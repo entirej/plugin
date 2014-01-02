@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.entirej.ide.core.spi.clientframework.exportProvider">
+      <provider
+            class="org.entirej.ide.cf.swing.SwingClientFrameworkProvider">
+      </provider>
+   </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.swing.runtime.EJCF_SWING_CONTAINER"
+          class="org.entirej.ide.cf.swing.lib.SwingRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.swing.runtime.EJCF_SWING_CONTAINER"
+          name="EntireJ Swing Runtime"
+          class="org.entirej.ide.cf.swing.lib.SwingRuntimeContainerPage"/>
+   </extension>
+</plugin>

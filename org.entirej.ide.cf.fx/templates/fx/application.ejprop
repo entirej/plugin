@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entirejFramework>
+    <applicationManager><![CDATA[org.entirej.applicationframework.fx.application.EJFXApplicationManager]]></applicationManager>
+    <applicationManagerDefinition><![CDATA[org.entirej.applicationframework.fx.renderers.application.EJFXApplicationDefinition]]></applicationManagerDefinition>
+    <connectionFactoryClassName><![CDATA[org.entirej.framework.core.EJDefaultConnectionFactory]]></connectionFactoryClassName>
+    <reusableBlocksLocation></reusableBlocksLocation>
+    <reusableLovDefinitionLocation></reusableLovDefinitionLocation>
+    <translatorClassName></translatorClassName>
+    <applicationLevelParameterList>
+    </applicationLevelParameterList>
+    <applicationDefinedProperties>
+    </applicationDefinedProperties>
+    <packages>
+    </packages>
+    <renderer>
+        <formRenderers>
+            <renderer name="Form" rendererClassName="org.entirej.applicationframework.fx.renderers.form.EJFXFormRenderer"/>
+        </formRenderers>
+        <blockRenderers>
+            <renderer name="MultiRecord" rendererClassName="org.entirej.applicationframework.fx.renderers.blocks.EJFXMultiRecordBlockRenderer"/>
+            <renderer name="SingleRecord" rendererClassName="org.entirej.applicationframework.fx.renderers.blocks.EJFXSingleRecordBlockRenderer"/>
+            <renderer name="TreeRecord" rendererClassName="org.entirej.applicationframework.fx.renderers.blocks.EJFXTreeRecordBlockRenderer"/>
+             <renderer name="TreeTableRecord" rendererClassName="org.entirej.applicationframework.fx.renderers.blocks.EJFXTreeTableRecordBlockRenderer"/>
+        </blockRenderers>
+        <itemRenderers>
+            <renderer name="TextItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXTextItemRenderer">
+            </renderer>
+            <renderer name="ButtonItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXButtonItemRenderer">
+            </renderer>
+            <renderer name="LabelItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXLabelItemRenderer">
+            </renderer>
+            <renderer name="NumberItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXNumberItemRenderer">
+            </renderer>
+            <renderer name="DateItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXDateItemRenderer">
+            </renderer>
+            <renderer name="CheckBoxItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXCheckBoxItemRenderer">
+            </renderer>
+            <renderer name="ComboItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXComboItemRenderer">
+            </renderer>
+            <renderer name="TextAreaItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXTextAreaRenderer">
+            </renderer>
+            <renderer name="ImageItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXImageItemRenderer">
+            </renderer>
+            <renderer name="RadioItem" rendererClassName="org.entirej.applicationframework.fx.renderers.items.EJFXRadioGroupItemRenderer">
+            </renderer>
+        </itemRenderers>
+        <lovRenderers>
+            <renderer name="Standard" rendererClassName="org.entirej.applicationframework.fx.renderers.lov.EJFXStandardLovRenderer"/>
+            <renderer name="Lookup" rendererClassName="org.entirej.applicationframework.fx.renderers.lov.EJFXLookupFormLovRenderer"/>
+        </lovRenderers>
+        <menuRenderers>
+        </menuRenderers>
+        <appCompRenderers>
+            <renderer name="SingleFormContainer" rendererClassName="org.entirej.applicationframework.fx.application.form.containers.EJFXSingleFormContainer"/>
+            <renderer name="Banner" rendererClassName="org.entirej.applicationframework.fx.application.components.EJFXBanner"/>
+            <renderer name="TabFormContainer" rendererClassName="org.entirej.applicationframework.fx.application.form.containers.EJFXTabPaneFormContainer"/>
+            <renderer name="StackedFormContainer" rendererClassName="org.entirej.applicationframework.fx.application.form.containers.EJFXStackedPaneFormContainer"/>
+            <renderer name="FormToolBar" rendererClassName="org.entirej.applicationframework.fx.application.components.EJFXDefaultFormToolbar"/>
+            <renderer name="MenuTree" rendererClassName="org.entirej.applicationframework.fx.application.components.EJFXMenuTreeComponent"/>
+        </appCompRenderers>
+    </renderer>
+    <applicationMenus>
+        <applicationMenu name="Default" actionProcessorClassName="" default="true">
+        </applicationMenu>
+    </applicationMenus>
+    <applicationLayout>
+        <title><![CDATA[EntireJ JavaFX Application]]></title>
+        <col>1</col>
+        <height>600</height>
+        <width>800</width>
+        <items>
+            <item type="SPLIT">
+                <name><![CDATA[Tab Forms]]></name>
+                <fill><![CDATA[BOTH]]></fill>
+                <grab><![CDATA[BOTH]]></grab>
+                <hHint>0</hHint>
+                <wHint>0</wHint>
+                <hMin>0</hMin>
+                <wMin>0</wMin>
+                <hSpan>1</hSpan>
+                <VSpan>1</VSpan>
+                <orientation><![CDATA[HORIZONTAL]]></orientation>
+                <items>
+                    <item type="COMPONENT">
+                        <name></name>
+                        <fill><![CDATA[BOTH]]></fill>
+                        <grab><![CDATA[BOTH]]></grab>
+                        <hHint>0</hHint>
+                        <wHint>2</wHint>
+                        <hMin>0</hMin>
+                        <wMin>0</wMin>
+                        <hSpan>1</hSpan>
+                        <VSpan>1</VSpan>
+                        <renderer><![CDATA[MenuTree]]></renderer>
+                        <rendererProperties>
+                            <property name="MENU_GROUP" multilingual="false" propertyType="MENU_GROUP"><![CDATA[Default]]></property>
+                        </rendererProperties>
+                    </item>
+                    <item type="GROUP">
+                        <name></name>
+                        <fill><![CDATA[BOTH]]></fill>
+                        <grab><![CDATA[BOTH]]></grab>
+                        <hHint>0</hHint>
+                        <wHint>8</wHint>
+                        <hMin>0</hMin>
+                        <wMin>0</wMin>
+                        <hSpan>1</hSpan>
+                        <VSpan>1</VSpan>
+                        <col>2</col>
+                        <title></title>
+                        <border>false</border>
+                        <hideMargin>false</hideMargin>
+                        <items>
+                            <item type="COMPONENT">
+                                <name></name>
+                                <fill><![CDATA[BOTH]]></fill>
+                                <grab><![CDATA[NONE]]></grab>
+                                <hHint>32</hHint>
+                                <wHint>0</wHint>
+                                <hMin>0</hMin>
+                                <wMin>0</wMin>
+                                <hSpan>2</hSpan>
+                                <VSpan>1</VSpan>
+                                <renderer><![CDATA[FormToolBar]]></renderer>
+                                <rendererProperties>
+                                </rendererProperties>
+                            </item>
+                            <item type="COMPONENT">
+                                <name></name>
+                                <fill><![CDATA[BOTH]]></fill>
+                                <grab><![CDATA[BOTH]]></grab>
+                                <hHint>0</hHint>
+                                <wHint>8</wHint>
+                                <hMin>0</hMin>
+                                <wMin>0</wMin>
+                                <hSpan>1</hSpan>
+                                <VSpan>1</VSpan>
+                                <renderer><![CDATA[TabFormContainer]]></renderer>
+                                <rendererProperties>
+                                </rendererProperties>
+                            </item>
+                        </items>
+                    </item>
+                </items>
+            </item>
+        </items>
+    </applicationLayout>
+    <visualAttributes>
+    </visualAttributes>
+</entirejFramework>

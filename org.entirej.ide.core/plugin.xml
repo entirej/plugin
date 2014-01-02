@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension-point id="org.entirej.ide.core.spi.clientframework.exportProvider" name="Client Framework Provider" schema="schema/org.entirej.ide.core.spi.clientframework.exportProvider.exsd"/>
+<extension-point id="org.entirej.ide.core.spi.databaseconnectivity.exportProvider" name="Database Connectivity Provider" schema="schema/org.entirej.ide.core.spi.databaseconnectivity.exportProvider.exsd"/>
+<extension-point id="org.entirej.ide.core.spi.blockservicecontent.provider" name="Block Service Content Provider" schema="schema/org.entirej.ide.core.spi.blockservicecontent.Provider.exsd"/>
+<extension-point id="org.entirej.ide.core.spi.ejpropertiesvalidate.provider" name="EJ Properties Validate Provider" schema="schema/org.entirej.ide.core.spi.ejpropertiesvalidate.Provider.exsd"/>
+<extension-point id="org.entirej.ide.core.spi.ejformvalidate.provider" name="EJ Form Validate Provider" schema="schema/org.entirej.ide.core.spi.ejformvalidate.Provider.exsd"/>
+<extension
+      point="org.entirej.ide.core.spi.databaseconnectivity.exportProvider">
+   <provider
+         class="org.entirej.ide.core.cf.EmptyDBConnectivityProvider">
+   </provider>
+</extension>
+      <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.entirej.ide.core.preferences.InfoPreferencePage"
+            id="org.entirej.ide.core.PreferencesPage"
+            name="EntireJ">
+      </page>
+   </extension>
+<extension
+      point="org.entirej.ide.core.spi.clientframework.exportProvider">
+   <provider
+         class="org.entirej.ide.core.cf.EmptyClientFrameworkProvider"></provider>
+</extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.core.runtime.EJ_CORE_CONTAINER"
+          class="org.entirej.ide.core.cf.lib.CoreRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.core.runtime.EJ_CORE_CONTAINER"
+          name="EntireJ Core Runtime"
+          class="org.entirej.ide.core.cf.lib.CoreRuntimeContainerPage"/>
+   </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.core.runtime.EJ_DEV_CONTAINER"
+          class="org.entirej.ide.core.cf.lib.DevRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.core.runtime.EJ_DEV_CONTAINER"
+          name="EntireJ CF Development Runtime"
+          class="org.entirej.ide.core.cf.lib.DevRuntimeContainerPage"/>
+   </extension>  
+   <extension
+         id="org.entirej.ide.EJNature"
+         name="%natures.EJNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.entirej.ide.core.project.EJProject">
+         </run>
+      </runtime>
+   </extension>  
+   <extension
+         id="org.entirej.ide.EJPropertiesBuilder"
+         name="%builders.EJPropertiesBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.entirej.ide.core.project.EJPropertiesConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="org.entirej.ide.EJFormBuilder"
+         name="%builders.EJFormBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.entirej.ide.core.project.EJFormConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   
+   <!-- ================================================================================= -->
+<!-- Markers                                                                           -->
+<!-- ================================================================================= -->
+   <extension
+         id="problem"
+         name="%builders.marker.label"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="id"/>
+      <attribute name="EJCategoryId"/>
+      <persistent value="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.entirej.ide.core.activation.EJBootstrap">
+      </startup>
+   </extension>
+</plugin>

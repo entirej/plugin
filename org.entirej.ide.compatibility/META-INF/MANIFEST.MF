@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EntireJ - compatibility
+Bundle-SymbolicName: org.entirej.ide.compatibility;singleton:=true
+Bundle-Version: 2.0.0.qualifier
+Bundle-Activator: org.entirej.framework.plugin.EntireJFrameworkPlugin
+Bundle-Vendor: Mojave Innovations GmbH
+Require-Bundle: org.eclipse.jdt.core,
+ org.eclipse.core.runtime.compatibility,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.views.properties.tabbed,
+ org.entirej.ide.core,
+ org.entirej.core.runtime
+Plugin-Class: org.entirej.framework.plugin.EntireJFrameworkPlugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.entirej.framework.plugin,
+ org.entirej.framework.plugin.framework.properties,
+ org.entirej.framework.plugin.framework.properties.containers,
+ org.entirej.framework.plugin.framework.properties.containers.interfaces,
+ org.entirej.framework.plugin.framework.properties.interfaces,
+ org.entirej.framework.plugin.framework.properties.reader,
+ org.entirej.framework.plugin.framework.properties.writer,
+ org.entirej.framework.plugin.preferences,
+ org.entirej.framework.plugin.ui.wizards.utils,
+ org.entirej.framework.plugin.utils
+Bundle-ActivationPolicy: lazy

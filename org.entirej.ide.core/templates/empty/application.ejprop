@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entirejFramework>
+    <applicationManager><![CDATA[]]></applicationManager>
+    <connectionFactoryClassName><![CDATA[]]></connectionFactoryClassName>
+    <reusableBlocksLocation></reusableBlocksLocation>
+    <reusableLovDefinitionLocation></reusableLovDefinitionLocation>
+    <translatorClassName></translatorClassName>
+    <applicationLevelParameterList>
+    </applicationLevelParameterList>
+    <applicationDefinedProperties>
+    </applicationDefinedProperties>
+    <packages>
+    </packages>
+    <renderers>
+        <formRenderers>
+        </formRenderers>
+        <blockRenderers>
+        </blockRenderers>
+        <itemRenderers>
+        </itemRenderers>
+        <lovRenderers>
+        </lovRenderers>
+        <queryScreenRenderers>
+        </queryScreenRenderers>
+        <insertScreenRenderers>
+        </insertScreenRenderers>
+        <updateScreenRenderers>
+        </updateScreenRenderers>
+    </renderers>
+    <applicationMenus>
+        <applicationMenu name="Default" actionProcessorClassName="" default="true">
+        </applicationMenu>
+    </applicationMenus>
+    <visualAttributes>
+    </visualAttributes>
+</entirejFramework>

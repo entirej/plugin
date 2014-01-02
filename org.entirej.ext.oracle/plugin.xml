@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+    <extension
+          point="org.entirej.ide.core.spi.databaseconnectivity.exportProvider">
+       <provider
+             class="org.entirej.ext.oracle.OracleDBConnectivityProvider">
+       </provider>
+    </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.oracle.runtime.EJ_ORACLE_CONTAINER"
+          class="org.entirej.ext.oracle.lib.OracleRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.oracle.runtime.EJ_ORACLE_CONTAINER"
+          name="EntireJ Oracle Runtime"
+          class="org.entirej.ext.oracle.lib.OracleRuntimeContainerPage"/>
+   </extension>
+<extension
+      point="org.entirej.ide.core.spi.blockservicecontent.provider">
+   <provider
+         class="org.entirej.ext.oracle.db.OraTypeBlockServiceContentProvider">
+   </provider>
+</extension>
+</plugin>

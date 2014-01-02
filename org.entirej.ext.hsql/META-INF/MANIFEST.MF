@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.entirej.ext.hsql;singleton:=true
+Bundle-Version: 2.0.0.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Category: %Bundle-Category
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.ui.forms,
+ org.entirej.ide.core,
+ org.entirej.core.runtime,
+ org.entirej.ide.compatibility,
+ org.entirej.ide.ui
+Bundle-ClassPath: .,
+ extlibs/h2-1.3.169.jar.jar
+Bundle-Activator: org.entirej.ext.hsql.EJExtHSQLPlugin
+Bundle-Localization: plugin
+Bundle-ActivationPolicy: lazy
+

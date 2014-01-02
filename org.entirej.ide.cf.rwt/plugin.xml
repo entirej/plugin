@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.entirej.ide.core.spi.clientframework.exportProvider">
+      <provider
+            class="org.entirej.ide.cf.rwt.RWTClientFrameworkProvider">
+      </provider>
+   </extension>
+      <extension
+         point="org.entirej.ide.core.spi.clientframework.exportProvider">
+      <provider
+            class="org.entirej.ide.cf.rwt.RWTRCPClientFrameworkProvider">
+      </provider>
+   </extension>
+    <!-- 
+    <extension
+         point="org.entirej.ide.core.spi.clientframework.exportProvider">
+      <provider
+            class="org.entirej.ide.cf.rwt.RWTTabrisClientFrameworkProvider">
+      </provider>
+   </extension>
+   -->
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.EJCF_RWT_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.RWTCFRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.EJCF_RWT_CONTAINER"
+          name="EntireJ RWT/CF Runtime"
+          class="org.entirej.ide.cf.rwt.lib.RWTCFRuntimeContainerPage"/>
+   </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.RWT_CORE_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.RWTCoreRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.RWT_CORE_CONTAINER"
+          name="EntireJ Bundled RWT/RAP Core Runtime"
+          class="org.entirej.ide.cf.rwt.lib.RWTCoreRuntimeContainerPage"/>
+   </extension> 
+   
+ <!-- Tabris  
+  <extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.EJCF_RWT_TABRIS_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.tabris.RWTCFRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.EJCF_RWT_TABRIS_CONTAINER"
+          name="EntireJ Tabris/CF Runtime"
+          class="org.entirej.ide.cf.rwt.lib.tabris.RWTCFRuntimeContainerPage"/>
+   </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.RWT_CORE_TABRIS_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.tabris.RWTCoreRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.RWT_CORE_TABRIS_CONTAINER"
+          name="EntireJ Bundled Tabris Runtime"
+          class="org.entirej.ide.cf.rwt.lib.tabris.RWTCoreRuntimeContainerPage"/>
+   </extension>  
+   
+ -->   
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.EJCF_RWT_RAP_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.EJCF_RWT_RAP_CONTAINER"
+          name="EntireJ RWT/RAP Extension"
+          class="org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeContainerPage"/>
+   </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.EJCF_RWT_RCP_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.EJCF_RWT_RCP_CONTAINER"
+          name="EntireJ RWT/RCP Extension"
+          class="org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeContainerPage"/>
+   </extension>         
+</plugin>

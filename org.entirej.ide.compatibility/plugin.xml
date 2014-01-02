@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+      <extension
+            point="org.eclipse.ui.preferencePages">
+      <page
+      category="org.entirej.ide.core.PreferencesPage"
+            class="org.entirej.framework.plugin.preferences.EntirejPreferencePage"
+            name="Defaults"
+            id="org.entirej.framework.plugin.preferences.EntirejPreferencePage"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.entirej.framework.plugin.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+    <extension id="org.entirej.framework.plugin.properties"
+           name="EntireJ Properties"
+               point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            class="org.entirej.framework.plugin.preferences.EntirejPreferencePage"
+            id="org.entirej.framework.plugin.preferences.EntirejPropertiesPage"
+            name="EntireJ"
+            objectClass="org.eclipse.core.resources.IProject">
+      </page>
+      <page
+            adaptable="true"
+            category="org.entirej.framework.plugin.preferences.EntirejPropertiesPage"
+            class="org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage"
+            id="org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage"
+            name="Connection Settings"
+            objectClass="org.eclipse.core.resources.IProject">
+      </page>
+    </extension>
+   
+</plugin>

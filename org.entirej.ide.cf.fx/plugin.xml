@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.entirej.ide.core.spi.clientframework.exportProvider">
+      <provider
+            class="org.entirej.ide.cf.fx.FXClientFrameworkProvider">
+      </provider>
+   </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.fx.runtime.EJCF_FX_CONTAINER"
+          class="org.entirej.ide.cf.fx.lib.FXCFRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.fx.runtime.EJCF_FX_CONTAINER"
+          name="EntireJ JavaFX CF Runtime"
+          class="org.entirej.ide.cf.fx.lib.FXCFRuntimeContainerPage"/>
+   </extension>
+       
+</plugin>

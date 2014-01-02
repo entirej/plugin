@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+    <extension
+          point="org.entirej.ide.core.spi.databaseconnectivity.exportProvider">
+       <provider
+             class="org.entirej.ext.mysql.MySQLDBConnectivityProvider">
+       </provider>
+    </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.mysql.runtime.EJ_MYSQL_CONTAINER"
+          class="org.entirej.ext.mysql.lib.MySQLRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.mysql.runtime.EJ_MYSQL_CONTAINER"
+          name="EntireJ MySQL Runtime"
+          class="org.entirej.ext.mysql.lib.MySQLRuntimeContainerPage"/>
+   </extension>
+</plugin>
