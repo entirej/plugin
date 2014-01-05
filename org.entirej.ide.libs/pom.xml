@@ -128,6 +128,15 @@
 							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
 							<destFileName>entirej-fx-renderer-defs.jar</destFileName>
 						</artifactItem>
+						<artifactItem>
+							<groupId>org.jfxtras</groupId>
+							<artifactId>jfxtras-labs</artifactId>
+							<version>8.0-r1-SNAPSHOT</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
+							<destFileName>jfxtras-labs-8.0-r1.jar</destFileName>
+						</artifactItem>
 						
 						<!-- RWT_BASE -->
 						<artifactItem>
@@ -193,6 +202,14 @@
 			  <enabled>true</enabled>
 			  <updatePolicy>always</updatePolicy>
 			</releases>
+		</repository>
+		<repository>
+			<id>sonatype-mvn-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots//</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 		</repository>
 	</repositories>
 </project>
