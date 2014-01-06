@@ -55,6 +55,7 @@
         <appCompRenderers>
             <renderer name="SingleFormContainer" rendererClassName="org.entirej.applicationframework.fx.application.form.containers.EJFXSingleFormContainer"/>
             <renderer name="Banner" rendererClassName="org.entirej.applicationframework.fx.application.components.EJFXBanner"/>
+            <renderer name="StatusBar" rendererClassName="org.entirej.applicationframework.fx.application.components.EJFXStatusBar"/>
             <renderer name="TabFormContainer" rendererClassName="org.entirej.applicationframework.fx.application.form.containers.EJFXTabPaneFormContainer"/>
             <renderer name="StackedFormContainer" rendererClassName="org.entirej.applicationframework.fx.application.form.containers.EJFXStackedPaneFormContainer"/>
             <renderer name="FormToolBar" rendererClassName="org.entirej.applicationframework.fx.application.components.EJFXDefaultFormToolbar"/>
