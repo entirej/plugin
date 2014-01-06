@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -44,6 +45,8 @@ import org.entirej.framework.core.properties.EJCoreLayoutItem.SplitGroup;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.TabGroup;
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
+import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
+import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.plugin.EJPluginParameterChecker;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
@@ -546,6 +549,49 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
                 writeTagValue(buffer, property.getValue());
             }
             closeTAG(buffer, "property");
+        }
+        
+        
+        EJFrameworkExtensionPropertyList propertyList;
+        Iterator<EJFrameworkExtensionPropertyList> propertyLists = renderer.getAllPropertyLists().iterator();
+        while (propertyLists.hasNext())
+        {
+            propertyList = propertyLists.next();
+            
+            startOpenTAG(buffer, "propertyList");
+            {
+                writePROPERTY(buffer, "name", propertyList.getName());
+                closeOpenTAG(buffer);
+                
+                Iterator<EJFrameworkExtensionPropertyListEntry> listEntries = propertyList.getAllListEntries().iterator();
+                while (listEntries.hasNext())
+                {
+                    EJFrameworkExtensionPropertyListEntry entry = listEntries.next();
+                    startTAG(buffer, "listEntry");
+                    {
+                        Map<String, String> leProperties = entry.getAllProperties();
+                        String leKey = "", leValue = "";
+                        Iterator<String> leKeys = leProperties.keySet().iterator();
+                        while (leKeys.hasNext())
+                        {
+                            leKey = leKeys.next();
+                            leValue = entry.getProperty(leKey);
+                            
+                            startOpenTAG(buffer, "property");
+                            {
+                                writePROPERTY(buffer, "name", leKey);
+                                closeOpenTAG(buffer);
+                                
+                                writeTagValue(buffer, leValue);
+                            }
+                            closeTAG(buffer, "property");
+                        }
+                        
+                    }
+                    endTAG(buffer, "listEntry");
+                }
+            }
+            endTAG(buffer, "propertyList");
         }
         
         Iterator<EJFrameworkExtensionProperties> groups = renderer.getAllPropertyGroups().iterator();
