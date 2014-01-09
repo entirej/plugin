@@ -128,6 +128,7 @@
 							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
 							<destFileName>entirej-fx-renderer-defs.jar</destFileName>
 						</artifactItem>
+						-->
 						<artifactItem>
 							<groupId>org.jfxtras</groupId>
 							<artifactId>jfxtras-labs</artifactId>
