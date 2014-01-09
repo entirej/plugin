@@ -109,7 +109,7 @@
 							<outputDirectory>../org.entirej.core.runtime/extlibs</outputDirectory>
 						</artifactItem>
 						
-						<!-- FX -->
+						<!-- FX
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-fx</artifactId>
