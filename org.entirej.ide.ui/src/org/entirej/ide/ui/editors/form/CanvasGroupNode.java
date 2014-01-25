@@ -124,6 +124,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             return true;
         }
+        
+        
+        
         EJPluginCanvasContainer parentCanvasContainer = source.getParentCanvasContainer();
         while (parentCanvasContainer.getParnetCanvas() != null)
         {
@@ -703,7 +706,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && !isAncestorCanvas(GroupCanvasNode.this.source, source);
+            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(GroupCanvasNode.this.source, source);
         }
 
         @Override
@@ -1106,7 +1109,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && !isAncestorCanvas(SplitCanvasNode.this.source, source);
+            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(SplitCanvasNode.this.source, source);
         }
 
         @Override
@@ -2248,7 +2251,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && !isAncestorCanvas(PopupCanvasNode.this.source, source);
+            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP  && !isAncestorCanvas(PopupCanvasNode.this.source, source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -2727,7 +2730,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && !isAncestorCanvas(TabCanvasPageNode.this.source.getTabCanvasProperties(), source);
+            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(TabCanvasPageNode.this.source.getTabCanvasProperties(), source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -3163,7 +3166,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && !isAncestorCanvas(StackedCanvasPageNode.this.source.getStackedCanvasProperties(), source);
+            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(StackedCanvasPageNode.this.source.getStackedCanvasProperties(), source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
