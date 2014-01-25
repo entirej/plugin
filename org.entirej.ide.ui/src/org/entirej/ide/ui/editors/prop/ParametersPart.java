@@ -186,10 +186,12 @@ public class ParametersPart extends SectionPart
     private void createButtons(final Composite body, FormToolkit toolkit)
     {
         Composite buttonClient = toolkit.createComposite(body);
-
-        GridLayout glayout = new GridLayout();
+        GridData layoutData = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+        layoutData.grabExcessHorizontalSpace =false;
+        layoutData.widthHint = 60;
+        buttonClient.setLayoutData(layoutData);
+        GridLayout glayout = new GridLayout(1,true);
         glayout.marginWidth = glayout.marginHeight = 2;
-        glayout.numColumns = 1;
         buttonClient.setLayout(glayout);
 
         addButton = toolkit.createButton(buttonClient, "Add", SWT.PUSH);
@@ -208,7 +210,7 @@ public class ParametersPart extends SectionPart
                 }
             }
         });
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = 1;
         addButton.setLayoutData(gd);
 
@@ -233,7 +235,7 @@ public class ParametersPart extends SectionPart
 
             }
         });
-        gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+        gd  = new GridData(GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = 1;
         editButton.setLayoutData(gd);
 
@@ -258,7 +260,7 @@ public class ParametersPart extends SectionPart
 
             }
         });
-        gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+        gd  = new GridData(GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = 1;
         removeButton.setLayoutData(gd);
 
