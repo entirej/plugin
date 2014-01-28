@@ -28,16 +28,19 @@ import org.entirej.framework.core.properties.EJCoreLayoutItem.SplitGroup;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.SplitGroup.ORIENTATION;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.TYPE;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.TabGroup;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevAppComponentRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
+import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class AppLayoutHandler extends EntireJTagHandler
 {
     private EJCoreLayoutContainer     container = new EJCoreLayoutContainer();
-    
+    final EJPluginEntireJProperties ejProperties ;
     public AppLayoutHandler(EJPluginEntireJProperties ejProperties)
     {
+        this.ejProperties = ejProperties;
     }
     
     @Override
@@ -99,7 +102,7 @@ public class AppLayoutHandler extends EntireJTagHandler
         
     }
     
-    private static class ItemContainerHandler extends EntireJTagHandler
+    private  class ItemContainerHandler extends EntireJTagHandler
     {
         private ItemContainer container;
         
@@ -130,7 +133,7 @@ public class AppLayoutHandler extends EntireJTagHandler
         }
         
     }
-    private static class ItemHandler extends EntireJTagHandler
+    private  class ItemHandler extends EntireJTagHandler
     {
         private final ItemContainer container;
         private EJCoreLayoutItem    item;
@@ -188,7 +191,22 @@ public class AppLayoutHandler extends EntireJTagHandler
             if ("rendererProperties".equals(name) && item instanceof LayoutComponent)
             {
                 LayoutComponent component = (LayoutComponent) item;
-                component.setRendereProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+                if(component.getRenderer()!=null && component.getRenderer().length()>0)
+                {
+                    EJDevAppComponentRendererDefinition definition = ExtensionsPropertiesFactory.loadAppComponentDefinition(ejProperties, component.getRenderer());
+                    if(definition!=null)
+                    {
+                        component.setRendereProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(definition.getComponentPropertyDefinitionGroup()));
+                    }
+                    else
+                    {
+                        component.setRendereProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+                    }
+                }
+                else
+                {
+                    component.setRendereProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+                }
             }
         }
         

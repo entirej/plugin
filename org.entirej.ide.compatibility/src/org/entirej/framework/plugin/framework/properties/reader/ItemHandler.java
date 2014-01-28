@@ -112,9 +112,18 @@ public class ItemHandler extends EntireJTagHandler
     {
         if (name.equals(ELEMENT_ITEM_RENDERER_PROPERTIES))
         {
-            if (((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup() != null)
+            if (((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup() != null )
             {
-                _itemProperties.setItemRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+               if(_itemProperties.getItemRendererDefinition() != null)
+               {
+                   _itemProperties.setItemRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(_itemProperties.getItemRendererDefinition().getItemPropertyDefinitionGroup()));
+               }
+               else
+               {
+                   _itemProperties.setItemRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+               }
+                
+                
             }
         }
     }
