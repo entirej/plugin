@@ -37,7 +37,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
 
     public RWTCoreRuntimeContainerPage()
     {
-        super("EntireJ Bundled Tabris 1.1 Runtime");
+        super("EntireJ Bundled Tabris 1.2.1 Runtime");
     }
 
     public void initialize(IJavaProject javaProject, IClasspathEntry[] currentEntries)
@@ -57,7 +57,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
     public void createControl(Composite parent)
     {
         setTitle("EntireJ Bundled Tabris  Runtime");
-        setDescription("Add bundled tabris 1.1 libraries to project path.");
+        setDescription("Add bundled tabris 1.2.1 libraries to project path.");
 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());

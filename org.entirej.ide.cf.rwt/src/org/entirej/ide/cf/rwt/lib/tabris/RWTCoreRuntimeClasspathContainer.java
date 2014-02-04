@@ -34,7 +34,8 @@ public class RWTCoreRuntimeClasspathContainer implements IClasspathContainer
 {
     public final static Path ID          = new Path("org.eclipse.rwt.runtime.RWT_CORE_TABRIS_CONTAINER");
 
-    final IPath              runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-rwt-tabris/"));
+    final IPath              runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-tabris/"));
+    final IPath              runtimeRapPath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-rwt/"));
     private FilenameFilter   _dirFilter  = new FilenameFilter()
                                          {
 
@@ -82,12 +83,35 @@ public class RWTCoreRuntimeClasspathContainer implements IClasspathContainer
                 entryList.add(JavaCore.newLibraryEntry(new Path(lib.getAbsolutePath()), srcPath, new Path("/")));
             }
         }
+        //add rap paths
+         _dir = new File(runtimeRapPath.toOSString());
+        if (_dir.exists())
+        {
+            File[] libs = _dir.listFiles(_dirFilter);
+            for (File lib : libs)
+            {
+                String[] split = lib.getName().split("[.]");
+                // strip off the file extension
+                String ext = split[split.length - 1];
+                // now see if this archive has an associated src jar
+                File srcArc = new File(lib.getAbsolutePath().replace("." + ext, "-src." + ext));
+                Path srcPath = null;
+                // if the source archive exists then get the path to attach it
+                if (srcArc.exists())
+                {
+                    srcPath = new Path(srcArc.getAbsolutePath());
+                }
+
+                entryList.add(JavaCore.newLibraryEntry(new Path(lib.getAbsolutePath()), srcPath, new Path("/")));
+            }
+        }
+        
         return (IClasspathEntry[]) entryList.toArray(new IClasspathEntry[entryList.size()]);
     }
 
     public String getDescription()
     {
-        return "EntireJ Bundled Tabris 1.1 Runtime Libraries.";
+        return "EntireJ Bundled Tabris 1.2.1 Runtime Libraries.";
     }
 
     public int getKind()

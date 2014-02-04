@@ -34,28 +34,35 @@ public class RWTCFRuntimeClasspathContainer implements IClasspathContainer
 {
     public final static Path ID          = new Path("org.eclipse.rwt.runtime.EJCF_RWT_TABRIS_CONTAINER");
 
-    final IPath              runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-tabris/"));
-    private FilenameFilter   _dirFilter  = new FilenameFilter()
-                                         {
+    public RWTCFRuntimeClasspathContainer(IPath path)
+    {
+        runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-tmt/"));
+        description = "EntireJ Tabris CF [2.1]  Libraries.";
+    }
 
-                                             public boolean accept(File dir, String name)
-                                             {
-                                                 String[] nameSegs = name.split("[.]");
-                                                 if (nameSegs.length < 2)
-                                                 {
-                                                     return false;
-                                                 }
-                                                 if (nameSegs[nameSegs.length - 2].endsWith("-src"))
-                                                 {
-                                                     return false;
-                                                 }
-                                                 if ("jar".equals(nameSegs[nameSegs.length - 1].toLowerCase()))
-                                                 {
-                                                     return true;
-                                                 }
-                                                 return false;
-                                             }
-                                         };
+    final String           description;
+    final IPath            runtimePath;
+    private FilenameFilter _dirFilter = new FilenameFilter()
+                                      {
+
+                                          public boolean accept(File dir, String name)
+                                          {
+                                              String[] nameSegs = name.split("[.]");
+                                              if (nameSegs.length < 2)
+                                              {
+                                                  return false;
+                                              }
+                                              if (nameSegs[nameSegs.length - 2].endsWith("-src"))
+                                              {
+                                                  return false;
+                                              }
+                                              if ("jar".equals(nameSegs[nameSegs.length - 1].toLowerCase()))
+                                              {
+                                                  return true;
+                                              }
+                                              return false;
+                                          }
+                                      };
 
     public IClasspathEntry[] getClasspathEntries()
     {
@@ -87,7 +94,7 @@ public class RWTCFRuntimeClasspathContainer implements IClasspathContainer
 
     public String getDescription()
     {
-        return "EntireJ Tabris/CF Runtime Libraries.";
+        return description;
     }
 
     public int getKind()

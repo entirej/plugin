@@ -13,14 +13,14 @@
             class="org.entirej.ide.cf.rwt.RWTRCPClientFrameworkProvider">
       </provider>
    </extension>
-    <!-- 
+    
     <extension
          point="org.entirej.ide.core.spi.clientframework.exportProvider">
       <provider
             class="org.entirej.ide.cf.rwt.RWTTabrisClientFrameworkProvider">
       </provider>
    </extension>
-   -->
+  
 <extension
        point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer
@@ -48,7 +48,7 @@
           class="org.entirej.ide.cf.rwt.lib.RWTCoreRuntimeContainerPage"/>
    </extension> 
    
- <!-- Tabris  
+ 
   <extension
        point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer
@@ -75,8 +75,7 @@
           name="EntireJ Bundled Tabris Runtime"
           class="org.entirej.ide.cf.rwt.lib.tabris.RWTCoreRuntimeContainerPage"/>
    </extension>  
-   
- -->   
+  
 <extension
        point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer

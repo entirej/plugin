@@ -28,7 +28,7 @@ import org.eclipse.jdt.core.JavaCore;
 public class RWTCFRuntimeClasspathContainerInitializer extends ClasspathContainerInitializer
 {
 
-    /*
+	 /*
      * (non-Javadoc)
      * 
      * @see
@@ -38,7 +38,7 @@ public class RWTCFRuntimeClasspathContainerInitializer extends ClasspathContaine
     @Override
     public void initialize(IPath containerPath, IJavaProject project) throws CoreException
     {
-        RWTCFRuntimeClasspathContainer container = new RWTCFRuntimeClasspathContainer();
+    	RWTCFRuntimeClasspathContainer container = new RWTCFRuntimeClasspathContainer(containerPath);
 
         JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { container }, null);
 
@@ -70,5 +70,4 @@ public class RWTCFRuntimeClasspathContainerInitializer extends ClasspathContaine
     {
         JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { containerSuggestion }, null);
     }
-
 }

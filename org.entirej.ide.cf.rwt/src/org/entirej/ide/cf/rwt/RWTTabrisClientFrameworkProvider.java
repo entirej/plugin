@@ -50,8 +50,6 @@ public class RWTTabrisClientFrameworkProvider implements ClientFrameworkProvider
     private static final String RWT_PROJECT_PROPERTIES_FILE = "/templates/rwt/application_tabris.ejprop";
     private static final String RWT_PROJECT_RENDERER_FILE   = "/templates/rwt/renderers_tabris.ejprop";
     private static final String RWT_APP_LAUNCHER            = "/templates/rwt/Configuration.java";
-    private static final String RWT_APP_MENU_PAGE           = "/templates/rwt/DefaultMenuPage.java";
-    private static final String RWT_APP_FORM_PAGE           = "/templates/rwt/ARootFormPage.java";
     private static final String RWT_WEB_DD                  = "/templates/rwt/web.tabris.xml";
     private static final String RWT_WEB_INDEX               = "/templates/rwt/index.html";
 
@@ -62,9 +60,7 @@ public class RWTTabrisClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.verifySourceContainer(project, "src");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_PROPERTIES_FILE, "src/application.ejprop");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_RENDERER_FILE, "src/renderers.ejprop");
-            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LAUNCHER, "src/org/entirej/tabris/Configuration.java");
-            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_MENU_PAGE, "src/org/entirej/tabris/DefaultMenuPage.java");
-            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_FORM_PAGE, "src/org/entirej/tabris/ARootFormPage.java");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LAUNCHER, "src/org/entirej/ApplicationLauncher.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_DD, "WebContent/WEB-INF/web.xml");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_INDEX, "WebContent/index.html");
 

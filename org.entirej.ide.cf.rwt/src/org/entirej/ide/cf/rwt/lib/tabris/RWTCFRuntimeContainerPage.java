@@ -23,54 +23,121 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.entirej.ide.cf.rwt.lib.RWTRuntimeVersions;
+import org.entirej.ide.cf.rwt.lib.RWTRuntimeVersions.Version;
 
-public class RWTCFRuntimeContainerPage extends WizardPage implements IClasspathContainerPage, IClasspathContainerPageExtension
-{
+public class RWTCFRuntimeContainerPage extends WizardPage implements
+		IClasspathContainerPage, IClasspathContainerPageExtension {
 
-    IJavaProject javaProject;
+	IJavaProject javaProject;
+	private IClasspathEntry containerEntryResult;
 
-    public RWTCFRuntimeContainerPage()
-    {
-        super("EntireJ Tabris/CF Runtime");
-    }
+	public RWTCFRuntimeContainerPage() {
+		super("EntireJ Tabris CF");
+		containerEntryResult = JavaCore
+				.newContainerEntry(RWTCFRuntimeClasspathContainer.ID);
+	}
 
-    public void initialize(IJavaProject javaProject, IClasspathEntry[] currentEntries)
-    {
-        this.javaProject = javaProject;
-    }
+	public void initialize(IJavaProject javaProject,
+			IClasspathEntry[] currentEntries) {
+		this.javaProject = javaProject;
+	}
 
-    public IClasspathEntry getSelection()
-    {
-        return JavaCore.newContainerEntry(RWTCFRuntimeClasspathContainer.ID);
-    }
+	public IClasspathEntry getSelection() {
+		return containerEntryResult;
+	}
 
-    public void setSelection(IClasspathEntry containerEntry)
-    {
-    }
+	public void setSelection(IClasspathEntry containerEntry) {
+		if (containerEntry == null) {
+			containerEntry = JavaCore
+					.newContainerEntry(RWTCFRuntimeClasspathContainer.ID);
+		}
+		containerEntryResult = containerEntry;
+	}
 
-    public void createControl(Composite parent)
-    {
-        setTitle("EntireJ Tabris/CF Runtime");
-        setDescription("Add entirej Tabris/CF libraries to project path.");
+	public void createControl(Composite parent) {
+		setTitle("EntireJ Tabris CF Runtime");
+		setDescription("Add entirej Tabris CF libraries to project path.");
 
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout());
-        setControl(composite);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		setControl(composite);
 
-        Link link = new Link(composite, SWT.NONE);
-        link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        link.setText("EntireJ Tabris/CF runtime classpath container.");
-        // TODO add link ???
-    }
+		Link link = new Link(composite, SWT.NONE);
+		link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		link.setText("EntireJ Tabris CF classpath container.");
+		Composite versionsPanel = new Composite(composite, SWT.NONE);
+		versionsPanel
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		versionsPanel.setLayout(new GridLayout(2, false));
+		Label versionLbl = new Label(versionsPanel, SWT.NONE);
+		versionLbl.setText("Version:");
+		final ComboViewer versionsList = new ComboViewer(versionsPanel);
 
-    public boolean finish()
-    {
-        return true;
-    }
+		versionsList.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if (element instanceof RWTRuntimeVersions.Version) {
+					RWTRuntimeVersions.Version version = (Version) element;
+
+					return version.getName();
+				}
+				return super.getText(element);
+			}
+		});
+		versionsList.setContentProvider(new IStructuredContentProvider() {
+
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+
+			}
+
+			public void dispose() {
+
+			}
+
+			public Object[] getElements(Object inputElement) {
+				return new Object[] { RWTRuntimeVersions.CF_TMT_V_2_1 };
+			}
+		});
+		versionsList.setInput(new Object());
+
+		versionsList.setSelection(new StructuredSelection(
+				RWTRuntimeVersions.CF_TMT_V_2_1));
+
+		versionsList
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+
+					public void selectionChanged(SelectionChangedEvent event) {
+						IStructuredSelection selection = (IStructuredSelection) versionsList
+								.getSelection();
+						if (!selection.isEmpty()) {
+							RWTRuntimeVersions.Version version = (Version) selection
+									.getFirstElement();
+							containerEntryResult = JavaCore
+									.newContainerEntry(version.getPath());
+						}
+					}
+				});
+	}
+
+	public boolean finish() {
+		return true;
+	}
 }

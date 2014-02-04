@@ -19,6 +19,7 @@
 package org.entirej.ide.cf.rwt.lib;
 
 import org.eclipse.core.runtime.IPath;
+import org.entirej.ide.cf.rwt.RWTTabrisClientFrameworkProvider;
 import org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeClasspathContainer;
 import org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeClasspathContainer;
 
@@ -28,6 +29,7 @@ public class RWTRuntimeVersions
     public static Version CF_V_2_0     = new Version("2.0", RWTCFRuntimeClasspathContainer.ID);
     public static Version CF_RAP_V_2_0 = new Version("2.0", RWTRapRuntimeClasspathContainer.ID);
     public static Version CF_RCP_V_2_0 = new Version("2.0", RWTRcpRuntimeClasspathContainer.ID);
+    public static Version CF_TMT_V_2_1 = new Version("2.1", RWTCFRuntimeClasspathContainer.ID);
 
     public static class Version
     {
