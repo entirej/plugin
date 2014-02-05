@@ -6,7 +6,7 @@
  
   <context-param>
     <param-name>org.eclipse.rap.applicationConfiguration</param-name>
-    <param-value>org.entirej.tabris.Configuration</param-value>
+    <param-value>org.entirej.ApplicationLauncher</param-value>
   </context-param>
  
   <listener>
