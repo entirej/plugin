@@ -253,6 +253,16 @@ public class LayoutPreviewPart extends AbstractDescriptorPart implements INodeDe
             case NONE:
                 break;
         }
+        
+        if(gd.grabExcessHorizontalSpace && gd.widthHint==0)
+        {
+            gd.horizontalAlignment = SWT.FILL;
+        }
+        
+        if(gd.grabExcessVerticalSpace && gd.heightHint==0)
+        {
+            gd.verticalAlignment = SWT.FILL;
+        }
 
         return gd;
     }
