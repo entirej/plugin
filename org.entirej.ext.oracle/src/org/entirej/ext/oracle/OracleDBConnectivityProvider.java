@@ -42,6 +42,7 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
     private static final String ORACLE_TYPE_SERVICE_GENERATOR = "/templates/oracleOptions/OracleCollectionTypeServiceGenerator.java";
     private static final String ORACLE_TYPE_POJO_GENERATOR    = "/templates/oracleOptions/OraclePojoGenerator.java";
     private static final String ORACLE_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJStatementParameterArray.java";
+    private static final String ORACLE_STMT_PARAMETER_STRUCT   = "/templates/oracleOptions/EJStatementParameterStruct.java";
     private static final String ORACLE_SQL_INPUT              = "/templates/oracleOptions/EJSQLInput.java";
 
     public void addEntireJNature(ClientFrameworkProvider cf, IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
@@ -55,6 +56,8 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
 
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_PARAMETER_ARRAY,
                     "src/org/entirej/EJStatementParameterArray.java");
+            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_PARAMETER_STRUCT,
+                    "src/org/entirej/EJStatementParameterStruct.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_SQL_INPUT, "src/org/entirej/EJSQLInput.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_POJO_GENERATOR,
                     "src/org/entirej/generators/OraclePojoGenerator.java");
