@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.entirej.framework.core.application.definition.interfaces.EJApplicationDefinition;
 import org.entirej.framework.core.properties.EJCoreLayoutContainer;
 import org.entirej.framework.core.properties.EJCoreLayoutItem;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.FILL;
@@ -43,6 +44,7 @@ import org.entirej.framework.core.properties.EJCoreLayoutItem.LayoutGroup;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.LayoutSpace;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.SplitGroup;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.SplitGroup.ORIENTATION;
+import org.entirej.framework.core.properties.EJCoreLayoutItem.TYPE;
 import org.entirej.framework.core.properties.EJCoreLayoutItem.TabGroup;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
@@ -71,6 +73,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
 {
     private final EJPropertiesEditor editor;
     private LayoutPreviewer          layoutPreviewer;
+    private TYPE[]                   supportedLayoutTypes = TYPE.values();
 
     public LayoutTreeSection(EJPropertiesEditor editor, FormPage page, Composite parent)
     {
@@ -95,6 +98,19 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         section.setLayoutData(sectionData);
     }
 
+    boolean isSupportLayoutSettings()
+    {
+        for (TYPE type : supportedLayoutTypes)
+        {
+            switch (type)
+            {
+                case GROUP:
+                   return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public Object getTreeInput()
     {
@@ -124,6 +140,23 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
     {
 
         return new Action[] {};
+    }
+
+    @Override
+    public void refresh()
+    {
+        EJApplicationDefinition applicationManager = editor.getEntireJProperties().getApplicationManager();
+        if (applicationManager != null)
+        {
+
+            supportedLayoutTypes = applicationManager.getSupportedLayoutTypes();
+
+        }
+        else
+        {
+            supportedLayoutTypes = TYPE.values();
+        }
+        super.refresh();
     }
 
     @Override
@@ -439,14 +472,48 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { nameDescriptor, widthDescriptor, heightDescriptor, colDescriptor };
+            
+            if(isSupportLayoutSettings())
+            {
+
+                return new AbstractDescriptor<?>[] { nameDescriptor, widthDescriptor, heightDescriptor, colDescriptor };
+            }
+            else
+            {
+
+                return new AbstractDescriptor<?>[] { nameDescriptor, widthDescriptor, heightDescriptor };
+            }
         }
 
         @Override
         public Action[] getActions()
         {
-            return new Action[] { createNewGroupAction(source), createNewSplitGroupAction(source), createNewTabGroupAction(source),
-                    createNewSpaceAction(source), createNewCompAction(source) };
+            List<Action> actions = new ArrayList<Action>();
+
+            for (TYPE type : supportedLayoutTypes)
+            {
+                switch (type)
+                {
+                    case GROUP:
+                        actions.add(createNewGroupAction(source));
+                        break;
+                    case COMPONENT:
+                        actions.add(createNewCompAction(source));
+                        break;
+                    case SPLIT:
+                        actions.add(createNewSplitGroupAction(source));
+                        break;
+                    case TAB:
+                        actions.add(createNewTabGroupAction(source));
+                        break;
+                    case SPACE:
+
+                        actions.add(createNewSpaceAction(source));
+                        break;
+                }
+            }
+
+            return actions.toArray(new Action[0]);
         }
 
         @Override
@@ -530,7 +597,13 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
-            return getItemDescriptors().toArray(new AbstractDescriptor<?>[0]);
+            if(isSupportLayoutSettings())
+            {
+                
+               return getItemDescriptors().toArray(new AbstractDescriptor<?>[0]);
+            }
+            
+            return new AbstractDescriptor<?>[0];
         }
     }
 
@@ -629,8 +702,32 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public Action[] getActions()
         {
-            return new Action[] { createNewGroupAction(group), createNewSplitGroupAction(group), createNewTabGroupAction(group), createNewSpaceAction(group),
-                    createNewCompAction(group) };
+            List<Action> actions = new ArrayList<Action>();
+
+            for (TYPE type : supportedLayoutTypes)
+            {
+                switch (type)
+                {
+                    case GROUP:
+                        actions.add(createNewGroupAction(group));
+                        break;
+                    case COMPONENT:
+                        actions.add(createNewCompAction(group));
+                        break;
+                    case SPLIT:
+                        actions.add(createNewSplitGroupAction(group));
+                        break;
+                    case TAB:
+                        actions.add(createNewTabGroupAction(group));
+                        break;
+                    case SPACE:
+
+                        actions.add(createNewSpaceAction(group));
+                        break;
+                }
+            }
+
+            return actions.toArray(new Action[0]);
         }
 
         @Override
@@ -867,8 +964,32 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public Action[] getActions()
         {
-            return new Action[] { createNewGroupAction(group), createNewSplitGroupAction(group), createNewTabGroupAction(group), createNewSpaceAction(group),
-                    createNewCompAction(group) };
+            List<Action> actions = new ArrayList<Action>();
+
+            for (TYPE type : supportedLayoutTypes)
+            {
+                switch (type)
+                {
+                    case GROUP:
+                        actions.add(createNewGroupAction(group));
+                        break;
+                    case COMPONENT:
+                        actions.add(createNewCompAction(group));
+                        break;
+                    case SPLIT:
+                        actions.add(createNewSplitGroupAction(group));
+                        break;
+                    case TAB:
+                        actions.add(createNewTabGroupAction(group));
+                        break;
+                    case SPACE:
+
+                        actions.add(createNewSpaceAction(group));
+                        break;
+                }
+            }
+
+            return actions.toArray(new Action[0]);
         }
 
         @Override
@@ -910,7 +1031,17 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                     return getItemDescriptors().toArray(new AbstractDescriptor<?>[0]);
                 }
             };
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+            
+            if(isSupportLayoutSettings())
+            {
+
+                return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+            }
+            else
+            {
+
+                return new AbstractDescriptor<?>[] { orientationDescriptor };
+            }
         }
 
         public boolean canMove(Neighbor relation, Object source)
@@ -1031,8 +1162,32 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public Action[] getActions()
         {
-            return new Action[] { createNewGroupAction(group), createNewSplitGroupAction(group), createNewTabGroupAction(group), createNewSpaceAction(group),
-                    createNewCompAction(group) };
+            List<Action> actions = new ArrayList<Action>();
+
+            for (TYPE type : supportedLayoutTypes)
+            {
+                switch (type)
+                {
+                    case GROUP:
+                        actions.add(createNewGroupAction(group));
+                        break;
+                    case COMPONENT:
+                        actions.add(createNewCompAction(group));
+                        break;
+                    case SPLIT:
+                        actions.add(createNewSplitGroupAction(group));
+                        break;
+                    case TAB:
+                        actions.add(createNewTabGroupAction(group));
+                        break;
+                    case SPACE:
+
+                        actions.add(createNewSpaceAction(group));
+                        break;
+                }
+            }
+
+            return actions.toArray(new Action[0]);
         }
 
         @Override
@@ -1074,7 +1229,17 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                     return getItemDescriptors().toArray(new AbstractDescriptor<?>[0]);
                 }
             };
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+            
+            if(isSupportLayoutSettings())
+            {
+
+                return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+            }
+            else
+            {
+
+                return new AbstractDescriptor<?>[] { orientationDescriptor };
+            }
         }
 
         public boolean canMove(Neighbor relation, Object source)
@@ -1216,11 +1381,27 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                                         component.getRendereProperties());
                             }
                         };
-                        return new AbstractDescriptor<?>[] { rendererDescriptor, rendererGroupDescriptor, layoutGroupDescriptor };
+                        if(isSupportLayoutSettings())
+                        {
+                            return new AbstractDescriptor<?>[] { rendererDescriptor, rendererGroupDescriptor, layoutGroupDescriptor };
+                        }
+                        else
+                        {
+                            return new AbstractDescriptor<?>[] { rendererDescriptor, rendererGroupDescriptor };
+                        }
+                        
                     }
                 }
             }
-            return new AbstractDescriptor<?>[] { rendererDescriptor, layoutGroupDescriptor };
+            if(isSupportLayoutSettings())
+            {
+                return new AbstractDescriptor<?>[] { rendererDescriptor, layoutGroupDescriptor };
+            }
+            else
+            {
+                return new AbstractDescriptor<?>[] { rendererDescriptor };
+            }
+           
         }
     }
 
@@ -1262,6 +1443,8 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 }
             };
         }
+        
+       
 
         protected List<AbstractDescriptor<?>> getItemDescriptors()
         {
