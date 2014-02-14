@@ -40,6 +40,8 @@
         <menuRenderers>
         </menuRenderers>
         <appCompRenderers>
+            <renderer name="FormPage" rendererDefinitionClassName="org.entirej.applicationframework.tmt.renderers.application.EJTMTFormRendererDefinition"/>
+            <renderer name="MenuPage" rendererDefinitionClassName="org.entirej.applicationframework.tmt.renderers.application.EJTMTMenuTreeRendererDefinition"/>
         </appCompRenderers>
     </renderer>
 </entirejFramework>

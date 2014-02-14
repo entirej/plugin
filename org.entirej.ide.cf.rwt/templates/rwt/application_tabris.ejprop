@@ -54,6 +54,8 @@
         <menuRenderers>
         </menuRenderers>
         <appCompRenderers>
+            <renderer name="FormPage" rendererClassName="org.entirej.applicationframework.tmt.application.components.EJTMTFormComponent"/>
+            <renderer name="MenuPage" rendererClassName="org.entirej.applicationframework.tmt.application.components.EJTMTMenuTreeComponent"/>
         </appCompRenderers>
     </renderer>
     <applicationMenus>
@@ -66,8 +68,25 @@
         <col>1</col>
         <height>0</height>
         <width>0</width>
-        <items>
-            
+         <items>
+            <item type="COMPONENT">
+                <name></name>
+                <fill><![CDATA[BOTH]]></fill>
+                <grab><![CDATA[BOTH]]></grab>
+                <hHint>0</hHint>
+                <wHint>0</wHint>
+                <hMin>0</hMin>
+                <wMin>0</wMin>
+                <hSpan>1</hSpan>
+                <VSpan>1</VSpan>
+                <renderer><![CDATA[MenuPage]]></renderer>
+                <rendererProperties>
+                    <property name="PAGE_IMAGE" multilingual="false" propertyType="PROJECT_FILE"></property>
+                    <property name="PAGE_TITLE" multilingual="false" propertyType="STRING"><![CDATA[Menu]]></property>
+                    <property name="PAGE_ID" multilingual="false" propertyType="STRING"><![CDATA[DEFAULT_MENU]]></property>
+                    <property name="MENU_GROUP" multilingual="false" propertyType="MENU_GROUP"><![CDATA[Default]]></property>
+                </rendererProperties>
+            </item>
         </items>
     </applicationLayout>
     <visualAttributes>
