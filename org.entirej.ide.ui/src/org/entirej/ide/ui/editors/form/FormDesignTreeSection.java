@@ -1307,7 +1307,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
 
-                    return "The width (in pixels) of the form within it's container. If the width of the form is wider than the available space then a horizontal scroll bar will be shown ";
+                    return "The width <b>(in pixels)</b> of the form within it's container. If the width of the form is wider than the available space then a horizontal scroll bar will be shown ";
                 }
 
                 @Override
@@ -1384,7 +1384,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
 
-                    return "The height (in pixels) of the form within it's container. If the form height is higher than the available space then a vertical scroll bar will be shown";
+                    return "The height <b>(in pixels)</b> of the form within it's container. If the form height is higher than the available space then a vertical scroll bar will be shown";
                 }
 
                 @Override
