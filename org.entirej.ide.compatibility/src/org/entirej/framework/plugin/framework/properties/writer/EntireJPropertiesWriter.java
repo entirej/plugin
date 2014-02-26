@@ -79,6 +79,7 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "connectionFactoryClassName", properties.getConnectionFactoryClassName());
             writeStringTAG(buffer, "reusableBlocksLocation", properties.getReusableBlocksLocation());
             writeStringTAG(buffer, "reusableLovDefinitionLocation", properties.getReusableLovDefinitionLocation());
+            writeStringTAG(buffer, "objectGroupDefinitionLocation", properties.getObjectGroupDefinitionLocation());
             writeStringTAG(buffer, "translatorClassName", properties.getTranslatorClassName());
             
             // Now add the application level parameters

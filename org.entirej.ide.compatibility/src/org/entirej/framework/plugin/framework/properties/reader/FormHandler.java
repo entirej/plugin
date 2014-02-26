@@ -53,6 +53,10 @@ public class FormHandler extends EntireJTagHandler
     {
         _formProperties = new EJPluginFormProperties(formName, javaProject);
     }
+    public FormHandler(EJPluginFormProperties formProperties)
+    {
+        _formProperties = formProperties;
+    }
     
     public EJPluginFormProperties getFormProperties()
     {

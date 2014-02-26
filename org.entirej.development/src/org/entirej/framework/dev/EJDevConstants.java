@@ -24,6 +24,7 @@ public class EJDevConstants
     public static final String FORM_PROPERTIES_FILE_SUFFIX              = "form";
     public static final String REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX = "lovdef";
     public static final String REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX  = "block";
+    public static final String OBJECT_GROUP_PROPERTIES_FILE_SUFFIX      = "objgroup";
     public static final String VISUAL_ATTRIBUTE_PROPERTIES_FILE_SUFFIX  = "vattr";
     public static final String DATA_TYPE_FILE_SUFFIX                    = "dtype";
 }

@@ -76,6 +76,7 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevInsertScree
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevUpdateScreenRendererDefinition;
+import org.entirej.framework.plugin.EJPluginConstants;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
@@ -327,14 +328,15 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
     private boolean isFormFile(IFile file)
     {
-        return EJDevConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
+        return EJPluginConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
     }
 
     private boolean isRefFormFile(IFile file)
     {
         String fileExtension = file.getFileExtension();
-        return EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
-                || EJDevConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension);
+        return EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
+                || EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
+                || EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension);
     }
 
     static void buildFormConstant(IJavaProject project, EJPluginFormProperties formProperties, IFile file, IProgressMonitor monitor)

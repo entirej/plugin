@@ -128,6 +128,12 @@ public class EJFormValidateImpl implements EJFormValidateProvider
                 validateFormLayoutSettings(file, formProperties, project);
 
             }
+            else if(isObjGroup(file))
+            {
+                
+                // validate base form Layout Settings
+                validateFormLayoutSettings(file, formProperties, project);
+            }
 
             // validate blocks
             validateBlocks(file, formProperties, project);
@@ -1424,6 +1430,11 @@ public class EJFormValidateImpl implements EJFormValidateProvider
     boolean isRefBlock(IFile file)
     {
         return file.getName().endsWith(EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX);
+    }
+    
+    boolean isObjGroup(IFile file)
+    {
+        return file.getName().endsWith(EJDevConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX);
     }
 
     boolean isRefLov(IFile file)

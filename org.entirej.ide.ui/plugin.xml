@@ -113,6 +113,12 @@
             name="%org.entirej.ide.ui.editors.ej.reflov.file.name"
             priority="high">
       </content-type>
+      <content-type
+            file-extensions="objgroup"
+            id="org.entirej.ide.ui.editors.ej.objgroup.file"
+            name="%org.entirej.ide.ui.editors.ej.objgroup.file.name"
+            priority="high">
+      </content-type>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -177,7 +183,19 @@
             name="%new.entirejRefLov.name"
             project="false">
          <description>
-            %new.entirejForm.description
+            %new.entirejRefLov.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.form.NewEntireJObjectGroupWizard"
+            finalPerspective="org.entirej.ide.ui.perspective"
+            icon="icons/etools16/newejobjectgroup_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEntireJObjectGroupWizard"
+            name="%new.entirejObjectGroup.name"
+            project="false">
+         <description>
+            %new.entirejObjectGroup.description
          </description>
       </wizard>
    </extension>
@@ -201,6 +219,14 @@
                label="%new.entirejRefBlock.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejRefBlock.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.form.NewObjectGroupAction"
+               icon="icons/etools16/newejobjectgroup_wiz.png"
+               id="org.entirej.ide.ui.wizards.form.NewObjectGroupAction"
+               label="%new.entirejObjectGroup.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejObjectGroup.description">
          </action>
          <action
                class="org.entirej.ide.ui.wizards.form.NewFormAction"

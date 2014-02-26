@@ -44,6 +44,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
     private final AbstractTypeDescriptor    translatorFactoryClass;
     private final AbstractPackageDescriptor reusableBlocksPkg;
     private final AbstractPackageDescriptor reusableLovDefinitionsPkg;
+    private final AbstractPackageDescriptor objectGroupDefinitionsPkg;
     private AbstractDescriptorPart          descriptorPart;
 
     public ApplicationPropertiesPart(final EJPropertiesEditor editor, FormPage page, Composite parent)
@@ -165,6 +166,23 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
                 return pathTopackage(editor.getEntireJProperties().getReusableLovDefinitionLocation());
             }
         };
+        objectGroupDefinitionsPkg = new AbstractPackageDescriptor(editor, "ObjectGroup Definition Location")
+        {
+            
+            @Override
+            public void setValue(String value)
+            {
+                editor.getEntireJProperties().setObjectGroupDefinitionLocation(packageToPath(value));
+                editor.setDirty(true);
+                
+            }
+            
+            @Override
+            public String getValue()
+            {
+                return pathTopackage(editor.getEntireJProperties().getObjectGroupDefinitionLocation());
+            }
+        };
 
         buildUI();
     }
@@ -173,7 +191,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
     public AbstractDescriptor<?>[] getDescriptors()
     {
         return new AbstractDescriptor<?>[] { applicationManagerClass, connectionFactoryClass, translatorFactoryClass, reusableBlocksPkg,
-                reusableLovDefinitionsPkg };
+                reusableLovDefinitionsPkg ,objectGroupDefinitionsPkg};
     }
 
     @Override

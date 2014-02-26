@@ -35,6 +35,7 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
     private static final String            APPLICATION_MANAGER_DEFCLASS_NAME = "applicationManagerDefinition";
     private static final String            REUSABLE_BLOCK_LOC                = "reusableBlocksLocation";
     private static final String            REUSABLE_LOV_LOV                  = "reusableLovDefinitionLocation";
+    private static final String            OBJECT_GROUP_LOV                  = "objectGroupDefinitionLocation";
     
     private static final String            APPLICATION_PROPERTIES            = "applicationDefinedProperties";
     
@@ -213,6 +214,10 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
         else if (name.equals(REUSABLE_LOV_LOV))
         {
             _properties.setReusableLovDefinitionLocation(value);
+        }
+        else if (name.equals(OBJECT_GROUP_LOV))
+        {
+            _properties.setObjectGroupDefinitionLocation(value);
         }
         else if (name.equals(FORMS_PACKAGE))
         {
