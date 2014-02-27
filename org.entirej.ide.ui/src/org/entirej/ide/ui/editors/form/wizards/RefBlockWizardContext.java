@@ -35,6 +35,8 @@ public interface RefBlockWizardContext
     boolean hasBlock(String blockName);
 
     boolean hasCanvas(String canvasName);
+    
+    boolean copyOption();
 
     IJavaProject getProject();
 

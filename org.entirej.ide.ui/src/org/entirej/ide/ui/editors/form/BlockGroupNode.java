@@ -214,7 +214,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
 
         return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(null),
-                treeSection.createNewRefBlockAction() };
+                treeSection.createNewRefBlockAction(true) };
     }
 
     protected boolean supportBlockDelete()
@@ -294,12 +294,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             if (source.isReferenceBlock() || source.isMirrorChild())
             {
                 return new Action[] { createReplicateAction(), createCopyNameAction(), null, treeSection.createNewBlockAction(false),
-                        treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction() };
+                        treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true) };
             }
 
             return new Action[] { createReplicateAction(), createCopyNameAction(), treeSection.createGenerateRefBlockAction(source), null,
                     treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()),
-                    treeSection.createNewRefBlockAction() };
+                    treeSection.createNewRefBlockAction(true) };
 
         }
 

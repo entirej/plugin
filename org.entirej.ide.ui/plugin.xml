@@ -75,6 +75,18 @@
          </contentTypeBinding>
       </editor>
       <editor
+            class="org.entirej.ide.ui.editors.form.EJObjectGroupEditor"
+            contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
+            default="true"
+            extensions="objgroup"
+            icon="icons/obj16/object_group.png"
+            id="org.entirej.ide.ui.editors.ej.objgroup"
+            name="%org.entirej.ide.ui.editors.ej.objgroup.name">
+         <contentTypeBinding
+               contentTypeId="org.entirej.ide.ui.editors.ej.objgroup.file">
+         </contentTypeBinding>
+      </editor>
+      <editor
             class="org.entirej.ide.ui.editors.form.EJRefLovEditor"
             contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
             default="true"

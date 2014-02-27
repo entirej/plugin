@@ -126,6 +126,8 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
         addMarker(file, validateReusableBlockPath(file, entireJProperties, project));
         // validate Reusable Lov Definition Location related problems
         addMarker(file, validateReusableLovPath(file, entireJProperties, project));
+        // validate object group Definition Location related problems
+        addMarker(file, validateObjectGroupPath(file, entireJProperties, project));
         // validate application parameters
         validateApplicationParameters(file, entireJProperties, project);
         // validate Renderers related problems
@@ -392,6 +394,16 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
             return new Problem(Problem.TYPE.WARNING, "If no Referenced Block Location is specified then it will not be possible to generate Reusable Blocks.");
         }
 
+        return null;
+    }
+    Problem validateObjectGroupPath(IFile file, EJPluginEntireJProperties prop, IJavaProject project)
+    {
+        String refLocation = prop.getObjectGroupDefinitionLocation();
+        if (refLocation == null || refLocation.trim().length() == 0)
+        {
+            return new Problem(Problem.TYPE.WARNING, "If no ObjectGroup Location is specified then it will not be possible to generate ObjectGroups.");
+        }
+        
         return null;
     }
 

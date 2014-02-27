@@ -143,7 +143,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     protected FormPreviewer                     formPreviewer;
 
     protected AbstractNode<?>                   baseNode;
-    private final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
+    protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
                                                                {
 
                                                                    public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
@@ -335,13 +335,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     public Action[] getBaseActions()
     {
 
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(), null,
+        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true), null,
                 createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction() };
     }
 
     protected Action[] getNewBlockActions()
     {
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction() };
+        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true) };
     }
 
     public Action createNewBlockAction(final boolean controlBlock)
@@ -662,7 +662,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         };
     }
 
-    public Action createNewRefBlockAction()
+    public Action createNewRefBlockAction(final boolean copyOption)
     {
 
         return new Action("Add Referenced Block")
@@ -674,6 +674,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 RefBlockWizard wizard = new RefBlockWizard(new RefBlockWizardContext()
                 {
 
+                    public boolean copyOption()
+                    {
+                        return copyOption;
+                    }
+                    
                     public void addBlock(String blockName, String refblock, boolean copyRefBlock, String canvas, boolean createCanvas)
                     {
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
@@ -993,7 +998,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                                           }
                                                       };
 
-        public FormNode(EJPluginFormProperties source)
+        private FormNode(EJPluginFormProperties source)
         {
             super(null, source);
         }
