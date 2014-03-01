@@ -144,7 +144,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "objGroupDefinition");
                         {
                             writePROPERTY(buffer, "name", properties.getName());
-                           
+                            closeOpenTAG(buffer);
                         }
                         endTAG(buffer, "objGroupDefinition");
                     }

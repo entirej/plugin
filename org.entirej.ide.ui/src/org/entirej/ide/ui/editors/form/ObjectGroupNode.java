@@ -149,7 +149,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
     public Action[] getActions()
     {
 
-        return new Action[] {};
+        return new Action[] {treeSection.createObjectGroupAction()};
     }
 
     protected boolean supportObjectGroupDelete()

@@ -93,6 +93,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.EJPluginReusableBlockProperties;
@@ -122,6 +123,8 @@ import org.entirej.ide.ui.editors.form.wizards.RefBlockWizard;
 import org.entirej.ide.ui.editors.form.wizards.RefBlockWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.RefLovWizard;
 import org.entirej.ide.ui.editors.form.wizards.RefLovWizardContext;
+import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizard;
+import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.RelationWizard;
 import org.entirej.ide.ui.editors.form.wizards.RelationWizardContext;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
@@ -336,7 +339,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     {
 
         return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true), null,
-                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction() };
+                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction(),null,createObjectGroupAction() };
     }
 
     protected Action[] getNewBlockActions()
@@ -877,6 +880,72 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 wizard.open();
             }
 
+        };
+    }
+    public Action createObjectGroupAction()
+    {
+        
+        return new Action("Add ObjectGroup Definition")
+        {
+            
+            @Override
+            public void runWithEvent(Event event)
+            {
+                RefObjectGroupWizard wizard = new RefObjectGroupWizard(new RefObjectGroupWizardContext()
+                {
+                    
+                    public void addObjectGroup(String refObjectGroup)
+                    {
+                        final EJPluginFormProperties formProperties = editor.getFormProperties();
+                        
+                        final EJPluginObjectGroupProperties objectGroupDef;
+                        try
+                        {
+                            objectGroupDef = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(refObjectGroup);
+                        }
+                        catch (EJDevFrameworkException e)
+                        {
+                            EJCoreLog.logException(e);
+                            return;
+                        }
+                        //FIXME: add content to form
+                        
+                        formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDef);
+                        
+                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        {
+                            
+                            public void run()
+                            {
+                                editor.setDirty(true);
+                                refresh(findNode(formProperties.getObjectGroupContainer()), true);
+                                selectNodes(true, findNode(objectGroupDef));
+                                
+                            }
+                        });
+                        
+                    }
+                    
+                    public List<String> getReferencedObjectGroupNames()
+                    {
+                        
+                        return editor.getFormProperties().getEntireJProperties().getObjectGroupDefinitionNames();
+                    }
+                    
+                    public boolean hasObjectGroup(String objGroupName)
+                    {
+                        return editor.getFormProperties().getObjectGroupContainer().contains(objGroupName);
+                    }
+                    
+                    public IJavaProject getProject()
+                    {
+                        return editor.getJavaProject();
+                    }
+                    
+                });
+                wizard.open();
+            }
+            
         };
     }
 
