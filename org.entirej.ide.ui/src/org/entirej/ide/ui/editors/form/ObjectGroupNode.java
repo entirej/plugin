@@ -42,6 +42,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginObjectGroupContainer;
@@ -263,6 +264,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                         // IGNORE
                     }
 
+                    @Override
+                    protected EJPluginFormProperties getFormProperties(AbstractEJFormEditor editor)
+                    {
+                        return source;
+                    }
+                    
                     @Override
                     public String getDescription()
                     {
