@@ -46,6 +46,7 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendere
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginObjectGroupContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginFormPreviewProvider;
 
@@ -54,7 +55,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     /**
      * 
      */
-    private static final long serialVersionUID = -8063612191054623340L;
+    private static final long                  serialVersionUID          = -8063612191054623340L;
     private boolean                            _isReusableLovForm        = false;
     private boolean                            _isReusableBlockForm      = false;
     private IJavaProject                       _formsProject;
@@ -78,6 +79,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     
     // Containers for the forms underlying objects
     private EJPluginBlockContainer             _blockContainer;
+    private EJPluginObjectGroupContainer       _objGroupContainer;
     private EJPluginCanvasContainer            _canvasContainer;
     private EJPluginRelationContainer          _relationContainer;
     private EJPluginLovDefinitionContainer     _lovDefinitionContainer;
@@ -87,6 +89,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         _name = formName;
         _formsProject = javaProject;
         _blockContainer = new EJPluginBlockContainer(this);
+        _objGroupContainer = new EJPluginObjectGroupContainer(this);
         _canvasContainer = new EJPluginCanvasContainer(this);
         _relationContainer = new EJPluginRelationContainer(this);
         _lovDefinitionContainer = new EJPluginLovDefinitionContainer(this);
@@ -104,6 +107,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         if (_entireJProperties != null) _entireJProperties.clear();
         _entireJProperties = null;
         _blockContainer.dispose();
+        _objGroupContainer.dispose();
         _canvasContainer.dispose();
         _relationContainer.dispose();
         _lovDefinitionContainer.dispose();
@@ -243,6 +247,19 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     public EJPluginBlockContainer getBlockContainer()
     {
         return _blockContainer;
+    }
+    
+    public void setObjectGroupContainer(EJPluginObjectGroupContainer container)
+    {
+        _objGroupContainer = container;
+    }
+    
+    /**
+     * @return the blockContainer
+     */
+    public EJPluginObjectGroupContainer getObjectGroupContainer()
+    {
+        return _objGroupContainer;
     }
     
     public void setCanvasContainer(EJPluginCanvasContainer container)

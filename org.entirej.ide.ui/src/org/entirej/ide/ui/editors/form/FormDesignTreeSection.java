@@ -962,7 +962,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 // project build errors
                 if (editor.getFormProperties() == null)
                     return new Object[0];
-                return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new BlockGroupNode(FormDesignTreeSection.this),
+                return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new ObjectGroupNode(FormDesignTreeSection.this),new BlockGroupNode(FormDesignTreeSection.this),
                         new RelationsGroupNode(FormDesignTreeSection.this), new LovGroupNode(FormDesignTreeSection.this),
                         new CanvasGroupNode(FormDesignTreeSection.this) };
             }

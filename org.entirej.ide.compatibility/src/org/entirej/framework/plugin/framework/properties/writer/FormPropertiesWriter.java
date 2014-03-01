@@ -20,6 +20,7 @@ package org.entirej.framework.plugin.framework.properties.writer;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -50,6 +51,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginInsertScreenIte
 import org.entirej.framework.plugin.framework.properties.EJPluginLovItemMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginQueryScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationJoinProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
@@ -132,6 +134,24 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "formRendererProperties");
                 
+                
+                // Now add the ObjectGroup Definitions
+                startTAG(buffer, "objGroupDefinitionList");
+                {
+                    List<EJPluginObjectGroupProperties> objectGroupProperties = form.getObjectGroupContainer().getAllObjectGroupProperties();
+                    for (EJPluginObjectGroupProperties properties : objectGroupProperties)
+                    {
+                        startOpenTAG(buffer, "objGroupDefinition");
+                        {
+                            writePROPERTY(buffer, "name", properties.getName());
+                           
+                        }
+                        endTAG(buffer, "objGroupDefinition");
+                    }
+                }
+                endTAG(buffer, "objGroupDefinitionList");
+                
+                
                 // Now add the forms canvases
                 startTAG(buffer, "canvasList");
                 {
@@ -160,6 +180,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     addLovDefinitionList(form.getLovDefinitionContainer(), buffer);
                 }
                 endTAG(buffer, "lovDefinitionList");
+                
             }
             endTAG(buffer, "form");
         }

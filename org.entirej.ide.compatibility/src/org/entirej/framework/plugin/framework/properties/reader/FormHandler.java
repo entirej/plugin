@@ -44,6 +44,7 @@ public class FormHandler extends EntireJTagHandler
     private static final String    ELEMENT_BLOCK                  = "block";
     private static final String    ELEMENT_RELATION               = "relation";
     private static final String    ELEMENT_LOV_DEFINITION         = "lovDefinition";
+    private static final String    ELEMENT_OBJGROUP_DEFINITION    = "objGroupDefinition";
     private static final String    ELEMENT_PROPERTY               = "property";
     
     private boolean                _gettingApplicationProperties  = false;
@@ -53,6 +54,7 @@ public class FormHandler extends EntireJTagHandler
     {
         _formProperties = new EJPluginFormProperties(formName, javaProject);
     }
+    
     public FormHandler(EJPluginFormProperties formProperties)
     {
         _formProperties = formProperties;
@@ -71,6 +73,11 @@ public class FormHandler extends EntireJTagHandler
     public EntireJTagHandler getLovDefinitionHandler(EJPluginFormProperties formProperties)
     {
         return new LovDefinitionHandler(formProperties);
+    }
+    
+    public EntireJTagHandler getObjectgroupDefinitionHandler(EJPluginFormProperties formProperties)
+    {
+        return new ObjGroupDefinitionHandler(formProperties);
     }
     
     public void startLocalElement(String name, Attributes attributes) throws SAXException
@@ -110,6 +117,10 @@ public class FormHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_LOV_DEFINITION))
         {
             setDelegate(getLovDefinitionHandler(_formProperties));
+        }
+        else if (name.equals(ELEMENT_OBJGROUP_DEFINITION))
+        {
+            setDelegate(getObjectgroupDefinitionHandler(_formProperties));
         }
         else if (name.equals(ELEMENT_FORM_PARAMETER))
         {
@@ -206,6 +217,12 @@ public class FormHandler extends EntireJTagHandler
         {
             _formProperties.getLovDefinitionContainer().addLovDefinitionProperties(((LovDefinitionHandler) currentDelegate).getLovDefinitionProperties());
             ((LovDefinitionHandler) currentDelegate).getLovDefinitionProperties().getBlockProperties().setFormProperties(_formProperties);
+            return;
+        }
+        else if (name.equals(ELEMENT_OBJGROUP_DEFINITION))
+        {
+            _formProperties.getObjectGroupContainer().addObjectGroupProperties(((ObjGroupDefinitionHandler) currentDelegate).getObjectGroupDefinitionProperties());
+
             return;
         }
         else if (name.equals(ELEMENT_RENDERER_PROPERTIES))

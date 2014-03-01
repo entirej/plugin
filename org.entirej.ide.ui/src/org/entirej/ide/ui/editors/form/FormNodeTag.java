@@ -27,6 +27,7 @@ public interface FormNodeTag
     public static final String CANVAS_ID        = "c_id";
     public static final String MAPPING_ID       = "m_id";
     public static final String ITEM_ID          = "i_id";
+    public static final String OBJGROUP_ID      = "o_id";
 
     public static final int    NONE             = 0;
     public static final int    FORM             = 1 << 1;
@@ -52,5 +53,6 @@ public interface FormNodeTag
     public static final int    INSET            = 1 << 21;
     public static final int    UPDATE           = 1 << 22;
     public static final int    QUERY            = 1 << 23;
+    public static final int    OBJGROUP         = 1 << 24;
 
 }

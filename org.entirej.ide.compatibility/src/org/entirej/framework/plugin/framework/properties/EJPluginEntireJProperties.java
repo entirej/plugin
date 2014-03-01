@@ -100,6 +100,9 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
     public abstract EJPluginLovDefinitionProperties loadLovDefinition(EJPluginEntireJProperties entirejProperties, IProject project, IFile file,
             String definitionName) throws EJDevFrameworkException;
     
+    public abstract EJPluginObjectGroupProperties loadObjectGroupDefinition(EJPluginEntireJProperties entirejProperties, IProject project, IFile file,
+            String definitionName) throws EJDevFrameworkException;
+    
     public void clear()
     {
         _itemRendererContainer.clear();
@@ -833,7 +836,7 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
         return loadLovDefinition(this, _javaProject.getProject(), file, definitionName);
     }
     
-    public EJPluginLovDefinitionProperties getObjectGroupDefinitionProperties(String definitionName) throws EJDevFrameworkException
+    public EJPluginObjectGroupProperties getObjectGroupDefinitionProperties(String definitionName) throws EJDevFrameworkException
     {
         if (definitionName == null || definitionName.trim().length() == 0)
         {
@@ -845,7 +848,7 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
         {
             return null;
         }
-        return null ;//TODO;
+        return loadObjectGroupDefinition(this, _javaProject.getProject(), file, definitionName);
     }
     
     public boolean containsReusableLovDefinitionProperties(String definitionName)

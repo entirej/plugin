@@ -32,6 +32,24 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
 
     private static final long serialVersionUID = 4791971005262621103L;
 
+    
+    private boolean  initialized ;
+    
+    
+    
+    
+    
+    
+    public boolean isInitialized()
+    {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized)
+    {
+        this.initialized = initialized;
+    }
+
     public EJPluginObjectGroupProperties(String formName, IJavaProject javaProject)
     {
         super(formName, javaProject);
