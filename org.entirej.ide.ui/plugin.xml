@@ -362,6 +362,19 @@
             </with>
          </enablement>        
       </renameParticipant>
+      <renameParticipant
+            class="org.entirej.ide.ui.refactoring.EJObjectGroupDefRenameParticipant"
+            id="org.entirej.ide.refactoring.EJObjectGroupDefRenameParticipant"
+            name="EJForm Rename Referenced ObjectGroup Def Participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+            </with>
+         </enablement>        
+      </renameParticipant>
             <renameParticipant
             class="org.entirej.ide.ui.refactoring.EJFormConstantsRenameParticipant"
             id="org.entirej.ide.refactoring.EJFormRenameParticipant"
