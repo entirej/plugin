@@ -23,9 +23,18 @@
  */
 package org.entirej.framework.plugin.framework.properties;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.jdt.core.IJavaProject;
+import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
+import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
 
 public class EJPluginObjectGroupProperties extends EJPluginFormProperties
 {
@@ -95,7 +104,67 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
     {
         return null;
     }
+
     
     
+
+    public void importObjectsToForm(EJPluginFormProperties form)
+    {
+        
+        EJPluginBlockContainer blockContainer = getBlockContainer();
+        List<EJPluginBlockProperties> allBlockProperties = blockContainer.getAllBlockProperties();
+        //import all blocks to form
+        for (EJPluginBlockProperties block : allBlockProperties)
+        {
+            block.setReferencedObjectGroupName(getName());//mark as import from this
+            form.getBlockContainer().addBlockProperties(block);
+        }
+        
+        EJPluginRelationContainer relationContainer = getRelationContainer();
+        List<EJPluginRelationProperties> relationProperties = relationContainer.getAllRelationProperties();
+        //import all relations
+        for (EJPluginRelationProperties relation : relationProperties)
+        {
+            relation.setReferencedObjectGroupName(getName());
+            form.getRelationContainer().addRelationProperties(relation);
+        }
+        
+        
+        //handle canvas import
+        EJPluginCanvasProperties rootCanvasProperties = getRootCanvas(form);
+        rootCanvasProperties.setReferencedObjectGroupName(getName());
+        rootCanvasProperties.setType(EJCanvasType.GROUP);
+        
+        EJPluginCanvasContainer canvasContainer = getCanvasContainer();
+        Collection<EJPluginCanvasProperties> allCanvasProperties = canvasContainer.getCanvasProperties();
+        for (EJPluginCanvasProperties canvas : allCanvasProperties)
+        {
+            canvas.setReferencedObjectGroupName(getName());
+            rootCanvasProperties.getGroupCanvasContainer().addCanvasProperties(canvas);
+        }
+        
+        
+        EJPluginLovDefinitionContainer lovDefinitionContainer = getLovDefinitionContainer();
+        List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = lovDefinitionContainer.getAllLovDefinitionProperties();
+        for (EJPluginLovDefinitionProperties lov : allLovDefinitionProperties)
+        {
+            lov.setReferencedObjectGroupName(getName());
+            form.getLovDefinitionContainer().addLovDefinitionProperties(lov);
+        }
+        
+    }
+    
+    private EJPluginCanvasProperties getRootCanvas(EJPluginFormProperties form)
+    {
+        String rootCanvasName = String.format("%s-OBJECT_GROUP", getName());
+        EJPluginCanvasProperties rootCanvasProperties = form.getCanvasContainer().getCanvasProperties(rootCanvasName);
+        if(rootCanvasProperties ==null)
+        {
+            rootCanvasProperties = new EJPluginCanvasProperties(form, rootCanvasName);
+            
+            form.getCanvasContainer().addCanvasProperties(rootCanvasProperties);
+        }
+        return rootCanvasProperties;
+    }
     
 }

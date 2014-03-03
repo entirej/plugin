@@ -48,8 +48,13 @@ public class EJPluginLovDefinitionProperties implements EJLovDefinitionPropertie
     private int                            _height;
     private EJFrameworkExtensionProperties _lovRendererProperties;
     private String                         _actionProcessorClassName;
+
+    private String                                 _referencedObjectGroupName    = "";
+    
     
     private EJPluginBlockProperties        _blockProperties;
+    
+    
     
     public EJPluginLovDefinitionProperties(String name, EJPluginFormProperties formProperties)
     {
@@ -435,6 +440,21 @@ public class EJPluginLovDefinitionProperties implements EJLovDefinitionPropertie
     public boolean isReferenced()
     {
         return _isReferenced;
+    }
+    
+    public String getReferencedObjectGroupName()
+    {
+        return _referencedObjectGroupName;
+    }
+    
+    public void setReferencedObjectGroupName(String name)
+    {
+        _referencedObjectGroupName = name;
+    }
+    
+    public boolean isImportFromObjectGroup()
+    {
+        return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
     }
     
 }

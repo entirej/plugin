@@ -66,6 +66,8 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private String                           _buttonTwoText               = "";
     private String                           _buttonThreeText             = "";
     private String                           _firstInitialStackedPageName = "";
+
+    private String                                 _referencedObjectGroupName    = "";
     
     private EJPluginTabPageContainer         _tabPageContainer;
     private EJPluginStackedPageContainer     _stackedPageContainer;
@@ -678,4 +680,20 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         return null;
     }
     
+    
+    
+    public String getReferencedObjectGroupName()
+    {
+        return _referencedObjectGroupName;
+    }
+    
+    public void setReferencedObjectGroupName(String name)
+    {
+        _referencedObjectGroupName = name;
+    }
+    
+    public boolean isImportFromObjectGroup()
+    {
+        return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
+    }
 }

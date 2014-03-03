@@ -908,9 +908,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             EJCoreLog.logException(e);
                             return;
                         }
-                        //FIXME: add content to form
+                        
                         
                         formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDef);
+                        objectGroupDef.importObjectsToForm(formProperties);
                         
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
@@ -919,6 +920,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             {
                                 editor.setDirty(true);
                                 refresh(findNode(formProperties.getObjectGroupContainer()), true);
+                                refresh(findNode(formProperties.getBlockContainer()), true);
+                                refresh(findNode(formProperties.getRelationContainer()), true);
+                                refresh(findNode(formProperties.getLovDefinitionContainer()), true);
+                                refresh(findNode(formProperties.getCanvasContainer()), true);
                                 selectNodes(true, findNode(objectGroupDef));
                                 
                             }
