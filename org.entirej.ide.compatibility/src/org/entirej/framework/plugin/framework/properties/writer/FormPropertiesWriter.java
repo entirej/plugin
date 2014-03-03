@@ -45,6 +45,7 @@ import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginInsertScreenItemProperties;
@@ -134,6 +135,16 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "formRendererProperties");
                 
+    
+                
+                
+                // Now add the forms canvases
+                startTAG(buffer, "canvasList");
+                {
+                    addCanvasList(form.getCanvasContainer(), buffer);
+                }
+                endTAG(buffer, "canvasList");
+                
                 
                 // Now add the ObjectGroup Definitions
                 startTAG(buffer, "objGroupDefinitionList");
@@ -151,13 +162,6 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "objGroupDefinitionList");
                 
-                
-                // Now add the forms canvases
-                startTAG(buffer, "canvasList");
-                {
-                    addCanvasList(form.getCanvasContainer(), buffer);
-                }
-                endTAG(buffer, "canvasList");
                 
                 // Now add the blocks
                 // The block items will be added during the addBlockList method
@@ -397,7 +401,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (relations.hasNext())
         {
             EJPluginRelationProperties relationProps = relations.next();
-            
+            if(relationProps.isImportFromObjectGroup())
+            {
+                continue;
+            }
             startOpenTAG(buffer, "relation");
             {
                 writePROPERTY(buffer, "name", relationProps.getName());
@@ -450,6 +457,8 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     writeBooleanTAG(buffer, "expandVertically", canvasProps.canExpandVertically());
                 }
                 
+                
+                
                 if (canvasProps.getType() == EJCanvasType.TAB)
                 {
                     writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
@@ -481,10 +490,19 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
                 }
                 
-                addTabPageProperties(canvasProps, buffer);
-                addStackedPageProperties(canvasProps, buffer);
-                addCanvasGroupCanvases(canvasProps, buffer);
-                addCanvasSplitCanvases(canvasProps, buffer);
+                
+                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup())
+                {
+                    //ignore and do not add any sub items
+                }
+                else
+                {
+                    addTabPageProperties(canvasProps, buffer);
+                    addStackedPageProperties(canvasProps, buffer);
+                    addCanvasGroupCanvases(canvasProps, buffer);
+                    addCanvasSplitCanvases(canvasProps, buffer);
+                }
+                
                 
             }
             endTAG(buffer, "canvas");
@@ -497,6 +515,11 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (blocks.hasNext())
         {
             EJPluginBlockProperties blockProps = blocks.next();
+            
+            if(blockProps.isImportFromObjectGroup())
+            {
+                continue;
+            }
             
             if (blockProps.isReferenceBlock())
             {
@@ -515,6 +538,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (lovDefinitions.hasNext())
         {
             EJLovDefinitionProperties lovDefinition = lovDefinitions.next();
+            if(lovDefinition instanceof EJPluginLovDefinitionProperties && ((EJPluginLovDefinitionProperties)lovDefinition).isImportFromObjectGroup())
+            {
+                continue;
+            }
             
             if (lovDefinition.isReferenced())
             {

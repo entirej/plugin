@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -221,7 +222,9 @@ public class FormHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_OBJGROUP_DEFINITION))
         {
-            _formProperties.getObjectGroupContainer().addObjectGroupProperties(((ObjGroupDefinitionHandler) currentDelegate).getObjectGroupDefinitionProperties());
+            EJPluginObjectGroupProperties objectGroupDefinitionProperties = ((ObjGroupDefinitionHandler) currentDelegate).getObjectGroupDefinitionProperties();
+            _formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDefinitionProperties);
+            objectGroupDefinitionProperties.importObjectsToForm(_formProperties);
 
             return;
         }
