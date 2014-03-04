@@ -59,6 +59,7 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevLovRenderer
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
@@ -267,6 +268,13 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
         public void addOverview(StyledString styledString)
         {
+            
+            if(source.isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
             if (source.isReferenceBlock() && source.getReferencedLovDefinitionName() != null && source.getReferencedLovDefinitionName().length() != 0)
             {
                 styledString.append(" [ ", StyledString.QUALIFIER_STYLER);
@@ -550,7 +558,8 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-            if (!supportLovDelete())
+            
+            if (!supportLovDelete()||source.isImportFromObjectGroup())
                 return null;
             return new INodeDeleteProvider()
             {
@@ -569,7 +578,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
         @Override
         public INodeRenameProvider getRenameProvider()
         {
-            if (!supportLovRename())
+            if (!supportLovRename()||source.isImportFromObjectGroup())
                 return null;
 
             return new INodeRenameProvider()
@@ -637,6 +646,54 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            
+            if(source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                {
+
+                    public boolean hasLableLink()
+                    {
+                        return true;
+                    }
+
+                    @Override
+                    public String lableLinkActivator()
+                    {
+
+                        EJPluginObjectGroupProperties file = editor.getFormProperties().getObjectGroupContainer()
+                                .getObjectGroupProperties(source.getReferencedObjectGroupName());
+                        if (file != null)
+                        {
+                            treeSection.selectNodes(true, treeSection.findNode(file));
+                        }
+
+                        return getValue();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return source.getReferencedObjectGroupName();
+                    }
+
+                    Text text;
+
+                    @Override
+                    public void addEditorAssist(Control control)
+                    {
+
+                        text = (Text) control;
+                        text.setEditable(false);
+                    }
+                }};
+            }
             final List<IMarker> fmarkers = validator.getMarkers();
             if (source.isReferenceBlock())
             {
@@ -1145,7 +1202,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
     public boolean canMove(Neighbor relation, Object source)
     {
-        return source instanceof EJPluginLovDefinitionProperties;
+        return source instanceof EJPluginLovDefinitionProperties &&!((EJPluginLovDefinitionProperties)source).isImportFromObjectGroup();
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)

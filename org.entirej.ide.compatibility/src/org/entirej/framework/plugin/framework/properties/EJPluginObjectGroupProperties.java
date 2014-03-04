@@ -162,6 +162,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         for (EJPluginLovDefinitionProperties lov : allLovDefinitionProperties)
         {
             lov.setReferencedObjectGroupName(getName());
+            lov.getBlockProperties().setReferencedObjectGroupName(getName());
             form.getLovDefinitionContainer().addLovDefinitionProperties(lov);
         }
         

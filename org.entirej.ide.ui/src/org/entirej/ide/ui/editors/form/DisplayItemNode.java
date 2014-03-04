@@ -625,7 +625,7 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
             @Override
             public void addEditorAssist(Control control)
             {
-                if (blockItemDisplayProperties == null || !blockItemDisplayProperties.getItemRendererDefinition().canExecuteActionCommand())
+                if (blockItemDisplayProperties == null || blockItemDisplayProperties.getItemRendererDefinition() ==null || !blockItemDisplayProperties.getItemRendererDefinition().canExecuteActionCommand())
                 {
                     (control).setEnabled(false);
                 }
