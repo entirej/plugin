@@ -440,6 +440,14 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         {
             EJCanvasProperties canvasProps = canvases.next();
             
+            if(canvasProps.getType()!=EJCanvasType.GROUP)
+            {
+                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup())
+                {
+                    continue;
+                }
+            }
+            
             startOpenTAG(buffer, "canvas");
             {
                 writePROPERTY(buffer, "name", canvasProps.getName());
@@ -491,7 +499,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 
                 
-                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup())
+                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot())
                 {
                     //ignore and do not add any sub items
                 }

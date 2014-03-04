@@ -35,6 +35,7 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginBloc
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
+import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
 
 public class EJPluginObjectGroupProperties extends EJPluginFormProperties
 {
@@ -132,15 +133,27 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         
         //handle canvas import
         EJPluginCanvasProperties rootCanvasProperties = getRootCanvas(form);
-        rootCanvasProperties.setReferencedObjectGroupName(getName());
         rootCanvasProperties.setType(EJCanvasType.GROUP);
         
         EJPluginCanvasContainer canvasContainer = getCanvasContainer();
         Collection<EJPluginCanvasProperties> allCanvasProperties = canvasContainer.getCanvasProperties();
         for (EJPluginCanvasProperties canvas : allCanvasProperties)
         {
-            canvas.setReferencedObjectGroupName(getName());
-            rootCanvasProperties.getGroupCanvasContainer().addCanvasProperties(canvas);
+            
+            if(canvas.getType()==EJCanvasType.POPUP)
+            {
+                form.getCanvasContainer().addCanvasProperties(canvas);
+            }
+            else
+            {
+                rootCanvasProperties.getGroupCanvasContainer().addCanvasProperties(canvas);
+            }
+        }
+        
+        Collection<EJCanvasProperties> retriveAllCanvases = EJPluginCanvasRetriever.retriveAllCanvases(this);
+        for (EJCanvasProperties canvas : retriveAllCanvases)
+        {
+           ((EJPluginCanvasProperties)canvas).setReferencedObjectGroupName(getName());
         }
         
         
@@ -164,6 +177,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
             
             form.getCanvasContainer().addCanvasProperties(rootCanvasProperties);
         }
+        rootCanvasProperties.setObjectGroupRoot(true);
         return rootCanvasProperties;
     }
     

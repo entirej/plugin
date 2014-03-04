@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -37,19 +39,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginStackedPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginTabPageProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
+import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
@@ -57,6 +66,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
+import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractSubActions;
@@ -124,9 +134,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             return true;
         }
-        
-        
-        
+
         EJPluginCanvasContainer parentCanvasContainer = source.getParentCanvasContainer();
         while (parentCanvasContainer.getParnetCanvas() != null)
         {
@@ -274,7 +282,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
     @Override
     public Action[] getActions()
     {
-
         return new Action[] { createNewCanvasAction(this, source, true) };
     }
 
@@ -286,7 +293,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
     public boolean canMove(Neighbor relation, Object source)
     {
-        return source instanceof EJPluginCanvasProperties;
+        return source instanceof EJPluginCanvasProperties && !((EJPluginCanvasProperties) source).isImportFromObjectGroup();
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -354,7 +361,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-
+            if (source.isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeDeleteProvider()
             {
 
@@ -377,6 +387,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public INodeRenameProvider getRenameProvider()
         {
+            if (source.isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeRenameProvider()
             {
 
@@ -426,6 +440,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public void addOverview(StyledString styledString)
         {
 
+            if(source.isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
+            
             styledString.append(" [ ", StyledString.QUALIFIER_STYLER);
             styledString.append(source.getType().name(), StyledString.QUALIFIER_STYLER);
             styledString.append(" ] ", StyledString.QUALIFIER_STYLER);
@@ -455,6 +476,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
+
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
 
             final EJPluginBlockProperties blockProperties = source.getPluginBlockProperties();
 
@@ -625,9 +651,18 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public void addOverview(StyledString styledString)
         {
+            
+           
+            
             final EJPluginBlockProperties blockProperties = source.getPluginBlockProperties();
             if (blockProperties != null)
-            {
+            { 
+                if(source.isImportFromObjectGroup())
+                {
+                    styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                    styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                    styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+                }
                 styledString.append(" : ", StyledString.DECORATIONS_STYLER);
                 styledString.append(blockProperties.getName(), StyledString.DECORATIONS_STYLER);
             }
@@ -640,6 +675,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public INodeDeleteProvider getDeleteProvider()
         {
 
+            if (source.isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeDeleteProvider()
             {
 
@@ -704,14 +743,29 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             super(parent, source);
         }
 
+        @Override
+        public INodeRenameProvider getRenameProvider()
+        {
+            if (source.isObjectGroupRoot())
+                return null;
+            return super.getRenameProvider();
+        }
+
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(GroupCanvasNode.this.source, source);
+            return !GroupCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginCanvasProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup() && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
+                    && !isAncestorCanvas(GroupCanvasNode.this.source, source);
         }
 
         @Override
         public Action[] getActions()
         {
+
+            if (source.isImportFromObjectGroup() || source.isObjectGroupRoot())
+            {
+                return new Action[0];
+            }
 
             return new Action[] { createNewCanvasAction(this, source.getGroupCanvasContainer(), false) };
         }
@@ -741,6 +795,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             if (source.getGroupFrameTitle() != null && source.getGroupFrameTitle().trim().length() > 0)
             {
+                if(source.isImportFromObjectGroup())
+                {
+                    styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                    styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                    styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+                }
                 styledString.append(" : ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getGroupFrameTitle(), StyledString.COUNTER_STYLER);
             }
@@ -787,6 +847,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
             final GroupCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
@@ -1094,6 +1159,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             heightHintDescriptor };
                 }
             };
+            
             return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, layoutGroupDescriptor };
         }
 
@@ -1109,13 +1175,18 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(SplitCanvasNode.this.source, source);
+            return !SplitCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginCanvasProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup() && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
+                    && !isAncestorCanvas(SplitCanvasNode.this.source, source);
         }
 
         @Override
         public Action[] getActions()
         {
-
+            if (source.isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
             return new Action[] { createNewCanvasAction(this, source.getSplitCanvasContainer(), false) };
         }
 
@@ -1144,6 +1215,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             if (source.getGroupFrameTitle() != null && source.getGroupFrameTitle().trim().length() > 0)
             {
+                if(source.isImportFromObjectGroup())
+                {
+                    styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                    styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                    styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+                }
                 styledString.append(" : ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getGroupFrameTitle(), StyledString.COUNTER_STYLER);
             }
@@ -1190,6 +1267,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
             final SplitCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
@@ -1460,6 +1542,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Action[] getActions()
         {
+            if (source.isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
+
             return new Action[] { new Action("New Tab Page")
             {
                 @Override
@@ -1508,7 +1595,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginTabPageProperties
+            return !TabCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginTabPageProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup()
                     && (TabCanvasNode.this.source.equals(((EJPluginTabPageProperties) source).getTabCanvasProperties()));
         }
 
@@ -1545,6 +1633,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
             final TabCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
@@ -1821,6 +1913,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Action[] getActions()
         {
+            if (source.isImportFromObjectGroup())
+            {
+                return new Action[] {};
+            }
+
             return new Action[] { new Action("New Stacked Page")
             {
                 @Override
@@ -1864,7 +1961,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginStackedPageProperties
+            return !StackedCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginStackedPageProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup()
                     && (StackedCanvasNode.this.source.equals(((EJPluginStackedPageProperties) source).getStackedCanvasProperties()));
         }
 
@@ -1901,6 +1999,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
+
             final StackedCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
@@ -2245,13 +2348,18 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Action[] getActions()
         {
-
+            if (source.isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
             return new Action[] { createNewCanvasAction(this, source.getPopupCanvasContainer(), false) };
         }
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP  && !isAncestorCanvas(PopupCanvasNode.this.source, source);
+            return !PopupCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginCanvasProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup() && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
+                    && !isAncestorCanvas(PopupCanvasNode.this.source, source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -2309,6 +2417,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
             final PopupCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
             if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
@@ -2604,13 +2716,20 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Action[] getActions()
         {
-
+            if (source.getTabCanvasProperties().isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
             return new Action[] { createNewCanvasAction(this, source.getContainedCanvases(), false) };
         }
 
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
+            if (source.getTabCanvasProperties().isImportFromObjectGroup())
+            {
+                return null;
+            }
 
             return new INodeDeleteProvider()
             {
@@ -2629,6 +2748,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public INodeRenameProvider getRenameProvider()
         {
+            if (source.getTabCanvasProperties().isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeRenameProvider()
             {
 
@@ -2673,7 +2796,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public void addOverview(StyledString styledString)
         {
-
+            if(source.getTabCanvasProperties().isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getTabCanvasProperties().getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
             if (source.getPageTitle() != null && source.getPageTitle().trim().length() > 0)
             {
                 styledString.append(" : ", StyledString.DECORATIONS_STYLER);
@@ -2684,7 +2812,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove()
         {
-            return true;
+            return !source.getTabCanvasProperties().isImportFromObjectGroup();
         }
 
         public Object getNeighborSource()
@@ -2730,7 +2858,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(TabCanvasPageNode.this.source.getTabCanvasProperties(), source);
+            return !TabCanvasPageNode.this.source.getTabCanvasProperties().isImportFromObjectGroup() && source instanceof EJPluginCanvasProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup() && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
+                    && !isAncestorCanvas(TabCanvasPageNode.this.source.getTabCanvasProperties(), source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -2755,6 +2885,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            if (source.getTabCanvasProperties().isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source.getTabCanvasProperties())};
+            }
             final TabCanvasPageNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
             AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Page Title")
@@ -3046,6 +3180,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Action[] getActions()
         {
+            if (source.getStackedCanvasProperties().isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
 
             return new Action[] { createNewCanvasAction(this, source.getContainedCanvases(), false) };
         }
@@ -3053,7 +3191,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-
+            if (source.getStackedCanvasProperties().isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeDeleteProvider()
             {
 
@@ -3071,6 +3212,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public INodeRenameProvider getRenameProvider()
         {
+            if (source.getStackedCanvasProperties().isImportFromObjectGroup())
+            {
+                return null;
+            }
+
             return new INodeRenameProvider()
             {
 
@@ -3115,12 +3261,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public void addOverview(StyledString styledString)
         {
-
+            if(source.getStackedCanvasProperties().isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getStackedCanvasProperties().getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
         }
 
         public boolean canMove()
         {
-            return true;
+            return !source.getStackedCanvasProperties().isImportFromObjectGroup();
         }
 
         public Object getNeighborSource()
@@ -3166,7 +3317,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(StackedCanvasPageNode.this.source.getStackedCanvasProperties(), source);
+            return !StackedCanvasPageNode.this.source.getStackedCanvasProperties().isImportFromObjectGroup() && source instanceof EJPluginCanvasProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup() && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
+                    && !isAncestorCanvas(StackedCanvasPageNode.this.source.getStackedCanvasProperties(), source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -3191,6 +3344,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            if (source.getStackedCanvasProperties().isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source.getStackedCanvasProperties())};
+            }
             final StackedCanvasPageNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
@@ -3398,6 +3555,54 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             return new AbstractDescriptor<?>[] { colDescriptor, layoutGroupDescriptor };
         }
 
+    }
+
+    AbstractTextDescriptor getObjectGroupDescriptor(final EJPluginCanvasProperties canvas)
+    {
+        return new AbstractTextDescriptor("Referenced ObjectGroup")
+        {
+
+            public boolean hasLableLink()
+            {
+                return true;
+            }
+
+            @Override
+            public String lableLinkActivator()
+            {
+
+                EJPluginObjectGroupProperties file = editor.getFormProperties().getObjectGroupContainer()
+                        .getObjectGroupProperties(canvas.getReferencedObjectGroupName());
+                if (file != null)
+                {
+                    treeSection.selectNodes(true, treeSection.findNode(file));
+                }
+
+                return getValue();
+            }
+
+            @Override
+            public void setValue(String value)
+            {
+
+            }
+
+            @Override
+            public String getValue()
+            {
+                return canvas.getReferencedObjectGroupName();
+            }
+
+            Text text;
+
+            @Override
+            public void addEditorAssist(Control control)
+            {
+
+                text = (Text) control;
+                text.setEditable(false);
+            }
+        };
     }
 
 }
