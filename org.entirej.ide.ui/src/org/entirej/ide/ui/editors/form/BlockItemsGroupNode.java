@@ -69,6 +69,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
@@ -210,7 +211,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
     @Override
     public Action[] getActions()
     {
-        if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock())
+        if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock() || source.getBlockProperties().isImportFromObjectGroup())
             return new Action[] {};
 
         return new Action[] { createNewBlockItemAction(-1) };
@@ -305,7 +306,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         @Override
         public Action[] getActions()
         {
-            if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock())
+            if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()|| source.getBlockProperties().isImportFromObjectGroup())
                 return new Action[] { createCopyBINameAction() };
 
             int indexOf = BlockItemsGroupNode.this.source.getAllItemProperties().indexOf(source);
@@ -332,7 +333,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         {
             // if it is a mirror child should not be able to DnD from mirror
             // level
-            return !(this.source.getBlockProperties().isMirrorChild() || this.source.getBlockProperties().isReferenceBlock());
+            return !(this.source.getBlockProperties().isMirrorChild() || this.source.getBlockProperties().isReferenceBlock() || this.source.getBlockProperties().isImportFromObjectGroup());
         }
 
         public Object getNeighborSource()
@@ -346,7 +347,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             // if it is a mirror child or Referenced should not be able to
             // delete from mirror
             // level
-            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock())
+            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()|| source.getBlockProperties().isImportFromObjectGroup())
                 return null;
 
             return new INodeDeleteProvider()
@@ -380,7 +381,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             // if it is a mirror child or Referenced should not be able to
             // rename from mirror
             // level
-            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock())
+            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()|| source.getBlockProperties().isImportFromObjectGroup())
                 return null;
 
             return new INodeRenameProvider()
@@ -536,9 +537,57 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                 };
                 descriptors.add(referencedDescriptor);
             }
-            else if (this.source.getBlockProperties().isReferenceBlock())
+            else if (this.source.getBlockProperties().isImportFromObjectGroup())
             {
 
+                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                {
+
+                    public boolean hasLableLink()
+                    {
+                        return true;
+                    }
+
+                    @Override
+                    public String lableLinkActivator()
+                    {
+
+                        EJPluginObjectGroupProperties file = editor.getFormProperties().getObjectGroupContainer()
+                                .getObjectGroupProperties(source.getBlockProperties().getReferencedObjectGroupName());
+                        if (file != null)
+                        {
+                            treeSection.selectNodes(true, treeSection.findNode(file));
+                        }
+
+                        return getValue();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return source.getBlockProperties().getReferencedObjectGroupName();
+                    }
+
+                    Text text;
+
+                    @Override
+                    public void addEditorAssist(Control control)
+                    {
+
+                        text = (Text) control;
+                        text.setEditable(false);
+                    }
+                }};
+            }
+            else if (this.source.getBlockProperties().isReferenceBlock())
+            {
+                
                 return new AbstractDescriptor<?>[] { queryItemDefaultValue, insertItemDefaultValue };
             }
             else
