@@ -175,7 +175,9 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         if(rootCanvasProperties ==null)
         {
             rootCanvasProperties = new EJPluginCanvasProperties(form, rootCanvasName);
-            
+            rootCanvasProperties.setNumCols(getNumCols());
+            rootCanvasProperties.setWidth(getFormWidth());
+            rootCanvasProperties.setHeight(getFormHeight());
             form.getCanvasContainer().addCanvasProperties(rootCanvasProperties);
         }
         rootCanvasProperties.setObjectGroupRoot(true);
