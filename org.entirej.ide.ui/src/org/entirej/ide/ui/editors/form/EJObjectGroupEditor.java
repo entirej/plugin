@@ -197,7 +197,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
         public Action[] getBaseActions()
         {
 
-            return new Action[] { createNewRefLovAction(), createNewLovAction() };
+            return new Action[] { createNewRefBlockAction(false), null, createNewRefLovAction(), createNewLovAction() };
         }
 
         protected Action[] getNewBlockActions()

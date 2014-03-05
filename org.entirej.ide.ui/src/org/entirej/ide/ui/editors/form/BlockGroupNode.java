@@ -296,6 +296,16 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             {
                 return new Action[0];
             }
+            
+            if(treeSection.getEditor().getFormProperties() instanceof EJPluginObjectGroupProperties)
+            {
+               
+                    return new Action[] { createCopyNameAction(), null,  treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true) };
+                
+
+                
+            }
+            
             if (source.isReferenceBlock() || source.isMirrorChild())
             {
                 return new Action[] { createReplicateAction(), createCopyNameAction(), null, treeSection.createNewBlockAction(false),
