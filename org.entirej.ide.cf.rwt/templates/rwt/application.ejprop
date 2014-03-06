@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entirejFramework>
+	<version><![CDATA[2.0]]></version>
     <applicationManager><![CDATA[org.entirej.applicationframework.rwt.application.EJRWTApplicationManager]]></applicationManager>
     <applicationManagerDefinition><![CDATA[org.entirej.applicationframework.rwt.renderers.application.EJRWTApplicationDefinition]]></applicationManagerDefinition>
     <connectionFactoryClassName><![CDATA[org.entirej.framework.core.EJDefaultConnectionFactory]]></connectionFactoryClassName>
