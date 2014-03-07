@@ -131,9 +131,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         }
         
         
-        //handle canvas import
-        EJPluginCanvasProperties rootCanvasProperties = getRootCanvas(form);
-        rootCanvasProperties.setType(EJCanvasType.GROUP);
+       EJPluginCanvasContainer formContainer = form.getCanvasContainer();
         
         EJPluginCanvasContainer canvasContainer = getCanvasContainer();
         Collection<EJPluginCanvasProperties> allCanvasProperties = canvasContainer.getCanvasProperties();
@@ -143,17 +141,38 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
             if(canvas.getType()==EJCanvasType.POPUP)
             {
                 form.getCanvasContainer().addCanvasProperties(canvas);
+                
             }
             else
             {
-                rootCanvasProperties.getGroupCanvasContainer().addCanvasProperties(canvas);
+                EJPluginCanvasProperties canvasProperties = (EJPluginCanvasProperties) EJPluginCanvasRetriever.getCanvasProperties(form, canvas.getName());
+                if(canvasProperties == null)
+                {
+                    formContainer.addCanvasProperties(canvas);
+                }
+                else
+                {
+                    canvasProperties.setObjectGroupRoot(true);
+                    canvas.setWidth(canvasProperties.getWidth());
+                    canvas.setHeight(canvasProperties.getHeight());
+                    canvas.setExpandHorizontally(canvasProperties.canExpandHorizontally());
+                    canvas.setExpandVertically(canvasProperties.canExpandVertically());
+                    canvas.setVerticalSpan(canvasProperties.getVerticalSpan());
+                    canvas.setHorizontalSpan(canvasProperties.getHorizontalSpan());
+                    canvasProperties.getParentCanvasContainer().replaceCanvasProperties(canvasProperties, canvas);
+                }
+                canvas.setObjectGroupRoot(true);
             }
         }
         
         Collection<EJCanvasProperties> retriveAllCanvases = EJPluginCanvasRetriever.retriveAllCanvases(this);
         for (EJCanvasProperties canvas : retriveAllCanvases)
         {
-           ((EJPluginCanvasProperties)canvas).setReferencedObjectGroupName(getName());
+            EJPluginCanvasProperties canvasPlug = (EJPluginCanvasProperties)canvas;
+            canvasPlug.setReferencedObjectGroupName(getName());
+            
+           
+           
         }
         
         
@@ -168,20 +187,6 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         
     }
     
-    private EJPluginCanvasProperties getRootCanvas(EJPluginFormProperties form)
-    {
-        String rootCanvasName = String.format("%s-OBJECT_GROUP", getName());
-        EJPluginCanvasProperties rootCanvasProperties = form.getCanvasContainer().getCanvasProperties(rootCanvasName);
-        if(rootCanvasProperties ==null)
-        {
-            rootCanvasProperties = new EJPluginCanvasProperties(form, rootCanvasName);
-            rootCanvasProperties.setNumCols(getNumCols());
-            rootCanvasProperties.setWidth(getFormWidth());
-            rootCanvasProperties.setHeight(getFormHeight());
-            form.getCanvasContainer().addCanvasProperties(rootCanvasProperties);
-        }
-        rootCanvasProperties.setObjectGroupRoot(true);
-        return rootCanvasProperties;
-    }
+
     
 }

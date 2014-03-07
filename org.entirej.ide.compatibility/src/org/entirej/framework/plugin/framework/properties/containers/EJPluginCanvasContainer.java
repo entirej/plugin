@@ -98,6 +98,22 @@ public class EJPluginCanvasContainer implements IPluginCanvasContainer
             ((EJPluginCanvasProperties) canvasProperties).setParentCanvasContainer(this);
         }
     }
+    public void replaceCanvasProperties(EJPluginCanvasProperties oldProp, EJPluginCanvasProperties newProp)
+    {
+        if (oldProp != null && newProp !=null)
+        {
+            int indexOf = _canvasProperties.indexOf(oldProp);
+            if(indexOf>-1)
+            {
+                _canvasProperties.set(indexOf, newProp);
+            }
+            else
+            {
+                _canvasProperties.add(newProp);
+            }
+            ((EJPluginCanvasProperties) newProp).setParentCanvasContainer(this);
+        }
+    }
     
     public void removeCanvasProperties(String canvasName)
     {

@@ -440,13 +440,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         {
             EJCanvasProperties canvasProps = canvases.next();
             
-            if(canvasProps.getType()!=EJCanvasType.GROUP)
+            
+            if(canvasProps instanceof EJPluginCanvasProperties && (!((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot() && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup()))
             {
-                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup())
-                {
-                    continue;
-                }
+                continue;
             }
+            
             
             startOpenTAG(buffer, "canvas");
             {
@@ -467,36 +466,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 
                 
                 
-                if (canvasProps.getType() == EJCanvasType.TAB)
-                {
-                    writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
-                }
-                else if (canvasProps.getType() == EJCanvasType.STACKED)
-                {
-                    writeStringTAG(buffer, "initialStackedPageName", canvasProps.getInitialStackedPageName());
-                }
-                else if (canvasProps.getType() == EJCanvasType.POPUP)
-                {
-                    writeStringTAG(buffer, "popupPageTitle", canvasProps.getPopupPageTitle());
-                    writeStringTAG(buffer, "buttonOneText", canvasProps.getButtonOneText());
-                    writeStringTAG(buffer, "buttonTwoText", canvasProps.getButtonTwoText());
-                    writeStringTAG(buffer, "buttonThreeText", canvasProps.getButtonThreeText());
-                    
-                    startTAG(buffer, "canvasList");
-                    {
-                        addCanvasList(canvasProps.getPopupCanvasContainer(), buffer);
-                    }
-                    endTAG(buffer, "canvasList");
-                }
-                else if (canvasProps.getType() == EJCanvasType.GROUP)
-                {
-                    writeBooleanTAG(buffer, "displayGroupFrame", canvasProps.getDisplayGroupFrame());
-                    writeStringTAG(buffer, "groupFrameTitle", canvasProps.getGroupFrameTitle());
-                }
-                else if (canvasProps.getType() == EJCanvasType.SPLIT)
-                {
-                    writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
-                }
+                
                 
                 
                 if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot())
@@ -505,10 +475,44 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 else
                 {
+                    
+                    if (canvasProps.getType() == EJCanvasType.TAB)
+                    {
+                        writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.STACKED)
+                    {
+                        writeStringTAG(buffer, "initialStackedPageName", canvasProps.getInitialStackedPageName());
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.POPUP)
+                    {
+                        writeStringTAG(buffer, "popupPageTitle", canvasProps.getPopupPageTitle());
+                        writeStringTAG(buffer, "buttonOneText", canvasProps.getButtonOneText());
+                        writeStringTAG(buffer, "buttonTwoText", canvasProps.getButtonTwoText());
+                        writeStringTAG(buffer, "buttonThreeText", canvasProps.getButtonThreeText());
+                        
+                        startTAG(buffer, "canvasList");
+                        {
+                            addCanvasList(canvasProps.getPopupCanvasContainer(), buffer);
+                        }
+                        endTAG(buffer, "canvasList");
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.GROUP)
+                    {
+                        writeBooleanTAG(buffer, "displayGroupFrame", canvasProps.getDisplayGroupFrame());
+                        writeStringTAG(buffer, "groupFrameTitle", canvasProps.getGroupFrameTitle());
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.SPLIT)
+                    {
+                        writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
+                    }
+                    
                     addTabPageProperties(canvasProps, buffer);
                     addStackedPageProperties(canvasProps, buffer);
                     addCanvasGroupCanvases(canvasProps, buffer);
                     addCanvasSplitCanvases(canvasProps, buffer);
+                    
+                    
                 }
                 
                 
