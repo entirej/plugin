@@ -300,7 +300,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             if(treeSection.getEditor().getFormProperties() instanceof EJPluginObjectGroupProperties)
             {
                
-                    return new Action[] { createCopyNameAction(), null,  treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true) };
+                    return new Action[] {  treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true),null, createCopyNameAction() };
                 
 
                 
@@ -308,13 +308,13 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             
             if (source.isReferenceBlock() || source.isMirrorChild())
             {
-                return new Action[] { createReplicateAction(), createCopyNameAction(), null, treeSection.createNewBlockAction(false),
-                        treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true) };
+                return new Action[] { createReplicateAction(),treeSection.createNewMirrorBlockAction(source.getName()),  null, treeSection.createNewBlockAction(false),
+                        treeSection.createNewBlockAction(true),  treeSection.createNewRefBlockAction(true),null,createCopyNameAction() };
             }
 
-            return new Action[] { createReplicateAction(), createCopyNameAction(), treeSection.createGenerateRefBlockAction(source), null,
-                    treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()),
-                    treeSection.createNewRefBlockAction(true) };
+            return new Action[] { createReplicateAction(),treeSection.createNewMirrorBlockAction(source.getName()),  treeSection.createGenerateRefBlockAction(source), null,
+                    treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), 
+                    treeSection.createNewRefBlockAction(true) ,null,createCopyNameAction()};
 
         }
 
