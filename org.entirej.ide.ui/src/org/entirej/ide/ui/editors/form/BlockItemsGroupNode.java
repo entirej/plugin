@@ -310,7 +310,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                 return new Action[] { createCopyBINameAction() };
 
             int indexOf = BlockItemsGroupNode.this.source.getAllItemProperties().indexOf(source);
-            return new Action[] { createCopyBINameAction(), null, createNewBlockItemAction(++indexOf) };
+            return new Action[] { createNewBlockItemAction(++indexOf), null,createCopyBINameAction()  };
         }
 
         public Action createCopyBINameAction()
