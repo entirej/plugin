@@ -60,6 +60,7 @@ public class EJPerspective implements IPerspectiveFactory
         layout.addNewWizardShortcut(EJUIConstants.EJ_SERVICE_WIZARD_ID);
         layout.addNewWizardShortcut(EJUIConstants.EJ_REUSABLEBLOCK_WIZARD_ID);
         layout.addNewWizardShortcut(EJUIConstants.EJ_REUSABLELOVDEF_WIZARD_ID);
+        layout.addNewWizardShortcut(EJUIConstants.EJ_REUSABLEOBJECT_GROUP);
 
         // Add JDT "new wizards".
         layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard");//$NON-NLS-1$
