@@ -23,6 +23,7 @@
  */
 package org.entirej.framework.plugin.framework.properties;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -106,7 +107,105 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         return null;
     }
 
+    public void removeObjects(EJPluginFormProperties form)
+    {
+        EJPluginBlockContainer blockContainer = form.getBlockContainer();
+        List<EJPluginBlockProperties> allBlockProperties = blockContainer.getAllBlockProperties();
+        //clean all blocks to form
+        for (EJPluginBlockProperties block : new ArrayList<EJPluginBlockProperties>(allBlockProperties))
+        {
+            if(block.isImportFromObjectGroup() && block.getReferencedObjectGroupName().equals(getName()))
+            
+            {
+                blockContainer.removeBlockProperties(block);
+            }
+        }
+        
+        EJPluginRelationContainer relationContainer = form.getRelationContainer();
+        List<EJPluginRelationProperties> relationProperties = relationContainer.getAllRelationProperties();
+        //clean all relations
+        for (EJPluginRelationProperties relation : new ArrayList<EJPluginRelationProperties>(relationProperties))
+        {
+            if(relation.isImportFromObjectGroup() && relation.getReferencedObjectGroupName().equals(getName()))
+                
+            {
+                relationContainer.removeRelationProperties(relation);
+            }
+        }
+      //clean all canvas
+        EJPluginCanvasContainer canvasContainer = form.getCanvasContainer();
+        Collection<EJPluginCanvasProperties> allCanvasProperties = canvasContainer.getCanvasProperties();
+        for (EJPluginCanvasProperties canvas : new ArrayList<EJPluginCanvasProperties>(allCanvasProperties))
+        {
+            if(canvas.isImportFromObjectGroup() && canvas.getReferencedObjectGroupName().equals(getName()))
+                        
+            {
+                canvasContainer.removeCanvasProperties(canvas);
+            }
+        }
+        
+      //clean all LOV
+        EJPluginLovDefinitionContainer lovDefinitionContainer = form.getLovDefinitionContainer();
+        List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = lovDefinitionContainer.getAllLovDefinitionProperties();
+        for (EJPluginLovDefinitionProperties lov :  new ArrayList<EJPluginLovDefinitionProperties>(allLovDefinitionProperties))
+        {
+            if(lov.isImportFromObjectGroup() && lov.getReferencedObjectGroupName().equals(getName()))
+                
+            {
+                lovDefinitionContainer.removeLovDefinitionProperties(lov);
+            }
+        }
+    }
     
+    public static void renameObjectGroup(EJPluginFormProperties form, String old,String newName)
+    {
+        EJPluginBlockContainer blockContainer = form.getBlockContainer();
+        List<EJPluginBlockProperties> allBlockProperties = blockContainer.getAllBlockProperties();
+        //clean all blocks to form
+        for (EJPluginBlockProperties block : new ArrayList<EJPluginBlockProperties>(allBlockProperties))
+        {
+            if(block.isImportFromObjectGroup() && block.getReferencedObjectGroupName().equals(old))
+                
+            {
+                block.setReferencedObjectGroupName(newName);
+            }
+        }
+        
+        EJPluginRelationContainer relationContainer = form.getRelationContainer();
+        List<EJPluginRelationProperties> relationProperties = relationContainer.getAllRelationProperties();
+        //clean all relations
+        for (EJPluginRelationProperties relation : new ArrayList<EJPluginRelationProperties>(relationProperties))
+        {
+            if(relation.isImportFromObjectGroup() && relation.getReferencedObjectGroupName().equals(old))
+                
+            {
+               relation.setReferencedObjectGroupName(newName);
+            }
+        }
+        //clean all canvas
+        EJPluginCanvasContainer canvasContainer = form.getCanvasContainer();
+        Collection<EJPluginCanvasProperties> allCanvasProperties = canvasContainer.getCanvasProperties();
+        for (EJPluginCanvasProperties canvas : new ArrayList<EJPluginCanvasProperties>(allCanvasProperties))
+        {
+            if(canvas.isImportFromObjectGroup() && canvas.getReferencedObjectGroupName().equals(old))
+                
+            {
+                canvas.setReferencedObjectGroupName(newName);
+            }
+        }
+        
+        //clean all LOV
+        EJPluginLovDefinitionContainer lovDefinitionContainer = form.getLovDefinitionContainer();
+        List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = lovDefinitionContainer.getAllLovDefinitionProperties();
+        for (EJPluginLovDefinitionProperties lov :  new ArrayList<EJPluginLovDefinitionProperties>(allLovDefinitionProperties))
+        {
+            if(lov.isImportFromObjectGroup() && lov.getReferencedObjectGroupName().equals(old))
+                
+            {
+                lov.setReferencedObjectGroupName(newName);
+            }
+        }
+    }
     
 
     public void importObjectsToForm(EJPluginFormProperties form)

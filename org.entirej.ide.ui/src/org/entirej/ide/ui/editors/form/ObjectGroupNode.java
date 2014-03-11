@@ -351,7 +351,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                             ObjectGroupNode.this.source.getAllObjectGroupProperties().remove(source);
                         }
                         editor.setDirty(true);
-                        treeSection.refresh(ObjectGroupNode.this);
+                        treeSection.refresh();
 
                     }
                 };

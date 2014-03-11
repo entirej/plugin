@@ -93,7 +93,7 @@ public class EJPluginObjectGroupContainer
         if (_objGroupProperties.contains(props))
         {
             
-            //FIXME: add complete remove ref.
+            props.removeObjects(_formProperties);
             
             _objGroupProperties.remove(props);
             

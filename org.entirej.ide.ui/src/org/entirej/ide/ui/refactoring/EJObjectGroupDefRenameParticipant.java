@@ -278,6 +278,7 @@ public class EJObjectGroupDefRenameParticipant extends RenameParticipant impleme
                                             createPropChange = true;
                                             String newDef = newName.substring(0, newName.lastIndexOf("."));
                                             blockProp.changeName(newDef);
+                                            EJPluginObjectGroupProperties.renameObjectGroup(formProperties,oldName,newDef);
                                         }
                                     }
                                 }
