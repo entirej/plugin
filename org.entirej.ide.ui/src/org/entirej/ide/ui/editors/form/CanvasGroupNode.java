@@ -87,6 +87,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
     private final static Image          POPUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
     private final static Image          TAB      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
     private final static Image          TAB_PAGE = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE);
+    private final static Image          BLOCK_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK_REF);
+    private final static Image          GROUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP_REF);
+    private final static Image          STACKED_REF  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED_REF);
+    private final static Image          POPUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP_REF);
+    private final static Image          TAB_REF      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_REF);
+    private final static Image          TAB_PAGE_REF = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE_REF);
 
     public CanvasGroupNode(FormDesignTreeSection treeSection)
     {
@@ -345,15 +351,15 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             {
                 case GROUP:
                 case SPLIT:
-                    return GROUP;
+                    return source.isImportFromObjectGroup()?GROUP_REF: GROUP;
                 case POPUP:
-                    return POPUP;
+                    return source.isImportFromObjectGroup()?POPUP_REF:POPUP;
                 case TAB:
-                    return TAB;
+                    return source.isImportFromObjectGroup()?TAB_REF:TAB;
                 case STACKED:
-                    return STACKED;
+                    return source.isImportFromObjectGroup()?STACKED_REF:STACKED;
                 default:
-                    return BLOCK;
+                    return source.isImportFromObjectGroup()?BLOCK_REF:BLOCK;
             }
 
         }
@@ -2739,7 +2745,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Image getImage()
         {
-            return TAB_PAGE;
+            return source.getTabCanvasProperties().isImportFromObjectGroup()? TAB_PAGE_REF :TAB_PAGE;
 
         }
 
@@ -3203,7 +3209,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Image getImage()
         {
-            return TAB_PAGE;
+            return source.getStackedCanvasProperties().isImportFromObjectGroup()? TAB_PAGE_REF :TAB_PAGE;
 
         }
 

@@ -65,6 +65,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
     private final AbstractEJFormEditor  editor;
     private final static Image          GROUP               = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
     private final static Image          BLOCK_RELATION      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION);
+    private final static Image          BLOCK_RELATION_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION_REF);
     private final static Image          BLOCK_RELATION_LINK = EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION_LINK);
 
     public RelationsGroupNode(FormDesignTreeSection treeSection)
@@ -422,7 +423,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
         @Override
         public Image getImage()
         {
-            return BLOCK_RELATION;
+            return source.isImportFromObjectGroup() ? BLOCK_RELATION_REF : BLOCK_RELATION;
         }
 
         public boolean canMove()

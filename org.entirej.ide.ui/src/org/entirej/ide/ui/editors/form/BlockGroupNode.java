@@ -112,7 +112,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     private final static Image                  GROUP          = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
     private final static Image                  BLOCK          = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
     private final static Image                  BLOCK_MIRROR   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
+    private final static Image                  BLOCK_MIRROR_REF   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
     private final static Image                  BLOCK_NTB      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
+    private final static Image                  BLOCK_NTB_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
     private final static Image                  BLOCK_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
     private final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
                                                                {
@@ -409,12 +411,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         public Image getImage()
         {
             if (source.isMirrorChild())
-                return BLOCK_MIRROR;
+                return source.isImportFromObjectGroup()? BLOCK_MIRROR_REF:BLOCK_MIRROR;
 
             if (source.isReferenceBlock())
                 return BLOCK_REF;
             if (source.isControlBlock())
-                return BLOCK_NTB;
+                return source.isImportFromObjectGroup()? BLOCK_NTB_REF:BLOCK_NTB;
 
             return BLOCK;
         }
