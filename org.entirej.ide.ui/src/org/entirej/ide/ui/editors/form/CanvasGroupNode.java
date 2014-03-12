@@ -1627,7 +1627,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public boolean canMove(Neighbor relation, Object source)
         {
             return !TabCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginTabPageProperties
-                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup())
+                    
                     && (TabCanvasNode.this.source.equals(((EJPluginTabPageProperties) source).getTabCanvasProperties()));
         }
 
@@ -1998,7 +1998,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public boolean canMove(Neighbor relation, Object source)
         {
             return !StackedCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginStackedPageProperties
-                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup())
                     && (StackedCanvasNode.this.source.equals(((EJPluginStackedPageProperties) source).getStackedCanvasProperties()));
         }
 
