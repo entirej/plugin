@@ -191,6 +191,15 @@ public class RefObjectGroupSelectionPage extends WizardPage
             setErrorMessage("ObjectGroup already Added.");
             return false;
         }
+        
+        //validate elements 
+        String elementValidation = wizardContext.elementValidation(lovRef);
+        if(elementValidation!=null)
+        {
+            setErrorMessage(elementValidation);
+            return false;
+        }
+        
 
         setErrorMessage(null);
         setMessage(null);

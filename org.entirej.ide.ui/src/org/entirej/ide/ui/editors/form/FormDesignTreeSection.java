@@ -894,6 +894,58 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 RefObjectGroupWizard wizard = new RefObjectGroupWizard(new RefObjectGroupWizardContext()
                 {
                     
+                    public String elementValidation(String objName)
+                    {
+                        final EJPluginFormProperties formProperties = editor.getFormProperties();
+                        try
+                        {
+                            EJPluginObjectGroupProperties objectGroupProperties = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(objName);
+                            
+                            List<EJPluginBlockProperties> allBlockProperties = objectGroupProperties.getBlockContainer().getAllBlockProperties();
+                            for (EJPluginBlockProperties blockProperties : allBlockProperties)
+                            {
+                                if(formProperties.getBlockContainer().contains(blockProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Blocks between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                            List<EJPluginRelationProperties> allRelationProperties = objectGroupProperties.getRelationContainer().getAllRelationProperties();
+                            for (EJPluginRelationProperties relationProperties : allRelationProperties)
+                            {
+                                if(formProperties.getRelationContainer().contains(relationProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Relations between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                            Collection<EJCanvasProperties> retriveAllCanvases = EJPluginCanvasRetriever.retriveAllCanvases(objectGroupProperties);
+                            for (EJCanvasProperties canvasProperties : retriveAllCanvases)
+                            {
+
+                                if(EJPluginCanvasRetriever.canvasExists(formProperties, canvasProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Canvases between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                            List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = objectGroupProperties.getLovDefinitionContainer().getAllLovDefinitionProperties();
+                            for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
+                            {
+                                if(formProperties.getLovDefinitionContainer().contains(lovDefinitionProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate LOV's between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                        }
+                        catch (EJDevFrameworkException e)
+                        {
+                            return e.getMessage();
+                        }
+                        return null;
+                    }
+                    
                     public void addObjectGroup(String refObjectGroup)
                     {
                         final EJPluginFormProperties formProperties = editor.getFormProperties();

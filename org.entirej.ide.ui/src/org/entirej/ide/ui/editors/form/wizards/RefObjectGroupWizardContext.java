@@ -28,6 +28,8 @@ public interface RefObjectGroupWizardContext
     void addObjectGroup(String refObjectGroup);
 
     List<String> getReferencedObjectGroupNames();
+    
+    String elementValidation(String objName);
 
     boolean hasObjectGroup(String lovName);
 
