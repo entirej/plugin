@@ -1008,7 +1008,21 @@ public class VisualAttTreeSection extends AbstractNodeTreeSection
                     break;
             }
             if (visualAttributeProperties.getFontSize() > 0)
-                size = visualAttributeProperties.getFontSize();
+            {
+                if(visualAttributeProperties.isFontSizeAsPercentage())
+                {
+                    if(visualAttributeProperties.getFontSize()!=100)
+                    {
+                        double fontSizeP = visualAttributeProperties.getFontSize();
+                        size = (int)(size* (fontSizeP/100)); 
+                    }
+                }
+                else
+                {
+
+                    size = visualAttributeProperties.getFontSize();
+                }
+            }
             font = new Font(Display.getDefault(), name, size, style);
             return font;
         }
