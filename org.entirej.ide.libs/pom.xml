@@ -130,13 +130,26 @@
 						</artifactItem>
 						-->
 						<artifactItem>
-							<groupId>org.jfxtras</groupId>
-							<artifactId>jfxtras-labs</artifactId>
-							<version>8.0-r1-SNAPSHOT</version>
+
+							  <groupId>org.jfxtras</groupId>
+							  <artifactId>jfxtras-controls</artifactId>
+							  <version>8.0-r1-SNAPSHOT</version>
+
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
-							<destFileName>jfxtras-labs-8.0-r1.jar</destFileName>
+							<destFileName>jfxtras-controls-8.0-r1.jar</destFileName>
+						</artifactItem>
+						<artifactItem>
+
+							  <groupId>org.jfxtras</groupId>
+							  <artifactId>jfxtras-common</artifactId>
+							  <version>8.0-r1-SNAPSHOT</version>
+
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
+							<destFileName>jfxtras-common-8.0-r1.jar</destFileName>
 						</artifactItem>
 						
 						<!-- RWT_BASE -->
