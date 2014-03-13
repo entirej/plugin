@@ -515,7 +515,15 @@ public class VisualAttTreeSection extends AbstractNodeTreeSection
                 public void setValue(Boolean value)
                 {
                    source.setFontSizeAsPercentage(value);
-                    
+                   if(value)
+                   {
+                       source.setFontSize(100);  
+                   }
+                   else
+                   {
+                       source.setFontSize(-1);
+                   }
+                   handler.refresh();
                 }
                 
                 @Override
