@@ -65,6 +65,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperti
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
@@ -506,6 +507,24 @@ public class VisualAttTreeSection extends AbstractNodeTreeSection
                     super.addEditorAssist(control);
                 }
             };
+            
+            final AbstractBooleanDescriptor fontSizeAsPercentage = new AbstractBooleanDescriptor("Size As Percentage","")
+            {
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                   source.setFontSizeAsPercentage(value);
+                    
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                   
+                    return source.isFontSizeAsPercentage();
+                }
+            };
 
             final AbstractDropDownDescriptor<EJFontStyle> fontStyle = new AbstractDropDownDescriptor<EJFontStyle>("Style")
             {
@@ -569,7 +588,7 @@ public class VisualAttTreeSection extends AbstractNodeTreeSection
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { fontNameDescriptor, sizeDescriptor, fontStyle, fontWeight };
+                    return new AbstractDescriptor<?>[] { fontNameDescriptor, sizeDescriptor,fontSizeAsPercentage, fontStyle, fontWeight };
                 }
 
             };
