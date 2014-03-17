@@ -128,7 +128,7 @@
 							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
 							<destFileName>entirej-fx-renderer-defs.jar</destFileName>
 						</artifactItem>
-						-->
+						
 						<artifactItem>
 
 							  <groupId>org.jfxtras</groupId>
@@ -151,7 +151,7 @@
 							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
 							<destFileName>jfxtras-common-8.0-r1.jar</destFileName>
 						</artifactItem>
-						
+						-->
 						<!-- RWT_BASE -->
 						<artifactItem>
 							<groupId>org.entirej</groupId>
