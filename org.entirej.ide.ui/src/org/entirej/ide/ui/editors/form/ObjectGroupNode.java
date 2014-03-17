@@ -449,7 +449,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
             
             
             final List<EJPluginRelationProperties> allRelationProperties = source.getRelationContainer().getAllRelationProperties();
-            if(allBlockProperties.size()>0)
+            if(allRelationProperties.size()>0)
             {
                 AbstractNode<?> relations =   new AbstractNode<EJPluginObjectGroupProperties>(this,source)
                         {
