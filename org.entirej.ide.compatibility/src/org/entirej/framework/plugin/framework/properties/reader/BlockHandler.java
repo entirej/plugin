@@ -36,6 +36,7 @@ public class BlockHandler extends EntireJTagHandler
     private EJPluginLovDefinitionProperties _lovDefinitionProperties;
     
     private static final String             ELEMENT_BLOCK                             = "block";
+    private static final String             ELEMENT_OBJECTGROUP                       = "objectgroup";
     private static final String             ELEMENT_MIRRORED_BLOCK                    = "isMirrored";
     private static final String             ELEMENT_MIRROR_PARENT                     = "mirrorParent";
     private static final String             ELEMENT_DESCRIPTION                       = "description";
@@ -130,19 +131,41 @@ public class BlockHandler extends EntireJTagHandler
             
             if (Boolean.parseBoolean(referenced))
             {
-                try
+                String objectGroup = attributes.getValue(ELEMENT_OBJECTGROUP);
+                if(objectGroup!=null && objectGroup.length()>0)
                 {
-                    EJPluginReusableBlockProperties reusableBlockProperties = _formProperties.getEntireJProperties().getReusableBlockProperties(
-                            referencedBlockName);
-                    if (reusableBlockProperties != null && reusableBlockProperties.getBlockProperties() != null)
+                    // dummy
+                    _blockProperties = new EJPluginControlBlockProperties(_formProperties, objectGroup);
+                    _blockProperties.setFormProperties(_formProperties);
+                    _blockProperties.internalSetName(blockName);
+                    _blockProperties.setReferencedObjectGroupName(objectGroup);
+                }
+                else
+                {
+                    try
                     {
-                        _blockProperties = reusableBlockProperties.getBlockProperties().makeCopy(blockName, false);
-                        _blockProperties.setFormProperties(_formProperties);
-                        _blockProperties.internalSetName(blockName);
-                        _blockProperties.setReferencedBlockName(referencedBlockName);
-                        if (_lovDefinitionProperties != null) _lovDefinitionProperties.setBlockProperties(_blockProperties);
+                        EJPluginReusableBlockProperties reusableBlockProperties = _formProperties.getEntireJProperties().getReusableBlockProperties(
+                                referencedBlockName);
+                        if (reusableBlockProperties != null && reusableBlockProperties.getBlockProperties() != null)
+                        {
+                            _blockProperties = reusableBlockProperties.getBlockProperties().makeCopy(blockName, false);
+                            _blockProperties.setFormProperties(_formProperties);
+                            _blockProperties.internalSetName(blockName);
+                            _blockProperties.setReferencedBlockName(referencedBlockName);
+                            if (_lovDefinitionProperties != null) _lovDefinitionProperties.setBlockProperties(_blockProperties);
+                        }
+                        else
+                        {
+                            // dummy
+                            _blockProperties = new EJPluginControlBlockProperties(_formProperties, referencedBlockName);
+                            _blockProperties.setFormProperties(_formProperties);
+                            _blockProperties.internalSetName(blockName);
+                            _blockProperties.setReferencedBlockName(referencedBlockName);
+                            if (_lovDefinitionProperties != null) _lovDefinitionProperties.setBlockProperties(_blockProperties);
+                        }
+                        
                     }
-                    else
+                    catch (EJDevFrameworkException e)
                     {
                         // dummy
                         _blockProperties = new EJPluginControlBlockProperties(_formProperties, referencedBlockName);
@@ -151,16 +174,6 @@ public class BlockHandler extends EntireJTagHandler
                         _blockProperties.setReferencedBlockName(referencedBlockName);
                         if (_lovDefinitionProperties != null) _lovDefinitionProperties.setBlockProperties(_blockProperties);
                     }
-                    
-                }
-                catch (EJDevFrameworkException e)
-                {
-                    // dummy
-                    _blockProperties = new EJPluginControlBlockProperties(_formProperties, referencedBlockName);
-                    _blockProperties.setFormProperties(_formProperties);
-                    _blockProperties.internalSetName(blockName);
-                    _blockProperties.setReferencedBlockName(referencedBlockName);
-                    if (_lovDefinitionProperties != null) _lovDefinitionProperties.setBlockProperties(_blockProperties);
                 }
                 
             }

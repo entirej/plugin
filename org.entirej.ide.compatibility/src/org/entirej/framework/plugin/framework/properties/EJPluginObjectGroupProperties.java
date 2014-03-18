@@ -217,7 +217,18 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         for (EJPluginBlockProperties block : allBlockProperties)
         {
             block.setReferencedObjectGroupName(getName());//mark as import from this
-            form.getBlockContainer().addBlockProperties(block);
+            
+            EJPluginBlockProperties oldProp = form.getBlockContainer().getBlockProperties(block.getName());
+            if(oldProp!=null && getName().equals(oldProp.getReferencedObjectGroupName()))
+            {
+                form.getBlockContainer().replaceBlockProperties(oldProp, block);
+            }
+            else
+            {
+                form.getBlockContainer().addBlockProperties(block);
+            }
+            
+            
         }
         
         EJPluginRelationContainer relationContainer = getRelationContainer();

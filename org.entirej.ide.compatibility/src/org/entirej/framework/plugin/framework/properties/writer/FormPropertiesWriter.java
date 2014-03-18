@@ -146,6 +146,14 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 endTAG(buffer, "canvasList");
                 
                 
+                // Now add the blocks
+                // The block items will be added during the addBlockList method
+                startTAG(buffer, "blockList");
+                {
+                    addBlockList(form.getBlockContainer(), buffer);
+                }
+                endTAG(buffer, "blockList");
+                
                 // Now add the ObjectGroup Definitions
                 startTAG(buffer, "objGroupDefinitionList");
                 {
@@ -163,13 +171,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 endTAG(buffer, "objGroupDefinitionList");
                 
                 
-                // Now add the blocks
-                // The block items will be added during the addBlockList method
-                startTAG(buffer, "blockList");
-                {
-                    addBlockList(form.getBlockContainer(), buffer);
-                }
-                endTAG(buffer, "blockList");
+               
                 
                 // Now add the forms relations
                 startTAG(buffer, "relationList");
@@ -530,6 +532,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
             
             if(blockProps.isImportFromObjectGroup())
             {
+                addObjectGroupBlockProperties(blockProps, buffer);
                 continue;
             }
             
@@ -840,6 +843,19 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 writeBooleanTAG(buffer, "expandVertically", blockProperties.getMainScreenProperties().canExpandVertically());
             }
             endTAG(buffer, "mainScreenProperties");
+        }
+        endTAG(buffer, "block");
+    }
+    protected void addObjectGroupBlockProperties(EJPluginBlockProperties blockProperties, StringBuffer buffer)
+    {
+        startOpenTAG(buffer, "block");
+        {
+            writePROPERTY(buffer, "name", blockProperties.getName());
+            writePROPERTY(buffer, "objectgroup", blockProperties.getReferencedObjectGroupName());
+            writePROPERTY(buffer, "referenced", "true");
+            closeOpenTAG(buffer);
+            
+            
         }
         endTAG(buffer, "block");
     }
