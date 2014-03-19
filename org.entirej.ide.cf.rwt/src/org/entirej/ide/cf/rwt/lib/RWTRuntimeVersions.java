@@ -19,6 +19,7 @@
 package org.entirej.ide.cf.rwt.lib;
 
 import org.eclipse.core.runtime.IPath;
+import org.entirej.ide.cf.rwt.RWTTabrisClientFrameworkProvider;
 import org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeClasspathContainer;
 import org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeClasspathContainer;
 
