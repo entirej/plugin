@@ -166,7 +166,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
                 return pathTopackage(editor.getEntireJProperties().getReusableLovDefinitionLocation());
             }
         };
-        objectGroupDefinitionsPkg = new AbstractPackageDescriptor(editor, "ObjectGroup Definition Location")
+        objectGroupDefinitionsPkg = new AbstractPackageDescriptor(editor, "ObjectGroup Location")
         {
             
             @Override
