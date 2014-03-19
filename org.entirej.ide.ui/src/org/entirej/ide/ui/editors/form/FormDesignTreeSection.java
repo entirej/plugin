@@ -885,7 +885,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     public Action createObjectGroupAction()
     {
         
-        return new Action("Add ObjectGroup Definition")
+        return new Action("Add ObjectGroup")
         {
             
             @Override
