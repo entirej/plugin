@@ -365,54 +365,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                     }
                 };
 
-                AbstractTextDescriptor titleDescriptor = new AbstractTextDescriptor("Title")
-                {
-                    Filter vfilter = new Filter()
-                                   {
-
-                                       public boolean match(int tag, IMarker marker)
-                                       {
-
-                                           return (tag & FormNodeTag.TITLE) != 0;
-                                       }
-                                   };
-
-                    @Override
-                    public String getErrors()
-                    {
-
-                        return validator.getErrorMarkerMsg(fmarkers, vfilter);
-                    }
-
-                    @Override
-                    public String getWarnings()
-                    {
-                        return validator.getWarningMarkerMsg(fmarkers, vfilter);
-                    }
-
-                    @Override
-                    public void setValue(String value)
-                    {
-                        source.setFormTitle(value);
-                        editor.setDirty(true);
-                        refresh(ObjGroupNode.this);
-                    }
-
-                    @Override
-                    public String getValue()
-                    {
-                        return source.getTitle();
-                    }
-
-                    @Override
-                    public String getTooltip()
-                    {
-                        return "This is the title displayed to the user when the ObjectGroup is Used. The title will be sent to the applications Translator for translation if required";
-                    }
-
-                };
-                titleDescriptor.setRequired(true);
-
+                
                 
 
                 
@@ -649,7 +602,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
 
                 
 
-                return new AbstractDescriptor<?>[] { titleDescriptor, layoutGroupDescriptor,
+                return new AbstractDescriptor<?>[] { layoutGroupDescriptor,
                         metadataGroupDescriptor };
             }
 

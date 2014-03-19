@@ -64,12 +64,8 @@ public class NewEntireJObjectGroupPage extends NewTypeWizardPage
 
     public static String     P_FORM_HEIGHT       = "FORM_HEIGHT";
     public static String     P_FORM_WIDTH        = "FORM_WIDTH";
-    private String           formTitle;
 
-    protected IStatus        fFormTitleStatus = new Status(IStatus.OK, EJUIPlugin.getID(), null);
-
-  
-
+    
     public NewEntireJObjectGroupPage()
     {
         super(false, "ej.objgroup");
@@ -124,7 +120,7 @@ public class NewEntireJObjectGroupPage extends NewTypeWizardPage
     private void doStatusUpdate()
     {
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, fFormTitleStatus };
+        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
@@ -157,15 +153,11 @@ public class NewEntireJObjectGroupPage extends NewTypeWizardPage
         createPackageControls(composite, nColumns);
         createSeparator(composite, nColumns);
         createTypeNameControls(composite, nColumns);
-        createFormTitleControls(composite, nColumns);
         setControl(composite);
         Dialog.applyDialogFont(composite);
     }
 
-    public String getTitleText()
-    {
-        return formTitle;
-    }
+
 
     @Override
     protected String getTypeNameLabel()
@@ -177,33 +169,7 @@ public class NewEntireJObjectGroupPage extends NewTypeWizardPage
 
 
 
-    private void createFormTitleControls(Composite composite, int nColumns)
-    {
-        Label formTitleLabel = new Label(composite, SWT.NULL);
-        formTitleLabel.setText("ObjectGroup Title:");
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = 1;
-        formTitleLabel.setLayoutData(gd);
-        final Text formTitleText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-
-        gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = false;
-        gd.horizontalSpan = 2;
-        formTitleText.setLayoutData(gd);
-        formTitleText.addModifyListener(new ModifyListener()
-        {
-
-            public void modifyText(ModifyEvent e)
-            {
-                formTitle = formTitleText.getText();
-                fFormTitleStatus = formTitleChanged();
-                doStatusUpdate();
-            }
-        });
-        fFormTitleStatus = formTitleChanged();
-        createEmptySpace(composite, 1);
-    }
+    
 
    
 
@@ -259,20 +225,7 @@ public class NewEntireJObjectGroupPage extends NewTypeWizardPage
     }
 
     
-    protected IStatus formTitleChanged()
-    {
-
-        String typeName = getTitleText();
-        // must not be empty
-        if (typeName==null || typeName.length() == 0)
-        {
-            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "ObjectGroup title is empty.");
-        }
-
-        
-
-        return new Status(IStatus.OK, EJUIPlugin.getID(), "");
-    }
+  
  
 
     
@@ -319,7 +272,7 @@ public class NewEntireJObjectGroupPage extends NewTypeWizardPage
 
                 final IFile formFile = folder.getFile(new Path(formName + "." + EJDevConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX));
 
-                String formTitle = getTitleText();
+                String formTitle = "";
              
 
                 EJPluginObjectGroupProperties formProperties = new EJPluginObjectGroupProperties(formName, project);
