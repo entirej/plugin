@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
@@ -53,6 +54,8 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
     
     private boolean                            _expandHorizontally;
     private boolean                            _expandVertically;
+    private EJItemGroupAlignment               _horizontalAlignment = EJItemGroupAlignment.FILL;
+    private EJItemGroupAlignment               _verticalAlignment = EJItemGroupAlignment.FILL;
     
     private List<EJPluginScreenItemProperties> _itemProperties;
     
@@ -245,6 +248,29 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
     public void setExpandVertically(boolean expandVertically)
     {
         _expandVertically = expandVertically;
+    }
+    
+    
+    @Override
+    public EJItemGroupAlignment getHorizontalAlignment()
+    {
+        return _horizontalAlignment;
+    }
+    
+    public void setHorizontalAlignment(EJItemGroupAlignment horizontalAlignment)
+    {
+        this._horizontalAlignment = horizontalAlignment;
+    }
+    
+    @Override
+    public EJItemGroupAlignment getVerticalAlignment()
+    {
+        return _verticalAlignment;
+    }
+    
+    public void setVerticalAlignment(EJItemGroupAlignment verticalAlignment)
+    {
+        this._verticalAlignment = verticalAlignment;
     }
     
     /**

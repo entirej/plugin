@@ -924,6 +924,8 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         writeIntTAG(buffer, "yspan", itemGroup.getYspan());
         writeBooleanTAG(buffer, "expandHorizontally", itemGroup.canExpandHorizontally());
         writeBooleanTAG(buffer, "expandVertically", itemGroup.canExpandVertically());
+        writeStringTAG(buffer, "verticalAlignment", itemGroup.getVerticalAlignment().name());
+        writeStringTAG(buffer, "horizontalAlignment", itemGroup.getHorizontalAlignment().name());
         if (itemGroup.getRendererProperties() != null)
         {
             

@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
+import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginItemGroupContainer;
 import org.xml.sax.Attributes;
@@ -39,6 +40,9 @@ public abstract class ItemGroupHandler extends EntireJTagHandler
     private static final String         YSPAN                       = "yspan";
     private static final String         EXPAND_HORIZONTAL           = "expandHorizontally";
     private static final String         EXPAND_VERTICAL             = "expandVertically";
+    
+    private static final String         HORIZONTAL_ALIGNMENT        = "horizontalAlignment";
+    private static final String         VERTICAL_ALIGNMENT          = "verticalAlignment";
     private static final String         ELEMENT_RENDERER_PROPERTIES = "rendererProperties";
     /**
      * Indicates the tag name that causes this handler to exit and return to its
@@ -162,6 +166,14 @@ public abstract class ItemGroupHandler extends EntireJTagHandler
         else if (name.equals(EXPAND_VERTICAL))
         {
             _itemGroupProperties.setExpandVertically(Boolean.parseBoolean(value));
+        }
+        else if (name.equals(HORIZONTAL_ALIGNMENT) && value!=null&& value.length()>0)
+        {
+            _itemGroupProperties.setHorizontalAlignment(EJItemGroupAlignment.valueOf(value));
+        }
+        else if (name.equals(VERTICAL_ALIGNMENT)&& value!=null&& value.length()>0)
+        {
+            _itemGroupProperties.setVerticalAlignment(EJItemGroupAlignment.valueOf(value));
         }
     }
     

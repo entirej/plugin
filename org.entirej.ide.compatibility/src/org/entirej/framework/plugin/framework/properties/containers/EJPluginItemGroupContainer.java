@@ -465,6 +465,8 @@ public class EJPluginItemGroupContainer implements EJItemGroupPropertiesContaine
         newItemGroup.setWidth(itemGroup.getWidth());
         newItemGroup.setXspan(itemGroup.getXspan());
         newItemGroup.setYspan(itemGroup.getYspan());
+        newItemGroup.setHorizontalAlignment(itemGroup.getHorizontalAlignment());
+        newItemGroup.setVerticalAlignment(itemGroup.getVerticalAlignment());
         
         EJPropertyDefinitionGroup definitionGroup = null;
         
