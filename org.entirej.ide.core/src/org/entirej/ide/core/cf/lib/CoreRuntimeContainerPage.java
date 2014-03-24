@@ -121,7 +121,7 @@ public class CoreRuntimeContainerPage extends WizardPage implements IClasspathCo
 
             public Object[] getElements(Object inputElement)
             {
-                return new Object[] { CoreRuntimeVersions.V_2_0 };
+                return new Object[] { CoreRuntimeVersions.V_2_1 };
             }
         });
         versionsList.setInput(new Object());
@@ -131,7 +131,7 @@ public class CoreRuntimeContainerPage extends WizardPage implements IClasspathCo
 //        }
 //        else
 //        {
-            versionsList.setSelection(new StructuredSelection(CoreRuntimeVersions.V_2_0));
+            versionsList.setSelection(new StructuredSelection(CoreRuntimeVersions.V_2_1));
  //       }
 
         versionsList.addSelectionChangedListener(new ISelectionChangedListener()

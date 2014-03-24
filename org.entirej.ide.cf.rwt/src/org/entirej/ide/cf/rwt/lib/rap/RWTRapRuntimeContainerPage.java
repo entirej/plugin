@@ -121,12 +121,12 @@ public class RWTRapRuntimeContainerPage extends WizardPage implements IClasspath
 
             public Object[] getElements(Object inputElement)
             {
-                return new Object[] { RWTRuntimeVersions.CF_RAP_V_2_0 };
+                return new Object[] { RWTRuntimeVersions.CF_RAP_V_2_1 };
             }
         });
         versionsList.setInput(new Object());
 
-        versionsList.setSelection(new StructuredSelection(RWTRuntimeVersions.CF_RAP_V_2_0));
+        versionsList.setSelection(new StructuredSelection(RWTRuntimeVersions.CF_RAP_V_2_1));
 
         versionsList.addSelectionChangedListener(new ISelectionChangedListener()
         {
