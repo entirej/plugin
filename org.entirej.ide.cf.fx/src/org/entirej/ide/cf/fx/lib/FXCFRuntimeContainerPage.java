@@ -120,12 +120,12 @@ public class FXCFRuntimeContainerPage extends WizardPage implements IClasspathCo
 
             public Object[] getElements(Object inputElement)
             {
-                return new Object[] { FXRuntimeVersions.CF_V_2_0 };
+                return new Object[] { FXRuntimeVersions.CF_V_2_1 };
             }
         });
         versionsList.setInput(new Object());
 
-        versionsList.setSelection(new StructuredSelection(FXRuntimeVersions.CF_V_2_0));
+        versionsList.setSelection(new StructuredSelection(FXRuntimeVersions.CF_V_2_1));
 
         versionsList.addSelectionChangedListener(new ISelectionChangedListener()
         {

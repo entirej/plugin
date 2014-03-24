@@ -47,7 +47,7 @@ public class CoreRuntimeClasspathContainer implements IClasspathContainer
 //        else
 //        {
             runtimePath = CFProjectHelper.getPathInPlugin(EJRuntimePlugin.getDefault().getBundle(), new Path("/extlibs/"));
-            description = "EntireJ Core [2.0] Runtime Libraries.";
+            description = "EntireJ Core [2.1] Runtime Libraries.";
 //        }
     }
     
