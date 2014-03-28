@@ -56,7 +56,7 @@
             <renderer name="MultiRecord" rendererClassName="org.entirej.applicationframework.rwt.renderers.blocks.EJRWTMultiRecordBlockRenderer"/>
             <renderer name="TreeRecord" rendererClassName="org.entirej.applicationframework.rwt.renderers.blocks.EJRWTTreeRecordBlockRenderer"/>
             <renderer name="TreeTableRecord" rendererClassName="org.entirej.applicationframework.rwt.renderers.blocks.EJRWTTreeTableRecordBlockRenderer"/>
-            <renderer name="HtmlTableRenderer" rendererClassName="org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlTableBlockRenderer"/>
+            <renderer name="HtmlTableRecord" rendererClassName="org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlTableBlockRenderer"/>
         </blockRenderers>
         <itemRenderers>
             <renderer name="TextItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTTextItemRenderer">
