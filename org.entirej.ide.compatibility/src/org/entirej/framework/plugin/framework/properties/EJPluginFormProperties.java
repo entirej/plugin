@@ -58,6 +58,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     private static final long                  serialVersionUID          = -8063612191054623340L;
     private boolean                            _isReusableLovForm        = false;
     private boolean                            _isReusableBlockForm      = false;
+    private boolean                            _isObjectGroupForm      = false;
     private IJavaProject                       _formsProject;
     
     private EJPluginEntireJProperties          _entireJProperties;
@@ -526,10 +527,18 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     {
         return _isReusableLovForm;
     }
+    public boolean isObjectGroupForm()
+    {
+        return _isObjectGroupForm;
+    }
     
     public void setIsReusableLovForm(boolean isReusableLovForm)
     {
         _isReusableLovForm = isReusableLovForm;
+    }
+    public void setIsObjectGroupForm(boolean isObjectGroupForm)
+    {
+        _isObjectGroupForm = isObjectGroupForm;
     }
     
     public Collection<String> getAllApplicationPropertyNames()
