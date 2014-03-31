@@ -20,6 +20,7 @@ package org.entirej.framework.dev.properties.interfaces;
 
 import java.util.Collection;
 
+import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 
 public interface EJDevItemGroupDisplayProperties
@@ -67,6 +68,11 @@ public interface EJDevItemGroupDisplayProperties
 
     public boolean canExpandVertically();
 
+    
+    public EJItemGroupAlignment getHorizontalAlignment();
+    
+    public EJItemGroupAlignment getVerticalAlignment();
+    
     /**
      * Returns the name of this item group
      * 

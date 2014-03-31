@@ -76,6 +76,7 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
     
     private String                             _reusableBlocksLocation;
     private String                             _reusableLovDefsLocation;
+    private String                             _objectGroupDefsLocation;
     
     public EJPluginEntireJProperties(IJavaProject javaProject)
     {
@@ -97,6 +98,9 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
             throws EJDevFrameworkException;
     
     public abstract EJPluginLovDefinitionProperties loadLovDefinition(EJPluginEntireJProperties entirejProperties, IProject project, IFile file,
+            String definitionName) throws EJDevFrameworkException;
+    
+    public abstract EJPluginObjectGroupProperties loadObjectGroupDefinition(EJPluginEntireJProperties entirejProperties, IProject project, IFile file,
             String definitionName) throws EJDevFrameworkException;
     
     public void clear()
@@ -272,6 +276,36 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
         else
         {
             _reusableLovDefsLocation = location;
+        }
+    }
+    
+    /**
+     * Returns the name of the package in which all object group definitions are
+     * stored
+     * 
+     * @return The name of the package in which all object group definitions are
+     *         stored
+     */
+    public String getObjectGroupDefinitionLocation()
+    {
+        return _objectGroupDefsLocation;
+    }
+    
+    /**
+     * Sets the package name in which all object group definitions are stored
+     * 
+     * @param location
+     *            The name of the package
+     */
+    public void setObjectGroupDefinitionLocation(String location)
+    {
+        if (location == null || location.trim().length() == 0)
+        {
+            _objectGroupDefsLocation = null;
+        }
+        else
+        {
+            _objectGroupDefsLocation = location;
         }
     }
     
@@ -691,6 +725,23 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
         return Collections.emptyList();
     }
     
+    public List<String> getObjectGroupDefinitionNames()
+    {
+        if (_objectGroupDefsLocation != null && _objectGroupDefsLocation.trim().length() > 0)
+        {
+            try
+            {
+                return loadFileNames(_objectGroupDefsLocation, EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX);
+            }
+            catch (EJDevFrameworkException e)
+            {
+                EJCoreLog.logWarnning(e);
+            }
+        }
+        
+        return Collections.emptyList();
+    }
+    
     @Override
     public EJCoreMenuProperties getMenuProperties(String name)
     {
@@ -741,6 +792,18 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
         return file;
     }
     
+    public IFile getObjectGroupFile(String definitionName) throws EJDevFrameworkException
+    {
+        if (definitionName == null || definitionName.trim().length() == 0)
+        {
+            return null;
+        }
+        
+        IFile file = loadFile(definitionName, _objectGroupDefsLocation, EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX);
+        
+        return file;
+    }
+    
     public boolean containsReusableBlockProperties(String blockName)
     {
         if (_reusableBlocksLocation != null && _reusableBlocksLocation.trim().length() > 0)
@@ -773,6 +836,21 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
         return loadLovDefinition(this, _javaProject.getProject(), file, definitionName);
     }
     
+    public EJPluginObjectGroupProperties getObjectGroupDefinitionProperties(String definitionName) throws EJDevFrameworkException
+    {
+        if (definitionName == null || definitionName.trim().length() == 0)
+        {
+            return null;
+        }
+        
+        IFile file = loadFile(definitionName, _objectGroupDefsLocation, EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX);
+        if (file == null)
+        {
+            return null;
+        }
+        return loadObjectGroupDefinition(this, _javaProject.getProject(), file, definitionName);
+    }
+    
     public boolean containsReusableLovDefinitionProperties(String definitionName)
     {
         if (_reusableLovDefsLocation != null && _reusableLovDefsLocation.trim().length() > 0)
@@ -780,6 +858,23 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
             try
             {
                 return hasFileName(_reusableLovDefsLocation, definitionName, EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX);
+            }
+            catch (EJDevFrameworkException e)
+            {
+                EJCoreLog.logWarnning(e);
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean containsObjectGroupDefinitionProperties(String definitionName)
+    {
+        if (_objectGroupDefsLocation != null && _objectGroupDefsLocation.trim().length() > 0)
+        {
+            try
+            {
+                return hasFileName(_objectGroupDefsLocation, definitionName, EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX);
             }
             catch (EJDevFrameworkException e)
             {

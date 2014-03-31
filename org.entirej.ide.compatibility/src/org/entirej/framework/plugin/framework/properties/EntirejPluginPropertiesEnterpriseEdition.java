@@ -170,4 +170,60 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         
         return props;
     }
+    
+    @Override
+    public EJPluginObjectGroupProperties loadObjectGroupDefinition(EJPluginEntireJProperties entirejProperties, IProject project, IFile file,
+            String definitionName) throws EJDevFrameworkException
+    {
+        InputStream inStream;
+        try
+        {
+            inStream = file.getContents();
+        }
+        catch (CoreException e)
+        {
+            try
+            {
+                file.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+            }
+            catch (CoreException e1)
+            {
+                // ignore
+            }
+            if (file.exists())
+            {
+                try
+                {
+                    inStream = file.getContents();
+                }
+                catch (CoreException e1)
+                {
+                    EJCoreLog.logWarnning(e);
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+        
+        EJPluginObjectGroupProperties formProperties = new EJPluginObjectGroupProperties(definitionName, getJavaProject());
+        FormHandler formHandler = new FormHandler(formProperties);
+        EntireJFormReader reader = new EntireJFormReader();
+        reader.readForm(formHandler, getJavaProject(), inStream);
+        formProperties.setInitialized(true);
+        try
+        {
+            inStream.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        
+        
+        
+        return formProperties;
+    }
 }

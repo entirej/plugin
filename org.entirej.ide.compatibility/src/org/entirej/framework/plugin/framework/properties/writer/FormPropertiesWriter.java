@@ -20,6 +20,7 @@ package org.entirej.framework.plugin.framework.properties.writer;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -44,12 +45,14 @@ import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginInsertScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovItemMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginQueryScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationJoinProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
@@ -132,12 +135,16 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "formRendererProperties");
                 
+    
+                
+                
                 // Now add the forms canvases
                 startTAG(buffer, "canvasList");
                 {
                     addCanvasList(form.getCanvasContainer(), buffer);
                 }
                 endTAG(buffer, "canvasList");
+                
                 
                 // Now add the blocks
                 // The block items will be added during the addBlockList method
@@ -146,6 +153,25 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     addBlockList(form.getBlockContainer(), buffer);
                 }
                 endTAG(buffer, "blockList");
+                
+                // Now add the ObjectGroup Definitions
+                startTAG(buffer, "objGroupDefinitionList");
+                {
+                    List<EJPluginObjectGroupProperties> objectGroupProperties = form.getObjectGroupContainer().getAllObjectGroupProperties();
+                    for (EJPluginObjectGroupProperties properties : objectGroupProperties)
+                    {
+                        startOpenTAG(buffer, "objGroupDefinition");
+                        {
+                            writePROPERTY(buffer, "name", properties.getName());
+                            closeOpenTAG(buffer);
+                        }
+                        endTAG(buffer, "objGroupDefinition");
+                    }
+                }
+                endTAG(buffer, "objGroupDefinitionList");
+                
+                
+               
                 
                 // Now add the forms relations
                 startTAG(buffer, "relationList");
@@ -160,6 +186,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     addLovDefinitionList(form.getLovDefinitionContainer(), buffer);
                 }
                 endTAG(buffer, "lovDefinitionList");
+                
             }
             endTAG(buffer, "form");
         }
@@ -376,7 +403,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (relations.hasNext())
         {
             EJPluginRelationProperties relationProps = relations.next();
-            
+            if(relationProps.isImportFromObjectGroup())
+            {
+                continue;
+            }
             startOpenTAG(buffer, "relation");
             {
                 writePROPERTY(buffer, "name", relationProps.getName());
@@ -412,6 +442,13 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         {
             EJCanvasProperties canvasProps = canvases.next();
             
+            
+            if(canvasProps instanceof EJPluginCanvasProperties && (!((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot() && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup()))
+            {
+                continue;
+            }
+            
+            
             startOpenTAG(buffer, "canvas");
             {
                 writePROPERTY(buffer, "name", canvasProps.getName());
@@ -429,41 +466,57 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     writeBooleanTAG(buffer, "expandVertically", canvasProps.canExpandVertically());
                 }
                 
-                if (canvasProps.getType() == EJCanvasType.TAB)
+                
+                
+                
+                
+                
+                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot())
                 {
-                    writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
+                    //ignore and do not add any sub items
                 }
-                else if (canvasProps.getType() == EJCanvasType.STACKED)
+                else
                 {
-                    writeStringTAG(buffer, "initialStackedPageName", canvasProps.getInitialStackedPageName());
-                }
-                else if (canvasProps.getType() == EJCanvasType.POPUP)
-                {
-                    writeStringTAG(buffer, "popupPageTitle", canvasProps.getPopupPageTitle());
-                    writeStringTAG(buffer, "buttonOneText", canvasProps.getButtonOneText());
-                    writeStringTAG(buffer, "buttonTwoText", canvasProps.getButtonTwoText());
-                    writeStringTAG(buffer, "buttonThreeText", canvasProps.getButtonThreeText());
                     
-                    startTAG(buffer, "canvasList");
+                    if (canvasProps.getType() == EJCanvasType.TAB)
                     {
-                        addCanvasList(canvasProps.getPopupCanvasContainer(), buffer);
+                        writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
                     }
-                    endTAG(buffer, "canvasList");
-                }
-                else if (canvasProps.getType() == EJCanvasType.GROUP)
-                {
-                    writeBooleanTAG(buffer, "displayGroupFrame", canvasProps.getDisplayGroupFrame());
-                    writeStringTAG(buffer, "groupFrameTitle", canvasProps.getGroupFrameTitle());
-                }
-                else if (canvasProps.getType() == EJCanvasType.SPLIT)
-                {
-                    writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
+                    else if (canvasProps.getType() == EJCanvasType.STACKED)
+                    {
+                        writeStringTAG(buffer, "initialStackedPageName", canvasProps.getInitialStackedPageName());
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.POPUP)
+                    {
+                        writeStringTAG(buffer, "popupPageTitle", canvasProps.getPopupPageTitle());
+                        writeStringTAG(buffer, "buttonOneText", canvasProps.getButtonOneText());
+                        writeStringTAG(buffer, "buttonTwoText", canvasProps.getButtonTwoText());
+                        writeStringTAG(buffer, "buttonThreeText", canvasProps.getButtonThreeText());
+                        
+                        startTAG(buffer, "canvasList");
+                        {
+                            addCanvasList(canvasProps.getPopupCanvasContainer(), buffer);
+                        }
+                        endTAG(buffer, "canvasList");
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.GROUP)
+                    {
+                        writeBooleanTAG(buffer, "displayGroupFrame", canvasProps.getDisplayGroupFrame());
+                        writeStringTAG(buffer, "groupFrameTitle", canvasProps.getGroupFrameTitle());
+                    }
+                    else if (canvasProps.getType() == EJCanvasType.SPLIT)
+                    {
+                        writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
+                    }
+                    
+                    addTabPageProperties(canvasProps, buffer);
+                    addStackedPageProperties(canvasProps, buffer);
+                    addCanvasGroupCanvases(canvasProps, buffer);
+                    addCanvasSplitCanvases(canvasProps, buffer);
+                    
+                    
                 }
                 
-                addTabPageProperties(canvasProps, buffer);
-                addStackedPageProperties(canvasProps, buffer);
-                addCanvasGroupCanvases(canvasProps, buffer);
-                addCanvasSplitCanvases(canvasProps, buffer);
                 
             }
             endTAG(buffer, "canvas");
@@ -476,6 +529,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (blocks.hasNext())
         {
             EJPluginBlockProperties blockProps = blocks.next();
+            
+            if(blockProps.isImportFromObjectGroup())
+            {
+                addObjectGroupBlockProperties(blockProps, buffer);
+                continue;
+            }
             
             if (blockProps.isReferenceBlock())
             {
@@ -494,6 +553,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (lovDefinitions.hasNext())
         {
             EJLovDefinitionProperties lovDefinition = lovDefinitions.next();
+            if(lovDefinition instanceof EJPluginLovDefinitionProperties && ((EJPluginLovDefinitionProperties)lovDefinition).isImportFromObjectGroup())
+            {
+                continue;
+            }
             
             if (lovDefinition.isReferenced())
             {
@@ -783,6 +846,19 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         }
         endTAG(buffer, "block");
     }
+    protected void addObjectGroupBlockProperties(EJPluginBlockProperties blockProperties, StringBuffer buffer)
+    {
+        startOpenTAG(buffer, "block");
+        {
+            writePROPERTY(buffer, "name", blockProperties.getName());
+            writePROPERTY(buffer, "objectgroup", blockProperties.getReferencedObjectGroupName());
+            writePROPERTY(buffer, "referenced", "true");
+            closeOpenTAG(buffer);
+            
+            
+        }
+        endTAG(buffer, "block");
+    }
     
     protected void addBlockItemProperties(EJPluginBlockItemContainer itemContainer, StringBuffer buffer)
     {
@@ -848,6 +924,8 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         writeIntTAG(buffer, "yspan", itemGroup.getYspan());
         writeBooleanTAG(buffer, "expandHorizontally", itemGroup.canExpandHorizontally());
         writeBooleanTAG(buffer, "expandVertically", itemGroup.canExpandVertically());
+        writeStringTAG(buffer, "verticalAlignment", itemGroup.getVerticalAlignment().name());
+        writeStringTAG(buffer, "horizontalAlignment", itemGroup.getHorizontalAlignment().name());
         if (itemGroup.getRendererProperties() != null)
         {
             

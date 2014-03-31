@@ -29,12 +29,15 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationJoinProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
@@ -43,6 +46,7 @@ import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.wizards.RelationLinkWizard;
@@ -61,6 +65,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
     private final AbstractEJFormEditor  editor;
     private final static Image          GROUP               = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
     private final static Image          BLOCK_RELATION      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION);
+    private final static Image          BLOCK_RELATION_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION_REF);
     private final static Image          BLOCK_RELATION_LINK = EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION_LINK);
 
     public RelationsGroupNode(FormDesignTreeSection treeSection)
@@ -198,10 +203,11 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
         private final class RelationLinkNode extends AbstractNode<EJPluginRelationJoinProperties> implements NodeOverview
         {
-
-            private RelationLinkNode(AbstractNode<?> parent, EJPluginRelationJoinProperties source)
+            boolean isImportFromObjectGroup ;
+            private RelationLinkNode(AbstractNode<?> parent, EJPluginRelationJoinProperties source, boolean isImportFromObjectGroup)
             {
                 super(parent, source);
+                this.isImportFromObjectGroup =isImportFromObjectGroup;
             }
 
             @Override
@@ -214,6 +220,8 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
             public void addOverview(StyledString styledString)
             {
 
+               
+                
                 if (source.getDetailItemName() != null && source.getDetailItemName().length() != 0)
                 {
                     styledString.append(" = ", StyledString.QUALIFIER_STYLER);
@@ -225,12 +233,21 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
             @Override
             public Action[] getActions()
             {
+                if(isImportFromObjectGroup)
+                {
+                    return new Action[]{};
+                }
                 return new Action[] { createNewRelationJoinAction() };
             }
 
             public AbstractDescriptor<?>[] getNodeDescriptors()
             {
 
+                if(isImportFromObjectGroup)
+                {
+                    return new  AbstractDescriptor<?>[0];
+                }
+                
                 AbstractTextDropDownDescriptor masterDescriptor = new AbstractTextDropDownDescriptor("Master Item")
                 {
 
@@ -338,6 +355,10 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
             @Override
             public INodeDeleteProvider getDeleteProvider()
             {
+                if(isImportFromObjectGroup)
+                {
+                    return null;
+                }
                 return new INodeDeleteProvider()
                 {
 
@@ -375,7 +396,13 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
         public void addOverview(StyledString styledString)
         {
-
+            if(source.isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
+            
             if (source.getMasterBlockName() != null && source.getMasterBlockName().length() != 0)
             {
                 styledString.append(" : ");
@@ -396,12 +423,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
         @Override
         public Image getImage()
         {
-            return BLOCK_RELATION;
+            return source.isImportFromObjectGroup() ? BLOCK_RELATION_REF : BLOCK_RELATION;
         }
 
         public boolean canMove()
         {
-            return true;
+            return !source.isImportFromObjectGroup();
         }
 
         public Object getNeighborSource()
@@ -412,6 +439,10 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
         @Override
         public Action[] getActions()
         {
+            if(source.isImportFromObjectGroup())
+            {
+                return new Action[]{};
+            }
             return new Action[] { createNewRelationJoinAction(), null, treeSection.createNewRelationAction() };
         }
 
@@ -508,7 +539,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
             Collection<EJPluginRelationJoinProperties> relationJoins = source.getRelationJoins();
             for (final EJPluginRelationJoinProperties joinProperties : relationJoins)
             {
-                nodes.add(new RelationLinkNode(this, joinProperties));
+                nodes.add(new RelationLinkNode(this, joinProperties,source.isImportFromObjectGroup()));
             }
             return nodes.toArray(new AbstractNode<?>[0]);
         }
@@ -516,7 +547,10 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-
+            if(source.isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeDeleteProvider()
             {
 
@@ -534,6 +568,11 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
         @Override
         public INodeRenameProvider getRenameProvider()
         {
+            
+            if(source.isImportFromObjectGroup())
+            {
+                return null;
+            }
             return new INodeRenameProvider()
             {
 
@@ -578,6 +617,54 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            
+            if(source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                {
+
+                    public boolean hasLableLink()
+                    {
+                        return true;
+                    }
+
+                    @Override
+                    public String lableLinkActivator()
+                    {
+
+                        EJPluginObjectGroupProperties file = editor.getFormProperties().getObjectGroupContainer()
+                                .getObjectGroupProperties(source.getReferencedObjectGroupName());
+                        if (file != null)
+                        {
+                            treeSection.selectNodes(true, treeSection.findNode(file));
+                        }
+
+                        return getValue();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return source.getReferencedObjectGroupName();
+                    }
+
+                    Text text;
+
+                    @Override
+                    public void addEditorAssist(Control control)
+                    {
+
+                        text = (Text) control;
+                        text.setEditable(false);
+                    }
+                }};
+            }
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
             AbstractTextDropDownDescriptor masterDescriptor = new AbstractTextDropDownDescriptor("Master Block", "The parent block of the relation")
@@ -758,7 +845,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
     public boolean canMove(Neighbor relation, Object source)
     {
-        return source instanceof EJPluginRelationProperties;
+        return source instanceof EJPluginRelationProperties && !((EJPluginRelationProperties)source).isImportFromObjectGroup();
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)

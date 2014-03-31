@@ -122,8 +122,7 @@ public class EJPluginCanvasRetriever
      */
     public static EJCanvasProperties getCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
-        ArrayList<EJCanvasProperties> canvasList = new ArrayList<EJCanvasProperties>();
-        addBlockCanvasesFromContainer(formProperties, formProperties.getCanvasContainer(), canvasList);
+        Collection<EJCanvasProperties> canvasList =  retriveAllCanvases(formProperties);
         
         for (EJCanvasProperties canvas : canvasList)
         {

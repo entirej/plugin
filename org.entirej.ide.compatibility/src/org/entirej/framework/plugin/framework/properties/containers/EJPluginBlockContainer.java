@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 
@@ -78,6 +79,22 @@ public class EJPluginBlockContainer
         if (blockProperties != null)
         {
             _blockProperties.add(blockProperties);
+        }
+    }
+    
+    public void replaceBlockProperties(EJPluginBlockProperties oldProp, EJPluginBlockProperties newProp)
+    {
+        if (oldProp != null && newProp !=null)
+        {
+            int indexOf = _blockProperties.indexOf(oldProp);
+            if(indexOf>-1)
+            {
+                _blockProperties.set(indexOf, newProp);
+            }
+            else
+            {
+                _blockProperties.add(newProp);
+            }
         }
     }
     

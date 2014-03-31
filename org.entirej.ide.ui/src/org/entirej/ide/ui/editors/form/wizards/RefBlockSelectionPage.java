@@ -85,7 +85,8 @@ public class RefBlockSelectionPage extends WizardPage
         composite.setLayout(layout);
         createBlockName(composite, nColumns);
         createBlockRefControls(composite, nColumns);
-        createRefCopyOptionControls(composite, nColumns);
+        if(wizardContext.copyOption())
+            createRefCopyOptionControls(composite, nColumns);
         createSeparator(composite, nColumns);
         createBlockCanvasControls(composite, nColumns);
         createNewCanvasName(composite, nColumns);
@@ -383,7 +384,7 @@ public class RefBlockSelectionPage extends WizardPage
 
     public boolean isCopyRefBlock()
     {
-        return copyRefBlock;
+        return wizardContext.copyOption() && copyRefBlock;
     }
 
     public String getNewCanvasName()

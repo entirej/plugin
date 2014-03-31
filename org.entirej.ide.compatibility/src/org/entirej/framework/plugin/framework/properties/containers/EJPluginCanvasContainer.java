@@ -98,6 +98,22 @@ public class EJPluginCanvasContainer implements IPluginCanvasContainer
             ((EJPluginCanvasProperties) canvasProperties).setParentCanvasContainer(this);
         }
     }
+    public void replaceCanvasProperties(EJPluginCanvasProperties oldProp, EJPluginCanvasProperties newProp)
+    {
+        if (oldProp != null && newProp !=null)
+        {
+            int indexOf = _canvasProperties.indexOf(oldProp);
+            if(indexOf>-1)
+            {
+                _canvasProperties.set(indexOf, newProp);
+            }
+            else
+            {
+                _canvasProperties.add(newProp);
+            }
+            ((EJPluginCanvasProperties) newProp).setParentCanvasContainer(this);
+        }
+    }
     
     public void removeCanvasProperties(String canvasName)
     {
@@ -132,7 +148,7 @@ public class EJPluginCanvasContainer implements IPluginCanvasContainer
      * @return The <code>CanvasProperties</code> for the given name or null of
      *         there is no canvas with the given name
      */
-    public EJCanvasProperties getCanvasProperties(String canvasName)
+    public EJPluginCanvasProperties getCanvasProperties(String canvasName)
     {
         if (canvasName == null || canvasName.trim().length() == 0)
         {
@@ -143,7 +159,7 @@ public class EJPluginCanvasContainer implements IPluginCanvasContainer
             Iterator<EJPluginCanvasProperties> iti = _canvasProperties.iterator();
             while (iti.hasNext())
             {
-                EJCanvasProperties props = iti.next();
+                EJPluginCanvasProperties props = iti.next();
                 if (props.getName().equalsIgnoreCase(canvasName))
                 {
                     return props;

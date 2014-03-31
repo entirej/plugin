@@ -67,7 +67,7 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
     /**
      * 
      */
-    private static final long serialVersionUID = -4917065094947867728L;
+    private static final long                      serialVersionUID              = -4917065094947867728L;
     private boolean                                _isControlBlock               = false;
     private boolean                                _isMirrorBlock                = false;
     private ArrayList<EJPluginBlockProperties>     _mirrorChildren;
@@ -76,6 +76,7 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
     private String                                 _blockDescription             = "";
     private boolean                                _isReferenced                 = false;
     private String                                 _referencedBlockName          = "";
+    private String                                 _referencedObjectGroupName    = "";
     private String                                 _canvasName                   = "";
     
     private EJPluginLovDefinitionProperties        _lovDefinition;
@@ -357,6 +358,21 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
     public void setReferencedBlockName(String name)
     {
         _referencedBlockName = name;
+    }
+    
+    public String getReferencedObjectGroupName()
+    {
+        return _referencedObjectGroupName;
+    }
+    
+    public void setReferencedObjectGroupName(String name)
+    {
+        _referencedObjectGroupName = name;
+    }
+    
+    public boolean isImportFromObjectGroup()
+    {
+        return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
     }
     
     public boolean isUsedInLovDefinition()

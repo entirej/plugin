@@ -31,7 +31,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
 import org.entirej.framework.core.enumerations.EJScreenType;
+import org.entirej.framework.core.properties.EJCoreLayoutItem.GRAB;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
@@ -64,6 +66,7 @@ import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.DisplayItemGroup;
@@ -1759,6 +1762,61 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     super.addEditorAssist(control);
                 }
             };
+            
+            
+            
+            final AbstractDropDownDescriptor<EJItemGroupAlignment> hAlignmentDescriptor = new AbstractDropDownDescriptor<EJItemGroupAlignment>("Horizontal Alignment")
+                    {
+
+                        public EJItemGroupAlignment[] getOptions()
+                        {
+
+                            return EJItemGroupAlignment.values();
+                        }
+
+                        public String getOptionText(EJItemGroupAlignment t)
+                        {
+                            return t.name();
+                        }
+
+                        public void setValue(EJItemGroupAlignment value)
+                        {
+                            properties.setHorizontalAlignment(value);
+                            editor.setDirty(true);
+                            treeSection.refresh(node);
+                        }
+
+                        public EJItemGroupAlignment getValue()
+                        {
+                            return properties.getHorizontalAlignment();
+                        }
+                    };
+           final AbstractDropDownDescriptor<EJItemGroupAlignment> vAlignmentDescriptor = new AbstractDropDownDescriptor<EJItemGroupAlignment>("Vertical Alignment")
+                            {
+                        
+                        public EJItemGroupAlignment[] getOptions()
+                        {
+                            
+                            return EJItemGroupAlignment.values();
+                        }
+                        
+                        public String getOptionText(EJItemGroupAlignment t)
+                        {
+                            return t.name();
+                        }
+                        
+                        public void setValue(EJItemGroupAlignment value)
+                        {
+                            properties.setVerticalAlignment(value);
+                            editor.setDirty(true);
+                            treeSection.refresh(node);
+                        }
+                        
+                        public EJItemGroupAlignment getValue()
+                        {
+                            return properties.getVerticalAlignment();
+                        }
+                     };
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings",
                     "Click <a href=\"http://docs.entirej.com/display/EJ1/EntireJ+Screens\">here</a> for more information on laying out an EntireJ Form")
@@ -1767,7 +1825,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor };
+                            heightHintDescriptor,hAlignmentDescriptor,vAlignmentDescriptor };
                 }
             };
 

@@ -76,9 +76,12 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevInsertScree
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevUpdateScreenRendererDefinition;
+import org.entirej.framework.plugin.EJPluginConstants;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
@@ -95,6 +98,10 @@ import org.entirej.ide.ui.utils.FormsUtil;
 
 public class EJFormConstBuilder extends IncrementalProjectBuilder
 {
+    private static final String OBJECTGROUP_PREFIX = "OG_";
+    private static final String REFBLOCK_PREFIX = "RB_";
+    private static final String LOV_PREFIX = "RL_";
+    private static final String FORM_PREFIX = "F_";
     private static final String CONSTANTS_PATH = "/constants";
 
     class DeltaVisitor implements IResourceDeltaVisitor
@@ -194,7 +201,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind("Cleaning EJ Form Constants in {0}", getProject().getName()), 1);
         try
         {
-            List<String> formNames = FormsUtil.getFormNames(JavaCore.create(getProject()), false);
+            List<String> formNames = FormsUtil.getFormNames(JavaCore.create(getProject()), true);
 
             // clean existing markers on schema files
             cleanFormsIn(getProject(), formNames, localmonitor);
@@ -217,23 +224,81 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         IFolder pkgPath = container.getFolder(new Path(CONSTANTS_PATH));
         if (pkgPath.exists())
         {
-            String formPrifix = getFormPrifix();
+            EJPluginEntireJProperties entireJProperties = EJPluginEntireJPropertiesLoader.getEntireJProperties(JavaCore.create(getProject()));
+            
             IResource[] pkgResources = pkgPath.members();
             for (IResource resource : pkgResources)
             {
                 if (resource instanceof IFile)
                 {
                     IFile file = (IFile) resource;
-                    if (file.exists() && file.getName().startsWith(formPrifix) && file.getName().endsWith(".java"))
+                    if (file.exists() && (file.getName().startsWith(FORM_PREFIX) || file.getName().startsWith(OBJECTGROUP_PREFIX) || file.getName().startsWith(REFBLOCK_PREFIX) || file.getName().startsWith(LOV_PREFIX)) && file.getName().endsWith(".java"))
                     {
                         String name = file.getName().substring(0, file.getName().length() - 5);
                         boolean ignore = false;
-                        for (String formName : formNames)
+                        
+                        if(name.startsWith(FORM_PREFIX))
                         {
-                            if (getFormId(formName).equals(name))
+                            for (String formName : formNames)
                             {
-                                ignore = true;
-                                break;
+                                
+                                
+                                    if (getFormId(formName).equals((name)))
+                                    {
+                                        ignore = true;
+                                        break;
+                                    }
+                                
+                                
+                                
+                            }
+                        }
+                        else if(name.startsWith(OBJECTGROUP_PREFIX))
+                        {
+                            for (String formName : entireJProperties.getObjectGroupDefinitionNames())
+                            {
+                                
+                                
+                                    if (getObjectGroupId(formName).equals((name)))
+                                    {
+                                        ignore = true;
+                                        break;
+                                    }
+                                
+                                
+                                
+                            }
+                        }
+                        else if(name.startsWith(REFBLOCK_PREFIX))
+                        {
+                            for (String formName : entireJProperties.getReusableBlockNames())
+                            {
+                                
+                                
+                                if (getRefBlockId(formName).equals((name)))
+                                {
+                                    ignore = true;
+                                    break;
+                                }
+                                
+                                
+                                
+                            }
+                        }
+                        else if(name.startsWith(LOV_PREFIX))
+                        {
+                            for (String formName : entireJProperties.getReusableLovDefinitionNames())
+                            {
+                                
+                                
+                                if (getLovId(formName).equals((name)))
+                                {
+                                    ignore = true;
+                                    break;
+                                }
+                                
+                                
+                                
                             }
                         }
                         if (ignore)
@@ -327,19 +392,22 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
     private boolean isFormFile(IFile file)
     {
-        return EJDevConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
+        return EJPluginConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
     }
 
     private boolean isRefFormFile(IFile file)
     {
         String fileExtension = file.getFileExtension();
-        return EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
-                || EJDevConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension);
+        return EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
+                || EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
+                || EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension);
     }
+    
+
 
     static void buildFormConstant(IJavaProject project, EJPluginFormProperties formProperties, IFile file, IProgressMonitor monitor)
     {
-        String formID = getFormId(formProperties.getFormName());
+        String formID = getFormId(formProperties);
 
         try
         {
@@ -740,10 +808,43 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     {
         return getFormPrifix() + toVAR(name).toUpperCase().replaceAll(" ", "_");
     }
+    public static String getObjectGroupId(String name)
+    {
+        return OBJECTGROUP_PREFIX + toVAR(name).toUpperCase().replaceAll(" ", "_");
+    }
+    public static String getRefBlockId(String name)
+    {
+        return REFBLOCK_PREFIX + toVAR(name).toUpperCase().replaceAll(" ", "_");
+    }
+    public static String getLovId(String name)
+    {
+        return LOV_PREFIX + toVAR(name).toUpperCase().replaceAll(" ", "_");
+    }
+    public static String getFormId(EJPluginFormProperties formProperties)
+    {
+        return getFormPrifix(formProperties) + toVAR(formProperties.getFormName()).toUpperCase().replaceAll(" ", "_");
+    }
 
     private static String getFormPrifix()
     {
-        return "F_";
+        return FORM_PREFIX;
+    }
+    private static String getFormPrifix(EJPluginFormProperties formProperties)
+    {
+        if(formProperties.isObjectGroupForm())
+        {
+            return OBJECTGROUP_PREFIX;
+        }
+        else if(formProperties.isReusableBlockForm())
+        {
+            return REFBLOCK_PREFIX;
+        }
+        else if(formProperties.isReusableLovForm())
+        {
+            return LOV_PREFIX;
+        }
+        
+        return FORM_PREFIX;
     }
 
     private static void createBlockCode(EJPluginBlockProperties blockProperties, StringBuilder builder)
@@ -882,6 +983,21 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
             formProperties = reader.readForm(new FormHandler(project, fileName), project, inStream);
             formProperties.initialisationCompleted();
+            
+            String fileExtension = file.getFileExtension();
+            if(fileExtension.equalsIgnoreCase(EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX))
+            {
+                formProperties.setIsObjectGroupForm(true);
+            }
+            else if(fileExtension.equalsIgnoreCase(EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX))
+            {
+                formProperties.setIsReusableLovForm(true);
+            }
+            else if(fileExtension.equalsIgnoreCase(EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX))
+            {
+                formProperties.setIsReusableBlockForm(true);
+            }
+            
         }
         catch (Exception exception)
         {

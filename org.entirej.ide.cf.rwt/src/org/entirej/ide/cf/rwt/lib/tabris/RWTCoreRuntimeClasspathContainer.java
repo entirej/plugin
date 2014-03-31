@@ -111,7 +111,7 @@ public class RWTCoreRuntimeClasspathContainer implements IClasspathContainer
 
     public String getDescription()
     {
-        return "EntireJ Bundled Tabris 1.2.1 Runtime Libraries.";
+        return "EntireJ Bundled Tabris 1.3.0 Runtime Libraries.";
     }
 
     public int getKind()

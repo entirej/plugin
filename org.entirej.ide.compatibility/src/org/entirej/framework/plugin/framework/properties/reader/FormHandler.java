@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -44,6 +45,7 @@ public class FormHandler extends EntireJTagHandler
     private static final String    ELEMENT_BLOCK                  = "block";
     private static final String    ELEMENT_RELATION               = "relation";
     private static final String    ELEMENT_LOV_DEFINITION         = "lovDefinition";
+    private static final String    ELEMENT_OBJGROUP_DEFINITION    = "objGroupDefinition";
     private static final String    ELEMENT_PROPERTY               = "property";
     
     private boolean                _gettingApplicationProperties  = false;
@@ -52,6 +54,11 @@ public class FormHandler extends EntireJTagHandler
     public FormHandler(IJavaProject javaProject, String formName)
     {
         _formProperties = new EJPluginFormProperties(formName, javaProject);
+    }
+    
+    public FormHandler(EJPluginFormProperties formProperties)
+    {
+        _formProperties = formProperties;
     }
     
     public EJPluginFormProperties getFormProperties()
@@ -67,6 +74,11 @@ public class FormHandler extends EntireJTagHandler
     public EntireJTagHandler getLovDefinitionHandler(EJPluginFormProperties formProperties)
     {
         return new LovDefinitionHandler(formProperties);
+    }
+    
+    public EntireJTagHandler getObjectgroupDefinitionHandler(EJPluginFormProperties formProperties)
+    {
+        return new ObjGroupDefinitionHandler(formProperties);
     }
     
     public void startLocalElement(String name, Attributes attributes) throws SAXException
@@ -106,6 +118,10 @@ public class FormHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_LOV_DEFINITION))
         {
             setDelegate(getLovDefinitionHandler(_formProperties));
+        }
+        else if (name.equals(ELEMENT_OBJGROUP_DEFINITION))
+        {
+            setDelegate(getObjectgroupDefinitionHandler(_formProperties));
         }
         else if (name.equals(ELEMENT_FORM_PARAMETER))
         {
@@ -202,6 +218,14 @@ public class FormHandler extends EntireJTagHandler
         {
             _formProperties.getLovDefinitionContainer().addLovDefinitionProperties(((LovDefinitionHandler) currentDelegate).getLovDefinitionProperties());
             ((LovDefinitionHandler) currentDelegate).getLovDefinitionProperties().getBlockProperties().setFormProperties(_formProperties);
+            return;
+        }
+        else if (name.equals(ELEMENT_OBJGROUP_DEFINITION))
+        {
+            EJPluginObjectGroupProperties objectGroupDefinitionProperties = ((ObjGroupDefinitionHandler) currentDelegate).getObjectGroupDefinitionProperties();
+            _formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDefinitionProperties);
+            objectGroupDefinitionProperties.importObjectsToForm(_formProperties);
+
             return;
         }
         else if (name.equals(ELEMENT_RENDERER_PROPERTIES))

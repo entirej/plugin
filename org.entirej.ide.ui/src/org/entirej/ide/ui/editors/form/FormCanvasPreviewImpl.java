@@ -56,12 +56,17 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
         COLOR_LIGHT_RED.dispose();
     }
 
+    protected EJPluginFormProperties getFormProperties(AbstractEJFormEditor editor)
+    {
+        return  editor.getFormProperties();
+    }
+    
     public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
     {
         // layout canvas preview
         Composite pContent = new Composite(previewComposite, SWT.NONE);
 
-        EJPluginFormProperties formProperties = editor.getFormProperties();
+        EJPluginFormProperties formProperties = getFormProperties(editor);
         EJPluginCanvasContainer container = formProperties.getCanvasContainer();
         int width = formProperties.getFormWidth();
         int height = formProperties.getFormHeight();

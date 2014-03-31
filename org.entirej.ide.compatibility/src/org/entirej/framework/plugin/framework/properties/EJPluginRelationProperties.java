@@ -39,6 +39,10 @@ public class EJPluginRelationProperties implements Comparable<EJPluginRelationPr
     private boolean                              _deferredQuery               = false;
     private boolean                              _autoQuery                   = true;
     private boolean                              _preventMasterlessOperations = true;
+
+    private String                                 _referencedObjectGroupName    = "";
+    
+    
     
     private List<EJPluginRelationJoinProperties> _joinList;
     
@@ -193,6 +197,22 @@ public class EJPluginRelationProperties implements Comparable<EJPluginRelationPr
     public int compareTo(EJPluginRelationProperties arg0)
     {
         return this.getName().compareTo(arg0.getName());
+    }
+    
+    
+    public String getReferencedObjectGroupName()
+    {
+        return _referencedObjectGroupName;
+    }
+    
+    public void setReferencedObjectGroupName(String name)
+    {
+        _referencedObjectGroupName = name;
+    }
+    
+    public boolean isImportFromObjectGroup()
+    {
+        return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
     }
     
 }

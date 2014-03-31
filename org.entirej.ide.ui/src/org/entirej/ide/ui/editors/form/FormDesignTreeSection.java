@@ -93,6 +93,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.EJPluginReusableBlockProperties;
@@ -122,6 +123,8 @@ import org.entirej.ide.ui.editors.form.wizards.RefBlockWizard;
 import org.entirej.ide.ui.editors.form.wizards.RefBlockWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.RefLovWizard;
 import org.entirej.ide.ui.editors.form.wizards.RefLovWizardContext;
+import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizard;
+import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.RelationWizard;
 import org.entirej.ide.ui.editors.form.wizards.RelationWizardContext;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
@@ -143,7 +146,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     protected FormPreviewer                     formPreviewer;
 
     protected AbstractNode<?>                   baseNode;
-    private final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
+    protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
                                                                {
 
                                                                    public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
@@ -335,13 +338,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     public Action[] getBaseActions()
     {
 
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(), null,
-                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction() };
+        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true), null,
+                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction(),null,createObjectGroupAction() };
     }
 
     protected Action[] getNewBlockActions()
     {
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction() };
+        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true) };
     }
 
     public Action createNewBlockAction(final boolean controlBlock)
@@ -662,7 +665,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         };
     }
 
-    public Action createNewRefBlockAction()
+    public Action createNewRefBlockAction(final boolean copyOption)
     {
 
         return new Action("Add Referenced Block")
@@ -674,6 +677,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 RefBlockWizard wizard = new RefBlockWizard(new RefBlockWizardContext()
                 {
 
+                    public boolean copyOption()
+                    {
+                        return copyOption;
+                    }
+                    
                     public void addBlock(String blockName, String refblock, boolean copyRefBlock, String canvas, boolean createCanvas)
                     {
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
@@ -874,6 +882,129 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
         };
     }
+    public Action createObjectGroupAction()
+    {
+        
+        return new Action("Add ObjectGroup")
+        {
+            
+            @Override
+            public void runWithEvent(Event event)
+            {
+                RefObjectGroupWizard wizard = new RefObjectGroupWizard(new RefObjectGroupWizardContext()
+                {
+                    
+                    public String elementValidation(String objName)
+                    {
+                        final EJPluginFormProperties formProperties = editor.getFormProperties();
+                        try
+                        {
+                            EJPluginObjectGroupProperties objectGroupProperties = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(objName);
+                            
+                            List<EJPluginBlockProperties> allBlockProperties = objectGroupProperties.getBlockContainer().getAllBlockProperties();
+                            for (EJPluginBlockProperties blockProperties : allBlockProperties)
+                            {
+                                if(formProperties.getBlockContainer().contains(blockProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Blocks between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                            List<EJPluginRelationProperties> allRelationProperties = objectGroupProperties.getRelationContainer().getAllRelationProperties();
+                            for (EJPluginRelationProperties relationProperties : allRelationProperties)
+                            {
+                                if(formProperties.getRelationContainer().contains(relationProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Relations between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                            Collection<EJCanvasProperties> retriveAllCanvases = EJPluginCanvasRetriever.retriveAllCanvases(objectGroupProperties);
+                            for (EJCanvasProperties canvasProperties : retriveAllCanvases)
+                            {
+
+                                if(EJPluginCanvasRetriever.canvasExists(formProperties, canvasProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Canvases between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                            List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = objectGroupProperties.getLovDefinitionContainer().getAllLovDefinitionProperties();
+                            for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
+                            {
+                                if(formProperties.getLovDefinitionContainer().contains(lovDefinitionProperties.getName()))
+                                {
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate LOV's between Form and ObjectGroup.",objName); 
+                                }
+                            }
+                            
+                        }
+                        catch (EJDevFrameworkException e)
+                        {
+                            return e.getMessage();
+                        }
+                        return null;
+                    }
+                    
+                    public void addObjectGroup(String refObjectGroup)
+                    {
+                        final EJPluginFormProperties formProperties = editor.getFormProperties();
+                        
+                        final EJPluginObjectGroupProperties objectGroupDef;
+                        try
+                        {
+                            objectGroupDef = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(refObjectGroup);
+                        }
+                        catch (EJDevFrameworkException e)
+                        {
+                            EJCoreLog.logException(e);
+                            return;
+                        }
+                        
+                        
+                        formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDef);
+                        objectGroupDef.importObjectsToForm(formProperties);
+                        
+                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        {
+                            
+                            public void run()
+                            {
+                                editor.setDirty(true);
+                                refresh(findNode(formProperties.getObjectGroupContainer()), true);
+                                refresh(findNode(formProperties.getBlockContainer()), true);
+                                refresh(findNode(formProperties.getRelationContainer()), true);
+                                refresh(findNode(formProperties.getLovDefinitionContainer()), true);
+                                refresh(findNode(formProperties.getCanvasContainer()), true);
+                                selectNodes(true, findNode(objectGroupDef));
+                                
+                            }
+                        });
+                        
+                    }
+                    
+                    public List<String> getReferencedObjectGroupNames()
+                    {
+                        
+                        return editor.getFormProperties().getEntireJProperties().getObjectGroupDefinitionNames();
+                    }
+                    
+                    public boolean hasObjectGroup(String objGroupName)
+                    {
+                        return editor.getFormProperties().getObjectGroupContainer().contains(objGroupName);
+                    }
+                    
+                    public IJavaProject getProject()
+                    {
+                        return editor.getJavaProject();
+                    }
+                    
+                });
+                wizard.open();
+            }
+            
+        };
+    }
 
     public Action createNewRelationAction()
     {
@@ -957,7 +1088,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 // project build errors
                 if (editor.getFormProperties() == null)
                     return new Object[0];
-                return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new BlockGroupNode(FormDesignTreeSection.this),
+                return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new ObjectGroupNode(FormDesignTreeSection.this),new BlockGroupNode(FormDesignTreeSection.this),
                         new RelationsGroupNode(FormDesignTreeSection.this), new LovGroupNode(FormDesignTreeSection.this),
                         new CanvasGroupNode(FormDesignTreeSection.this) };
             }
@@ -993,7 +1124,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                                           }
                                                       };
 
-        public FormNode(EJPluginFormProperties source)
+        private FormNode(EJPluginFormProperties source)
         {
             super(null, source);
         }

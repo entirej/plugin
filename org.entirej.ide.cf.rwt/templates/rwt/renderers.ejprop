@@ -9,6 +9,7 @@
             <renderer name="MultiRecord" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTMultiRecordBlockDefinition"/>
             <renderer name="TreeRecord" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTTreeRecordBlockDefinition"/>
             <renderer name="TreeTableRecord" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTTreeTableRecordBlockDefinition"/>
+            <renderer name="HTMLMultiRecord" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTHtmlTableBlockRendererDefinition"/>
         </blockRenderers>
         <itemRenderers>
             <renderer name="TextItem" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTTextItemRendererDefinition">

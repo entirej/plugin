@@ -70,6 +70,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginCanvasPropertie
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.EJPluginStackedPageProperties;
@@ -111,7 +112,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     private final static Image                  GROUP          = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
     private final static Image                  BLOCK          = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
     private final static Image                  BLOCK_MIRROR   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
+    private final static Image                  BLOCK_MIRROR_REF   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
     private final static Image                  BLOCK_NTB      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
+    private final static Image                  BLOCK_NTB_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
     private final static Image                  BLOCK_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
     private final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
                                                                {
@@ -214,7 +217,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
 
         return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(null),
-                treeSection.createNewRefBlockAction() };
+                treeSection.createNewRefBlockAction(true) };
     }
 
     protected boolean supportBlockDelete()
@@ -291,21 +294,42 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         @Override
         public Action[] getActions()
         {
+            if(source.isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
+            
+            if(treeSection.getEditor().getFormProperties() instanceof EJPluginObjectGroupProperties)
+            {
+               
+                    return new Action[] {  treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true),null, createCopyNameAction() };
+                
+
+                
+            }
+            
             if (source.isReferenceBlock() || source.isMirrorChild())
             {
-                return new Action[] { createReplicateAction(), createCopyNameAction(), null, treeSection.createNewBlockAction(false),
-                        treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction() };
+                return new Action[] { createReplicateAction(),treeSection.createNewMirrorBlockAction(source.getName()),  null, treeSection.createNewBlockAction(false),
+                        treeSection.createNewBlockAction(true),  treeSection.createNewRefBlockAction(true),null,createCopyNameAction() };
             }
 
-            return new Action[] { createReplicateAction(), createCopyNameAction(), treeSection.createGenerateRefBlockAction(source), null,
-                    treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(source.getName()),
-                    treeSection.createNewRefBlockAction() };
+            return new Action[] { createReplicateAction(),treeSection.createNewMirrorBlockAction(source.getName()),  treeSection.createGenerateRefBlockAction(source), null,
+                    treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), 
+                    treeSection.createNewRefBlockAction(true) ,null,createCopyNameAction()};
 
         }
 
         public void addOverview(StyledString styledString)
         {
 
+            if(source.isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
+            
             if (source.isReferenceBlock() && source.getReferencedBlockName() != null && source.getReferencedBlockName().length() != 0)
             {
                 styledString.append(" [ ", StyledString.QUALIFIER_STYLER);
@@ -387,12 +411,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         public Image getImage()
         {
             if (source.isMirrorChild())
-                return BLOCK_MIRROR;
+                return source.isImportFromObjectGroup()? BLOCK_MIRROR_REF:BLOCK_MIRROR;
 
             if (source.isReferenceBlock())
                 return BLOCK_REF;
             if (source.isControlBlock())
-                return BLOCK_NTB;
+                return source.isImportFromObjectGroup()? BLOCK_NTB_REF:BLOCK_NTB;
 
             return BLOCK;
         }
@@ -984,6 +1008,54 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
 
+            if(source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                {
+
+                    public boolean hasLableLink()
+                    {
+                        return true;
+                    }
+
+                    @Override
+                    public String lableLinkActivator()
+                    {
+
+                        EJPluginObjectGroupProperties file = editor.getFormProperties().getObjectGroupContainer()
+                                .getObjectGroupProperties(source.getReferencedObjectGroupName());
+                        if (file != null)
+                        {
+                            treeSection.selectNodes(true, treeSection.findNode(file));
+                        }
+
+                        return getValue();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return source.getReferencedObjectGroupName();
+                    }
+
+                    Text text;
+
+                    @Override
+                    public void addEditorAssist(Control control)
+                    {
+
+                        text = (Text) control;
+                        text.setEditable(false);
+                    }
+                }};
+            }
+            
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
             final List<AbstractDescriptor<?>> dataDescriptors = new ArrayList<AbstractDescriptor<?>>();

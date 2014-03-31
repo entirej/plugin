@@ -75,6 +75,18 @@
          </contentTypeBinding>
       </editor>
       <editor
+            class="org.entirej.ide.ui.editors.form.EJObjectGroupEditor"
+            contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
+            default="true"
+            extensions="objgroup"
+            icon="icons/obj16/object_group.png"
+            id="org.entirej.ide.ui.editors.ej.objgroup"
+            name="%org.entirej.ide.ui.editors.ej.objgroup.name">
+         <contentTypeBinding
+               contentTypeId="org.entirej.ide.ui.editors.ej.objgroup.file">
+         </contentTypeBinding>
+      </editor>
+      <editor
             class="org.entirej.ide.ui.editors.form.EJRefLovEditor"
             contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
             default="true"
@@ -111,6 +123,12 @@
             file-extensions="lovdef"
             id="org.entirej.ide.ui.editors.ej.reflov.file"
             name="%org.entirej.ide.ui.editors.ej.reflov.file.name"
+            priority="high">
+      </content-type>
+      <content-type
+            file-extensions="objgroup"
+            id="org.entirej.ide.ui.editors.ej.objgroup.file"
+            name="%org.entirej.ide.ui.editors.ej.objgroup.file.name"
             priority="high">
       </content-type>
    </extension>
@@ -177,7 +195,19 @@
             name="%new.entirejRefLov.name"
             project="false">
          <description>
-            %new.entirejForm.description
+            %new.entirejRefLov.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.form.NewEntireJObjectGroupWizard"
+            finalPerspective="org.entirej.ide.ui.perspective"
+            icon="icons/etools16/newejobjectgroup_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEntireJObjectGroupWizard"
+            name="%new.entirejObjectGroup.name"
+            project="false">
+         <description>
+            %new.entirejObjectGroup.description
          </description>
       </wizard>
    </extension>
@@ -201,6 +231,14 @@
                label="%new.entirejRefBlock.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejRefBlock.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.form.NewObjectGroupAction"
+               icon="icons/etools16/newejobjectgroup_wiz.png"
+               id="org.entirej.ide.ui.wizards.form.NewObjectGroupAction"
+               label="%new.entirejObjectGroup.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejObjectGroup.description">
          </action>
          <action
                class="org.entirej.ide.ui.wizards.form.NewFormAction"
@@ -315,6 +353,19 @@
             class="org.entirej.ide.ui.refactoring.EJRefBlockDefRenameParticipant"
             id="org.entirej.ide.refactoring.EJRefBlockDefRenameParticipant"
             name="EJForm Rename Referenced block Def Participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+            </with>
+         </enablement>        
+      </renameParticipant>
+      <renameParticipant
+            class="org.entirej.ide.ui.refactoring.EJObjectGroupDefRenameParticipant"
+            id="org.entirej.ide.refactoring.EJObjectGroupDefRenameParticipant"
+            name="EJForm Rename Referenced ObjectGroup Def Participant">
          <enablement>
             <with
                   variable="element">

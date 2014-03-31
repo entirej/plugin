@@ -20,7 +20,7 @@
 <feature
       id="org.entirej.fx.feature"
       label="EntireJ JavaFX Client Framework"
-      version="2.1.0.qualifier"
+      version="2.2.0.qualifier"
       provider-name="Mojave Innovations GmbH"
       plugin="org.entirej.ide.core">
 
