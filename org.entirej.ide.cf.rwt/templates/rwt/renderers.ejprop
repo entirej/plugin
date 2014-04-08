@@ -28,6 +28,8 @@
             </renderer>
             <renderer name="ComboItem" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTComboBoxRendererDefinition">
             </renderer>
+            <renderer name="ListItem" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTListBoxRendererDefinition">
+            </renderer>
             <renderer name="RadioItem" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTRadioGroupItemRendererDefinition">
             </renderer>
             <renderer name="CheckBoxItem" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTCheckBoxRendererDefinition">
