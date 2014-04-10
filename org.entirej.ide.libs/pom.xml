@@ -189,6 +189,26 @@
 							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-rcp</outputDirectory>
 							<destFileName>entirej-rwt-appframework-rcp.jar</destFileName>
 						</artifactItem>
+						
+						<!-- TMT_BASE -->
+						<artifactItem>
+							<groupId>org.entirej</groupId>
+							<artifactId>entirej-tabris</artifactId>
+							<version>${VERSION.TMT}</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-tmt</outputDirectory>
+							<destFileName>entirej-tmt-appframework.jar</destFileName>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.entirej</groupId>
+							<artifactId>entirej-tabris-def</artifactId>
+							<version>${VERSION.TMT}</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-tmt</outputDirectory>
+							<destFileName>entirej-tmt-renderer-defs.jar</destFileName>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
@@ -198,6 +218,7 @@
 	<properties>
 		<VERSION.CORE>DEVELOPMENT</VERSION.CORE>
 		<VERSION.RWT>DEVELOPMENT</VERSION.RWT>
+		<VERSION.TMT>DEVELOPMENT</VERSION.TMT>
 		<VERSION.FX>DEVELOPMENT</VERSION.FX>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 	</properties>
