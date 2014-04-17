@@ -25,7 +25,7 @@
 
 	<groupId>org.entirej.ide</groupId>
 	<artifactId>org.entirej.ide.libs</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
+	<version>2.1.2-SNAPSHOT</version>
 
 	<name>Entirej-IDE-lib-Updater</name>
 
