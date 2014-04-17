@@ -2433,6 +2433,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     case GROUP:
                         nodes.add(new GroupCanvasNode(this, canvas));
                         break;
+                    case SPLIT:
+                        nodes.add(new SplitCanvasNode(this, canvas));
+                        break;
                     case POPUP:
                         nodes.add(new PopupCanvasNode(this, canvas));
                         break;
