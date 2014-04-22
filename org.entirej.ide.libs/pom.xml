@@ -190,7 +190,7 @@
 							<destFileName>entirej-rwt-appframework-rcp.jar</destFileName>
 						</artifactItem>
 						
-						<!-- TMT_BASE -->
+						<!-- TMT_BASE 
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-tabris</artifactId>
@@ -209,6 +209,8 @@
 							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-tmt</outputDirectory>
 							<destFileName>entirej-tmt-renderer-defs.jar</destFileName>
 						</artifactItem>
+						
+						 -->
 					</artifactItems>
 				</configuration>
 			</plugin>
