@@ -37,8 +37,6 @@
 				<version>2.8</version>
 				<configuration>
 	               <overWriteIfNewer>true</overWriteIfNewer>
-	               <overWriteReleases>true</overWriteReleases>
-	               <overWriteSnapshots>true</overWriteSnapshots>
 					<artifactItems>
 						<!-- CORE -->
 						<artifactItem>
