@@ -29,7 +29,6 @@ public class EJPluginAssignedRendererContainer
 {
     
     private List<EJPluginRenderer> _renderers;
-    private EJPluginRenderer       _lastAddedRenderer;
     
     private EJRendererType         _rendererType;
     
@@ -46,7 +45,6 @@ public class EJPluginAssignedRendererContainer
             renderer.clear();
         }
         _renderers.clear();
-        _lastAddedRenderer = null;
     }
     
     public EJRendererType getRendererType()
@@ -73,7 +71,13 @@ public class EJPluginAssignedRendererContainer
         if (rendererAssignment != null)
         {
             _renderers.add(rendererAssignment);
-            _lastAddedRenderer = rendererAssignment;
+        }
+    }
+    public void addRendererAssignment(int index,EJPluginRenderer rendererAssignment)
+    {
+        if (rendererAssignment != null)
+        {
+            _renderers.add(index,rendererAssignment);
         }
     }
     
@@ -88,10 +92,7 @@ public class EJPluginAssignedRendererContainer
             if (props.getAssignedName().equalsIgnoreCase(name))
             {
                 iti.remove();
-                if (_lastAddedRenderer == props)
-                {
-                    _lastAddedRenderer = null;
-                }
+
                 break;
             }
         }
@@ -102,10 +103,7 @@ public class EJPluginAssignedRendererContainer
         _renderers.remove(rendererAssignment);
     }
     
-    public EJPluginRenderer getLastAddedRenderer()
-    {
-        return _lastAddedRenderer;
-    }
+
     
     /**
      * Used to retrieve a specific renderer

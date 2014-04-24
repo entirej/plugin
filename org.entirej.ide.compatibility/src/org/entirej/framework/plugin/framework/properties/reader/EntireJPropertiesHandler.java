@@ -47,7 +47,6 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
     private static final String            FORM_RENDERERS                    = "formRenderers";
     private static final String            BLOCK_RENDERERS                   = "blockRenderers";
     private static final String            ITEM_RENDERERS                    = "itemRenderers";
-    private static final String            ITEM_RENDERER_DATA_TYPE           = "renderedDataType";
     private static final String            LOV_RENDERERS                     = "lovRenderers";
     private static final String            MENU_RENDERERS                    = "menuRenderers";
     private static final String            APP_COMP_RENDERERS                = "appCompRenderers";
@@ -181,11 +180,7 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
     @Override
     public void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
     {
-        if (_selectingItemRenderers && name.equals(ITEM_RENDERER_DATA_TYPE))
-        {
-            addItemRendererDataType(value);
-            return;
-        }
+
         
         if (name.endsWith(FRAMEWORK))
         {
@@ -318,11 +313,7 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
         _properties.getItemRendererContainer().addRendererAssignment(def);
     }
     
-    private void addItemRendererDataType(String name)
-    {
-        EJPluginRenderer renderer = _properties.getItemRendererContainer().getLastAddedRenderer();
-        renderer.addDataTypeName(name);
-    }
+    
     
     private void addLovRenderer(Attributes attributes)
     {
