@@ -103,6 +103,11 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
             styledString.append(source.getLabel(), StyledString.COUNTER_STYLER);
 
         }
+        if (source.isMandatory())
+        {
+            styledString.append(" [ * ] ", StyledString.DECORATIONS_STYLER);
+            
+        }
     }
 
     @Override
