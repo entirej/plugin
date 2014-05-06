@@ -551,8 +551,8 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 }
             }
             
-            
-         // adding Actions
+            builder.append("\n");
+            // adding Actions
             for (String action : actions)
             {
                 builder.append("    public static final String AC_");
