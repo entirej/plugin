@@ -127,8 +127,9 @@ public class FormHandler extends EntireJTagHandler
         {
             String paramName = attributes.getValue("name");
             String dataTypeName = attributes.getValue("dataType");
+            String defaultValue = attributes.getValue("defaultValue");
             
-            _formProperties.addFormParameter(new EJPluginApplicationParameter(paramName, dataTypeName));
+            _formProperties.addFormParameter(new EJPluginApplicationParameter(paramName, dataTypeName,defaultValue));
         }
     }
     

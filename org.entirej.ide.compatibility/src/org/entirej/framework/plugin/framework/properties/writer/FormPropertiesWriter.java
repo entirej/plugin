@@ -98,6 +98,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                         {
                             writePROPERTY(buffer, "name", parameter.getName());
                             writePROPERTY(buffer, "dataType", parameter.getDataTypeName());
+                            writePROPERTY(buffer, "defaultValue", parameter.getDefaultValue());
                             closeOpenTAG(buffer);
                         }
                         closeTAG(buffer, "formParameter");

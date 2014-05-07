@@ -316,6 +316,12 @@ public class ParametersPart extends SectionPart
                     ss.append(type.getDataTypeName(), StyledString.COUNTER_STYLER);
                     ss.append(" ] ", StyledString.QUALIFIER_STYLER);
                 }
+                
+                if (type.getDefaultValue() != null && type.getDefaultValue().length()>0)
+                {
+                    ss.append(" = ", StyledString.QUALIFIER_STYLER);
+                    ss.append(type.getDefaultValue(), StyledString.DECORATIONS_STYLER);
+                }
             }
             return ss;
         }
@@ -331,6 +337,7 @@ public class ParametersPart extends SectionPart
 
         private Text                         nameText;
         private Text                         dataTypeText;
+        private Text                         defaultValueText;
 
         public ParameterDialog(Shell parentShell, EJPluginApplicationParameter applicationParameter)
         {
@@ -387,6 +394,9 @@ public class ParametersPart extends SectionPart
             layout.numColumns = 4;
             layout.verticalSpacing = 9;
 
+            
+
+            
             Label nameLabel = new Label(container, SWT.NULL);
             nameLabel.setText("Parameter Name:");
             nameText = new Text(container, SWT.BORDER | SWT.SINGLE);
@@ -402,7 +412,6 @@ public class ParametersPart extends SectionPart
                     validate();
                 }
             });
-
             Label classLabel = new Label(container, SWT.NULL);
             classLabel.setText("Parameter Type:");
             dataTypeText = new Text(container, SWT.BORDER | SWT.SINGLE);
@@ -413,7 +422,9 @@ public class ParametersPart extends SectionPart
             {
                 public void modifyText(ModifyEvent e)
                 {
+                    verifyDefaultValue();
                     validate();
+                    
                 }
             });
 
@@ -445,8 +456,40 @@ public class ParametersPart extends SectionPart
             buttonGd.widthHint = 60;
             _dataTypeChoiceButton.setLayoutData(buttonGd);
 
+            Label defaultValueLabel = new Label(container, SWT.NULL);
+            defaultValueLabel.setText("Default Value:");
+            defaultValueText = new Text(container, SWT.BORDER | SWT.SINGLE);
+            if (applicationParameter != null && applicationParameter.getDefaultValue() != null)
+                defaultValueText.setText(applicationParameter.getDefaultValue());
+             gd = new GridData(GridData.FILL_HORIZONTAL);
+            gd.horizontalSpan = 3;
+            defaultValueText.setLayoutData(gd);
+            defaultValueText.addModifyListener(new ModifyListener()
+            {
+                public void modifyText(ModifyEvent e)
+                {
+                    validate();
+                }
+            });
+            verifyDefaultValue();
         }
 
+        
+        private void verifyDefaultValue()
+        {
+            String type = dataTypeText.getText();
+            if(type.length()==0 || !EJPluginApplicationParameter.isValidDefaultValueType(type))
+            {
+                defaultValueText.setEnabled(false);
+                defaultValueText.setText("");
+            }
+            else
+            {
+                defaultValueText.setEnabled(true);
+                
+            }
+        }
+        
         private void validate()
         {
             IStatus iStatus = org.eclipse.core.runtime.Status.OK_STATUS;
@@ -462,6 +505,12 @@ public class ParametersPart extends SectionPart
             if (iStatus.isOK() && dataTypeText != null && (dataTypeText.getText().length() == 0))
             {
                 iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a parameter type.");
+            }
+            else  if (iStatus.isOK() && defaultValueText != null && (defaultValueText.getText().length() != 0))
+            {
+                String defaultValueError = EJPluginApplicationParameter.validateDefaultValue(dataTypeText.getText(), defaultValueText.getText());
+                if(defaultValueError!=null)
+                    iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), defaultValueError);
             }
 
             if (iStatus.isOK() && nameText != null)
@@ -481,8 +530,8 @@ public class ParametersPart extends SectionPart
                 setMessage(iStatus.getMessage(), IMessageProvider.ERROR);
 
             }
-
-            getButton(IDialogConstants.OK_ID).setEnabled(iStatus.isOK());
+            if(getButton(IDialogConstants.OK_ID)!=null)
+                getButton(IDialogConstants.OK_ID).setEnabled(iStatus.isOK());
 
         }
 
@@ -503,6 +552,7 @@ public class ParametersPart extends SectionPart
                 {
                     applicationParameter.setName(nameText.getText());
                     applicationParameter.setDataTypeName(dataTypeText.getText());
+                    applicationParameter.setDefaultValue(defaultValueText.getText());
                 }
                 super.buttonPressed(buttonId);
             }

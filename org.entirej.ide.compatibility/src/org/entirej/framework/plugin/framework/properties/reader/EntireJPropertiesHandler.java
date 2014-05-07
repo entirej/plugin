@@ -126,8 +126,9 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
         {
             String paramName = attributes.getValue("name");
             String dataTypeName = attributes.getValue("dataType");
+            String defaultValue = attributes.getValue("defaultValue");
             
-            _properties.addApplicationLevelParameter(new EJPluginApplicationParameter(paramName, dataTypeName));
+            _properties.addApplicationLevelParameter(new EJPluginApplicationParameter(paramName, dataTypeName,defaultValue));
         }
         else if (name.equals(FORMS_PACKAGE))
         {
