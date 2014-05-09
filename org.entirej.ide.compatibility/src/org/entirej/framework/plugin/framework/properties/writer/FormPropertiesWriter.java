@@ -60,6 +60,8 @@ import org.entirej.framework.plugin.framework.properties.EJPluginReusableBlockPr
 import org.entirej.framework.plugin.framework.properties.EJPluginReusableLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginUpdateScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockContainerItem;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockItemContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
@@ -526,26 +528,61 @@ public class FormPropertiesWriter extends AbstractXmlWriter
     
     protected void addBlockList(EJPluginBlockContainer blockContainer, StringBuffer buffer)
     {
-        Iterator<EJPluginBlockProperties> blocks = blockContainer.getAllBlockProperties().iterator();
-        while (blocks.hasNext())
+        
+        List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
+        for (BlockContainerItem item : blockContainerItems)
         {
-            EJPluginBlockProperties blockProps = blocks.next();
-            
-            if(blockProps.isImportFromObjectGroup())
+            if(item instanceof EJPluginBlockProperties)
             {
-                addObjectGroupBlockProperties(blockProps, buffer);
+                EJPluginBlockProperties blockProps = (EJPluginBlockProperties) item;
+                if(blockProps.isImportFromObjectGroup())
+                {
+                    addObjectGroupBlockProperties(blockProps, buffer);
+                    continue;
+                }
+                
+                if (blockProps.isReferenceBlock())
+                {
+                    addReferencedBlockProperties(blockProps, buffer);
+                }
+                else
+                {
+                    addBlockProperties(blockProps, buffer);
+                }
                 continue;
             }
-            
-            if (blockProps.isReferenceBlock())
+            //write Block groups
+            if(item instanceof BlockGroup)
             {
-                addReferencedBlockProperties(blockProps, buffer);
-            }
-            else
-            {
-                addBlockProperties(blockProps, buffer);
+                BlockGroup group = (BlockGroup) item;
+                startOpenTAG(buffer, "blockGroup");
+                {
+                    writePROPERTY(buffer, "name", group.getName());
+                    closeOpenTAG(buffer);
+                    List<EJPluginBlockProperties> allBlockProperties = group.getAllBlockProperties();
+                    for (EJPluginBlockProperties blockProps : allBlockProperties)
+                    {
+                        if(blockProps.isImportFromObjectGroup())
+                        {
+                            addObjectGroupBlockProperties(blockProps, buffer);
+                            continue;
+                        }
+                        
+                        if (blockProps.isReferenceBlock())
+                        {
+                            addReferencedBlockProperties(blockProps, buffer);
+                        }
+                        else
+                        {
+                            addBlockProperties(blockProps, buffer);
+                        }
+                        continue;
+                    }
+                }
+                endTAG(buffer, "blockGroup");
             }
         }
+        
     }
     
     protected void addLovDefinitionList(EJPluginLovDefinitionContainer lovDefinitionContainer, StringBuffer buffer)

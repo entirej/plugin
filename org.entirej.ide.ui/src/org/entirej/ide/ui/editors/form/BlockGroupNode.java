@@ -78,6 +78,8 @@ import org.entirej.framework.plugin.framework.properties.EJPluginTabPageProperti
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockContainerItem;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
@@ -204,11 +206,23 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     public AbstractNode<?>[] getChildren()
     {
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-        List<EJPluginBlockProperties> allBlockProperties = source.getAllBlockProperties();
-        for (EJPluginBlockProperties blockProperties : allBlockProperties)
+
+        List<BlockContainerItem> blockContainerItems = source.getBlockContainerItems();
+
+        for (BlockContainerItem item : blockContainerItems)
         {
-            nodes.add(new BlockNode(this, blockProperties));
+            if (item instanceof EJPluginBlockProperties)
+            {
+
+                nodes.add(new BlockNode(this, (EJPluginBlockProperties) item));
+            }
+            else if (item instanceof BlockGroup)
+            {
+
+                nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
+            }
         }
+
         return nodes.toArray(new AbstractNode<?>[0]);
     }
 
@@ -217,7 +231,39 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
 
         return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(null),
-                treeSection.createNewRefBlockAction(true) };
+                treeSection.createNewRefBlockAction(true),null,createNewBlockGroupAction() };
+    }
+    
+    
+    public Action createNewBlockGroupAction()
+    {
+        
+        return new Action("New Block Group")
+        {
+            
+            @Override
+            public void runWithEvent(Event event)
+            {
+                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), "New Block Group", "Group Name", null,
+                        new IInputValidator()
+                        {
+
+                            public String isValid(String newText)
+                            {
+                                if (newText == null || newText.trim().length() == 0)
+                                    return "Group name can't be empty.";
+                                return null;
+                            }
+                        });
+                if (dlg.open() == Window.OK)
+                {
+                    BlockGroup blockGroup = new BlockGroup();
+                    blockGroup.setName(dlg.getValue());
+                    source.addBlockProperties(blockGroup);
+                    treeSection.refresh(BlockGroupNode.this);
+                }
+            }
+        };
     }
 
     protected boolean supportBlockDelete()
@@ -240,6 +286,166 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
         return new AbstractDescriptor<?>[] {};
     }
+    
+    
+    class BlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
+    {
+        public BlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
+        {
+            super(parent, source);
+
+        }
+
+        @Override
+        public <S> S getAdapter(Class<S> adapter)
+        {
+            return BlockGroupNode.this.getAdapter(adapter);
+        }
+        
+        @Override
+        public String getName()
+        {
+            return source.getName();
+        }
+
+        public void addOverview(StyledString styledString)
+        {
+            //todo:
+            
+        }
+
+        public boolean canMove()
+        {
+            return true;
+        }
+
+        public Object getNeighborSource()
+        {
+            return source;
+        }
+        
+        @Override
+        public Image getImage()
+        {
+            return BlockGroupNode.this.getImage();
+        }
+        
+        
+        @Override
+        public INodeDeleteProvider getDeleteProvider()
+        {
+            
+                return new INodeDeleteProvider()
+                {
+
+                    public void delete(boolean cleanup)
+                    {
+
+                        BlockGroupNode.this.source.removeBlockContainerItem(source);
+                        
+                        editor.setDirty(true);
+                        treeSection.refresh(BlockGroupNode.this);
+
+                    }
+                };
+        }
+        
+        
+        @Override
+        public INodeRenameProvider getRenameProvider()
+        {
+            return new INodeRenameProvider()
+            {
+
+                public void rename()
+                {
+                    InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Rename Block Group [%s]", source.getName()),
+                            "Group Name", source.getName(), new IInputValidator()
+                            {
+
+                                public String isValid(String newText)
+                                {
+                                    if (newText == null || newText.trim().length() == 0)
+                                        return "Canvas name can't be empty.";
+                                    if (source.getName().equals(newText.trim()))
+                                        return "";
+                                    if (source.getName().equalsIgnoreCase(newText.trim()))
+                                        return null;
+                                    return null;
+                                }
+                            });
+                    if (dlg.open() == Window.OK)
+                    {
+                        // String oldName = source.getName();
+                        String newName = dlg.getValue().trim();
+                       
+                        source.setName(newName);
+                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        {
+
+                            public void run()
+                            {
+                                editor.setDirty(true);
+                                treeSection.refresh();
+
+                            }
+                        });
+                    }
+
+                }
+            };
+        }
+        
+        @Override
+        public boolean isLeaf()
+        {
+            return source.isEmpty();
+        }
+        
+        
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+
+            List<EJPluginBlockProperties> allBlockProperties = source.getAllBlockProperties();
+            for (EJPluginBlockProperties properties : allBlockProperties)
+            {
+                nodes.add(new BlockNode(this, properties));
+            }
+
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+        
+        
+        public boolean canMove(Neighbor relation, Object source)
+        {
+            return source instanceof EJPluginBlockProperties;
+        }
+
+        public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    source.addBlockProperties(index, (EJPluginBlockProperties) dSource);
+                }
+            }
+            else
+                source.addBlockProperties((EJPluginBlockProperties) dSource);
+
+        }
+        
+        
+    }
+    
 
     class BlockNode extends AbstractNode<EJPluginBlockProperties> implements Neighbor, Movable, NodeOverview
     {
@@ -821,14 +1027,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     public void delete(boolean cleanup)
                     {
 
-                        if (cleanup)
-                        {
-                            BlockGroupNode.this.source.removeBlockProperties(source);
-                        }
-                        else
-                        {
-                            BlockGroupNode.this.source.getAllBlockProperties().remove(source);
-                        }
+                        BlockGroupNode.this.source.removeBlockProperties(source,cleanup);
+                        
                         editor.setDirty(true);
                         treeSection.refresh(BlockGroupNode.this);
 
@@ -1864,7 +2064,11 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 }
             };
         }
+       
 
+        
+        
+        
         public Action createReplicateAction()
         {
 
@@ -1941,7 +2145,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
     public boolean canMove(Neighbor relation, Object source)
     {
-        return source instanceof EJPluginBlockProperties;
+        return source instanceof BlockContainerItem;
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -1949,18 +2153,18 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         if (neighbor != null)
         {
             Object methodNeighbor = neighbor.getNeighborSource();
-            List<EJPluginBlockProperties> items = source.getAllBlockProperties();
+            List<BlockContainerItem> items = source.getBlockContainerItems();
             if (items.contains(methodNeighbor))
             {
                 int index = items.indexOf(methodNeighbor);
                 if (!before)
                     index++;
 
-                source.addBlockProperties(index, (EJPluginBlockProperties) dSource);
+                source.addBlockProperties(index, (BlockContainerItem) dSource);
             }
         }
         else
-            source.addBlockProperties((EJPluginBlockProperties) dSource);
+            source.addBlockProperties((BlockContainerItem) dSource);
 
     }
 }

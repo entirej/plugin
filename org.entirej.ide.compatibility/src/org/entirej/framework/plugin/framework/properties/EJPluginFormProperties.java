@@ -103,25 +103,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         return this;
     }
     
-    public void dispose()
-    {
-        if (_entireJProperties != null) _entireJProperties.clear();
-        _entireJProperties = null;
-        _blockContainer.dispose();
-        _objGroupContainer.dispose();
-        _canvasContainer.dispose();
-        _relationContainer.dispose();
-        _lovDefinitionContainer.dispose();
-        _applicationProperties.clear();
-        _formParameters.clear();
-        
-        _formRendererProperties = null;
-        
-        if (_formsProject != null)
-        {
-            _formsProject = null;
-        }
-    }
+
     
     /**
      * This method will be called after the form has been read
