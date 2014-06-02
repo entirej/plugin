@@ -23,19 +23,18 @@ import java.util.List;
 
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 
 public class EJPluginBlockContainer
 {
-    private List<EJPluginBlockProperties> _blockProperties;
+    private List<BlockContainerItem> _blockProperties;
     private EJPluginFormProperties        _formProperties;
     
     public EJPluginBlockContainer(EJPluginFormProperties formProperties)
     {
         _formProperties = formProperties;
-        _blockProperties = new ArrayList<EJPluginBlockProperties>();
+        _blockProperties = new ArrayList<BlockContainerItem>();
     }
     
     public EJPluginFormProperties getFormProperties()
@@ -43,16 +42,7 @@ public class EJPluginBlockContainer
         return _formProperties;
     }
     
-    public void dispose()
-    {
-        for (EJPluginBlockProperties props : _blockProperties)
-        {
-            props.dispose();
-        }
-        _blockProperties.clear();
-        _formProperties = null;
-        _blockProperties = null;
-    }
+
     
     public boolean isEmpty()
     {
@@ -62,10 +52,21 @@ public class EJPluginBlockContainer
     
     public boolean contains(String blockName)
     {
-        Iterator<EJPluginBlockProperties> iti = _blockProperties.iterator();
+        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         while (iti.hasNext())
         {
-            EJPluginBlockProperties props = iti.next();
+            
+            BlockContainerItem containerItem = iti.next();
+            if((containerItem instanceof BlockGroup))
+            {
+                EJPluginBlockProperties blockProperties = ((BlockGroup)containerItem).getBlockProperties(blockName);
+                if(blockProperties!=null)
+                {
+                    return true;
+                }
+                continue;
+            }
+            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
             if (props.getName().equalsIgnoreCase(blockName))
             {
                 return true;
@@ -74,7 +75,7 @@ public class EJPluginBlockContainer
         return false;
     }
     
-    public void addBlockProperties(EJPluginBlockProperties blockProperties)
+    public void addBlockProperties(BlockContainerItem blockProperties)
     {
         if (blockProperties != null)
         {
@@ -82,23 +83,40 @@ public class EJPluginBlockContainer
         }
     }
     
+    public void removeBlockContainerItem(BlockContainerItem blockProperties)
+    {
+        if (blockProperties != null)
+        {
+            _blockProperties.remove(blockProperties);
+        }
+    }
+    
     public void replaceBlockProperties(EJPluginBlockProperties oldProp, EJPluginBlockProperties newProp)
     {
         if (oldProp != null && newProp !=null)
         {
-            int indexOf = _blockProperties.indexOf(oldProp);
-            if(indexOf>-1)
+            
+            BlockGroup blockGroupByBlock = getBlockGroupByBlock(oldProp);
+            if(blockGroupByBlock==null)
             {
-                _blockProperties.set(indexOf, newProp);
+                int indexOf = _blockProperties.indexOf(oldProp);
+                if(indexOf>-1)
+                {
+                    _blockProperties.set(indexOf, newProp);
+                }
+                else
+                {
+                    _blockProperties.add(newProp);
+                }
             }
             else
             {
-                _blockProperties.add(newProp);
+                blockGroupByBlock.replaceBlockProperties(oldProp, newProp);
             }
         }
     }
     
-    public void addBlockProperties(int index, EJPluginBlockProperties blockProperties)
+    public void addBlockProperties(int index, BlockContainerItem blockProperties)
     {
         if (blockProperties != null)
         {
@@ -106,13 +124,13 @@ public class EJPluginBlockContainer
         }
     }
     
-    public void removeBlockProperties(EJPluginBlockProperties props)
+    public void removeBlockProperties(EJPluginBlockProperties props,boolean cleanup)
     {
         
-        if (_blockProperties.contains(props))
+        if (cleanup &&contains(props.getName()))
         {
             
-            if (props.isMirrorChild())
+            if (props.isMirrorChild() && props.getMirrorParent()!=null)
             {
                 props.getMirrorParent().removeMirrorChild(props);
             }
@@ -120,7 +138,7 @@ public class EJPluginBlockContainer
             // First remove it from all mirrored blocks
             for (EJPluginBlockProperties mirroredBlock : new ArrayList<EJPluginBlockProperties>(props.getMirrorChildren()))
             {
-                removeBlockProperties(mirroredBlock);
+                removeBlockProperties(mirroredBlock,cleanup);
             }
             
             List<EJPluginBlockProperties> allBlockProperties = new ArrayList<EJPluginBlockProperties>(props.getFormProperties().getBlockContainer()
@@ -180,8 +198,22 @@ public class EJPluginBlockContainer
                 }
             }
             
-            _blockProperties.remove(props);
             
+            
+            
+            
+            
+        }
+        
+        
+        BlockGroup blockGroup = getBlockGroupByBlock(props);
+        if(blockGroup==null)
+        {
+            _blockProperties.remove(props);
+        }
+        else
+        {
+            blockGroup.removeBlockProperties(props); 
         }
         
     }
@@ -199,15 +231,55 @@ public class EJPluginBlockContainer
     public EJPluginBlockProperties getBlockProperties(String blockName)
     {
         
-        Iterator<EJPluginBlockProperties> iti = _blockProperties.iterator();
+        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
         {
-            EJPluginBlockProperties props = iti.next();
+
+            BlockContainerItem containerItem = iti.next();
+            if((containerItem instanceof BlockGroup))
+            {
+                EJPluginBlockProperties blockProperties = ((BlockGroup)containerItem).getBlockProperties(blockName);
+                if(blockProperties!=null)
+                {
+                    return blockProperties;
+                }
+                continue;
+            }
+            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
             
             if (props.getName().equalsIgnoreCase(blockName))
             {
                 return props;
+            }
+        }
+        return null;
+    }
+    
+    
+    public BlockGroup getBlockGroupByBlock(EJPluginBlockProperties blockProperties)
+    {
+        
+       Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        
+        while (iti.hasNext())
+        {
+
+            BlockContainerItem containerItem = iti.next();
+            if((containerItem instanceof BlockGroup))
+            {
+                BlockGroup blockGroup = (BlockGroup)containerItem;
+                if(blockGroup.getBlockProperties(blockProperties.getName())!=null)
+                {
+                    return blockGroup;
+                }
+                continue;
+            }
+            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
+            
+            if (props.equals(blockProperties))
+            {
+                return null;
             }
         }
         return null;
@@ -224,8 +296,30 @@ public class EJPluginBlockContainer
      */
     public List<EJPluginBlockProperties> getAllBlockProperties()
     {
+        List<EJPluginBlockProperties> list = new ArrayList<EJPluginBlockProperties>();
+        
+        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        while (iti.hasNext())
+        {
+            
+            BlockContainerItem containerItem = iti.next();
+            if((containerItem instanceof BlockGroup))
+            {
+                list.addAll(((BlockGroup)containerItem).getAllBlockProperties());
+                continue;
+            }
+            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
+            list.add(props);
+        }
+        
+        return list;
+    }
+    
+    public List<BlockContainerItem> getBlockContainerItems()
+    {
         return _blockProperties;
     }
+    
     
     public String getDefaultBlockName()
     {
@@ -239,4 +333,120 @@ public class EJPluginBlockContainer
             }
         }
     }
+    
+    
+    public static interface BlockContainerItem
+    {
+        //marker interface
+    }
+    
+  
+    public static class BlockGroup implements BlockContainerItem
+    {
+        
+        private String name;
+        
+        public void setName(String name)
+        {
+            this.name = name;
+        }
+        
+        public String getName()
+        {
+            return name;
+        }
+        
+        private List<EJPluginBlockProperties> _blockProperties = new ArrayList<EJPluginBlockProperties>();
+        
+        
+        public boolean isEmpty()
+        {
+            return _blockProperties.isEmpty();
+            
+        }
+        
+        public boolean contains(String blockName)
+        {
+            Iterator<EJPluginBlockProperties> iti = _blockProperties.iterator();
+            while (iti.hasNext())
+            {
+                EJPluginBlockProperties props = iti.next();
+                if (props.getName().equalsIgnoreCase(blockName))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public void addBlockProperties(EJPluginBlockProperties blockProperties)
+        {
+            if (blockProperties != null)
+            {
+                _blockProperties.add(blockProperties);
+            }
+        }
+        
+        public void replaceBlockProperties(EJPluginBlockProperties oldProp, EJPluginBlockProperties newProp)
+        {
+            if (oldProp != null && newProp !=null)
+            {
+                int indexOf = _blockProperties.indexOf(oldProp);
+                if(indexOf>-1)
+                {
+                    _blockProperties.set(indexOf, newProp);
+                }
+                else
+                {
+                    _blockProperties.add(newProp);
+                }
+            }
+        }
+        
+        public void addBlockProperties(int index, EJPluginBlockProperties blockProperties)
+        {
+            if (blockProperties != null)
+            {
+                _blockProperties.add(index, blockProperties);
+            }
+        }
+        
+        public void removeBlockProperties(EJPluginBlockProperties props)
+        {
+            
+            if (_blockProperties.contains(props))
+            {
+
+                
+                _blockProperties.remove(props);
+                
+            }
+            
+        }
+        
+
+        public EJPluginBlockProperties getBlockProperties(String blockName)
+        {
+            
+            Iterator<EJPluginBlockProperties> iti = _blockProperties.iterator();
+            
+            while (iti.hasNext())
+            {
+                EJPluginBlockProperties props = iti.next();
+                
+                if (props.getName().equalsIgnoreCase(blockName))
+                {
+                    return props;
+                }
+            }
+            return null;
+        }
+        
+
+        public List<EJPluginBlockProperties> getAllBlockProperties()
+        {
+            return _blockProperties;
+        }
+    }
+    
 }

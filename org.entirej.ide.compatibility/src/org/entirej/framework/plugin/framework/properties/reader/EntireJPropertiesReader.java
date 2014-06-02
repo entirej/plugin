@@ -79,6 +79,26 @@ public class EntireJPropertiesReader
                 }
                 
             }
+            // try automatic renderer settings fix 
+            if (EJRWTRendererConfigFix.isRWTCF(newProperties))
+            {
+                
+                try
+                {
+                    EJRWTRendererConfigFix rendererFix = new EJRWTRendererConfigFix();
+                    boolean configed = rendererFix.config(newProperties);
+                    if(configed)
+                    {
+                        new EntireJPropertiesWriter().saveEntireJProperitesFile(newProperties, file, null);
+                    }
+                    
+                }
+                catch (Exception e)
+                {
+                    // ignore
+                }
+                
+            }
             
         }
         catch (SAXException e)

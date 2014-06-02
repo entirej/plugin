@@ -40,16 +40,7 @@ public class EJPluginObjectGroupContainer
         return _formProperties;
     }
     
-    public void dispose()
-    {
-        for (EJPluginObjectGroupProperties props : _objGroupProperties)
-        {
-            props.dispose();
-        }
-        _objGroupProperties.clear();
-        _formProperties = null;
-        _objGroupProperties = null;
-    }
+
     
     public boolean isEmpty()
     {

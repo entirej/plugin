@@ -46,8 +46,7 @@ public class EJFormEditor extends AbstractEJFormEditor
             try
             {
 
-                if (formProperties != null)
-                    formProperties.dispose();
+                
                 try
                 {
                     inStream = file.getContents();

@@ -76,9 +76,6 @@ public class EJRefLovEditor extends AbstractEJFormEditor
             InputStream inStream = null;
             try
             {
-
-                if (formProperties != null)
-                    formProperties.dispose();
                 try
                 {
                     inStream = file.getContents();

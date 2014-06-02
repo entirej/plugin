@@ -1808,6 +1808,22 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             return "";
                         }
                     });
+                    /*
+                    factory.createColumn("Default Value", 120, new ColumnLabelProvider()
+                    {
+                        
+                        @Override
+                        public String getText(Object element)
+                        {
+                            
+                            if (element instanceof EJPluginApplicationParameter)
+                            {
+                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
+                                return entry.getDefaultValue();
+                            }
+                            return "";
+                        }
+                    });*/
                     tableViewer.setContentProvider(new IStructuredContentProvider()
                     {
 
@@ -1905,6 +1921,28 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                     };
                     typeDescriptor.setBaseClass(Object.class.getName());
+                    /*
+                    AbstractTextDescriptor defaultValueDescriptor = new AbstractTextDescriptor("Default Value")
+                    {
+                        
+                        @Override
+                        public void setValue(String value)
+                        {
+                            entry.setDefaultValue(value);
+                            editor.setDirty(true);
+                            if (tableViewer != null)
+                            {
+                                tableViewer.refresh(entry);
+                            }
+                        }
+                        
+                        @Override
+                        public String getValue()
+                        {
+                            return entry.getDefaultValue();
+                        }
+                    };
+                    return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor,defaultValueDescriptor };*/
                     return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor };
                 }
             };

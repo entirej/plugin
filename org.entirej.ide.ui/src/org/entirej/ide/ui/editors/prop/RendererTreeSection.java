@@ -45,6 +45,10 @@ import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeContentProvider;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeContext;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Movable;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class RendererTreeSection extends AbstractNodeTreeSection
 {
@@ -55,6 +59,8 @@ public class RendererTreeSection extends AbstractNodeTreeSection
         super(editor, page, parent);
         this.editor = editor;
         initTree();
+
+        addDnDSupport(null);// no root move need in layout
     }
 
     @Override
@@ -179,7 +185,7 @@ public class RendererTreeSection extends AbstractNodeTreeSection
         };
     }
 
-    private class GroupNode extends AbstractNode<EJPluginAssignedRendererContainer>
+    private class GroupNode extends AbstractNode<EJPluginAssignedRendererContainer> implements  NodeMoveProvider
     {
         private final Image  GROUP = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
         private final String lable;
@@ -233,9 +239,35 @@ public class RendererTreeSection extends AbstractNodeTreeSection
         {
             return new Action[] { createNewRenderer(source.getRendererType()) };
         }
+
+        public boolean canMove(Neighbor relation, Object source)
+        {
+           
+            return source instanceof EJPluginRenderer && this.source.getRendererType()== (((EJPluginRenderer)source).getRendererType());
+        }
+
+        public void move(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginRenderer> items = new ArrayList<EJPluginRenderer>(this.source.getAllRenderers());
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    this.source.addRendererAssignment(index,(EJPluginRenderer)source);
+                }
+            }
+            else
+                this.source.addRendererAssignment((EJPluginRenderer)source);
+            
+        }
     }
 
-    private class RendererNode extends AbstractNode<EJPluginRenderer>
+    private class RendererNode extends AbstractNode<EJPluginRenderer> implements Neighbor, Movable
     {
         private final Image ELEMENT = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 
@@ -352,6 +384,16 @@ public class RendererTreeSection extends AbstractNodeTreeSection
             nameDescriptor.setRequired(true);
             typeDescriptor.setRequired(true);
             return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor };
+        }
+
+        public boolean canMove()
+        {
+            return true;
+        }
+
+        public Object getNeighborSource()
+        {
+            return source;
         }
     }
 

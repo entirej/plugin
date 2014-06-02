@@ -88,7 +88,10 @@ public class BlockItemSelectionPage extends WizardPage
         createSeparator(composite, nColumns);
 
         createBlockRendererControls(composite, nColumns);
-        createServiceItemOptionControls(composite, nColumns);
+        if(!wizardContext.isContorl())
+        {
+            createServiceItemOptionControls(composite, nColumns);
+        }
         setControl(composite);
 
         setPageComplete(false);

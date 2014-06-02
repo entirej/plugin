@@ -19,6 +19,7 @@
 package org.entirej.framework.dev.properties.interfaces;
 
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
+import org.entirej.framework.core.properties.interfaces.EJEntireJProperties;
 
 public interface EJDevBlockDisplayProperties
 {
@@ -45,6 +46,9 @@ public interface EJDevBlockDisplayProperties
      * @return The name of this block
      */
     public String getName();
+    
+    
+    public EJEntireJProperties getEntireJProperties();
 
     /**
      * Returns the rendering properties for this block

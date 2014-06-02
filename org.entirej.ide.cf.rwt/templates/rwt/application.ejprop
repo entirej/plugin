@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entirejFramework>
-	<version><![CDATA[2.0]]></version>
+	<version><![CDATA[2.2]]></version>
     <applicationManager><![CDATA[org.entirej.applicationframework.rwt.application.EJRWTApplicationManager]]></applicationManager>
     <applicationManagerDefinition><![CDATA[org.entirej.applicationframework.rwt.renderers.application.EJRWTApplicationDefinition]]></applicationManagerDefinition>
     <connectionFactoryClassName><![CDATA[org.entirej.framework.core.EJDefaultConnectionFactory]]></connectionFactoryClassName>
@@ -74,6 +74,8 @@
             <renderer name="ButtonItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTButtonItemRenderer">
             </renderer>
             <renderer name="ComboItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTComboItemRenderer">
+            </renderer>
+            <renderer name="ListItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTListItemRenderer">
             </renderer>
             <renderer name="RadioItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTRadioGroupItemRenderer">
             </renderer>

@@ -117,7 +117,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
             if(block.isImportFromObjectGroup() && block.getReferencedObjectGroupName().equals(getName()))
             
             {
-                blockContainer.removeBlockProperties(block);
+                blockContainer.removeBlockProperties(block,true);
             }
         }
         

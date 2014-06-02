@@ -31,6 +31,8 @@ public interface BlockItemWizardContext
     List<EJPluginRenderer> getBlockItemRenderer();
 
     boolean hasBlockItem(String blockName);
+    
+    boolean isContorl();
 
     IJavaProject getProject();
 }

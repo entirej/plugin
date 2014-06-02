@@ -43,6 +43,7 @@ public class FormHandler extends EntireJTagHandler
     
     private static final String    ELEMENT_CANVAS                 = "canvas";
     private static final String    ELEMENT_BLOCK                  = "block";
+    private static final String    ELEMENT_BLOCK_GROUP            = "blockGroup";
     private static final String    ELEMENT_RELATION               = "relation";
     private static final String    ELEMENT_LOV_DEFINITION         = "lovDefinition";
     private static final String    ELEMENT_OBJGROUP_DEFINITION    = "objGroupDefinition";
@@ -69,6 +70,10 @@ public class FormHandler extends EntireJTagHandler
     public EntireJTagHandler getBlockHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
     {
         return new BlockHandler(formProperties, lovDefinitionProperties);
+    }
+    public EntireJTagHandler getBlockGroupHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
+    {
+        return new BlockGroupHandler(formProperties);
     }
     
     public EntireJTagHandler getLovDefinitionHandler(EJPluginFormProperties formProperties)
@@ -111,6 +116,10 @@ public class FormHandler extends EntireJTagHandler
         {
             setDelegate(getBlockHandler(_formProperties, null));
         }
+        else if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            setDelegate(getBlockGroupHandler(_formProperties, null));
+        }
         else if (name.equals(ELEMENT_RELATION))
         {
             setDelegate(new RelationHandler(_formProperties));
@@ -127,8 +136,9 @@ public class FormHandler extends EntireJTagHandler
         {
             String paramName = attributes.getValue("name");
             String dataTypeName = attributes.getValue("dataType");
+            String defaultValue = attributes.getValue("defaultValue");
             
-            _formProperties.addFormParameter(new EJPluginApplicationParameter(paramName, dataTypeName));
+            _formProperties.addFormParameter(new EJPluginApplicationParameter(paramName, dataTypeName,defaultValue));
         }
     }
     
@@ -207,6 +217,11 @@ public class FormHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_BLOCK))
         {
             _formProperties.getBlockContainer().addBlockProperties(((BlockHandler) currentDelegate).getBlockProperties());
+            return;
+        }
+        else if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            _formProperties.getBlockContainer().addBlockProperties(((BlockGroupHandler) currentDelegate).getBlockGroup());
             return;
         }
         else if (name.equals(ELEMENT_RELATION))

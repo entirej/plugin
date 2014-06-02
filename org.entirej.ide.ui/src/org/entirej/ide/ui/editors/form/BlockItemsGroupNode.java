@@ -633,35 +633,41 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     }
                 };
 
-                AbstractDescriptor<Boolean> blockServiceDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-                {
-
-                    @Override
-                    public Boolean getValue()
-                    {
-                        return source.isBlockServiceItem();
-                    }
-
-                    @Override
-                    public void setValue(Boolean value)
-                    {
-                        source.setBlockServiceItem(value.booleanValue());
-                        editor.setDirty(true);
-                        treeSection.refresh(ItemNode.this);
-
-                    }
-
-                    @Override
-                    public String getTooltip()
-                    {
-                        return "Indicates if this item is controlled by the blocks service. All Block Service Items must exist within the block service pojo. If you create a Block Service Item that does not exist in the pojo, then an exception will be thrown as soon as the Block Service is called to query, insert, update or delete data.";
-                    }
-
-                };
-                blockServiceDescriptor.setText("Block Service Item");
-
                 descriptors.add(dataTypeDescriptor);
-                descriptors.add(blockServiceDescriptor);
+                
+                if(source.getBlockProperties().isControlBlock())
+                {
+                    AbstractDescriptor<Boolean> blockServiceDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+                    {
+    
+                        @Override
+                        public Boolean getValue()
+                        {
+                            return source.isBlockServiceItem();
+                        }
+    
+                        @Override
+                        public void setValue(Boolean value)
+                        {
+                            source.setBlockServiceItem(value.booleanValue());
+                            editor.setDirty(true);
+                            treeSection.refresh(ItemNode.this);
+    
+                        }
+    
+                        @Override
+                        public String getTooltip()
+                        {
+                            return "Indicates if this item is controlled by the blocks service. All Block Service Items must exist within the block service pojo. If you create a Block Service Item that does not exist in the pojo, then an exception will be thrown as soon as the Block Service is called to query, insert, update or delete data.";
+                        }
+    
+                    };
+                    blockServiceDescriptor.setText("Block Service Item");
+                    
+    
+                    
+                    descriptors.add(blockServiceDescriptor);
+                }
             }
             AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Item Renderer",
                     "The renderer you have chosen for your item")
@@ -863,6 +869,11 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     public IJavaProject getProject()
                     {
                         return editor.getJavaProject();
+                    }
+                    
+                    public boolean isContorl()
+                    {
+                        return source.getBlockProperties().isControlBlock();
                     }
 
                     public List<EJPluginRenderer> getBlockItemRenderer()

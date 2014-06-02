@@ -69,15 +69,6 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
 
     }
 
-    @Override
-    public void dispose()
-    {
-
-        super.dispose();
-        if (formProperties != null)
-            formProperties.dispose();
-        formProperties = null;
-    }
 
     public EJPluginFormProperties getFormProperties()
     {

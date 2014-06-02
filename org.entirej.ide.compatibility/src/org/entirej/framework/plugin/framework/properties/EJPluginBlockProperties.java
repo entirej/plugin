@@ -51,6 +51,7 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevInsertScree
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevUpdateScreenRendererDefinition;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockItemContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginInsertScreenItemGroupContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginItemGroupContainer;
@@ -61,7 +62,7 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginUpda
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginFormPreviewProvider;
 import org.entirej.ide.core.EJCoreLog;
 
-public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDisplayProperties, EJPluginFormPreviewProvider
+public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDisplayProperties, EJPluginFormPreviewProvider,BlockContainerItem
 {
     
     /**
@@ -130,29 +131,7 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
         _mainScreenProperties = new EJPluginMainScreenProperties(this);
     }
     
-    public void dispose()
-    {
-        for (EJPluginBlockProperties props : _mirrorChildren)
-        {
-            props.dispose();
-        }
-        _mirrorChildren.clear();
-        _itemContainer.dispose();
-        
-        _lovDefinition = null;
-        _formProperties = null;
-        _mainScreenProperties = null;
-        _blockRendererProperties = null;
-        _queryScreenRendererProperties = null;
-        _insertScreenRendererProperties = null;
-        _updateScreenRendererProperties = null;
-        
-        _mainScreenItemGroupContainer.dispose();
-        _insertScreenItemGroupContainer.dispose();
-        _updateScreenItemGroupContainer.dispose();
-        _queryScreenItemGroupContainer.dispose();
-        _lovMappingContainer.dispose();
-    }
+ 
     
     /**
      * Indicates if this block is a mirror block

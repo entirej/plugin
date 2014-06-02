@@ -57,6 +57,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEdit;
 import org.entirej.framework.core.enumerations.EJScreenType;
+import org.entirej.framework.core.properties.EJCoreMenuProperties;
 import org.entirej.framework.core.properties.definitions.EJPropertyDefinitionType;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
@@ -69,7 +70,6 @@ import org.entirej.framework.core.properties.interfaces.EJRendererAssignment;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
-import org.entirej.framework.dev.EJDevConstants;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevInsertScreenRendererDefinition;
@@ -86,6 +86,12 @@ import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafActionProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafBranchProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafFormProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafSpacerProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginMenuProperties;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJFormReader;
@@ -158,6 +164,13 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                     }
                 }
+                else if(isEJProperties(candidate))
+                {
+                    if (delta.getKind() != IResourceDelta.REMOVED)
+                    {
+                        genPropertiesConstantFile(candidate, monitor);
+                    }
+                }
             }
             return false;
         }
@@ -178,6 +191,8 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 IJavaProject project = JavaCore.create(p);
                 // make sure it is refresh before build again
                 EJPluginEntireJClassLoader.reload(project);
+                
+                genPropertiesConstantFile(EJProject.getPropertiesFile(p), monitor);
                 IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
 
                 for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
@@ -339,7 +354,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
         try
         {
-            // try to ignore outpu path
+            // try to ignore output path
             IJavaProject project = JavaCore.create(file.getProject());
             IPath outputLocation = project.getOutputLocation();
             if (outputLocation.isPrefixOf(file.getFullPath()))
@@ -371,6 +386,46 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         monitor.subTask("Constants Updating ...");
         monitor.done();
     }
+    
+    
+    private void genPropertiesConstantFile(IFile file, IProgressMonitor monitor)
+    {
+        
+        try
+        {
+            // try to ignore output path
+            IJavaProject project = JavaCore.create(file.getProject());
+            IPath outputLocation = project.getOutputLocation();
+            if (outputLocation.isPrefixOf(file.getFullPath()))
+                return;
+        }
+        catch (JavaModelException e)
+        {
+            // ignore
+        }
+        IFile propFile = EJProject.getPropertiesFile(file.getProject());
+        if (propFile == null || !propFile.exists())
+        {
+            return;
+        }
+        
+        String message = NLS.bind("Constants Generating {0} ...", file.getFullPath().toString());
+        monitor.subTask(message);
+        
+        SubProgressMonitor subProgressMonitor = new SubProgressMonitor(monitor, 1);
+        
+        IProject _project = file.getProject();
+        
+        IJavaProject project = JavaCore.create(_project);
+        EJPluginEntireJProperties entireJProperties = EJPluginEntireJPropertiesLoader.getEntireJProperties(project);
+       
+        if (entireJProperties != null)
+            buildPropertiesConstant(project, entireJProperties, file, subProgressMonitor);
+        
+        subProgressMonitor.done();
+        monitor.subTask("Constants Updating ...");
+        monitor.done();
+    }
 
     private void genFormConstantsIn(IContainer container, IProgressMonitor monitor) throws CoreException
     {
@@ -394,6 +449,11 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     {
         return EJPluginConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
     }
+    
+    private boolean isEJProperties(IFile file)
+    {
+        return "ejprop".equalsIgnoreCase(file.getFileExtension()) ;
+    }
 
     private boolean isRefFormFile(IFile file)
     {
@@ -405,13 +465,13 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     
 
 
-    static void buildFormConstant(IJavaProject project, EJPluginFormProperties formProperties, IFile file, IProgressMonitor monitor)
+    static void buildPropertiesConstant(IJavaProject project,  EJPluginEntireJProperties entireJProperties, IFile file, IProgressMonitor monitor)
     {
-        String formID = getFormId(formProperties);
+        String propID = "EJ_PROPERTIES";
 
         try
         {
-            IFile javaFile = getFormJavaSource(file, monitor, formID);
+            IFile javaFile = getPropertiesJavaSource(file, monitor, propID);
 
             StringBuilder builder = new StringBuilder();
 
@@ -419,6 +479,144 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append(javaFile.getParent().getProjectRelativePath().toString().replaceFirst("src/", "").replaceAll("/", "."));
             builder.append(";");
 
+            builder.append("\n");
+            builder.append("\n");
+            builder.append("/* AUTO-GENERATED FILE.  DO NOT MODIFY. \n");
+            builder.append("*\n");
+            builder.append("* This class was automatically generated by the\n");
+            builder.append("* entirej plugin from the EntireJProperties.  It\n");
+            builder.append("* should not be modified by hand.\n");
+            builder.append(" */");
+            builder.append("\n");
+            builder.append("public class ");
+            builder.append(propID);
+            builder.append("\n");
+            builder.append("{");
+            builder.append("\n");
+
+          
+            Set<String> actions = new TreeSet<String>();
+            // adding menu id's parameters
+            for (EJPluginMenuProperties menuProperties : entireJProperties.getPluginMenuContainer().getAllMenuProperties())
+            {
+                if (menuProperties.getName() != null && menuProperties.getName().trim().length() > 0)
+                {
+                    builder.append("    public static final String M_");
+                    builder.append(toVAR(menuProperties.getName()).toUpperCase().replaceAll(" ", "_"));
+                    builder.append(" = ");
+                    builder.append("\"");
+                    builder.append(menuProperties.getName());
+                    builder.append("\"");
+                    builder.append(";");
+                    builder.append("\n");
+                }
+                addActionsFromMenuProperties(menuProperties, actions);
+            }
+
+            
+            builder.append("\n");
+            // adding form parameters
+            Collection<EJPluginApplicationParameter> formParameters = entireJProperties.getAllApplicationLevelParameters();
+            for (EJPluginApplicationParameter parameter : formParameters)
+            {
+                if (parameter.getName() != null && parameter.getName().trim().length() > 0)
+                {
+                    builder.append("    public static final String P_");
+                    builder.append(toVAR(parameter.getName()).toUpperCase().replaceAll(" ", "_"));
+                    builder.append(" = ");
+                    builder.append("\"");
+                    builder.append(parameter.getName());
+                    builder.append("\"");
+                    builder.append(";");
+                    builder.append("\n");
+                }
+            }
+            builder.append("\n");
+            
+            
+            // adding VA 
+            Collection<String> visualAttributeNames = entireJProperties.getVisualAttributesContainer().getVisualAttributeNames();
+            for (String va : visualAttributeNames)
+            {
+                if (va != null && va.trim().length() > 0)
+                {
+                    builder.append("    public static final String VA_");
+                    builder.append(toVAR(va).toUpperCase().replaceAll(" ", "_"));
+                    builder.append(" = ");
+                    builder.append("\"");
+                    builder.append(va);
+                    builder.append("\"");
+                    builder.append(";");
+                    builder.append("\n");
+                }
+            }
+            
+            builder.append("\n");
+            // adding Actions
+            for (String action : actions)
+            {
+                builder.append("    public static final String AC_");
+                builder.append(toVAR(action).toUpperCase().replaceAll(" ", "_"));
+                builder.append(" = ");
+                builder.append("\"");
+                builder.append(action);
+                builder.append("\"");
+                builder.append(";");
+                builder.append("\n");
+            }
+
+            
+            builder.append("\n");
+            builder.append("}");
+            String classContent = builder.toString();
+            CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(project.getOptions(true));
+            IDocument doc = new Document(classContent);
+            TextEdit edit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, doc.get(), 0, doc.get().length(), 0, null);
+            if (edit != null)
+            {
+                edit.apply(doc);
+                classContent = doc.get();
+            }
+            if (javaFile.exists())
+            {
+                try
+                {
+                    if (classContent.equals(getStringFromInputStream(javaFile.getContents(true))))
+                        return;
+                }
+                catch (Exception e)
+                {
+                    // ignore
+                }
+
+                javaFile.setContents(new ByteArrayInputStream(classContent.toString().getBytes("UTF-8")), IResource.FORCE, monitor);
+            }
+            else
+            {
+                javaFile.create(new ByteArrayInputStream(classContent.toString().getBytes("UTF-8")), IResource.FORCE, monitor);
+            }
+
+        }
+        catch (Exception e)
+        {
+            EJCoreLog.logException(e);
+        }
+    }
+    
+    static void buildFormConstant(IJavaProject project, EJPluginFormProperties formProperties, IFile file, IProgressMonitor monitor)
+    {
+        String formID = getFormId(formProperties);
+        
+        try
+        {
+            IFile javaFile = getFormJavaSource(file, monitor, formID);
+            
+            StringBuilder builder = new StringBuilder();
+            
+            builder.append("package ");
+            builder.append(javaFile.getParent().getProjectRelativePath().toString().replaceFirst("src/", "").replaceAll("/", "."));
+            builder.append(";");
+            
             builder.append("\n");
             builder.append("\n");
             builder.append("/* AUTO-GENERATED FILE.  DO NOT MODIFY. \n");
@@ -433,7 +631,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append("\n");
             builder.append("{");
             builder.append("\n");
-
+            
             // add Form ID
             builder.append("    public static final String ID = ");
             builder.append("\"");
@@ -441,7 +639,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append("\"");
             builder.append(";");
             Set<String> actions = new TreeSet<String>();
-
+            
             // process Form renderer Properties
             String renderer = formProperties.getFormRendererName();
             if (renderer != null && renderer.trim().length() > 0)
@@ -454,14 +652,14 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     EJFrameworkExtensionProperties rendererProperties = formProperties.getFormRendererProperties();
                     if (rendererDefinition != null && rendererProperties != null)
                     {
-
+                        
                         addActionsFromRendererProperties(formProperties, null, rendererDefinition.getFormPropertyDefinitionGroup(), rendererProperties, actions);
-
+                        
                     }
                 }
             }
             // /
-
+            
             // build Block
             List<EJPluginBlockProperties> allBlockProperties = formProperties.getBlockContainer().getAllBlockProperties();
             for (EJPluginBlockProperties blockProp : allBlockProperties)
@@ -469,65 +667,65 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 if (blockProp.getName() != null && blockProp.getName().length() > 0)
                 {
                     createBlockCode(blockProp, builder);
-
+                    
                     EJDevBlockRendererDefinition rendererDefinition = blockProp.getBlockRendererDefinition();
                     EJFrameworkExtensionProperties rendererProperties = blockProp.getBlockRendererProperties();
                     if (rendererDefinition != null && rendererProperties != null)
                     {
-
+                        
                         addActionsFromRendererProperties(formProperties, blockProp, rendererDefinition.getBlockPropertyDefinitionGroup(), rendererProperties,
                                 actions);
                         List<EJPluginItemGroupProperties> itemGroups = blockProp.getMainScreenItemGroupDisplayContainer().getItemGroups();
-
+                        
                         EJPropertyDefinitionGroup propertyDefinitionGroup = rendererDefinition.getItemPropertiesDefinitionGroup();
-
+                        
                         for (EJPluginItemGroupProperties groupProperties : itemGroups)
                         {
-
+                            
                             addActionsFromItemGroupProperties(formProperties, rendererDefinition.getItemGroupPropertiesDefinitionGroup(),
                                     propertyDefinitionGroup, groupProperties, actions);
                         }
-
+                        
                     }
                     rendererDefinition = null;
-
+                    
                     if (blockProp.isInsertAllowed())
                     {
                         EJDevInsertScreenRendererDefinition insertRendererDefinition = blockProp.getInsertScreenRendererDefinition();
                         rendererProperties = blockProp.getInsertScreenRendererProperties();
                         if (insertRendererDefinition != null && rendererProperties != null)
                         {
-
+                            
                             addActionsFromRendererProperties(formProperties, blockProp, insertRendererDefinition.getInsertScreenPropertyDefinitionGroup(),
                                     rendererProperties, actions);
                             List<EJPluginItemGroupProperties> itemGroups = blockProp.getInsertScreenItemGroupDisplayContainer().getItemGroups();
-
+                            
                             EJPropertyDefinitionGroup propertyDefinitionGroup = insertRendererDefinition.getItemPropertyDefinitionGroup();
-
+                            
                             for (EJPluginItemGroupProperties groupProperties : itemGroups)
                             {
                                 addActionsFromItemGroupProperties(formProperties, insertRendererDefinition.getItemGroupPropertiesDefinitionGroup(),
                                         propertyDefinitionGroup, groupProperties, actions);
                             }
-
+                            
                         }
                         insertRendererDefinition = null;
-
+                        
                     }
-
+                    
                     if (blockProp.isUpdateAllowed())
                     {
                         EJDevUpdateScreenRendererDefinition updateRendererDefinition = blockProp.getUpdateScreenRendererDefinition();
                         rendererProperties = blockProp.getUpdateScreenRendererProperties();
                         if (updateRendererDefinition != null && rendererProperties != null)
                         {
-
+                            
                             addActionsFromRendererProperties(formProperties, blockProp, updateRendererDefinition.getUpdateScreenPropertyDefinitionGroup(),
                                     rendererProperties, actions);
                             List<EJPluginItemGroupProperties> itemGroups = blockProp.getUpdateScreenItemGroupDisplayContainer().getItemGroups();
-
+                            
                             EJPropertyDefinitionGroup propertyDefinitionGroup = updateRendererDefinition.getItemPropertyDefinitionGroup();
-
+                            
                             for (EJPluginItemGroupProperties groupProperties : itemGroups)
                             {
                                 addActionsFromItemGroupProperties(formProperties, updateRendererDefinition.getItemGroupPropertiesDefinitionGroup(),
@@ -536,20 +734,20 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                         updateRendererDefinition = null;
                     }
-
+                    
                     if (blockProp.isQueryAllowed())
                     {
                         EJDevQueryScreenRendererDefinition queryRendererDefinition = blockProp.getQueryScreenRendererDefinition();
                         rendererProperties = blockProp.getQueryScreenRendererProperties();
                         if (queryRendererDefinition != null && rendererProperties != null)
                         {
-
+                            
                             addActionsFromRendererProperties(formProperties, blockProp, queryRendererDefinition.getQueryScreenPropertyDefinitionGroup(),
                                     rendererProperties, actions);
                             List<EJPluginItemGroupProperties> itemGroups = blockProp.getQueryScreenItemGroupDisplayContainer().getItemGroups();
-
+                            
                             EJPropertyDefinitionGroup propertyDefinitionGroup = queryRendererDefinition.getItemPropertyDefinitionGroup();
-
+                            
                             for (EJPluginItemGroupProperties groupProperties : itemGroups)
                             {
                                 addActionsFromItemGroupProperties(formProperties, queryRendererDefinition.getItemGroupPropertiesDefinitionGroup(),
@@ -558,7 +756,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                         queryRendererDefinition = null;
                     }
-
+                    
                 }
                 List<EJPluginBlockItemProperties> allItemProperties = blockProp.getItemContainer().getAllItemProperties();
                 for (EJPluginBlockItemProperties itemProp : allItemProperties)
@@ -568,18 +766,18 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     {
                         continue;
                     }
-
+                    
                     EJRendererAssignment assignment = formProperties.getEntireJProperties().getApplicationAssignedItemRenderer(itemRenderer);
                     if (assignment == null)
                     {
                         continue;
                     }
-
+                    
                     EJDevItemRendererDefinition rendererDefinition = itemProp.getItemRendererDefinition();
                     EJFrameworkExtensionProperties rendererProperties = itemProp.getItemRendererProperties();
                     if (rendererDefinition != null && rendererProperties != null)
                     {
-
+                        
                         addActionsFromRendererProperties(formProperties, blockProp, rendererDefinition.getItemPropertyDefinitionGroup(), rendererProperties,
                                 actions);
                     }
@@ -595,9 +793,9 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                     }
                 }
-
+                
             }
-
+            
             // build LOV
             // build Block
             List<EJPluginLovDefinitionProperties> lovDefinitionProperties = formProperties.getLovDefinitionContainer().getAllLovDefinitionProperties();
@@ -608,7 +806,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     createLovCode(definitionProperties, builder);
                 }
             }
-
+            
             // read canvas
             Collection<EJCanvasProperties> allCanvasProperties = EJPluginCanvasRetriever.retriveAllCanvases(formProperties);
             for (EJCanvasProperties canvasProperties : allCanvasProperties)
@@ -623,12 +821,12 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     builder.append("\"");
                     builder.append(";");
                     builder.append("\n");
-
+                    
                     switch (canvasProperties.getType())
                     {
                         case TAB:
                             Collection<EJTabPageProperties> allTabPageProperties = canvasProperties.getTabPageContainer().getAllTabPageProperties();
-
+                            
                             builder.append("\n");
                             builder.append("public static class ");
                             builder.append("C_");
@@ -637,7 +835,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                             builder.append("\n");
                             builder.append("{");
                             builder.append("\n");
-
+                            
                             for (EJTabPageProperties page : allTabPageProperties)
                             {
                                 if (page.getName() != null && page.getName().length() > 0)
@@ -658,7 +856,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                             break;
                         case STACKED:
                             Collection<EJStackedPageProperties> allStackedPageProperties = canvasProperties.getStackedPageContainer()
-                                    .getAllStackedPageProperties();
+                            .getAllStackedPageProperties();
                             builder.append("\n");
                             builder.append("public static class ");
                             builder.append("C_");
@@ -703,7 +901,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 builder.append(";");
                 builder.append("\n");
             }
-
+            
             builder.append("\n");
             // adding form parameters
             Collection<EJPluginApplicationParameter> formParameters = formProperties.getAllFormParameters();
@@ -743,14 +941,14 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 {
                     // ignore
                 }
-
+                
                 javaFile.setContents(new ByteArrayInputStream(classContent.toString().getBytes("UTF-8")), IResource.FORCE, monitor);
             }
             else
             {
                 javaFile.create(new ByteArrayInputStream(classContent.toString().getBytes("UTF-8")), IResource.FORCE, monitor);
             }
-
+            
         }
         catch (Exception e)
         {
@@ -801,6 +999,16 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             pkgPath.create(true, true, monitor);
         }
         IFile javaFile = pkgPath.getFile(formID + ".java");
+        return javaFile;
+    }
+    public static IFile getPropertiesJavaSource(IFile file, IProgressMonitor monitor, String fileID) throws CoreException
+    {
+        IFolder pkgPath = file.getParent().getFolder(new Path("org/entirej/constants"));
+        if (!pkgPath.exists())
+        {
+            pkgPath.create(true, true, monitor);
+        }
+        IFile javaFile = pkgPath.getFile(fileID + ".java");
         return javaFile;
     }
 
@@ -1028,6 +1236,55 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         if (definitionGroup != null && rendererProperties != null)
         {
             addActionsFromPropertyDefinitionGroup(formProperties, blockProperties, rendererProperties, definitionGroup, actions);
+        }
+    }
+    
+    
+    // menu action process
+    static void addActionsFromMenuProperties(EJPluginMenuProperties menuProperties, Set<String> actions)
+    {
+        List<EJPluginMenuLeafProperties> leaves = new ArrayList<EJPluginMenuLeafProperties>(menuProperties.getLeaves());
+        for (EJPluginMenuLeafProperties leafProperties : leaves)
+        {
+            if (leafProperties instanceof EJPluginMenuLeafBranchProperties)
+            {
+                addActionsFromMenuProperties((EJPluginMenuLeafBranchProperties)leafProperties, actions);
+            }
+            else if (leafProperties instanceof EJPluginMenuLeafSpacerProperties)
+            {
+                continue;
+            }
+            else if (leafProperties instanceof EJPluginMenuLeafActionProperties)
+            {
+                actions.add(((EJPluginMenuLeafActionProperties)leafProperties).getMenuAction());
+            }
+            else if (leafProperties instanceof EJPluginMenuLeafFormProperties)
+            {
+                continue;
+            }
+        }
+    }
+    static void addActionsFromMenuProperties(EJPluginMenuLeafBranchProperties menuProperties, Set<String> actions)
+    {
+        List<EJPluginMenuLeafProperties> leaves = new ArrayList<EJPluginMenuLeafProperties>(menuProperties.getLeaves());
+        for (EJPluginMenuLeafProperties leafProperties : leaves)
+        {
+            if (leafProperties instanceof EJPluginMenuLeafBranchProperties)
+            {
+                addActionsFromMenuProperties((EJPluginMenuLeafBranchProperties)leafProperties, actions);
+            }
+            else if (leafProperties instanceof EJPluginMenuLeafSpacerProperties)
+            {
+                continue;
+            }
+            else if (leafProperties instanceof EJPluginMenuLeafActionProperties)
+            {
+                actions.add(((EJPluginMenuLeafActionProperties)leafProperties).getMenuAction());
+            }
+            else if (leafProperties instanceof EJPluginMenuLeafFormProperties)
+            {
+                continue;
+            }
         }
     }
 
