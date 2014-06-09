@@ -2357,6 +2357,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             {
                                 case GROUP:
                                     createGroupLayout(layoutBody, canvas);
+                                    break;
                                 case SPLIT:
                                     createSplitLayout(layoutBody, canvas);
                                     break;
