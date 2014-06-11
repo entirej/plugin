@@ -50,13 +50,10 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginObje
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginFormPreviewProvider;
 
-public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPluginFormProperties>, EJPluginFormPreviewProvider
+public class EJPluginReportProperties implements EJFormProperties, Comparable<EJPluginReportProperties>, EJPluginFormPreviewProvider
 {
-    /**
-     * 
-     */
+    
     private static final long                  serialVersionUID          = -8063612191054623340L;
-    private boolean                            _isReusableLovForm        = false;
     private boolean                            _isReusableBlockForm      = false;
     private boolean                            _isObjectGroupForm      = false;
     private IJavaProject                       _formsProject;
@@ -84,7 +81,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     private EJPluginRelationContainer          _relationContainer;
     private EJPluginLovDefinitionContainer     _lovDefinitionContainer;
     
-    public EJPluginFormProperties(String formName, IJavaProject javaProject)
+    public EJPluginReportProperties(String formName, IJavaProject javaProject)
     {
         _name = formName;
         _formsProject = javaProject;
@@ -97,10 +94,7 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         _formParameters = new ArrayList<EJPluginApplicationParameter>();
     }
     
-    public EJPluginFormProperties getFormProperties()
-    {
-        return this;
-    }
+   
     
 
     
@@ -489,9 +483,9 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         _actionProcessorClassName = processorClassName;
     }
     
-    public int compareTo(EJPluginFormProperties arg0)
+    public int compareTo(EJPluginReportProperties arg0)
     {
-        return this.getName().compareTo(((EJPluginFormProperties) arg0).getName());
+        return this.getName().compareTo(((EJPluginReportProperties) arg0).getName());
     }
     
     public boolean isReusableBlockForm()
