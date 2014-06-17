@@ -29,35 +29,35 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
-import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
+import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
 import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportRendererDefinition;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
 {
     
-    private boolean                            _isReusableBlock          = false;
-    private boolean                            _isObjectGroup            = false;
-    private IJavaProject                       _reportProject;
+    private boolean                              _isReusableBlock          = false;
+    private boolean                              _isObjectGroup            = false;
+    private IJavaProject                         _reportProject;
     
-    private String                             _name                     = "";
-    private String                             _reportRendererName       = "";
-    private EJFrameworkExtensionProperties     _reportRendererProperties;
-    private String                             _reportTitle              = "";
-    private String                             _reportDisplayName        = "";
+    private String                               _name                     = "";
+    private String                               _reportRendererName       = "";
+    private EJReportFrameworkExtensionProperties _reportRendererProperties;
+    private String                               _reportTitle              = "";
+    private String                               _reportDisplayName        = "";
     
-    private String                             _actionProcessorClassName = "";
+    private String                               _actionProcessorClassName = "";
     
-    private List<EJPluginApplicationParameter> _reportParameters;
-    private HashMap<String, String>            _applicationProperties;
+    private List<EJPluginApplicationParameter>   _reportParameters;
+    private HashMap<String, String>              _applicationProperties;
     
     // Display Properties
-    private int                                _reportWidth;
-    private int                                _reportHeight;
-    private int                                _numCols;
+    private int                                  _reportWidth;
+    private int                                  _reportHeight;
+    private int                                  _numCols;
     
     public EJPluginReportProperties(String reportName, IJavaProject javaProject)
     {
@@ -117,7 +117,7 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         return _reportRendererName;
     }
     
-    public EJReportRendererDefinition getreportRendererDefinition()
+    public EJReportRendererDefinition getReportRendererDefinition()
     {
         return EJPluginReportRenderers.loadReportRendererDefinition(getEntireJProperties(), this.getReportRendererName());
     }
@@ -144,12 +144,12 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         }
     }
     
-    public void setReportRendererProperties(EJFrameworkExtensionProperties properties)
+    public void setReportRendererProperties(EJReportFrameworkExtensionProperties properties)
     {
         _reportRendererProperties = properties;
     }
     
-    public EJFrameworkExtensionProperties getReportRendererProperties()
+    public EJReportFrameworkExtensionProperties getReportRendererProperties()
     {
         return _reportRendererProperties;
     }
@@ -346,7 +346,7 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         return _reportParameters;
     }
     
-    public void addreportParameter(EJPluginApplicationParameter parameter)
+    public void addReportParameter(EJPluginApplicationParameter parameter)
     {
         if (parameter != null)
         {

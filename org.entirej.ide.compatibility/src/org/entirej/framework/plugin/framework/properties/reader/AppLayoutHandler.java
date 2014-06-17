@@ -112,7 +112,7 @@ public class AppLayoutHandler extends EntireJTagHandler
         }
         
         @Override
-        void startLocalElement(String name, Attributes attributes) throws SAXException
+        protected void startLocalElement(String name, Attributes attributes) throws SAXException
         {
             if ("item".equals(name))
             {
@@ -122,7 +122,7 @@ public class AppLayoutHandler extends EntireJTagHandler
         }
         
         @Override
-        void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
+        protected void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
         {
             if (name.equals("items"))
             {
@@ -144,7 +144,7 @@ public class AppLayoutHandler extends EntireJTagHandler
         }
         
         @Override
-        void startLocalElement(String name, Attributes attributes) throws SAXException
+        protected void startLocalElement(String name, Attributes attributes) throws SAXException
         {
             if (name.equals("item"))
             {
@@ -211,7 +211,7 @@ public class AppLayoutHandler extends EntireJTagHandler
         }
         
         @Override
-        void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
+        protected void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
         {
             if (name.equals("item"))
             {

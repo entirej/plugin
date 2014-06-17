@@ -1,0 +1,208 @@
+/*******************************************************************************
+ * Copyright 2013 Mojave Innovations GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * Contributors: Mojave Innovations GmbH - initial API and implementation
+ ******************************************************************************/
+package org.entirej.framework.plugin.reports.reader;
+
+import org.eclipse.jdt.core.IJavaProject;
+import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
+import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.framework.properties.reader.BlockGroupHandler;
+import org.entirej.framework.plugin.framework.properties.reader.BlockHandler;
+import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
+import org.entirej.framework.plugin.framework.properties.reader.LovDefinitionHandler;
+import org.entirej.framework.plugin.framework.properties.reader.ObjGroupDefinitionHandler;
+import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+public class ReportHandler extends EntireJTagHandler
+{
+    private EJPluginReportProperties _formProperties;
+    
+    private static final String      ELEMENT_FORM_TITLE             = "reportTitle";
+    private static final String      ELEMENT_FORM_DISPLAY_NAME      = "reportDisplayName";
+    private static final String      ELEMENT_FORM_WIDTH             = "width";
+    private static final String      ELEMENT_FORM_HEIGHT            = "height";
+    private static final String      ELEMENT_NUM_COLS               = "numCols";
+    private static final String      ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
+    private static final String      ELEMENT_RENDERER_NAME          = "reportRendererName";
+    private static final String      ELEMENT_RENDERER_PROPERTIES    = "reportRendererProperties";
+    
+    private static final String      ELEMENT_FORM_PARAMETER         = "reportParameter";
+    private static final String      ELEMENT_APPLICATION_PROPERTIES = "applicationProperties";
+    private static final String      ELEMENT_PROPERTY               = "property";
+    
+    private boolean                  _gettingApplicationProperties  = false;
+    private String                   _lastApplicationPropertyName   = "";
+    
+    public ReportHandler(IJavaProject javaProject, String formName)
+    {
+        _formProperties = new EJPluginReportProperties(formName, javaProject);
+    }
+    
+    public ReportHandler(EJPluginReportProperties reportProperties)
+    {
+        _formProperties = reportProperties;
+    }
+    
+    public EJPluginReportProperties getReportProperties()
+    {
+        return _formProperties;
+    }
+    
+    public EntireJTagHandler getBlockHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
+    {
+        return new BlockHandler(formProperties, lovDefinitionProperties);
+    }
+    
+    public EntireJTagHandler getBlockGroupHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
+    {
+        return new BlockGroupHandler(formProperties);
+    }
+    
+    public EntireJTagHandler getLovDefinitionHandler(EJPluginFormProperties formProperties)
+    {
+        return new LovDefinitionHandler(formProperties);
+    }
+    
+    public EntireJTagHandler getObjectgroupDefinitionHandler(EJPluginFormProperties formProperties)
+    {
+        return new ObjGroupDefinitionHandler(formProperties);
+    }
+    
+    public void startLocalElement(String name, Attributes attributes) throws SAXException
+    {
+        
+        if (name.equals(ELEMENT_APPLICATION_PROPERTIES))
+        {
+            _gettingApplicationProperties = true;
+        }
+        
+        if (_gettingApplicationProperties)
+        {
+            if (name.equals(ELEMENT_PROPERTY))
+            {
+                _lastApplicationPropertyName = attributes.getValue("name");
+            }
+            return;
+        }
+        
+        // Now process the FORM PROPERTIES elements
+        if (name.equals(ELEMENT_RENDERER_PROPERTIES))
+        {
+            setDelegate(new FrameworkExtensionPropertiesHandler(_formProperties, null, ELEMENT_RENDERER_PROPERTIES));
+        }
+        if (name.equals(ELEMENT_FORM_PARAMETER))
+        {
+            String paramName = attributes.getValue("name");
+            String dataTypeName = attributes.getValue("dataType");
+            String defaultValue = attributes.getValue("defaultValue");
+            
+            _formProperties.addReportParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
+        }
+        
+    }
+    
+    public void endLocalElement(String name, String value, String untrimmedValue)
+    {
+        if (_gettingApplicationProperties)
+        {
+            if (name.equals(ELEMENT_APPLICATION_PROPERTIES))
+            {
+                _gettingApplicationProperties = false;
+            }
+            else if (name.equals(ELEMENT_PROPERTY))
+            {
+                _formProperties.addApplicationProperty(_lastApplicationPropertyName, value);
+            }
+            return;
+        }
+        
+        if (name.equals(ELEMENT_FORM_TITLE))
+        {
+            _formProperties.setReportTitle(value);
+        }
+        else if (name.equals(ELEMENT_FORM_DISPLAY_NAME))
+        {
+            _formProperties.setReportDisplayName(value);
+        }
+        else if (name.equals(ELEMENT_FORM_HEIGHT))
+        {
+            if (value.length() > 0)
+            {
+                _formProperties.setReportHeight(Integer.parseInt(value));
+            }
+            else
+            {
+                _formProperties.setReportHeight(0);
+            }
+        }
+        else if (name.equals(ELEMENT_FORM_WIDTH))
+        {
+            if (value.length() > 0)
+            {
+                _formProperties.setReportWidth(Integer.parseInt(value));
+            }
+            else
+            {
+                _formProperties.setReportWidth(0);
+            }
+        }
+        else if (name.equals(ELEMENT_NUM_COLS))
+        {
+            if (value.length() > 0)
+            {
+                _formProperties.setNumCols(Integer.parseInt(value));
+            }
+            else
+            {
+                _formProperties.setNumCols(1);
+            }
+        }
+        else if (name.equals(ELEMENT_ACTION_PROCESSOR))
+        {
+            _formProperties.setActionProcessorClassName(value);
+        }
+        else if (name.equals(ELEMENT_RENDERER_NAME))
+        {
+            _formProperties.setReportRendererName(value);
+        }
+    }
+    
+    public void cleanUpAfterDelegate(String name, EntireJTagHandler currentDelegate)
+    {
+        
+        if (name.equals(ELEMENT_RENDERER_PROPERTIES))
+        {
+            if (((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup() != null)
+            {
+                
+                if (_formProperties.getReportRendererDefinition() != null)
+                {
+                    _formProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(_formProperties
+                            .getReportRendererDefinition().getReportPropertyDefinitionGroup()));
+                }
+                else
+                {
+                    _formProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+                }
+            }
+            return;
+        }
+    }
+}

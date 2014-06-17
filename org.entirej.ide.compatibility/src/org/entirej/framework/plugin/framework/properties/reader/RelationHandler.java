@@ -64,7 +64,7 @@ public class RelationHandler extends EntireJTagHandler
     }
     
     @Override
-    void endLocalElement(String name, String value, String untrimmedValue)
+    protected void endLocalElement(String name, String value, String untrimmedValue)
     {
         if (name.equals(ELEMENT_RELATION))
         {

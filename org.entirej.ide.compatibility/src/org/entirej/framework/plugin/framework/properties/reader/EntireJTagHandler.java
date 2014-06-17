@@ -44,7 +44,7 @@ public abstract class EntireJTagHandler extends DefaultHandler
      * @param name
      * @param attributes
      */
-    abstract void startLocalElement(String name, Attributes attributes) throws SAXException;
+    protected  abstract void startLocalElement(String name, Attributes attributes) throws SAXException;
     
     protected void setDelegate(EntireJTagHandler delegateHandler)
     {
@@ -61,7 +61,7 @@ public abstract class EntireJTagHandler extends DefaultHandler
      * @param untrimmedValue
      * @param name
      */
-    abstract void endLocalElement(String name, String value, String untrimmedValue) throws SAXException;
+    protected abstract void endLocalElement(String name, String value, String untrimmedValue) throws SAXException;
     
     protected void quitAsDelegate()
     {

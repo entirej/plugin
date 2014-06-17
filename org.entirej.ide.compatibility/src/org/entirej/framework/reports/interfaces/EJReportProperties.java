@@ -20,6 +20,8 @@ package org.entirej.framework.reports.interfaces;
 
 import java.io.Serializable;
 
+import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
+
 public interface EJReportProperties extends Serializable
 {
     /**
@@ -76,5 +78,6 @@ public interface EJReportProperties extends Serializable
     public String getReportRendererName();
     
     
+    public EJReportFrameworkExtensionProperties getReportRendererProperties();
     
 }

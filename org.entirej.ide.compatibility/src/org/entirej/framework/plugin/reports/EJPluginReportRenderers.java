@@ -6,12 +6,13 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionListener;
 import org.entirej.framework.dev.properties.EJDevPropertyDefinitionGroup;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
+import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
 import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportRendererDefinition;
 
 public class EJPluginReportRenderers
 {
     
-    public static EJFrameworkExtensionProperties createReportRendererProperties(EJPluginReportProperties pluginReportProperties, boolean addDefaults)
+    public static EJReportFrameworkExtensionProperties createReportRendererProperties(EJPluginReportProperties pluginReportProperties, boolean addDefaults)
     {
         // TODO Auto-generated method stub
         return null;
