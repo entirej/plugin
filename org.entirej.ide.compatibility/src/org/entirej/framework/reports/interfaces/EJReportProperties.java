@@ -1,20 +1,19 @@
 /*******************************************************************************
  * Copyright 2013 Mojave Innovations GmbH
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  * 
- * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ * Contributors: Mojave Innovations GmbH - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.reports.interfaces;
 
@@ -24,6 +23,12 @@ import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFr
 
 public interface EJReportProperties extends Serializable
 {
+    
+    public enum ORIENTATION
+    {
+        PORTRAIT, LANDSCAPE
+    }
+    
     /**
      * Returns the name of the report
      * 
@@ -70,13 +75,51 @@ public interface EJReportProperties extends Serializable
     public int getReportWidth();
     
     /**
+     * Returns the required Margin of the report from Top
+     * <p>
+     * The value is the margin in pixels
+     * 
+     * @return The required margin of the report from Top
+     */
+    public int getMarginTop();
+    
+    /**
+     * Returns the required Margin of the report from Bottom
+     * <p>
+     * The value is the margin in pixels
+     * 
+     * @return The required margin of the report from Bottom
+     */
+    public int getMarginBottom();
+    
+    /**
+     * Returns the required Margin of the report from Left
+     * <p>
+     * The value is the margin in pixels
+     * 
+     * @return The required margin of the report from Left
+     */
+    public int getMarginLeft();
+    
+    /**
+     * Returns the required Margin of the report from Right
+     * <p>
+     * The value is the margin in pixels
+     * 
+     * @return The required margin of the report from Right
+     */
+    public int getMarginRight();
+    
+    
+    public ORIENTATION getOrientation();
+    
+    /**
      * Retrieves the name of the renderer that is responsible for displaying
      * this report
      * 
      * @return the report renderers name
      */
     public String getReportRendererName();
-    
     
     public EJReportFrameworkExtensionProperties getReportRendererProperties();
     

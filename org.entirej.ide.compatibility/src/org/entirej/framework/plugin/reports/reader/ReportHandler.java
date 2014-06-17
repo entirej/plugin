@@ -27,23 +27,29 @@ import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandle
 import org.entirej.framework.plugin.framework.properties.reader.LovDefinitionHandler;
 import org.entirej.framework.plugin.framework.properties.reader.ObjGroupDefinitionHandler;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.reports.interfaces.EJReportProperties.ORIENTATION;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class ReportHandler extends EntireJTagHandler
 {
-    private EJPluginReportProperties _formProperties;
+    private EJPluginReportProperties _reportProperties;
     
-    private static final String      ELEMENT_FORM_TITLE             = "reportTitle";
-    private static final String      ELEMENT_FORM_DISPLAY_NAME      = "reportDisplayName";
-    private static final String      ELEMENT_FORM_WIDTH             = "width";
-    private static final String      ELEMENT_FORM_HEIGHT            = "height";
+    private static final String      ELEMENT_REPORT_TITLE           = "reportTitle";
+    private static final String      ELEMENT_REPORT_DISPLAY_NAME    = "reportDisplayName";
+    private static final String      ELEMENT_REPORT_WIDTH           = "width";
+    private static final String      ELEMENT_MARGIN_TOP             = "marginTop";
+    private static final String      ELEMENT_MARGIN_BOTTOM          = "marginBottom";
+    private static final String      ELEMENT_MARGIN_LEFT            = "marginLeft";
+    private static final String      ELEMENT_MARGIN_RIGHT           = "marginRight";
+    private static final String      ELEMENT_REPORT_ORIENTATION     = "orientation";
+    private static final String      ELEMENT_REPORT_HEIGHT          = "height";
     private static final String      ELEMENT_NUM_COLS               = "numCols";
     private static final String      ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
     private static final String      ELEMENT_RENDERER_NAME          = "reportRendererName";
     private static final String      ELEMENT_RENDERER_PROPERTIES    = "reportRendererProperties";
     
-    private static final String      ELEMENT_FORM_PARAMETER         = "reportParameter";
+    private static final String      ELEMENT_REPORT_PARAMETER       = "reportParameter";
     private static final String      ELEMENT_APPLICATION_PROPERTIES = "applicationProperties";
     private static final String      ELEMENT_PROPERTY               = "property";
     
@@ -52,17 +58,17 @@ public class ReportHandler extends EntireJTagHandler
     
     public ReportHandler(IJavaProject javaProject, String formName)
     {
-        _formProperties = new EJPluginReportProperties(formName, javaProject);
+        _reportProperties = new EJPluginReportProperties(formName, javaProject);
     }
     
     public ReportHandler(EJPluginReportProperties reportProperties)
     {
-        _formProperties = reportProperties;
+        _reportProperties = reportProperties;
     }
     
     public EJPluginReportProperties getReportProperties()
     {
-        return _formProperties;
+        return _reportProperties;
     }
     
     public EntireJTagHandler getBlockHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
@@ -105,15 +111,15 @@ public class ReportHandler extends EntireJTagHandler
         // Now process the FORM PROPERTIES elements
         if (name.equals(ELEMENT_RENDERER_PROPERTIES))
         {
-            setDelegate(new FrameworkExtensionPropertiesHandler(_formProperties, null, ELEMENT_RENDERER_PROPERTIES));
+            setDelegate(new FrameworkExtensionPropertiesHandler(_reportProperties, null, ELEMENT_RENDERER_PROPERTIES));
         }
-        if (name.equals(ELEMENT_FORM_PARAMETER))
+        if (name.equals(ELEMENT_REPORT_PARAMETER))
         {
             String paramName = attributes.getValue("name");
             String dataTypeName = attributes.getValue("dataType");
             String defaultValue = attributes.getValue("defaultValue");
             
-            _formProperties.addReportParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
+            _reportProperties.addReportParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
         }
         
     }
@@ -128,59 +134,107 @@ public class ReportHandler extends EntireJTagHandler
             }
             else if (name.equals(ELEMENT_PROPERTY))
             {
-                _formProperties.addApplicationProperty(_lastApplicationPropertyName, value);
+                _reportProperties.addApplicationProperty(_lastApplicationPropertyName, value);
             }
             return;
         }
         
-        if (name.equals(ELEMENT_FORM_TITLE))
+        if (name.equals(ELEMENT_REPORT_TITLE))
         {
-            _formProperties.setReportTitle(value);
+            _reportProperties.setReportTitle(value);
         }
-        else if (name.equals(ELEMENT_FORM_DISPLAY_NAME))
+        else if (name.equals(ELEMENT_REPORT_DISPLAY_NAME))
         {
-            _formProperties.setReportDisplayName(value);
+            _reportProperties.setReportDisplayName(value);
         }
-        else if (name.equals(ELEMENT_FORM_HEIGHT))
+        else if (name.equals(ELEMENT_REPORT_HEIGHT))
         {
             if (value.length() > 0)
             {
-                _formProperties.setReportHeight(Integer.parseInt(value));
+                _reportProperties.setReportHeight(Integer.parseInt(value));
             }
             else
             {
-                _formProperties.setReportHeight(0);
+                _reportProperties.setReportHeight(0);
             }
         }
-        else if (name.equals(ELEMENT_FORM_WIDTH))
+        else if (name.equals(ELEMENT_REPORT_WIDTH))
         {
             if (value.length() > 0)
             {
-                _formProperties.setReportWidth(Integer.parseInt(value));
+                _reportProperties.setReportWidth(Integer.parseInt(value));
             }
             else
             {
-                _formProperties.setReportWidth(0);
+                _reportProperties.setReportWidth(0);
             }
         }
         else if (name.equals(ELEMENT_NUM_COLS))
         {
             if (value.length() > 0)
             {
-                _formProperties.setNumCols(Integer.parseInt(value));
+                _reportProperties.setNumCols(Integer.parseInt(value));
             }
             else
             {
-                _formProperties.setNumCols(1);
+                _reportProperties.setNumCols(1);
+            }
+        }
+        else if (name.equals(ELEMENT_MARGIN_TOP))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setMarginTop(Integer.parseInt(value));
+            }
+            else
+            {
+                _reportProperties.setMarginTop(1);
+            }
+        }
+        else if (name.equals(ELEMENT_MARGIN_BOTTOM))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setMarginBottom(Integer.parseInt(value));
+            }
+            else
+            {
+                _reportProperties.setMarginBottom(1);
+            }
+        }
+        else if (name.equals(ELEMENT_MARGIN_LEFT))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setMarginLeft(Integer.parseInt(value));
+            }
+            else
+            {
+                _reportProperties.setMarginLeft(1);
+            }
+        }
+        else if (name.equals(ELEMENT_MARGIN_RIGHT))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setMarginRight(Integer.parseInt(value));
+            }
+            else
+            {
+                _reportProperties.setMarginRight(1);
             }
         }
         else if (name.equals(ELEMENT_ACTION_PROCESSOR))
         {
-            _formProperties.setActionProcessorClassName(value);
+            _reportProperties.setActionProcessorClassName(value);
+        }
+        else if (name.equals(ELEMENT_REPORT_ORIENTATION))
+        {
+            _reportProperties.setOrientation(ORIENTATION.valueOf(value));
         }
         else if (name.equals(ELEMENT_RENDERER_NAME))
         {
-            _formProperties.setReportRendererName(value);
+            _reportProperties.setReportRendererName(value);
         }
     }
     
@@ -192,14 +246,14 @@ public class ReportHandler extends EntireJTagHandler
             if (((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup() != null)
             {
                 
-                if (_formProperties.getReportRendererDefinition() != null)
+                if (_reportProperties.getReportRendererDefinition() != null)
                 {
-                    _formProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(_formProperties
-                            .getReportRendererDefinition().getReportPropertyDefinitionGroup()));
+                    _reportProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate)
+                            .getMainPropertiesGroup(_reportProperties.getReportRendererDefinition().getReportPropertyDefinitionGroup()));
                 }
                 else
                 {
-                    _formProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+                    _reportProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
                 }
             }
             return;

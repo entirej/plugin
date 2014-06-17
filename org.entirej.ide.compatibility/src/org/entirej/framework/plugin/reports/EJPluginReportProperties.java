@@ -58,6 +58,12 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private int                                  _reportWidth;
     private int                                  _reportHeight;
     private int                                  _numCols;
+    private int                                  _marginTop;
+    private int                                  _marginBottom;
+    private int                                  _marginLeft;
+    private int                                  _marginRight;
+    
+    private EJReportProperties.ORIENTATION       _orientation              = ORIENTATION.PORTRAIT;
     
     public EJPluginReportProperties(String reportName, IJavaProject javaProject)
     {
@@ -186,6 +192,17 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         _reportTitle = title;
     }
     
+    @Override
+    public ORIENTATION getOrientation()
+    {
+        return _orientation;
+    }
+    
+    public void setOrientation(EJReportProperties.ORIENTATION orientation)
+    {
+        this._orientation = orientation;
+    }
+    
     /**
      * Returns the required width of the report
      * <p>
@@ -263,6 +280,46 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     public void setNumCols(int numCols)
     {
         _numCols = numCols;
+    }
+    
+    public int getMarginTop()
+    {
+        return _marginTop;
+    }
+    
+    public void setMarginTop(int _marginTop)
+    {
+        this._marginTop = _marginTop;
+    }
+    
+    public int getMarginBottom()
+    {
+        return _marginBottom;
+    }
+    
+    public void setMarginBottom(int _marginBottom)
+    {
+        this._marginBottom = _marginBottom;
+    }
+    
+    public int getMarginLeft()
+    {
+        return _marginLeft;
+    }
+    
+    public void setMarginLeft(int _marginLeft)
+    {
+        this._marginLeft = _marginLeft;
+    }
+    
+    public int getMarginRight()
+    {
+        return _marginRight;
+    }
+    
+    public void setMarginRight(int _marginRight)
+    {
+        this._marginRight = _marginRight;
     }
     
     /**
