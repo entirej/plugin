@@ -655,7 +655,7 @@ public class EJFormValidateImpl implements EJFormValidateProvider
 
         String strValue = rendererProperties.getStringProperty(groupName);
         boolean vlaueNull = (strValue == null || strValue.trim().length() == 0);
-        if (vlaueNull && definition.isMandatory())
+        if (vlaueNull && definition.isMandatory() && definition.getPropertyType()!=EJPropertyDefinitionType.BOOLEAN)
         {
 
             IMarker marker = addMarker(file, new Problem(Problem.TYPE.ERROR, String.format("%s mandatory property '%s' not defined.", tag, label)));
