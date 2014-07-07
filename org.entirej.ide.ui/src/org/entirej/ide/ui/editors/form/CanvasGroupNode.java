@@ -74,12 +74,14 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
     private final static Image          MAIN     = EJUIImages.getImage(EJUIImages.DESC_LAYOUT_COMP);
     private final static Image          BLOCK    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK);
     private final static Image          GROUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP);
+    private final static Image          FORM    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM);
     private final static Image          STACKED  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
     private final static Image          POPUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
     private final static Image          TAB      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
     private final static Image          TAB_PAGE = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE);
     private final static Image          BLOCK_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK_REF);
     private final static Image          GROUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP_REF);
+    private final static Image          FORM_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM_REF);
     private final static Image          STACKED_REF  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED_REF);
     private final static Image          POPUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP_REF);
     private final static Image          TAB_REF      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_REF);
@@ -352,7 +354,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 case POPUP:
                     return source.isImportFromObjectGroup()?POPUP_REF:POPUP;
                 case FORM:
-                    return source.isImportFromObjectGroup()?GROUP_REF:GROUP;
+                    return source.isImportFromObjectGroup()?FORM_REF:FORM;
                 case TAB:
                     return source.isImportFromObjectGroup()?TAB_REF:TAB;
                 case STACKED:
@@ -985,7 +987,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
                     styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
                 }
-                styledString.append(" : ", StyledString.DECORATIONS_STYLER);
                 
            
 
