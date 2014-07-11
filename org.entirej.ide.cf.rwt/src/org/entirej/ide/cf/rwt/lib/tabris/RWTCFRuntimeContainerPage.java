@@ -113,13 +113,13 @@ public class RWTCFRuntimeContainerPage extends WizardPage implements
 			}
 
 			public Object[] getElements(Object inputElement) {
-				return new Object[] { RWTRuntimeVersions.CF_TMT_V_2_1 };
+				return new Object[] { RWTRuntimeVersions.CF_TMT_V_2_3 };
 			}
 		});
 		versionsList.setInput(new Object());
 
 		versionsList.setSelection(new StructuredSelection(
-				RWTRuntimeVersions.CF_TMT_V_2_1));
+				RWTRuntimeVersions.CF_TMT_V_2_3));
 
 		versionsList
 				.addSelectionChangedListener(new ISelectionChangedListener() {

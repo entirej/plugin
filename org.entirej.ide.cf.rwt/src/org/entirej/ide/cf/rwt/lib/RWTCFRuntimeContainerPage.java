@@ -120,12 +120,12 @@ public class RWTCFRuntimeContainerPage extends WizardPage implements IClasspathC
 
             public Object[] getElements(Object inputElement)
             {
-                return new Object[] { RWTRuntimeVersions.CF_V_2_1 };
+                return new Object[] { RWTRuntimeVersions.CF_V_2_3 };
             }
         });
         versionsList.setInput(new Object());
 
-        versionsList.setSelection(new StructuredSelection(RWTRuntimeVersions.CF_V_2_1));
+        versionsList.setSelection(new StructuredSelection(RWTRuntimeVersions.CF_V_2_3));
 
         versionsList.addSelectionChangedListener(new ISelectionChangedListener()
         {
