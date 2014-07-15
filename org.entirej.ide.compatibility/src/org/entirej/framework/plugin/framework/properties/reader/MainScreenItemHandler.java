@@ -157,6 +157,12 @@ public class MainScreenItemHandler extends EntireJTagHandler
         {
             if (((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup() != null)
             {
+                if(_itemProperties.getBlockProperties().getBlockRendererDefinition() != null
+                        && _itemProperties.getBlockProperties().getBlockRendererDefinition().getItemPropertiesDefinitionGroup()!= null)
+                {
+                    _itemProperties.setBlockRendererRequiredProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(_itemProperties.getBlockProperties().getBlockRendererDefinition().getItemPropertiesDefinitionGroup()));
+                }
+                else
                 _itemProperties.setBlockRendererRequiredProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
             }
         }

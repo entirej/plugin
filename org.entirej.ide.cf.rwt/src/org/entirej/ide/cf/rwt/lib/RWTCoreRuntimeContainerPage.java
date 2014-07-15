@@ -37,7 +37,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
 
     public RWTCoreRuntimeContainerPage()
     {
-        super("EntireJ Bundled RWT/RAP Core 2.2 Runtime");
+        super("EntireJ Bundled RWT/RAP Core 2.32 Runtime");
     }
 
     public void initialize(IJavaProject javaProject, IClasspathEntry[] currentEntries)
@@ -57,7 +57,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
     public void createControl(Composite parent)
     {
         setTitle("EntireJ Bundled RWT/RAP Core Runtime");
-        setDescription("Add bundled rwt/rap core 2.2 libraries to project path.");
+        setDescription("Add bundled rwt/rap core 2.3 libraries to project path.");
 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());

@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -39,16 +37,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
-import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
@@ -58,7 +51,6 @@ import org.entirej.framework.plugin.framework.properties.EJPluginTabPageProperti
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
@@ -66,7 +58,6 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
-import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractSubActions;
@@ -83,12 +74,14 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
     private final static Image          MAIN     = EJUIImages.getImage(EJUIImages.DESC_LAYOUT_COMP);
     private final static Image          BLOCK    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK);
     private final static Image          GROUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP);
+    private final static Image          FORM    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM);
     private final static Image          STACKED  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
     private final static Image          POPUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
     private final static Image          TAB      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
     private final static Image          TAB_PAGE = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE);
     private final static Image          BLOCK_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK_REF);
     private final static Image          GROUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP_REF);
+    private final static Image          FORM_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM_REF);
     private final static Image          STACKED_REF  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED_REF);
     private final static Image          POPUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP_REF);
     private final static Image          TAB_REF      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_REF);
@@ -187,6 +180,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     case STACKED:
                         name = "Stacked";
                         break;
+                    case FORM:
+                        name = "Form";
+                        break;
                     case TAB:
                         name = "Tab";
                         break;
@@ -245,9 +241,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             {
                 if (isRoot)
                     return new Action[] { createAction(EJCanvasType.BLOCK), createAction(EJCanvasType.GROUP), createAction(EJCanvasType.SPLIT),
-                            createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.POPUP) };
+                            createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.POPUP),createAction(EJCanvasType.FORM) };
                 return new Action[] { createAction(EJCanvasType.BLOCK), createAction(EJCanvasType.GROUP), createAction(EJCanvasType.SPLIT),
-                        createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED) };
+                        createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED),createAction(EJCanvasType.FORM) };
             }
 
         };
@@ -276,6 +272,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     break;
                 case STACKED:
                     nodes.add(new StackedCanvasNode(this, canvas));
+                    break;
+                case FORM:
+                    nodes.add(new FormCanvasNode(this, canvas));
                     break;
                 default:
                     nodes.add(new BlockCanvasNode(this, canvas));
@@ -354,6 +353,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     return source.isImportFromObjectGroup()?GROUP_REF: GROUP;
                 case POPUP:
                     return source.isImportFromObjectGroup()?POPUP_REF:POPUP;
+                case FORM:
+                    return source.isImportFromObjectGroup()?FORM_REF:FORM;
                 case TAB:
                     return source.isImportFromObjectGroup()?TAB_REF:TAB;
                 case STACKED:
@@ -720,6 +721,303 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
         }
     }
+    
+    
+    private class FormCanvasNode extends AbstractCanvas
+    {
+
+        public FormCanvasNode(AbstractNode<?> parent, EJPluginCanvasProperties source)
+        {
+            super(parent, source);
+        }
+
+        @Override
+        public AbstractDescriptor<?>[] getNodeDescriptors()
+        {
+           
+            if (source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+            }
+            final FormCanvasNode node = FormCanvasNode.this;
+           
+            final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setHorizontalSpan(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setHorizontalSpan(1);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+
+                    treeSection.refresh(node);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getHorizontalSpan());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setVerticalSpan(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setVerticalSpan(1);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+
+                    treeSection.refresh(node);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getVerticalSpan());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.canExpandHorizontally();
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setExpandHorizontally(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+            };
+            hExpandDescriptor.setText("Expand Horizontally");
+            final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.canExpandVertically();
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setExpandVertically(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+            };
+            vExpandDescriptor.setText("Expand Vertically");
+
+            final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setWidth(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setWidth(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getWidth());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setHeight(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setWidth(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
+            {
+
+                public AbstractDescriptor<?>[] getDescriptors()
+                {
+                    if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
+                            && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
+                    {
+                        widthHintDescriptor.setText("Weight");
+                        return new AbstractDescriptor<?>[] { widthHintDescriptor, };
+                    }
+
+                    return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
+                            heightHintDescriptor };
+                }
+            };
+            if(source.isObjectGroupRoot())
+            {
+
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
+            }
+            return new AbstractDescriptor<?>[] { layoutGroupDescriptor };
+                
+            
+        }
+
+        public void addOverview(StyledString styledString)
+        {
+            
+           
+            
+           
+                if(source.isImportFromObjectGroup())
+                {
+                    styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                    styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                    styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+                }
+                
+           
+
+        }
+
+        @Override
+        public INodeDeleteProvider getDeleteProvider()
+        {
+
+            if (source.isImportFromObjectGroup())
+            {
+                return null;
+            }
+            return new INodeDeleteProvider()
+            {
+
+                public void delete(boolean cleanup)
+                {
+
+                  
+                    source.getParentCanvasContainer().removeCanvasProperties(source);
+                    editor.setDirty(true);
+                    treeSection.refresh(FormCanvasNode.this.getParent());
+
+                }
+            };
+        }
+    }
+    
+    
+    
 
     private void cleanBlockAssignment(EJPluginCanvasProperties source)
     {
@@ -855,6 +1153,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case TAB:
                         nodes.add(new TabCanvasNode(this, canvas));
+                        break;
+                    case FORM:
+                        nodes.add(new FormCanvasNode(this, canvas));
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
@@ -1282,6 +1583,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
+                        break;
+                    case FORM:
+                        nodes.add(new FormCanvasNode(this, canvas));
                         break;
                     default:
                         nodes.add(new BlockCanvasNode(this, canvas));
@@ -2445,6 +2749,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
+                    case FORM:
+                        nodes.add(new FormCanvasNode(this, canvas));
                         break;
                     default:
                         nodes.add(new BlockCanvasNode(this, canvas));
@@ -2886,6 +3192,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
+                        break;
+                    case FORM:
+                        nodes.add(new FormCanvasNode(this, canvas));
                         break;
                     default:
                         nodes.add(new BlockCanvasNode(this, canvas));
@@ -3345,6 +3654,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
+                        break;
+                    case FORM:
+                        nodes.add(new FormCanvasNode(this, canvas));
                         break;
                     default:
                         nodes.add(new BlockCanvasNode(this, canvas));
