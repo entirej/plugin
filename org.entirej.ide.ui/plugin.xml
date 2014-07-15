@@ -210,6 +210,18 @@
             %new.entirejObjectGroup.description
          </description>
       </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.report.NewEntireJReportWizard"
+            finalPerspective="org.entirej.ide.ui.perspective"
+            icon="icons/etools16/newejform_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEntireJReportWizard"
+            name="%new.entirejReport.name"
+            project="false">
+         <description>
+            %new.entirejForm.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -247,6 +259,14 @@
                label="%new.entirejForm.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejForm.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.report.NewReportAction"
+               icon="icons/etools16/newejform_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.NewReportAction"
+               label="%new.entirejReport.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejReport.description">
          </action>
          <action
                class="org.entirej.ide.ui.wizards.service.NewPojoServiceAction"

@@ -64,4 +64,8 @@ public class EJUIMessages extends NLS
     public static String NewFormWizard_title;
     public static String NewFormWizard_MainPage_title;
     public static String NewFormWizard_MainPage_desc;
+    
+    public static String NewReportWizard_title;
+    public static String NewReportWizard_MainPage_title;
+    public static String NewReportWizard_MainPage_desc;
 }

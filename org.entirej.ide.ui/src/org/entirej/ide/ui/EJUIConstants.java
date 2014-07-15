@@ -28,6 +28,7 @@ public class EJUIConstants
     public static final String EJ_FORM_REF_LOV_EDITOR_ID   = "org.entirej.ide.ui.editors.ej.lov";                     //$NON-NLS-1$
     public static final String EJ_FORM_REF_BLOCK_EDITOR_ID = "org.entirej.ide.ui.editors.ej.block";                   //$NON-NLS-1$
     public static final String EJ_FORM_WIZARD_ID           = "org.entirej.ide.ui.wizards.NewEntireJFormWizard";       //$NON-NLS-1$
+    public static final String EJ_REPORT_WIZARD_ID         = "org.entirej.ide.ui.wizards.NewEntireJReportWizard";     //$NON-NLS-1$
     public static final String EJ_SERVICE_WIZARD_ID        = "org.entirej.ide.ui.wizards.NewEJPojoServiceWizard";     //$NON-NLS-1$
     public static final String EJ_REUSABLEBLOCK_WIZARD_ID  = "org.entirej.ide.ui.wizards.NewEntireJRefBlockWizard";   //$NON-NLS-1$
     public static final String EJ_REUSABLELOVDEF_WIZARD_ID = "org.entirej.ide.ui.wizards.NewEntireJRefLovWizard";     //$NON-NLS-1$

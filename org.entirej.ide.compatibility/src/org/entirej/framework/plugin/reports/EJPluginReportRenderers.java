@@ -1,11 +1,16 @@
 package org.entirej.framework.plugin.reports;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.entirej.framework.core.enumerations.EJRendererType;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionListener;
 import org.entirej.framework.dev.properties.EJDevPropertyDefinitionGroup;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
 import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportRendererDefinition;
 
@@ -51,6 +56,14 @@ public class EJPluginReportRenderers
                 return new EJDevPropertyDefinitionGroup("REPORT");
             }
         };
+    }
+
+    public static Collection<? extends EJPluginRenderer> getReportRenderers(EJPluginEntireJProperties entireJProperties)
+    {
+        EJPluginRenderer jasperRenderer = new EJPluginRenderer(entireJProperties, "Jasper Report", EJRendererType.APP_COMPONENT,
+                "org.entirej.reports.jasper.renderers.EJJasperReportRendererDefinition",
+                "org.entirej.reports.jasper.renderers.EJJasperReportRenderer");
+        return Arrays.asList(jasperRenderer);
     }
     
 }
