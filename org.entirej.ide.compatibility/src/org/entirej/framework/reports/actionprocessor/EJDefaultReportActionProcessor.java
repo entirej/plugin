@@ -16,9 +16,11 @@
  * Contributors: Mojave Innovations GmbH - initial API and implementation
  ******************************************************************************/
 
-package org.entirej.framework.reports.actionprocessor.interfaces;
+package org.entirej.framework.reports.actionprocessor;
 
-public interface EJReportActionProcessor
+import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
+
+public class EJDefaultReportActionProcessor implements EJReportActionProcessor
 {
     
 }

@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.core.actionprocessor.EJDefaultFormActionProcessor;
 import org.entirej.framework.dev.EJDevConstants;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
@@ -67,6 +66,7 @@ import org.entirej.framework.plugin.framework.properties.EntirejPluginProperties
 import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportRenderers;
+import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -84,6 +84,11 @@ public class NewEntireJReportPage extends NewTypeWizardPage
     private EJPluginRenderer reportRenderer;
 
     private ComboViewer      reportRenderersViewer;
+    
+    
+    private EJPluginRenderer reportFormat;
+    
+    private ComboViewer      reportFormatViewer;
 
     public NewEntireJReportPage()
     {
@@ -105,7 +110,7 @@ public class NewEntireJReportPage extends NewTypeWizardPage
         initTypePage(jelem);
         doStatusUpdate();
 
-        setSuperClass(EJDefaultFormActionProcessor.class.getName(), true);
+        setSuperClass(EJDefaultReportActionProcessor.class.getName(), true);
     }
 
     private void doStatusUpdate()
