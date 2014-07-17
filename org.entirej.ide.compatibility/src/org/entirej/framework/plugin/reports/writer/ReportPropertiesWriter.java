@@ -36,7 +36,7 @@ import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFr
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
 {
-    public void saveForm(EJPluginReportProperties form, IFile file, IProgressMonitor monitor)
+    public void saveReport(EJPluginReportProperties form, IFile file, IProgressMonitor monitor)
     {
         StringBuffer buffer = new StringBuffer();
         buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

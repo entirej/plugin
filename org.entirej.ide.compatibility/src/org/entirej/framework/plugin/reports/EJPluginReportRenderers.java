@@ -77,7 +77,7 @@ public class EJPluginReportRenderers
 
     public static Collection<? extends EJPluginRenderer> getReportRenderers(EJPluginEntireJProperties entireJProperties)
     {
-        EJPluginRenderer jasperRenderer = new EJPluginRenderer(entireJProperties, "Jasper Report", EJRendererType.APP_COMPONENT,
+        EJPluginRenderer jasperRenderer = new EJPluginRenderer(entireJProperties, "JasperReport", EJRendererType.APP_COMPONENT,
                 "org.entirej.reports.jasper.renderers.EJJasperReportRendererDefinition",
                 "org.entirej.reports.jasper.renderers.EJJasperReportRenderer");
         return Arrays.asList(jasperRenderer);

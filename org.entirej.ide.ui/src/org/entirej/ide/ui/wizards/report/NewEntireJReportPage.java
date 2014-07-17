@@ -48,6 +48,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.SWT;
@@ -59,13 +60,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.dev.EJDevConstants;
-import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.EntirejPluginPropertiesEnterpriseEdition;
 import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
-import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
+import org.entirej.framework.plugin.reports.EJPluginReportFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportRenderers;
+import org.entirej.framework.plugin.reports.writer.ReportPropertiesWriter;
 import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.ide.core.EJCoreLog;
@@ -79,6 +80,7 @@ public class NewEntireJReportPage extends NewTypeWizardPage
     private String           reportTitle;
 
     protected IStatus        fReportRendererStatus = new Status(IStatus.OK, EJUIPlugin.getID(), null);
+    protected IStatus        fReportFormatStatus = new Status(IStatus.OK, EJUIPlugin.getID(), null);
     protected IStatus        fReportTitleStatus = new Status(IStatus.OK, EJUIPlugin.getID(), null);
 
     private EJPluginRenderer reportRenderer;
@@ -86,7 +88,7 @@ public class NewEntireJReportPage extends NewTypeWizardPage
     private ComboViewer      reportRenderersViewer;
     
     
-    private EJPluginRenderer reportFormat;
+    private EJPluginReportFormats.ReportFormat reportFormat;
     
     private ComboViewer      reportFormatViewer;
 
@@ -116,7 +118,7 @@ public class NewEntireJReportPage extends NewTypeWizardPage
     private void doStatusUpdate()
     {
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, fReportRendererStatus,fReportTitleStatus };
+        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, fReportRendererStatus,fReportFormatStatus,fReportTitleStatus };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
@@ -149,8 +151,9 @@ public class NewEntireJReportPage extends NewTypeWizardPage
         createPackageControls(composite, nColumns);
         createSeparator(composite, nColumns);
         createTypeNameControls(composite, nColumns);
-        createFormTitleControls(composite, nColumns);
-        createFormRendererControls(composite, nColumns);
+        createReportTitleControls(composite, nColumns);
+        createReportRendererControls(composite, nColumns);
+        createReportFormatControls(composite, nColumns);
         createSuperClassControls(composite, nColumns);
         setControl(composite);
         Dialog.applyDialogFont(composite);
@@ -185,13 +188,13 @@ public class NewEntireJReportPage extends NewTypeWizardPage
                 EJReportActionProcessor.class.getName());
     }
 
-    private void createFormTitleControls(Composite composite, int nColumns)
+    private void createReportTitleControls(Composite composite, int nColumns)
     {
-        Label formTitleLabel = new Label(composite, SWT.NULL);
-        formTitleLabel.setText("Report Title:");
+        Label reportTitleLabel = new Label(composite, SWT.NULL);
+        reportTitleLabel.setText("Report Title:");
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         gd.horizontalSpan = 1;
-        formTitleLabel.setLayoutData(gd);
+        reportTitleLabel.setLayoutData(gd);
         final Text formTitleText = new Text(composite, SWT.BORDER | SWT.SINGLE);
 
         gd = new GridData();
@@ -205,15 +208,15 @@ public class NewEntireJReportPage extends NewTypeWizardPage
             public void modifyText(ModifyEvent e)
             {
                 reportTitle = formTitleText.getText();
-                fReportTitleStatus = formTitleChanged();
+                fReportTitleStatus = reportTitleChanged();
                 doStatusUpdate();
             }
         });
-        fReportTitleStatus = formTitleChanged();
+        fReportTitleStatus = reportTitleChanged();
         createEmptySpace(composite, 1);
     }
 
-    private void createFormRendererControls(Composite composite, int nColumns)
+    private void createReportRendererControls(Composite composite, int nColumns)
     {
         Label formTitleLabel = new Label(composite, SWT.NULL);
         formTitleLabel.setText("Report Renderer:");
@@ -291,15 +294,15 @@ public class NewEntireJReportPage extends NewTypeWizardPage
                 if (reportRenderersViewer.getSelection() instanceof IStructuredSelection)
                     reportRenderer = (EJPluginRenderer) ((IStructuredSelection) reportRenderersViewer.getSelection()).getFirstElement();
 
-                fReportRendererStatus = formRendererChanged();
+                fReportRendererStatus = reportRendererChanged();
                 doStatusUpdate();
             }
         });
         createEmptySpace(composite, 1);
-        refreshFormRenderers();
+        refreshReportRenderers();
     }
 
-    public void refreshFormRenderers()
+    public void refreshReportRenderers()
     {
         if (reportRenderersViewer != null)
         {
@@ -311,7 +314,87 @@ public class NewEntireJReportPage extends NewTypeWizardPage
                 if (reportRenderersViewer.getSelection() instanceof IStructuredSelection)
                     reportRenderer = (EJPluginRenderer) ((IStructuredSelection) reportRenderersViewer.getSelection()).getFirstElement();
             }
-            fReportRendererStatus = formRendererChanged();
+            fReportRendererStatus = reportRendererChanged();
+            doStatusUpdate();
+        }
+    }
+    private void createReportFormatControls(Composite composite, int nColumns)
+    {
+        Label formTitleLabel = new Label(composite, SWT.NULL);
+        formTitleLabel.setText("Report Formats:");
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan = 1;
+        formTitleLabel.setLayoutData(gd);
+        reportFormatViewer = new ComboViewer(composite);
+        
+        gd = new GridData();
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = false;
+        gd.horizontalSpan = 2;
+        reportFormatViewer.getCombo().setLayoutData(gd);
+        reportFormatViewer.setLabelProvider(new ColumnLabelProvider()
+        {
+            @Override
+            public String getText(Object element)
+            {
+                if (element instanceof  EJPluginReportFormats.ReportFormat)
+                {
+                    EJPluginReportFormats.ReportFormat renderer = (( EJPluginReportFormats.ReportFormat) element);
+                    return String.format("%s - [%d,%d]", renderer.name,renderer.reportWidth,renderer.reportHeight);
+                }
+                return super.getText(element);
+            }
+            
+        });
+        
+        reportFormatViewer.setContentProvider(new IStructuredContentProvider()
+        {
+            
+            public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+            {
+            }
+            
+            public void dispose()
+            {
+            }
+            
+            public Object[] getElements(Object inputElement)
+            {
+                
+                
+                
+                
+                
+                
+                return  EJPluginReportFormats.getFormats().toArray();
+            }
+        });
+        
+        reportFormatViewer.addSelectionChangedListener(new ISelectionChangedListener()
+        {
+            
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                
+                if (reportFormatViewer.getSelection() instanceof IStructuredSelection)
+                    reportFormat = ( EJPluginReportFormats.ReportFormat) ((IStructuredSelection) reportFormatViewer.getSelection()).getFirstElement();
+                
+                fReportFormatStatus = reportFormatChanged();
+                doStatusUpdate();
+            }
+        });
+        createEmptySpace(composite, 1);
+        refreshReportFormats();
+    }
+    
+    public void refreshReportFormats()
+    {
+        if (reportFormatViewer != null)
+        {
+            reportFormatViewer.setInput(new Object());
+            reportFormatViewer.setSelection(new StructuredSelection( EJPluginReportFormats.A4));
+            reportFormat =  EJPluginReportFormats.A4;
+            fReportFormatStatus = reportFormatChanged();
             doStatusUpdate();
         }
     }
@@ -323,7 +406,7 @@ public class NewEntireJReportPage extends NewTypeWizardPage
         // must not be empty
         if (typeName.length() == 0)
         {
-            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Form name is empty.");
+            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Report name is empty.");
         }
 
         IStatus result = ResourcesPlugin.getWorkspace().validateName(typeName, IResource.FILE);
@@ -337,15 +420,15 @@ public class NewEntireJReportPage extends NewTypeWizardPage
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
         IFolder folder = root.getFolder(packageFragment.getPath());
-        final IFile formFile = folder.getFile(new Path(typeName + "." + EJDevConstants.FORM_PROPERTIES_FILE_SUFFIX));
-        if (folder.exists() && formFile.exists())
+        final IFile reportFile = folder.getFile(new Path(typeName + ".ejreport"));
+        if (folder.exists() && reportFile.exists())
         {
 
-            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Form already exists.");
+            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Report already exists.");
 
         }
 
-        URI location = formFile.getLocationURI();
+        URI location = reportFile.getLocationURI();
         if (location != null)
         {
             try
@@ -353,7 +436,7 @@ public class NewEntireJReportPage extends NewTypeWizardPage
                 IFileStore store = EFS.getStore(location);
                 if (store.fetchInfo().exists())
                 {
-                    return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Form with same name but different case exists.");
+                    return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Report with same name but different case exists.");
                 }
             }
             catch (CoreException e)
@@ -366,14 +449,14 @@ public class NewEntireJReportPage extends NewTypeWizardPage
     }
 
     
-    protected IStatus formTitleChanged()
+    protected IStatus reportTitleChanged()
     {
 
         String typeName = getTitleText();
         // must not be empty
         if (typeName==null || typeName.length() == 0)
         {
-            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Form title is empty.");
+            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Report title is empty.");
         }
 
         
@@ -384,11 +467,11 @@ public class NewEntireJReportPage extends NewTypeWizardPage
     @Override
     protected IStatus containerChanged()
     {
-        refreshFormRenderers();
+        refreshReportRenderers();
         return super.containerChanged();
     }
 
-    protected IStatus formRendererChanged()
+    protected IStatus reportRendererChanged()
     {
         IJavaProject javaProject = getJavaProject();
         if (javaProject != null)
@@ -404,7 +487,17 @@ public class NewEntireJReportPage extends NewTypeWizardPage
         }
         if (reportRenderer == null)
         {
-            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a form renderer.");
+            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a report renderer.");
+        }
+        return new Status(IStatus.OK, EJUIPlugin.getID(), "");
+    }
+    
+    protected IStatus reportFormatChanged()
+    {
+        
+        if (reportFormat == null)
+        {
+            return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a report format.");
         }
         return new Status(IStatus.OK, EJUIPlugin.getID(), "");
     }
@@ -437,10 +530,10 @@ public class NewEntireJReportPage extends NewTypeWizardPage
             if (project != null)
             {
                 IPackageFragment packageFragment = getPackageFragment();
-                String formName = getTypeName();
+                String reportName = getTypeName();
 
                 // create a sample file
-                monitor.beginTask("Creating Form " + formName, 2);
+                monitor.beginTask("Creating Report " + reportName, 2);
                 IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
                 IFolder folder = root.getFolder(packageFragment.getPath());
@@ -449,29 +542,32 @@ public class NewEntireJReportPage extends NewTypeWizardPage
                     folder.create(false, true, monitor);
                 }
 
-                final IFile formFile = folder.getFile(new Path(formName + "." + EJDevConstants.FORM_PROPERTIES_FILE_SUFFIX));
+                final IFile formFile = folder.getFile(new Path(reportName + ".ejreport"));
 
-                String formTitle = getTitleText();
+                String reportTitle = getTitleText();
                 String rendererName = reportRenderer.getAssignedName();
                 String actionProcessor = getSuperClass();
 
-                EJPluginFormProperties formProperties = new EJPluginFormProperties(formName, project);
-                formProperties.setFormRendererName(rendererName);
-                formProperties.setFormTitle(formTitle);
+                EJPluginReportProperties formProperties = new EJPluginReportProperties(reportName, project);
+                formProperties.setReportRendererName(rendererName);
+                formProperties.setReportTitle(reportTitle);
                 if (actionProcessor != null && actionProcessor.length() > 0)
                 {
                     formProperties.setActionProcessorClassName(actionProcessor);
                 }
 
-                int height = 0;
-                int width = 0;
+               
 
-                formProperties.setFormHeight(height);
-                formProperties.setFormWidth(width);
+                formProperties.setReportHeight(reportFormat.reportHeight);
+                formProperties.setReportWidth(reportFormat.reportWidth);
+                formProperties.setMarginTop(reportFormat.marginTop);
+                formProperties.setMarginBottom(reportFormat.marginBottom);
+                formProperties.setMarginLeft(reportFormat.marginLeft);
+                formProperties.setMarginRight(reportFormat.marginRight);
                 formProperties.setNumCols(1);
 
-                FormPropertiesWriter writer = new FormPropertiesWriter();
-                writer.saveForm(formProperties, formFile, monitor);
+                ReportPropertiesWriter writer = new ReportPropertiesWriter();
+                writer.saveReport(formProperties, formFile, monitor);
                 folder.refreshLocal(IResource.DEPTH_ONE, monitor);
                 getShell().getDisplay().asyncExec(new Runnable()
                 {

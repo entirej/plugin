@@ -25,6 +25,7 @@ public class EJPluginReportFormats
 {
     
     
+    public static final ReportFormat LETTER = new ReportFormat("Letter", 612, 792, 1, 20 , 20, 20, 20);
     public static final ReportFormat A3 = new ReportFormat("A3", 842, 1190, 1, 20 , 20, 20, 20);
     public static final ReportFormat A4 = new ReportFormat("A4", 595, 842, 1, 20 , 20, 20, 20);
 
@@ -32,6 +33,7 @@ public class EJPluginReportFormats
     {
         List<ReportFormat> formats = new ArrayList<ReportFormat>();
         
+        formats.add(LETTER);
         formats.add(A3);
         formats.add(A4);
         
