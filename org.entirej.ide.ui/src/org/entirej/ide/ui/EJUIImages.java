@@ -114,11 +114,13 @@ public class EJUIImages
     public static final ImageDescriptor DESC_CANVAS_TAB              = create(PATH_OBJ16, "canvas_tab.png");                                           //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_BLOCK            = create(PATH_OBJ16, "canvas_block.png");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_GROUP            = create(PATH_OBJ16, "canvas_group.png");                                         //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_FORM            = create(PATH_OBJ16, "form_canvas.png");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_STACKED          = create(PATH_OBJ16, "canvas_stacked.png");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_POPUP            = create(PATH_OBJ16, "canvas_popup.png");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_TAB_REF              = create(PATH_OBJ16, "canvas_tab_ref.png");                                           //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_BLOCK_REF            = create(PATH_OBJ16, "canvas_block_ref.png");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_GROUP_REF            = create(PATH_OBJ16, "canvas_group_ref.png");                                         //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_FORM_REF            = create(PATH_OBJ16, "form_canvas_ref.png");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_STACKED_REF          = create(PATH_OBJ16, "canvas_stacked_ref.png");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_POPUP_REF            = create(PATH_OBJ16, "canvas_popup_ref.png");                                         //$NON-NLS-1$
 

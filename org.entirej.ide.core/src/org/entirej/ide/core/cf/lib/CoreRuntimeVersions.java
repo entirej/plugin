@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 public class CoreRuntimeVersions
 {
 
-    public static Version V_2_1 = new Version("2.1", CoreRuntimeClasspathContainerInitializer.ID);
+    public static Version V_2_3 = new Version("2.3", CoreRuntimeClasspathContainerInitializer.ID);
     //public static Version V_1_0 = new Version("1.0", CoreRuntimeClasspathContainerInitializer.ID_V_1_0);
 
     public static class Version

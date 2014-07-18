@@ -635,7 +635,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
 
                 descriptors.add(dataTypeDescriptor);
                 
-                if(source.getBlockProperties().isControlBlock())
+                if(!source.getBlockProperties().isControlBlock())
                 {
                     AbstractDescriptor<Boolean> blockServiceDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
                     {
