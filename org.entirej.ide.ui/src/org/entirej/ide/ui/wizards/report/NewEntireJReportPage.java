@@ -564,7 +564,6 @@ public class NewEntireJReportPage extends NewTypeWizardPage
                 formProperties.setMarginBottom(reportFormat.marginBottom);
                 formProperties.setMarginLeft(reportFormat.marginLeft);
                 formProperties.setMarginRight(reportFormat.marginRight);
-                formProperties.setNumCols(1);
 
                 ReportPropertiesWriter writer = new ReportPropertiesWriter();
                 writer.saveReport(formProperties, formFile, monitor);

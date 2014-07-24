@@ -57,7 +57,6 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     // Display Properties
     private int                                  _reportWidth;
     private int                                  _reportHeight;
-    private int                                  _numCols;
     private int                                  _marginTop;
     private int                                  _marginBottom;
     private int                                  _marginLeft;
@@ -253,34 +252,7 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         _reportHeight = reportHeight;
     }
     
-    /**
-     * Returns the number of display columns that this for uses
-     * <p>
-     * The report will lay out the main content canvases within a grid. This
-     * property defines how many columns the grid should have. A value of
-     * <code>1</code> (the default), indicates that all content canvases will be
-     * stacked one above each other
-     * 
-     * @return The number of columns that the report will use to display the
-     *         content canvases
-     */
-    public int getNumCols()
-    {
-        return _numCols;
-    }
-    
-    /**
-     * Sets the number of columns the report should use to display the content
-     * canvases
-     * 
-     * @param numCols
-     *            The number of columns
-     * @see #getNumCols()
-     */
-    public void setNumCols(int numCols)
-    {
-        _numCols = numCols;
-    }
+
     
     public int getMarginTop()
     {

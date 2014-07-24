@@ -49,7 +49,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "reportDisplayName", form.getReportDisplayName());
                 writeIntTAG(buffer, "width", form.getReportWidth());
                 writeIntTAG(buffer, "height", form.getReportHeight());
-                writeIntTAG(buffer, "numCols", form.getNumCols());
                 writeIntTAG(buffer, "marginTop", form.getMarginTop());
                 writeIntTAG(buffer, "marginBottom", form.getMarginBottom());
                 writeIntTAG(buffer, "marginLeft", form.getMarginLeft());

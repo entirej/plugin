@@ -43,18 +43,6 @@ public interface EJReportProperties extends Serializable
      */
     public String getTitle();
     
-    /**
-     * Returns the number of display columns that this for uses
-     * <p>
-     * The report will lay out the main content canvases within a grid. This
-     * property defines how many columns the grid should have. A value of
-     * <code>1</code> (the default), indicates that all content canvases will be
-     * stacked one above each other
-     * 
-     * @return The number of columns that the report will use to display the
-     *         content canvases
-     */
-    public int getNumCols();
     
     /**
      * Returns the required height of the report

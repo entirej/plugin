@@ -44,7 +44,6 @@ public class ReportHandler extends EntireJTagHandler
     private static final String      ELEMENT_MARGIN_RIGHT           = "marginRight";
     private static final String      ELEMENT_REPORT_ORIENTATION     = "orientation";
     private static final String      ELEMENT_REPORT_HEIGHT          = "height";
-    private static final String      ELEMENT_NUM_COLS               = "numCols";
     private static final String      ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
     private static final String      ELEMENT_RENDERER_NAME          = "reportRendererName";
     private static final String      ELEMENT_RENDERER_PROPERTIES    = "reportRendererProperties";
@@ -167,17 +166,6 @@ public class ReportHandler extends EntireJTagHandler
             else
             {
                 _reportProperties.setReportWidth(0);
-            }
-        }
-        else if (name.equals(ELEMENT_NUM_COLS))
-        {
-            if (value.length() > 0)
-            {
-                _reportProperties.setNumCols(Integer.parseInt(value));
-            }
-            else
-            {
-                _reportProperties.setNumCols(1);
             }
         }
         else if (name.equals(ELEMENT_MARGIN_TOP))
