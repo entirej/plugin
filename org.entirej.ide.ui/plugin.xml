@@ -98,6 +98,18 @@
                contentTypeId="org.entirej.ide.ui.editors.ej.reflov.file">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="org.entirej.ide.ui.editors.form.EJFormEditor"
+            contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
+            default="true"
+            extensions="ejreport"
+            icon="icons/obj16/form.png"
+            id="org.entirej.ide.ui.editors.ej.report"
+            name="%org.entirej.ide.ui.editors.ej.report.name">
+         <contentTypeBinding
+               contentTypeId="org.entirej.ide.ui.editors.ej.form.file">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
@@ -129,6 +141,12 @@
             file-extensions="objgroup"
             id="org.entirej.ide.ui.editors.ej.objgroup.file"
             name="%org.entirej.ide.ui.editors.ej.objgroup.file.name"
+            priority="high">
+      </content-type>
+      <content-type
+            file-extensions="ejreport"
+            id="org.entirej.ide.ui.editors.ej.report.file"
+            name="%org.entirej.ide.ui.editors.ej.report.file.name"
             priority="high">
       </content-type>
    </extension>
