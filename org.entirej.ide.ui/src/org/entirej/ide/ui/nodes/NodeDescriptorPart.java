@@ -45,6 +45,17 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
         super.buildBody(section, toolkit);
     }
 
+    
+    @Override
+    public void setFocus()
+    {
+        if(getSection().isDisposed() || getSection().getClient()==null || getSection().getClient().isDisposed())
+            return;
+        
+        super.setFocus();
+    }
+
+    
     @Override
     public Action[] getToolbarActions()
     {
