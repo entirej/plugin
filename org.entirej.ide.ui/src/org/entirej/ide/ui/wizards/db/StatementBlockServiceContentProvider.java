@@ -93,15 +93,22 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
                 if (columnSelectionPage.isPageComplete())
                 {
                     EJServiceGeneratorType serviceGeneratorType = new EJServiceGeneratorType();
-                    serviceGeneratorType.setQueryStatement(columnSelectionPage.getSelectStatement());
-                    serviceGeneratorType.setInsertStatement(statementsWizardPage.getInsertStatement());
-                    serviceGeneratorType.setUpdateStatement(statementsWizardPage.getUpdateStatement());
-                    serviceGeneratorType.setDeleteStatement(statementsWizardPage.getDeleteStatement());
+                    serviceGeneratorType.setQueryStatement(escapeNextLine(columnSelectionPage.getSelectStatement()));
+                    serviceGeneratorType.setInsertStatement(escapeNextLine(statementsWizardPage.getInsertStatement()));
+                    serviceGeneratorType.setUpdateStatement(escapeNextLine(statementsWizardPage.getUpdateStatement()));
+                    serviceGeneratorType.setDeleteStatement(escapeNextLine(statementsWizardPage.getDeleteStatement()));
                     EJPojoGeneratorType pojoGeneratorType = new EJPojoGeneratorType();
                     pojoGeneratorType.setColumnNames(columnSelectionPage.getColumns());
                     return new BlockServiceContent(serviceGeneratorType, pojoGeneratorType);
                 }
                 return null;
+            }
+            
+            
+            private String escapeNextLine(String text)
+            {
+                
+                return text.replace("\r\n", " ").replace("\n", " ");
             }
         };
     }

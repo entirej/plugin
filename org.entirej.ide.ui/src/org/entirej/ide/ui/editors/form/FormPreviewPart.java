@@ -155,6 +155,16 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
         previewLayout();
 
     }
+    
+    
+    @Override
+    public void setFocus()
+    {
+        if(getSection().isDisposed() || getSection().getClient()==null || getSection().getClient().isDisposed())
+            return;
+        
+        super.setFocus();
+    }
 
     private void previewLayout()
     {

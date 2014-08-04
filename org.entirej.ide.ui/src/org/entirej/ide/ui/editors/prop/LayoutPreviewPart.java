@@ -78,6 +78,16 @@ public class LayoutPreviewPart extends AbstractDescriptorPart implements INodeDe
         super.dispose();
         COLOR_LIGHT_RED.dispose();
     }
+    
+    @Override
+    public void setFocus()
+    {
+        if(getSection().isDisposed() || getSection().getClient()==null || getSection().getClient().isDisposed())
+            return;
+        
+        super.setFocus();
+    }
+
 
     @Override
     protected void buildBody(Section section, FormToolkit toolkit)

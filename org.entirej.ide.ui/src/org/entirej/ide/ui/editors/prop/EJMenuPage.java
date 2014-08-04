@@ -54,6 +54,8 @@ public class EJMenuPage extends AbstractEditorPage implements PageActionHandlerP
         NodeDescriptorPart descriptorPart = new NodeDescriptorPart(editor, this, body)
         {
 
+      
+            
             @Override
             public boolean isStale()
             {

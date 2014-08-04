@@ -107,10 +107,11 @@ public class NewEJGenServicePage extends NewTypeWizardPage implements IJavaProje
                 setPackageFragmentRoot(pojoServiceSelectPage.getPackageFragmentRoot(), false);
                 setPackageFragment(pojoServiceSelectPage.getPackageFragment(), true);
             }
+            validate();
         }
     }
 
-    private void doStatusUpdate()
+    public void doStatusUpdate()
     {
         // status of all used components
         IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, serviceGenStatus };
@@ -218,7 +219,7 @@ public class NewEJGenServicePage extends NewTypeWizardPage implements IJavaProje
     }
 
     @Override
-    protected IStatus typeNameChanged()
+    public IStatus typeNameChanged()
     {
         IStatus typeNameChanged = super.typeNameChanged();
         if (pojoServiceSelectPage.getPackageFragment().equals(getPackageFragment()) && pojoServiceSelectPage.getTypeName().equals(getTypeName()))
@@ -277,6 +278,14 @@ public class NewEJGenServicePage extends NewTypeWizardPage implements IJavaProje
         gd.heightHint = 0;
         label.setLayoutData(gd);
         return label;
+    }
+
+    public void validate()
+    {
+        fTypeNameStatus = typeNameChanged();
+        fPackageStatus = packageChanged();
+       doStatusUpdate();
+        
     }
 
 }

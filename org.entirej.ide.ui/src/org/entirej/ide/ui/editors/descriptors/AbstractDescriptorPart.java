@@ -161,7 +161,6 @@ public abstract class AbstractDescriptorPart extends SectionPart
         if (body != null)
         {
             body.dispose();
-
         }
 
         AbstractDescriptor<?>[] descriptors = getDescriptors();
@@ -178,7 +177,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         }
         
         body = toolkit.createComposite(section);
-
+        section.setClient(body);
         body.setLayout(new GridLayout());
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         section.setTabList(new Control[] { body });
@@ -239,7 +238,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         }
 
         toolkit.paintBordersFor(body);
-        section.setClient(body);
+       
         section.layout();
         section.setRedraw(true);
 
