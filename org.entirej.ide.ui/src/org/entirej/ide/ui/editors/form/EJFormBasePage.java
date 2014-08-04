@@ -60,6 +60,9 @@ public class EJFormBasePage extends AbstractEditorPage implements PageActionHand
         descriptorPart = new NodeDescriptorPart(editor, this, body)
         {
 
+            
+          
+
             @Override
             public boolean isStale()
             {

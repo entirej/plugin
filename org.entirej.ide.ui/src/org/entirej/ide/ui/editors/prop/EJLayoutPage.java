@@ -57,6 +57,7 @@ public class EJLayoutPage extends AbstractEditorPage implements PageActionHandle
         NodeDescriptorPart descriptorPart = new NodeDescriptorPart(editor, this, body)
         {
 
+         
             @Override
             public boolean isStale()
             {
