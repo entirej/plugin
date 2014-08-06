@@ -28,7 +28,6 @@ import org.entirej.framework.core.properties.interfaces.EJMainScreenProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
-import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
 
 public interface EJReportBlockProperties extends Serializable
 {
@@ -205,18 +204,6 @@ public interface EJReportBlockProperties extends Serializable
      * @return The item group container for the given screen type
      */
     public EJItemGroupPropertiesContainer getScreenItemGroupContainer();
-    
-    /**
-     * Returns the rendering properties for this block
-     * <p>
-     * These properties are not used internally within the EntireJ Core
-     * Framework but can be used by the applications rendering engine to display
-     * the block
-     * <p>
-     * 
-     * @return The blocks rendering properties
-     */
-    public EJReportFrameworkExtensionProperties getBlockRendererProperties();
     
 
     

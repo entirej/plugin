@@ -19,21 +19,9 @@
 package org.entirej.ide.ui.editors.report;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -41,8 +29,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -53,14 +39,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -73,87 +53,35 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.entirej.framework.core.actionprocessor.EJDefaultFormActionProcessor;
-import org.entirej.framework.core.actionprocessor.interfaces.EJFormActionProcessor;
-import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
-import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
-import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
-import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
-import org.entirej.framework.core.renderers.definitions.interfaces.EJFormRendererDefinition;
-import org.entirej.framework.dev.EJDevConstants;
-import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
-import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
-import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
-import org.entirej.framework.plugin.framework.properties.EJPluginReusableBlockProperties;
-import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
-import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
-import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
-import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
-import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
-import org.entirej.framework.plugin.preferences.EJPropertyRetriever;
-import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
+import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.ide.core.EJCoreLog;
+import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
+import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
-import org.entirej.ide.ui.editors.form.AbstractEJFormEditor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
-import org.entirej.ide.ui.editors.form.BlockGroupNode;
-import org.entirej.ide.ui.editors.form.CanvasGroupNode;
-import org.entirej.ide.ui.editors.form.FormCanvasPreviewImpl;
 import org.entirej.ide.ui.editors.form.FormNodeTag;
-import org.entirej.ide.ui.editors.form.IFormPreviewProvider;
-import org.entirej.ide.ui.editors.form.LovGroupNode;
-import org.entirej.ide.ui.editors.form.ObjectGroupNode;
-import org.entirej.ide.ui.editors.form.RelationsGroupNode;
-import org.entirej.ide.ui.editors.form.wizards.DataBlockServiceWizard;
-import org.entirej.ide.ui.editors.form.wizards.DataBlockWizardContext;
-import org.entirej.ide.ui.editors.form.wizards.MirrorBlockWizard;
-import org.entirej.ide.ui.editors.form.wizards.MirrorBlockWizardContext;
-import org.entirej.ide.ui.editors.form.wizards.RefBlockWizard;
-import org.entirej.ide.ui.editors.form.wizards.RefBlockWizardContext;
-import org.entirej.ide.ui.editors.form.wizards.RefLovWizard;
-import org.entirej.ide.ui.editors.form.wizards.RefLovWizardContext;
-import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizard;
-import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizardContext;
-import org.entirej.ide.ui.editors.form.wizards.RelationWizard;
-import org.entirej.ide.ui.editors.form.wizards.RelationWizardContext;
-import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
-import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart.IExtensionValues;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeContentProvider;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
-import org.entirej.ide.ui.nodes.AbstractSubActions;
 import org.entirej.ide.ui.nodes.INodeDescriptorViewer;
 import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.table.TableViewerColumnFactory;
-import org.entirej.ide.ui.wizards.form.NewEntireJRefLovWizard;
 
-public class FormDesignTreeSection extends AbstractNodeTreeSection
+public class ReportDesignTreeSection extends AbstractNodeTreeSection
 {
-    protected final AbstractEJFormEditor        editor;
+    protected final AbstractEJReportEditor        editor;
 
-    protected FormPreviewer                     formPreviewer;
+    protected ReportPreviewer                     reportPreviewer;
 
     protected AbstractNode<?>                   baseNode;
     protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
@@ -174,7 +102,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                                                    }
                                                                };
 
-    public FormDesignTreeSection(AbstractEJFormEditor editor, FormPage page, Composite parent)
+    public ReportDesignTreeSection(AbstractEJReportEditor editor, FormPage page, Composite parent)
     {
         super(editor, page, parent);
         this.editor = editor;
@@ -182,7 +110,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         addDnDSupport(null);// no root move need in layout
     }
 
-    public AbstractEJFormEditor getEditor()
+    public AbstractEJReportEditor getEditor()
     {
         return editor;
     }
@@ -196,32 +124,32 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     @Override
     protected void showNodeDetails(AbstractNode<?> node)
     {
-        // use form node as default node to editor
+        // use report node as default node to editor
         if (node == null)
             node = baseNode;
 
         super.showNodeDetails(node);
-        if (formPreviewer != null)
-            formPreviewer.showDetails(node);
+        if (reportPreviewer != null)
+            reportPreviewer.showDetails(node);
     }
 
     public void refreshPreview()
     {
-        if (formPreviewer != null)
+        if (reportPreviewer != null)
             Display.getDefault().asyncExec(new Runnable()
             {
 
                 public void run()
                 {
-                    formPreviewer.refresh();
+                    reportPreviewer.refresh();
 
                 }
             });
     }
 
-    public void setFormPreviewer(FormPreviewer formPreviewer)
+    public void setReportPreviewer(ReportPreviewer reportPreviewer)
     {
-        this.formPreviewer = formPreviewer;
+        this.reportPreviewer = reportPreviewer;
     }
 
     @Override
@@ -245,14 +173,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     @Override
     public String getSectionTitle()
     {
-        return "Form Setup";
+        return "Report Setup";
     }
 
     @Override
     public String getSectionDescription()
     {
 
-        return "Define design/settings of the form in the following section.";
+        return "Define design/settings of the report in the following section.";
     }
 
     @Override
@@ -285,272 +213,15 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     public Action[] getBaseActions()
     {
 
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true), null,
-                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction(),null,createObjectGroupAction() };
+        return new Action[] {  };
     }
 
     protected Action[] getNewBlockActions()
     {
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true) };
+        return new Action[] {  };
     }
 
-    public Action createNewBlockAction(final boolean controlBlock)
-    {
-
-        return new Action(controlBlock ? "New Control Block" : "New Service Block")
-        {
-
-            @Override
-            public void runWithEvent(Event event)
-            {
-                DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
-                {
-
-                    public void addBlock(String blockName, EJPluginRenderer block, String canvas, boolean createCanvas, String serviceClass)
-                    {
-                        final EJPluginFormProperties formProperties = editor.getFormProperties();
-                        final EJPluginBlockProperties blockProperties = new EJPluginBlockProperties(formProperties, blockName, controlBlock);
-
-                        if (createCanvas)
-                        {
-                            EJPluginCanvasContainer container = formProperties.getCanvasContainer();
-                            EJCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                            container.addCanvasProperties(canvasProp);
-                        }
-
-                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
-                        blockProperties.setCanvasName(canvas);
-                        blockProperties.setBlockRendererName(block.getAssignedName(), true);
-                        // create items if service is also selected
-                        if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
-                        {
-                            blockProperties.setServiceClassName(serviceClass, true);
-                        }
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                refresh(findNode(formProperties.getCanvasContainer()));
-                                selectNodes(true, findNode(blockProperties));
-
-                            }
-                        });
-
-                    }
-
-                    public List<EJPluginRenderer> getBlockRenderer()
-                    {
-                        Collection<EJPluginRenderer> allRenderers = editor.getFormProperties().getEntireJProperties().getBlockRendererContainer()
-                                .getAllRenderers();
-                        return new ArrayList<EJPluginRenderer>(allRenderers);
-                    }
-
-                    public List<EJCanvasProperties> getCanvas()
-                    {
-                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever.retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
-                        return new ArrayList<EJCanvasProperties>(canvasCollection);
-                    }
-
-                    public boolean hasBlock(String blockName)
-                    {
-                        return editor.getFormProperties().getBlockContainer().contains(blockName);
-                    }
-
-                    public boolean hasCanvas(String canvasName)
-                    {
-                        final EJPluginFormProperties formProperties = editor.getFormProperties();
-                        return EJPluginCanvasRetriever.canvasExists(formProperties, canvasName);
-                    }
-
-                    public IJavaProject getProject()
-                    {
-                        return editor.getJavaProject();
-                    }
-
-                    public boolean supportService()
-                    {
-                        return !controlBlock;
-                    }
-
-                });
-                wizard.open();
-            }
-
-        };
-    }
-
-    public Action createNewMirrorBlockAction(final String defaultBlock)
-    {
-
-        return new Action("New Mirror Block")
-        {
-
-            @Override
-            public void runWithEvent(Event event)
-            {
-                MirrorBlockWizard wizard = new MirrorBlockWizard(new MirrorBlockWizardContext()
-                {
-
-                    public String getDefault()
-                    {
-                        return defaultBlock;
-                    }
-
-                    public void addBlock(String blockName, EJPluginRenderer block, String canvas, boolean createCanvas, String parentBlock)
-                    {
-                        final EJPluginFormProperties formProperties = editor.getFormProperties();
-                        EJPluginBlockProperties parent = editor.getFormProperties().getBlockContainer().getBlockProperties(parentBlock);
-                        parent.setIsMirroredBlock(true);
-                        final EJPluginBlockProperties blockProperties = parent.makeCopy(blockName, true);
-
-                        if (createCanvas)
-                        {
-                            EJPluginCanvasContainer container = formProperties.getCanvasContainer();
-                            EJCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                            container.addCanvasProperties(canvasProp);
-                        }
-
-                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
-                        blockProperties.setCanvasName(canvas);
-                        blockProperties.setBlockRendererName(block.getAssignedName(), true);
-
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                refresh(findNode(formProperties.getCanvasContainer()));
-                                selectNodes(true, findNode(blockProperties));
-
-                            }
-                        });
-
-                    }
-
-                    public List<EJPluginRenderer> getBlockRenderer()
-                    {
-                        Collection<EJPluginRenderer> allRenderers = editor.getFormProperties().getEntireJProperties().getBlockRendererContainer()
-                                .getAllRenderers();
-                        return new ArrayList<EJPluginRenderer>(allRenderers);
-                    }
-
-                    public List<EJCanvasProperties> getCanvas()
-                    {
-                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever.retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
-                        return new ArrayList<EJCanvasProperties>(canvasCollection);
-                    }
-
-                    public boolean hasBlock(String blockName)
-                    {
-                        return editor.getFormProperties().getBlockContainer().contains(blockName);
-                    }
-
-                    public boolean hasCanvas(String canvasName)
-                    {
-                        final EJPluginFormProperties formProperties = editor.getFormProperties();
-                        return EJPluginCanvasRetriever.canvasExists(formProperties, canvasName);
-                    }
-
-                    public IJavaProject getProject()
-                    {
-                        return editor.getJavaProject();
-                    }
-
-                    public List<String> getBlockNames()
-                    {
-                        List<String> names = new ArrayList<String>();
-                        for (EJPluginBlockProperties blockProperties : editor.getFormProperties().getBlockContainer().getAllBlockProperties())
-                        {
-                            if (!blockProperties.isMirrorChild())
-                            {
-                                names.add(blockProperties.getName());
-                            }
-                        }
-                        return names;
-                    }
-
-                });
-                wizard.open();
-            }
-
-        };
-    }
-
-
-    
-
-        return new Action("New Block Relation")
-        {
-
-            @Override
-            public void runWithEvent(Event event)
-            {
-                RelationWizard wizard = new RelationWizard(new RelationWizardContext()
-                {
-
-                    public List<String> getBlockNames()
-                    {
-                        return new ArrayList<String>(editor.getFormProperties().getBlockNames());
-                    }
-
-                    public boolean hasRelation(String lovName)
-                    {
-                        return editor.getFormProperties().getRelationContainer().contains(lovName);
-                    }
-
-                    public IJavaProject getProject()
-                    {
-                        return editor.getJavaProject();
-                    }
-
-                    public void addRelation(String relationName, String master, String detail)
-                    {
-                        final EJPluginFormProperties formProperties = editor.getFormProperties();
-
-                        final EJPluginRelationProperties relationProperties = new EJPluginRelationProperties(formProperties, relationName);
-                        relationProperties.setMasterBlockName(master);
-                        relationProperties.setDetailBlockName(detail);
-                        formProperties.getRelationContainer().addRelationProperties(relationProperties);
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getRelationContainer()), true);
-                                selectNodes(true, findNode(relationProperties));
-
-                            }
-                        });
-
-                    }
-
-                    public String validDtlRelation(String dtlBlock)
-                    {
-                        final EJPluginFormProperties formProperties = editor.getFormProperties();
-
-                        List<EJPluginRelationProperties> allRelationProperties = formProperties.getRelationContainer().getAllRelationProperties();
-                        for (EJPluginRelationProperties relationProperties : allRelationProperties)
-                        {
-                            if (relationProperties.getDetailBlockName() != null && relationProperties.getDetailBlockName().equals(dtlBlock))
-                            {
-                                return String.format("relation '%s' already defined with detail block '%s'.", relationProperties.getName(), dtlBlock);
-                            }
-                        }
-                        return null;
-                    }
-
-                });
-                wizard.open();
-            }
-
-        };
-    }
+   
 
     @Override
     public AbstractNodeContentProvider getContentProvider()
@@ -561,22 +232,22 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             public Object[] getElements(Object inputElement)
             {
                 // project build errors
-                if (editor.getFormProperties() == null)
+                if (editor.getReportProperties() == null)
                     return new Object[0];
-                return new Object[] { baseNode = new FormNode(editor.getFormProperties())};
+                return new Object[] { baseNode = new ReportNode(editor.getReportProperties())};
             }
         };
     }
 
-    private class FormNode extends AbstractNode<EJPluginFormProperties> implements NodeOverview
+    private class ReportNode extends AbstractNode<EJPluginReportProperties> implements NodeOverview
     {
-        private final Image                 FORM      = EJUIImages.getImage(EJUIImages.DESC_FORM);
+        private final Image                 REPORT      = EJUIImages.getImage(EJUIImages.DESC_FORM);
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
                                                       {
 
                                                           public void refreshNode()
                                                           {
-                                                              refresh(FormNode.this);
+                                                              refresh(ReportNode.this);
                                                           }
 
                                                           @Override
@@ -597,7 +268,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                                           }
                                                       };
 
-        private FormNode(EJPluginFormProperties source)
+        private ReportNode(EJPluginReportProperties source)
         {
             super(null, source);
         }
@@ -606,7 +277,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         {
             String name = source.getName();
             if (name == null || name.length() == 0)
-                name = "<form>";
+                name = "<report>";
 
             return name;
         }
@@ -621,7 +292,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         public String getNodeDescriptorDetails()
         {
             
-            return "Click <a href=\"http://docs.entirej.com/display/EJ1/Form+Properties#FormProperties\">here</a> for more information on Form Properties. All mandatory properties are denoted by \"*\"";
+            return "Click <a href=\"http://docs.entirej.com/display/EJ1/Report+Properties#ReportProperties\">here</a> for more information on Report Properties. All mandatory properties are denoted by \"*\"";
         }
 
         public <S> S getAdapter(Class<S> adapter)
@@ -630,8 +301,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             {
                 return adapter.cast(validator);
             }
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
+            if (IReportPreviewProvider.class.isAssignableFrom(adapter))
             {
+                /*
                 return adapter.cast(new FormCanvasPreviewImpl()
                 {
                     @Override
@@ -668,6 +340,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                     }
                 });
+                */
             }
             return null;
         }
@@ -675,7 +348,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         @Override
         public Image getImage()
         {
-            return FORM;
+            return REPORT;
         }
 
         @Override
@@ -691,21 +364,21 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
             final AbstractTextDescriptor formDisplayNameDescriptor = new AbstractTextDescriptor(
                     "Display Name",
-                    "If you are using more cryptic names for your forms i.e. FRM001, FRM002 etc, then you may want to have a different name displayed in your project tree so you can find your form easier")
+                    "If you are using more cryptic names for your reports i.e. FRM001, FRM002 etc, then you may want to have a different name displayed in your project tree so you can find your report easier")
             {
 
                 @Override
                 public void setValue(String value)
                 {
-                    source.setFormDisplayName(value);
+                    source.setReportDisplayName(value);
                     editor.setDirty(true);
-                    refresh(FormNode.this);
+                    refresh(ReportNode.this);
                 }
 
                 @Override
                 public String getValue()
                 {
-                    return source.getFormDisplayName();
+                    return source.getReportDisplayName();
                 }
 
             };
@@ -753,9 +426,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 @Override
                 public void setValue(String value)
                 {
-                    source.setFormTitle(value);
+                    source.setReportTitle(value);
                     editor.setDirty(true);
-                    refresh(FormNode.this);
+                    refresh(ReportNode.this);
                 }
 
                 @Override
@@ -767,77 +440,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 @Override
                 public String getTooltip()
                 {
-                    return "This is the title displayed to the user when the form is run. The title will be sent to the applications Translator for translation if required";
+                    return "This is the title displayed to the user when the report is run. The title will be sent to the applications Translator for translation if required";
                 }
 
             };
             titleDescriptor.setRequired(true);
 
-            AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer",
-                    "The form renderer defined for the client framework you are using")
-            {
-
-                Filter vfilter = new Filter()
-                               {
-
-                                   public boolean match(int tag, IMarker marker)
-                                   {
-
-                                       return (tag & FormNodeTag.RENDERER) != 0;
-                                   }
-                               };
-
-                @Override
-                public String getErrors()
-                {
-
-                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
-                }
-
-                @Override
-                public String getWarnings()
-                {
-                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
-                }
-
-                public String[] getOptions()
-                {
-                    List<String> options = new ArrayList<String>();
-                    EJPluginAssignedRendererContainer rendererContainer = source.getEntireJProperties().getFormRendererContainer();
-                    Collection<EJPluginRenderer> allRenderers = rendererContainer.getAllRenderers();
-                    for (EJPluginRenderer renderer : allRenderers)
-                    {
-                        options.add(renderer.getAssignedName());
-                    }
-
-                    return options.toArray(new String[0]);
-                }
-
-                public String getOptionText(String t)
-                {
-
-                    return t;
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    source.setFormRendererName(value);
-                    EJFrameworkExtensionProperties extensionProperties = ExtensionsPropertiesFactory.createFormRendererProperties(source, true);
-                    source.setFormRendererProperties(extensionProperties);
-                    editor.setDirty(true);
-                    refresh(FormNode.this);
-                    if (descriptorViewer != null)
-                        descriptorViewer.showDetails(FormNode.this);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return source.getFormRendererName();
-                }
-            };
-            rendererDescriptor.setRequired(true);
+    
 
             AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor")
             {
@@ -869,7 +478,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 {
                     source.setActionProcessorClassName(value);
                     editor.setDirty(true);
-                    refresh(FormNode.this);
+                    refresh(ReportNode.this);
 
                 }
 
@@ -882,11 +491,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 @Override
                 public String getTooltip()
                 {
-                    return "The action processor to use for this form. Action Processors are used as event handlers for your form";
+                    return "The action processor to use for this report. Action Processors are used as event handlers for your report";
                 }
             };
-            actionDescriptor.setBaseClass(EJFormActionProcessor.class.getName());
-            actionDescriptor.setDefaultClass(EJDefaultFormActionProcessor.class.getName());
+            actionDescriptor.setBaseClass(EJReportActionProcessor.class.getName());
+            actionDescriptor.setDefaultClass(EJDefaultReportActionProcessor.class.getName());
 
             final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
             {
@@ -911,7 +520,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
 
-                    return "The width <b>(in pixels)</b> of the form within it's container. If the width of the form is wider than the available space then a horizontal scroll bar will be shown ";
+                    return "The width <b>(in pixels)</b> of the report within it's container. If the width of the report is wider than the available space then a horizontal scroll bar will be shown ";
                 }
 
                 @Override
@@ -925,11 +534,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 {
                     try
                     {
-                        source.setFormWidth(Integer.parseInt(value));
+                        source.setReportWidth(Integer.parseInt(value));
                     }
                     catch (NumberFormatException e)
                     {
-                        source.setFormWidth(0);
+                        source.setReportWidth(0);
                         if (text != null)
                         {
                             text.setText(getValue());
@@ -937,13 +546,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                     }
                     editor.setDirty(true);
-                    refresh(FormNode.this);
+                    refresh(ReportNode.this);
                 }
 
                 @Override
                 public String getValue()
                 {
-                    return String.valueOf(source.getFormWidth());
+                    return String.valueOf(source.getReportWidth());
                 }
 
                 Text text;
@@ -988,7 +597,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
 
-                    return "The height <b>(in pixels)</b> of the form within it's container. If the form height is higher than the available space then a vertical scroll bar will be shown";
+                    return "The height <b>(in pixels)</b> of the report within it's container. If the report height is higher than the available space then a vertical scroll bar will be shown";
                 }
 
                 @Override
@@ -996,11 +605,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 {
                     try
                     {
-                        source.setFormHeight(Integer.parseInt(value));
+                        source.setReportHeight(Integer.parseInt(value));
                     }
                     catch (NumberFormatException e)
                     {
-                        source.setFormHeight(0);
+                        source.setReportHeight(0);
                         if (text != null)
                         {
                             text.setText(getValue());
@@ -1008,13 +617,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                     }
                     editor.setDirty(true);
-                    refresh(FormNode.this);
+                    refresh(ReportNode.this);
                 }
 
                 @Override
                 public String getValue()
                 {
-                    return String.valueOf(source.getFormHeight());
+                    return String.valueOf(source.getReportHeight());
                 }
 
                 Text text;
@@ -1030,75 +639,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            final AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
-            {
-                Filter vfilter = new Filter()
-                               {
-
-                                   public boolean match(int tag, IMarker marker)
-                                   {
-
-                                       return (tag & FormNodeTag.COL) != 0;
-                                   }
-                               };
-
-                @Override
-                public String getErrors()
-                {
-
-                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
-                }
-
-                @Override
-                public String getWarnings()
-                {
-                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
-                }
-
-                @Override
-                public String getTooltip()
-                {
-                    return "The amount of columns the form will use to layout it's contained canvases";
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setNumCols(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setNumCols(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    refresh(FormNode.this);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getNumCols());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
+            
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
@@ -1106,67 +647,19 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 @Override
                 public String getTooltip()
                 {
-                    return "Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form\">here</a> For more information on laying out an EntireJ Form";
+                    return "Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Report\">here</a> For more information on laying out an EntireJ Report";
 
                 }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor, colDescriptor };
+                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor };
                 }
             };
 
-            // try to load renderer group
-            EJFrameworkExtensionProperties rendereProperties = source.getFormRendererProperties();
-            if (rendereProperties == null && source.getFormRendererName() != null)
-            {
-                rendereProperties = ExtensionsPropertiesFactory.createFormRendererProperties(source, true);
-                source.setFormRendererProperties(rendereProperties);
-            }
-            if (rendereProperties != null)
-            {
+            
 
-                final EJDevFormRendererDefinition formRendererDefinition = ExtensionsPropertiesFactory.loadFormRendererDefinition(
-                        source.getEntireJProperties(), source.getFormRendererName());
-                if (formRendererDefinition != null)
-                {
-                    final EJPropertyDefinitionGroup definitionGroup = formRendererDefinition.getFormPropertyDefinitionGroup();
-                    if (definitionGroup != null)
-                    {
-
-                        AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Renderer Settings")
-                        {
-
-                            public AbstractDescriptor<?>[] getDescriptors()
-                            {
-                                return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getEntireJProperties(), definitionGroup,
-                                        source.getFormRendererProperties(), new IExtensionValues()
-                                        {
-
-                                            public void loadValidValuesFromExtension(EJFrameworkExtensionProperties frameworkExtensionProperties,
-                                                    EJPropertyDefinition propertyDefinition)
-                                            {
-                                                propertyDefinition.clearValidValues();
-                                                EJFormRendererDefinition rendererDef = ExtensionsPropertiesFactory.loadFormRendererDefinition(
-                                                        source.getEntireJProperties(), source.getFormRendererName());
-                                                rendererDef.loadValidValuesForProperty(frameworkExtensionProperties, propertyDefinition);
-                                            }
-
-                                            public EJPluginBlockProperties getBlockProperties()
-                                            {
-                                                return null;
-                                            }
-                                        });
-                            }
-                        };
-
-                        return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor, layoutGroupDescriptor,
-                                rendererGroupDescriptor, metadataGroupDescriptor };
-                    }
-                }
-            }
-
-            AbstractGroupDescriptor parametersDes = new AbstractGroupDescriptor("Form Parameters")
+            AbstractGroupDescriptor parametersDes = new AbstractGroupDescriptor("Report Parameters")
             {
                 IRefreshHandler              handler;
                 TableViewer                  tableViewer;
@@ -1176,7 +669,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 @Override
                 public String getTooltip()
                 {
-                    return "Form parameters are form global variables that can be accessed from the forms action processor or used as default Query / Insert values on the block items. For more information, read the Form Properties section <a href=\"http://docs.entirej.com/display/EJ1/Form+Properties#FormProperties-FormParameters\">here</a>";
+                    return "Report parameters are report global variables that can be accessed from the reports action processor or used as default Query  values on the block items. For more information, read the Form Properties section <a href=\"http://docs.entirej.com/display/EJ1/Report+Properties#FormProperties-ReportParameters\">here</a>";
                 }
 
                 public Action[] getToolbarActions()
@@ -1190,7 +683,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         {
 
                             EJPluginApplicationParameter newEntry = new EJPluginApplicationParameter("", "java.lang.String");
-                            source.getFormProperties().addFormParameter(newEntry);
+                            source.addReportParameter(newEntry);
 
                             if (tableViewer != null)
                             {
@@ -1213,7 +706,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             if (entry == null)
                                 return;
 
-                            source.getFormProperties().removeFormParameter(entry);
+                            source.removeReportParameter(entry);
                             if (tableViewer != null)
                             {
                                 tableViewer.remove(entry);
@@ -1342,7 +835,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                 public Object getValue()
                 {
-                    return source.getFormProperties().getAllFormParameters().toArray();
+                    return source.getAllReportParameters().toArray();
                 };
 
                 public AbstractDescriptor<?>[] getDescriptors()
@@ -1420,16 +913,16 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor, layoutGroupDescriptor, parametersDes,
+            return new AbstractDescriptor<?>[] { titleDescriptor,  actionDescriptor, layoutGroupDescriptor, parametersDes,
                     metadataGroupDescriptor };
         }
 
         public void addOverview(StyledString styledString)
         {
-            if (source.getFormDisplayName() != null && source.getFormDisplayName().length() != 0)
+            if (source.getReportDisplayName() != null && source.getReportDisplayName().length() != 0)
             {
                 styledString.append(" : ", StyledString.QUALIFIER_STYLER);
-                styledString.append(source.getFormDisplayName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getReportDisplayName(), StyledString.DECORATIONS_STYLER);
 
             }
             if (source.getTitle() != null && source.getTitle().length() != 0)
@@ -1442,7 +935,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         }
     }
 
-    static interface FormPreviewer extends INodeDescriptorViewer
+    static interface ReportPreviewer extends INodeDescriptorViewer
     {
         void refresh();
     }

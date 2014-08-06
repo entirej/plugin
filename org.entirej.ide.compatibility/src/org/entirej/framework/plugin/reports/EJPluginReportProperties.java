@@ -33,8 +33,6 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
-import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
-import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportRendererDefinition;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
 {
@@ -44,8 +42,6 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private IJavaProject                         _reportProject;
     
     private String                               _name                     = "";
-    private String                               _reportRendererName       = "";
-    private EJReportFrameworkExtensionProperties _reportRendererProperties;
     private String                               _reportTitle              = "";
     private String                               _reportDisplayName        = "";
     
@@ -111,53 +107,8 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     {
         _name = newName;
     }
-    
-    /**
-     * Retieves the class name that is responsible for displaying this report
-     * 
-     * @return the fully qualified class name for the report renderer
-     */
-    public String getReportRendererName()
-    {
-        return _reportRendererName;
-    }
-    
-    public EJReportRendererDefinition getReportRendererDefinition()
-    {
-        return EJPluginReportRenderers.loadReportRendererDefinition(getEntireJProperties(), this.getReportRendererName());
-    }
-    
-    /**
-     * Sets the name of the report renderer
-     * <p>
-     * the renderer names are defined within the <b>EntireJ Properties</b>
-     * 
-     * @param reportRendererName
-     *            The renderer name
-     */
-    public void setReportRendererName(String reportRendererName)
-    {
-        _reportRendererName = reportRendererName;
-        
-        if (reportRendererName == null || reportRendererName.trim().length() == 0)
-        {
-            _reportRendererProperties = null;
-        }
-        else
-        {
-            _reportRendererProperties = EJPluginReportRenderers.createReportRendererProperties(this, false);
-        }
-    }
-    
-    public void setReportRendererProperties(EJReportFrameworkExtensionProperties properties)
-    {
-        _reportRendererProperties = properties;
-    }
-    
-    public EJReportFrameworkExtensionProperties getReportRendererProperties()
-    {
-        return _reportRendererProperties;
-    }
+ 
+
     
     /**
      * the title of the report. This will be the translated title code if a
@@ -428,6 +379,12 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     public String getReportName()
     {
         return _name;
+    }
+
+    public void initialisationCompleted()
+    {
+       
+        
     }
     
 }

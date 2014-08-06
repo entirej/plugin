@@ -31,9 +31,6 @@ import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
-import org.entirej.ide.ui.editors.form.AbstractEJFormEditor;
-import org.entirej.ide.ui.editors.form.FormDesignTreeSection;
-import org.entirej.ide.ui.editors.form.FormPreviewPart;
 import org.entirej.ide.ui.editors.handlers.NodeElementDeleteHandler;
 import org.entirej.ide.ui.editors.handlers.PageActionHandler;
 import org.entirej.ide.ui.editors.handlers.PageActionHandlerProvider;
@@ -42,7 +39,7 @@ import org.entirej.ide.ui.nodes.NodeDescriptorPart;
 public class EJReportBasePage extends AbstractEditorPage implements PageActionHandlerProvider
 {
     protected AbstractEJReportEditor  editor;
-    protected FormDesignTreeSection treeSection;
+    protected ReportDesignTreeSection treeSection;
     protected NodeDescriptorPart    descriptorPart;
     public static final String      PAGE_ID = "ej.report.base"; //$NON-NLS-1$
 
@@ -84,22 +81,22 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
         };
 
         treeSection.setNodeDescriptorViewer(descriptorPart);
-        FormPreviewPart layoutPreviewPart = new FormPreviewPart(editor, this, body);
+        ReportPreviewPart layoutPreviewPart = new ReportPreviewPart(editor, this, body);
         managedForm.addPart(treeSection);
         managedForm.addPart(descriptorPart);
         managedForm.addPart(layoutPreviewPart);
-        treeSection.setFormPreviewer(layoutPreviewPart);
+        treeSection.setReportPreviewer(layoutPreviewPart);
     }
 
-    protected FormDesignTreeSection createTreeSection(Composite body)
+    protected ReportDesignTreeSection createTreeSection(Composite body)
     {
-        return new FormDesignTreeSection(editor, this, body);
+        return new ReportDesignTreeSection(editor, this, body);
     }
 
     @Override
     protected String getPageHeader()
     {
-        return "Form Design";
+        return "Report Design";
     }
 
     public PageActionHandler getActionHandler(String commandId)

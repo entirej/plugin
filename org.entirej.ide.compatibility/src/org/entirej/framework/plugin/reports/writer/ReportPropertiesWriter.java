@@ -19,20 +19,15 @@ package org.entirej.framework.plugin.reports.writer;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.entirej.framework.core.extensions.properties.EJCoreFrameworkExtensionProperty;
-import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
-import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
-import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
 {
@@ -55,7 +50,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeIntTAG(buffer, "marginRight", form.getMarginRight());
                 writeStringTAG(buffer, "orientation", form.getOrientation().name());
                 writeStringTAG(buffer, "actionProcessorClassName", form.getActionProcessorClassName());
-                writeStringTAG(buffer, "reportRendererName", form.getReportRendererName());
                 
                 // Now add the forms parameters
                 Iterator<EJPluginApplicationParameter> paramNamesIti = form.getAllReportParameters().iterator();
@@ -101,12 +95,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "applicationProperties");
                 
-                // Now add the form renderer properties
-                startTAG(buffer, "reportRendererProperties");
-                {
-                    addFrameworkExtensionProperties(form.getReportRendererProperties(), buffer);
-                }
-                endTAG(buffer, "reportRendererProperties");
                 
             }
             endTAG(buffer, "report");
@@ -134,85 +122,5 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save report: " + form.getName());
         }
     }
-    
-    protected void addFrameworkExtensionProperties(EJReportFrameworkExtensionProperties renderer, StringBuffer buffer)
-    {
-        // If there is no renderer passed, then just do nothing and return
-        if (renderer == null)
-        {
-            return;
-        }
-        
-        for (EJCoreFrameworkExtensionProperty property : renderer.getAllProperties().values())
-        {
-            startOpenTAG(buffer, "property");
-            {
-                writePROPERTY(buffer, "name", property.getName());
-                writePROPERTY(buffer, "multilingual", "" + property.isMultilingual());
-                writePROPERTY(buffer, "propertyType", property.getPropertyType().toString());
-                
-                closeOpenTAG(buffer);
-                
-                writeTagValue(buffer, property.getValue());
-            }
-            closeTAG(buffer, "property");
-        }
-        
-        EJFrameworkExtensionPropertyList propertyList;
-        Iterator<EJFrameworkExtensionPropertyList> propertyLists = renderer.getAllPropertyLists().iterator();
-        while (propertyLists.hasNext())
-        {
-            propertyList = propertyLists.next();
-            
-            startOpenTAG(buffer, "propertyList");
-            {
-                writePROPERTY(buffer, "name", propertyList.getName());
-                closeOpenTAG(buffer);
-                
-                Iterator<EJFrameworkExtensionPropertyListEntry> listEntries = propertyList.getAllListEntries().iterator();
-                while (listEntries.hasNext())
-                {
-                    EJFrameworkExtensionPropertyListEntry entry = listEntries.next();
-                    startTAG(buffer, "listEntry");
-                    {
-                        Map<String, String> leProperties = entry.getAllProperties();
-                        String leKey = "", leValue = "";
-                        Iterator<String> leKeys = leProperties.keySet().iterator();
-                        while (leKeys.hasNext())
-                        {
-                            leKey = leKeys.next();
-                            leValue = entry.getProperty(leKey);
-                            
-                            startOpenTAG(buffer, "property");
-                            {
-                                writePROPERTY(buffer, "name", leKey);
-                                closeOpenTAG(buffer);
-                                
-                                writeTagValue(buffer, leValue);
-                            }
-                            closeTAG(buffer, "property");
-                        }
-                        
-                    }
-                    endTAG(buffer, "listEntry");
-                }
-            }
-            endTAG(buffer, "propertyList");
-        }
-        
-        Iterator<EJReportFrameworkExtensionProperties> groups = renderer.getAllPropertyGroups().iterator();
-        while (groups.hasNext())
-        {
-            EJReportFrameworkExtensionProperties group = groups.next();
-            startOpenTAG(buffer, "propertyGroup");
-            {
-                writePROPERTY(buffer, "name", group.getName());
-                closeOpenTAG(buffer);
-                
-                addFrameworkExtensionProperties(group, buffer);
-            }
-            endTAG(buffer, "propertyGroup");
-        }
-    }
-    
+  
 }

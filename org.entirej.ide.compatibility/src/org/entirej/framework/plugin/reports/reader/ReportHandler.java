@@ -45,8 +45,6 @@ public class ReportHandler extends EntireJTagHandler
     private static final String      ELEMENT_REPORT_ORIENTATION     = "orientation";
     private static final String      ELEMENT_REPORT_HEIGHT          = "height";
     private static final String      ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
-    private static final String      ELEMENT_RENDERER_NAME          = "reportRendererName";
-    private static final String      ELEMENT_RENDERER_PROPERTIES    = "reportRendererProperties";
     
     private static final String      ELEMENT_REPORT_PARAMETER       = "reportParameter";
     private static final String      ELEMENT_APPLICATION_PROPERTIES = "applicationProperties";
@@ -107,11 +105,6 @@ public class ReportHandler extends EntireJTagHandler
             return;
         }
         
-        // Now process the FORM PROPERTIES elements
-        if (name.equals(ELEMENT_RENDERER_PROPERTIES))
-        {
-            setDelegate(new FrameworkExtensionPropertiesHandler(_reportProperties, null, ELEMENT_RENDERER_PROPERTIES));
-        }
         if (name.equals(ELEMENT_REPORT_PARAMETER))
         {
             String paramName = attributes.getValue("name");
@@ -220,31 +213,11 @@ public class ReportHandler extends EntireJTagHandler
         {
             _reportProperties.setOrientation(ORIENTATION.valueOf(value));
         }
-        else if (name.equals(ELEMENT_RENDERER_NAME))
-        {
-            _reportProperties.setReportRendererName(value);
-        }
     }
     
     public void cleanUpAfterDelegate(String name, EntireJTagHandler currentDelegate)
     {
         
-        if (name.equals(ELEMENT_RENDERER_PROPERTIES))
-        {
-            if (((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup() != null)
-            {
-                
-                if (_reportProperties.getReportRendererDefinition() != null)
-                {
-                    _reportProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate)
-                            .getMainPropertiesGroup(_reportProperties.getReportRendererDefinition().getReportPropertyDefinitionGroup()));
-                }
-                else
-                {
-                    _reportProperties.setReportRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
-                }
-            }
-            return;
-        }
+       
     }
 }

@@ -19,8 +19,6 @@ package org.entirej.framework.reports.interfaces;
 
 import java.io.Serializable;
 
-import org.entirej.framework.reports.renderers.definitions.interfaces.EJReportFrameworkExtensionProperties;
-
 public interface EJReportProperties extends Serializable
 {
     
@@ -100,15 +98,5 @@ public interface EJReportProperties extends Serializable
     
     
     public ORIENTATION getOrientation();
-    
-    /**
-     * Retrieves the name of the renderer that is responsible for displaying
-     * this report
-     * 
-     * @return the report renderers name
-     */
-    public String getReportRendererName();
-    
-    public EJReportFrameworkExtensionProperties getReportRendererProperties();
     
 }
