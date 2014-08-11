@@ -107,7 +107,7 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
             
             private String escapeNextLine(String text)
             {
-                
+                if(text==null)return text;
                 return text.replace("\r\n", " ").replace("\n", " ");
             }
         };
