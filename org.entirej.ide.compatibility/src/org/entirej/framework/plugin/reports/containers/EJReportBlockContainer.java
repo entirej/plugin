@@ -21,28 +21,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 
 public class EJReportBlockContainer
 {
     private List<BlockContainerItem> _blockProperties;
-    private EJPluginFormProperties        _formProperties;
+    private EJPluginReportProperties _reportProperties;
     
-    public EJReportBlockContainer(EJPluginFormProperties formProperties)
+    public EJReportBlockContainer(EJPluginReportProperties reportProperties)
     {
-        _formProperties = formProperties;
+        _reportProperties = reportProperties;
         _blockProperties = new ArrayList<BlockContainerItem>();
     }
     
-    public EJPluginFormProperties getFormProperties()
+    public EJPluginReportProperties getReportProperties()
     {
-        return _formProperties;
+        return _reportProperties;
     }
-    
-
     
     public boolean isEmpty()
     {
@@ -57,16 +53,16 @@ public class EJReportBlockContainer
         {
             
             BlockContainerItem containerItem = iti.next();
-            if((containerItem instanceof BlockGroup))
+            if ((containerItem instanceof BlockGroup))
             {
-                EJPluginBlockProperties blockProperties = ((BlockGroup)containerItem).getBlockProperties(blockName);
-                if(blockProperties!=null)
+                EJPluginReportBlockProperties blockProperties = ((BlockGroup) containerItem).getBlockProperties(blockName);
+                if (blockProperties != null)
                 {
                     return true;
                 }
                 continue;
             }
-            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
+            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
             if (props.getName().equalsIgnoreCase(blockName))
             {
                 return true;
@@ -91,16 +87,16 @@ public class EJReportBlockContainer
         }
     }
     
-    public void replaceBlockProperties(EJPluginBlockProperties oldProp, EJPluginBlockProperties newProp)
+    public void replaceBlockProperties(EJPluginReportBlockProperties oldProp, EJPluginReportBlockProperties newProp)
     {
-        if (oldProp != null && newProp !=null)
+        if (oldProp != null && newProp != null)
         {
             
             BlockGroup blockGroupByBlock = getBlockGroupByBlock(oldProp);
-            if(blockGroupByBlock==null)
+            if (blockGroupByBlock == null)
             {
                 int indexOf = _blockProperties.indexOf(oldProp);
-                if(indexOf>-1)
+                if (indexOf > -1)
                 {
                     _blockProperties.set(indexOf, newProp);
                 }
@@ -124,96 +120,24 @@ public class EJReportBlockContainer
         }
     }
     
-    public void removeBlockProperties(EJPluginBlockProperties props,boolean cleanup)
+    public void removeBlockProperties(EJPluginReportBlockProperties props, boolean cleanup)
     {
         
-        if (cleanup &&contains(props.getName()))
+        if (cleanup && contains(props.getName()))
         {
             
-            if (props.isMirrorChild() && props.getMirrorParent()!=null)
-            {
-                props.getMirrorParent().removeMirrorChild(props);
-            }
-            
-            // First remove it from all mirrored blocks
-            for (EJPluginBlockProperties mirroredBlock : new ArrayList<EJPluginBlockProperties>(props.getMirrorChildren()))
-            {
-                removeBlockProperties(mirroredBlock,cleanup);
-            }
-            
-            List<EJPluginBlockProperties> allBlockProperties = new ArrayList<EJPluginBlockProperties>(props.getFormProperties().getBlockContainer()
-                    .getAllBlockProperties());
-            List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = props.getFormProperties().getLovDefinitionContainer()
-                    .getAllLovDefinitionProperties();
-            for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
-            {
-                allBlockProperties.add(lovDefinitionProperties.getBlockProperties());
-            }
-            
-            for (EJPluginBlockProperties properties : allBlockProperties)
-            {
-                List<EJPluginBlockItemProperties> itemProperties = properties.getItemContainer().getAllItemProperties();
-                for (EJPluginBlockItemProperties blockItemProperties : itemProperties)
-                {
-                    
-                    String insertValue = blockItemProperties.getDefaultInsertValue();
-                    if (insertValue != null && insertValue.trim().length() > 0 && insertValue.indexOf(":") > 0)
-                    {
-                        if ("BLOCK_ITEM".equals(insertValue.substring(0, insertValue.indexOf(":"))))
-                        {
-                            String value = insertValue.substring(insertValue.indexOf(":") + 1);
-                            String[] split = value.split("\\.");
-                            if (split.length == 2)
-                            {
-                                if (props.getName().equals(split[0]))
-                                {
-                                    
-                                    blockItemProperties.setDefaultInsertValue("");
-                                    
-                                }
-                            }
-                        }
-                        
-                    }
-                    
-                    String queryValue = blockItemProperties.getDefaultQueryValue();
-                    if (queryValue != null && queryValue.trim().length() > 0 && queryValue.indexOf(":") > 0)
-                    {
-                        if ("BLOCK_ITEM".equals(queryValue.substring(0, queryValue.indexOf(":"))))
-                        {
-                            String value = queryValue.substring(queryValue.indexOf(":") + 1);
-                            String[] split = value.split("\\.");
-                            if (split.length == 2)
-                            {
-                                if (props.getName().equals(split[0]))
-                                {
-                                    
-                                    blockItemProperties.setDefaultQueryValue("");
-                                    
-                                }
-                            }
-                        }
-                        
-                    }
-                }
-            }
-            
-            
-            
-            
-            
+            // FIXME
             
         }
         
-        
         BlockGroup blockGroup = getBlockGroupByBlock(props);
-        if(blockGroup==null)
+        if (blockGroup == null)
         {
             _blockProperties.remove(props);
         }
         else
         {
-            blockGroup.removeBlockProperties(props); 
+            blockGroup.removeBlockProperties(props);
         }
         
     }
@@ -228,25 +152,25 @@ public class EJReportBlockContainer
      * 
      * @see com.ottomobil.dsys.sprintframework.dataobjects.properties.interfaces.IFormProperties#getBlockProperties(java.lang.String)
      */
-    public EJPluginBlockProperties getBlockProperties(String blockName)
+    public EJPluginReportBlockProperties getBlockProperties(String blockName)
     {
         
         Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
         {
-
+            
             BlockContainerItem containerItem = iti.next();
-            if((containerItem instanceof BlockGroup))
+            if ((containerItem instanceof BlockGroup))
             {
-                EJPluginBlockProperties blockProperties = ((BlockGroup)containerItem).getBlockProperties(blockName);
-                if(blockProperties!=null)
+                EJPluginReportBlockProperties blockProperties = ((BlockGroup) containerItem).getBlockProperties(blockName);
+                if (blockProperties != null)
                 {
                     return blockProperties;
                 }
                 continue;
             }
-            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
+            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
             
             if (props.getName().equalsIgnoreCase(blockName))
             {
@@ -256,26 +180,25 @@ public class EJReportBlockContainer
         return null;
     }
     
-    
-    public BlockGroup getBlockGroupByBlock(EJPluginBlockProperties blockProperties)
+    public BlockGroup getBlockGroupByBlock(EJPluginReportBlockProperties blockProperties)
     {
         
-       Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
         {
-
+            
             BlockContainerItem containerItem = iti.next();
-            if((containerItem instanceof BlockGroup))
+            if ((containerItem instanceof BlockGroup))
             {
-                BlockGroup blockGroup = (BlockGroup)containerItem;
-                if(blockGroup.getBlockProperties(blockProperties.getName())!=null)
+                BlockGroup blockGroup = (BlockGroup) containerItem;
+                if (blockGroup.getBlockProperties(blockProperties.getName()) != null)
                 {
                     return blockGroup;
                 }
                 continue;
             }
-            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
+            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
             
             if (props.equals(blockProperties))
             {
@@ -285,30 +208,21 @@ public class EJReportBlockContainer
         return null;
     }
     
-    /**
-     * Used to return the whole list of blocks contained within this form. The
-     * key of the <code>HashMap</code> is the name of the block <b>in upper
-     * case</b>. The value will be a <code>IBlockProperties</code> object.
-     * 
-     * @return A <code>HashMap</code> containing this forms
-     *         <code>Block Properties</code>
-     * @see com.ottomobil.dsys.sprintframework.dataobjects.properties.interfaces.IFormProperties#getAllBlockProperties()
-     */
-    public List<EJPluginBlockProperties> getAllBlockProperties()
+    public List<EJPluginReportBlockProperties> getAllBlockProperties()
     {
-        List<EJPluginBlockProperties> list = new ArrayList<EJPluginBlockProperties>();
+        List<EJPluginReportBlockProperties> list = new ArrayList<EJPluginReportBlockProperties>();
         
         Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         while (iti.hasNext())
         {
             
             BlockContainerItem containerItem = iti.next();
-            if((containerItem instanceof BlockGroup))
+            if ((containerItem instanceof BlockGroup))
             {
-                list.addAll(((BlockGroup)containerItem).getAllBlockProperties());
+                list.addAll(((BlockGroup) containerItem).getAllBlockProperties());
                 continue;
             }
-            EJPluginBlockProperties props = (EJPluginBlockProperties) containerItem;
+            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
             list.add(props);
         }
         
@@ -319,7 +233,6 @@ public class EJReportBlockContainer
     {
         return _blockProperties;
     }
-    
     
     public String getDefaultBlockName()
     {
@@ -334,13 +247,11 @@ public class EJReportBlockContainer
         }
     }
     
-    
     public static interface BlockContainerItem
     {
-        //marker interface
+        // marker interface
     }
     
-  
     public static class BlockGroup implements BlockContainerItem
     {
         
@@ -356,8 +267,7 @@ public class EJReportBlockContainer
             return name;
         }
         
-        private List<EJPluginBlockProperties> _blockProperties = new ArrayList<EJPluginBlockProperties>();
-        
+        private List<EJPluginReportBlockProperties> _blockProperties = new ArrayList<EJPluginReportBlockProperties>();
         
         public boolean isEmpty()
         {
@@ -367,10 +277,10 @@ public class EJReportBlockContainer
         
         public boolean contains(String blockName)
         {
-            Iterator<EJPluginBlockProperties> iti = _blockProperties.iterator();
+            Iterator<EJPluginReportBlockProperties> iti = _blockProperties.iterator();
             while (iti.hasNext())
             {
-                EJPluginBlockProperties props = iti.next();
+                EJPluginReportBlockProperties props = iti.next();
                 if (props.getName().equalsIgnoreCase(blockName))
                 {
                     return true;
@@ -379,7 +289,7 @@ public class EJReportBlockContainer
             return false;
         }
         
-        public void addBlockProperties(EJPluginBlockProperties blockProperties)
+        public void addBlockProperties(EJPluginReportBlockProperties blockProperties)
         {
             if (blockProperties != null)
             {
@@ -387,12 +297,12 @@ public class EJReportBlockContainer
             }
         }
         
-        public void replaceBlockProperties(EJPluginBlockProperties oldProp, EJPluginBlockProperties newProp)
+        public void replaceBlockProperties(EJPluginReportBlockProperties oldProp, EJPluginReportBlockProperties newProp)
         {
-            if (oldProp != null && newProp !=null)
+            if (oldProp != null && newProp != null)
             {
                 int indexOf = _blockProperties.indexOf(oldProp);
-                if(indexOf>-1)
+                if (indexOf > -1)
                 {
                     _blockProperties.set(indexOf, newProp);
                 }
@@ -403,7 +313,7 @@ public class EJReportBlockContainer
             }
         }
         
-        public void addBlockProperties(int index, EJPluginBlockProperties blockProperties)
+        public void addBlockProperties(int index, EJPluginReportBlockProperties blockProperties)
         {
             if (blockProperties != null)
             {
@@ -411,12 +321,11 @@ public class EJReportBlockContainer
             }
         }
         
-        public void removeBlockProperties(EJPluginBlockProperties props)
+        public void removeBlockProperties(EJPluginReportBlockProperties props)
         {
             
             if (_blockProperties.contains(props))
             {
-
                 
                 _blockProperties.remove(props);
                 
@@ -424,15 +333,14 @@ public class EJReportBlockContainer
             
         }
         
-
-        public EJPluginBlockProperties getBlockProperties(String blockName)
+        public EJPluginReportBlockProperties getBlockProperties(String blockName)
         {
             
-            Iterator<EJPluginBlockProperties> iti = _blockProperties.iterator();
+            Iterator<EJPluginReportBlockProperties> iti = _blockProperties.iterator();
             
             while (iti.hasNext())
             {
-                EJPluginBlockProperties props = iti.next();
+                EJPluginReportBlockProperties props = iti.next();
                 
                 if (props.getName().equalsIgnoreCase(blockName))
                 {
@@ -442,8 +350,7 @@ public class EJReportBlockContainer
             return null;
         }
         
-
-        public List<EJPluginBlockProperties> getAllBlockProperties()
+        public List<EJPluginReportBlockProperties> getAllBlockProperties()
         {
             return _blockProperties;
         }

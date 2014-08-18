@@ -61,7 +61,7 @@ public interface EJReportItemProperties extends Serializable
     
     /**
      * The full name of an item is made up as follows:
-     * <code>FormName.&lt;LovDefinitionName&gt;.BlockName.ItemName</code>
+     * <code>FormName.&lt;.BlockName.ItemName</code>
      * 
      * @return The full name of this item
      */

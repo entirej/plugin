@@ -30,7 +30,7 @@ public interface EJReportBlockProperties extends Serializable
      * 
      * @return the main screen properties for this block
      */
-    public EJMainScreenProperties getMainScreenProperties();
+    public EJReportScreenProperties getMainScreenProperties();
     
     /**
      * Returns the screen item properties for the given item
@@ -173,19 +173,7 @@ public interface EJReportBlockProperties extends Serializable
      */
     public Collection<String> getScreenItemNames();
     
-    /**
-     * Returns the <code>ItemGroupContainer</code> that contains all item groups
-     * and items for the given screen of this block
-     * 
-     * @return An <code>ItemGroupContainer</code> containing all items and item
-     *         groups of the given screen of this block
-     * 
-     * @param screenType
-     *            The screen type for which the item groups should be returned
-     * @return The item group container for the given screen type
-     */
-    public EJItemGroupPropertiesContainer getScreenItemGroupContainer();
-    
+ 
 
 
     

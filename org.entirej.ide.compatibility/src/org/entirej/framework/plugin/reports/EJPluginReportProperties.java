@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
@@ -60,13 +61,25 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     
     private EJReportProperties.ORIENTATION       _orientation              = ORIENTATION.PORTRAIT;
     
+    
+    private EJReportBlockContainer blockContainer;
+    
     public EJPluginReportProperties(String reportName, IJavaProject javaProject)
     {
         _name = reportName;
         _reportProject = javaProject;
         _applicationProperties = new HashMap<String, String>();
         _reportParameters = new ArrayList<EJPluginApplicationParameter>();
+        blockContainer = new EJReportBlockContainer(this);
+        
     }
+    
+    
+    public EJReportBlockContainer getBlockContainer()
+    {
+        return blockContainer;
+    }
+    
     
     public IJavaProject getJavaProject()
     {
