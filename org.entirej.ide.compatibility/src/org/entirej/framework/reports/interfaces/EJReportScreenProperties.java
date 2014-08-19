@@ -48,4 +48,7 @@ public interface EJReportScreenProperties extends Serializable
     public int getY();
 
     
+    
+    
+    public EJReportScreenItemProperties getScreenItemProperties(String itemName);
 }

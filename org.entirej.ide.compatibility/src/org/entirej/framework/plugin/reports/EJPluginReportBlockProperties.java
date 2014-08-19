@@ -1,120 +1,183 @@
 package org.entirej.framework.plugin.reports;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
 import org.entirej.framework.reports.interfaces.EJReportItemProperties;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
 import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
-import org.entirej.framework.reports.interfaces.EJReportScreenProperties;
 
 public class EJPluginReportBlockProperties implements EJReportBlockProperties, BlockContainerItem
 {
-
-    @Override
-    public EJReportScreenProperties getMainScreenProperties()
+    
+    private boolean                        _isControlBlock           = false;
+    
+    private String                         _blockDescription         = "";
+    private boolean                        _isReferenced             = false;
+    private String                         _canvasName               = "";
+    
+    private EJPluginReportProperties       _reportProperties;
+    private String                         _name                     = "";
+    private String                         _blockRendererName        = "";
+    
+    private EJPluginReportScreenProperties _mainScreenProperties;
+    
+    private String                         _serviceClassName;
+    private String                         _actionProcessorClassName = "";
+    
+    private EJReportBlockItemContainer     _itemContainer;
+    
+    public EJPluginReportBlockProperties(EJPluginReportProperties formProperties, String blockName, boolean isCcontrolBlock)
     {
-        // TODO Auto-generated method stub
-        return null;
+        _name = blockName;
+        _isControlBlock = isCcontrolBlock;
+        _mainScreenProperties = new EJPluginReportScreenProperties(this);
+        _itemContainer = new EJReportBlockItemContainer(this);
     }
-
+    
+    @Override
+    public EJPluginReportScreenProperties getMainScreenProperties()
+    {
+        return _mainScreenProperties;
+    }
+    
     @Override
     public EJReportScreenItemProperties getScreenItemProperties(String itemName)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _mainScreenProperties.getScreenItemProperties(itemName);
     }
-
+    
     @Override
     public Collection<EJReportItemProperties> getAllItemProperties()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<EJReportItemProperties>(_itemContainer.getAllItemProperties());
     }
-
+    
     @Override
-    public EJReportItemProperties getItemProperties(String itemName)
+    public EJPluginReportItemProperties getItemProperties(String itemName)
     {
         // TODO Auto-generated method stub
-        return null;
+        return _itemContainer.getItemProperties(itemName);
     }
-
+    
     @Override
     public String getCanvasName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _canvasName;
     }
-
+    
+    public void setCanvasName(String canvasName)
+    {
+        this._canvasName = canvasName;
+    }
+    
     @Override
     public boolean isControlBlock()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return _isControlBlock;
     }
-
+    
+    public void setControlBlock(boolean isControlBlock)
+    {
+        _isControlBlock = isControlBlock;
+    }
+    
     @Override
     public boolean isReferenceBlock()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return _isReferenced;
     }
-
+    
     @Override
     public String getDescription()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _blockDescription;
     }
-
+    
+    public void setDescription(String description)
+    {
+        _blockDescription = description;
+    }
+    
     @Override
     public EJReportProperties getReportProperties()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _reportProperties;
     }
+    
 
-    @Override
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _name;
     }
+    
 
+    public void internalSetName(String blockName)
+    {
+        if (blockName != null && blockName.trim().length() > 0)
+        {
+            _name = blockName;
+        }
+    }
+    
     @Override
     public String getBlockRendererName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _blockRendererName;
     }
-
-    @Override
+    
+  
+    
+   
+    
+ 
+    public String getActionProcessorClassName()
+    {
+        return _actionProcessorClassName;
+    }
+    
+ 
+    public void setActionProcessorClassName(String processorClassName)
+    {
+        _actionProcessorClassName = processorClassName;
+        
+    }
+    
+    /**
+     * Returns the class name of the service that is responsible for the data
+     * manipulation for this block
+     * 
+     * @return the service class name
+     */
     public String getServiceClassName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _serviceClassName;
+    }
+    
+    /**
+     * Sets the class name of the service that is responsible for the retrieval
+     * and manipulation of this blocks data
+     * 
+     * @return the service class name
+     */
+    public void setServiceClassName(String serviceClassName)
+    {
+        _serviceClassName = serviceClassName;
+    }
+    
+    @Override
+    public Collection<String> getScreenItemNames()
+    {
+        return _mainScreenProperties.getScreenItemNames();
     }
 
     @Override
     public EJBlockService<?> getBlockService()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getActionProcessorClassName()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Collection<String> getScreenItemNames()
-    {
-        // TODO Auto-generated method stub
         return null;
     }
     
