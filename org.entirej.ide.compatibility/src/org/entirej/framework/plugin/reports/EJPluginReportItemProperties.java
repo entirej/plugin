@@ -5,67 +5,149 @@ import org.entirej.framework.reports.interfaces.EJReportItemProperties;
 public class EJPluginReportItemProperties implements EJReportItemProperties
 {
 
-    @Override
+    private EJPluginReportBlockProperties blockProperties;
+    
+    
+    private String                         _name;
+    private String                         _dataTypeClassName      = "";
+    private boolean                        _blockServiceItem       = false;
+    private String                         _itemRendererName       = "";
+
+    private String                         _defaultQueryValue      = "";
+    private String                         _fieldName;
+    
+    public EJPluginReportItemProperties(EJPluginReportBlockProperties blockProperties)
+    {
+       this.blockProperties = blockProperties;
+    }
+    public EJPluginReportItemProperties(EJPluginReportBlockProperties blockProperties,String itemName)
+    {
+        this.blockProperties = blockProperties;
+    }
+    
+    
+    
+    public EJPluginReportBlockProperties getBlockProperties()
+    {
+        return blockProperties;
+    }
+    
+    public String getBlockName()
+    {
+        return blockProperties.getName();
+    }
+    
+    
+    public boolean belongsToControlBlock()
+    {
+        return blockProperties.isControlBlock();
+    }
+    
+    public void setDefaultQueryValue(String defaultQueryValue)
+    {
+        _defaultQueryValue = defaultQueryValue;
+        
+    }
+    
+
     public String getDefaultQueryValue()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _defaultQueryValue;
     }
 
     @Override
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _name;
     }
 
-    @Override
-    public String getFieldName()
+    public void setName(String name)
     {
-        // TODO Auto-generated method stub
-        return null;
+        _name = name;
     }
-
+    
     @Override
     public String getFullName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuffer thisName = new StringBuffer();
+        thisName.append(blockProperties.getReportProperties().getName());
+        thisName.append(".");
+        
+        
+        
+        thisName.append(blockProperties.getName());
+        thisName.append(".");
+        thisName.append(this.getName());
+        
+        return thisName.toString();
     }
 
-    @Override
-    public String getBlockName()
+    public void setDataTypeClassName(String dataTypeClassName)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (dataTypeClassName == null || dataTypeClassName.trim().length() == 0)
+        {
+            _dataTypeClassName = null;
+            // _dataTypeClass = null;
+            return;
+        }
+        
+        _dataTypeClassName = dataTypeClassName;
+     
+    }
+    
+
+
+    public void setBlockServiceItem(boolean isBlockServiceItem)
+    {
+        _blockServiceItem = isBlockServiceItem;
     }
 
     @Override
     public boolean isBlockServiceItem()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return _blockServiceItem;
     }
 
-    @Override
-    public String getItemRendererName()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
 
     @Override
     public String getDataTypeClassName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return _dataTypeClassName;
     }
 
     @Override
     public Class<?> getDataTypeClass()
     {
-        // TODO Auto-generated method stub
         return null;
     }
     
+    public String getItemRendererName()
+    {
+        return _itemRendererName;
+    }
+    
+    
+    public void setItemRendererName(String rendererName, boolean addDefaultValues)
+    {
+        _itemRendererName = rendererName;
+        
+        //FIXME
+    }
+    
+    public String getFieldName()
+    {
+        return _fieldName;
+        
+    }
+    
+    /**
+     * Sets this items field name
+     * 
+     * @param fieldName
+     */
+    public void setFieldName(String fieldName)
+    {
+        _fieldName = fieldName;
+    }
 }
