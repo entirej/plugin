@@ -2,14 +2,21 @@ package org.entirej.framework.plugin.reports;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.entirej.framework.core.service.EJBlockService;
+import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
 import org.entirej.framework.reports.interfaces.EJReportItemProperties;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
 import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
+import org.entirej.ide.core.EJCoreLog;
 
 public class EJPluginReportBlockProperties implements EJReportBlockProperties, BlockContainerItem
 {
@@ -60,7 +67,6 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     @Override
     public EJPluginReportItemProperties getItemProperties(String itemName)
     {
-        // TODO Auto-generated method stub
         return _itemContainer.getItemProperties(itemName);
     }
     
@@ -109,13 +115,11 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         return _reportProperties;
     }
     
-
     public String getName()
     {
         return _name;
     }
     
-
     public void internalSetName(String blockName)
     {
         if (blockName != null && blockName.trim().length() > 0)
@@ -130,17 +134,11 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         return _blockRendererName;
     }
     
-  
-    
-   
-    
- 
     public String getActionProcessorClassName()
     {
         return _actionProcessorClassName;
     }
     
- 
     public void setActionProcessorClassName(String processorClassName)
     {
         _actionProcessorClassName = processorClassName;
@@ -164,9 +162,25 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
      * 
      * @return the service class name
      */
-    public void setServiceClassName(String serviceClassName)
+    public void setServiceClassName(String serviceClassName, boolean addItems)
     {
-        _serviceClassName = serviceClassName;
+        if (addItems && (_serviceClassName == null || (serviceClassName != null && !_serviceClassName.equals(serviceClassName.trim()))))
+        {
+            _serviceClassName = serviceClassName.trim();
+            
+            getItemContainer().sync(getServiceItems());
+            
+        }
+        else
+        {
+            _serviceClassName = serviceClassName;
+        }
+        
+    }
+    
+    public EJReportBlockItemContainer getItemContainer()
+    {
+        return _itemContainer;
     }
     
     @Override
@@ -174,11 +188,102 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     {
         return _mainScreenProperties.getScreenItemNames();
     }
-
+    
     @Override
     public EJBlockService<?> getBlockService()
     {
         return null;
+    }
+    
+    public EJPluginEntireJProperties getEntireJProperties()
+    {
+        return _reportProperties.getEntireJProperties();
+    }
+    
+    public List<EJPluginReportItemProperties> getServiceItems()
+    {
+        
+        List<EJPluginReportItemProperties> newItems = new ArrayList<EJPluginReportItemProperties>();
+        try
+        {
+            
+            IType serviceType = getEntireJProperties().getJavaProject().findType(_serviceClassName);
+            if (serviceType != null)
+            {
+                String[] superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                for (String superInterface : superInterfaces)
+                {
+                    String typeErasure = Signature.getTypeErasure(Signature.toString(superInterface));
+                    
+                    if (typeErasure != null && EJBlockService.class.getSimpleName().equals(typeErasure))
+                    {
+                        String[] typeArguments = Signature.getTypeArguments(superInterface);
+                        if (typeArguments.length == 1)
+                        {
+                            serviceType.getTypeParameter(Signature.toString(typeArguments[0])).getPath();
+                            String[][] resolveType = serviceType.resolveType(Signature.toString(typeArguments[0]));
+                            if (resolveType != null && resolveType.length == 1)
+                            {
+                                
+                                String[] typeSegments = resolveType[0];
+                                String pojoName = Signature.toQualifiedName(typeSegments);
+                                IType pojoType = getEntireJProperties().getJavaProject().findType(pojoName);
+                                if (pojoType != null)
+                                {
+                                    IMethod[] methods = pojoType.getMethods();
+                                    for (IMethod method : methods)
+                                    {
+                                        if (!method.isConstructor() && method.getNumberOfParameters() == 0
+                                                && (!Signature.SIG_VOID.equals(method.getReturnType())))
+                                        {
+                                            String name = method.getElementName();
+                                            if (name.startsWith("get"))
+                                            {
+                                                name = name.substring(3);
+                                            }
+                                            else if (name.startsWith("is"))
+                                            {
+                                                name = name.substring(2);
+                                            }
+                                            else
+                                            {
+                                                continue;
+                                            }
+                                            // check dose it Has setter name
+                                            IMethod setter = pojoType.getMethod(String.format("set%s", name), new String[] { method.getReturnType() });
+                                            if (setter != null && setter.exists())
+                                            {
+                                                String fieldName = String.format("%s%s", name.substring(0, 1).toLowerCase(), name.substring(1));
+                                                EJPluginReportItemProperties item = new EJPluginReportItemProperties(this);
+                                                item.setName(fieldName);
+                                                String[][] resolveRetrunType = pojoType.resolveType(Signature.toString(method.getReturnType()));
+                                                if (resolveRetrunType != null && resolveRetrunType.length == 1)
+                                                {
+                                                    item.setDataTypeClassName(Signature.toQualifiedName(resolveRetrunType[0]));
+                                                }
+                                                item.setBlockServiceItem(true);
+                                                newItems.add(item);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            
+        }
+        catch (JavaModelException e)
+        {
+            EJCoreLog.logException(e);
+        }
+        finally
+        {
+            
+        }
+        return newItems;
     }
     
 }
