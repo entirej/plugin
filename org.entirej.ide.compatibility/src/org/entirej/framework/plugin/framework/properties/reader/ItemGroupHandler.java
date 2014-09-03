@@ -186,7 +186,14 @@ public abstract class ItemGroupHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_RENDERER_PROPERTIES))
         {
-            _itemGroupProperties.setRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+            if(_itemGroupProperties.getBlockProperties().getBlockRendererDefinition()!=null && _itemGroupProperties.getBlockProperties().getBlockRendererDefinition().getItemGroupPropertiesDefinitionGroup()!=null)
+            {
+                _itemGroupProperties.setRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(_itemGroupProperties.getBlockProperties().getBlockRendererDefinition().getItemGroupPropertiesDefinitionGroup()));
+            }
+            else
+            {
+                _itemGroupProperties.setRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup());
+            }
         }
     }
 }
