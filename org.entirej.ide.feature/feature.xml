@@ -20,7 +20,7 @@
 <feature
       id="org.entirej.ide.feature"
       label="EntireJ Tools"
-      version="2.3.1.qualifier"
+      version="2.3.2.qualifier"
       provider-name="Mojave Innovations GmbH"
       plugin="org.entirej.ide.core">
 

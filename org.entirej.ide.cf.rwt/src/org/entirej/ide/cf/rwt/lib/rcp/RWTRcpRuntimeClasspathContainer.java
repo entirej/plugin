@@ -37,7 +37,7 @@ public class RWTRcpRuntimeClasspathContainer implements IClasspathContainer
     public RWTRcpRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-rcp/"));
-        description = "EntireJ RWT/RCP [2.3.1] Extension Libraries.";
+        description = "EntireJ RWT/RCP [2.3.2] Extension Libraries.";
     }
 
     final String           description;
