@@ -520,7 +520,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
 
-                    return "The width <b>(in pixels)</b> of the report within it's container. If the width of the report is wider than the available space then a horizontal scroll bar will be shown ";
+                    return "The width <b>(in pixels)</b> of the report within it's Page.";
                 }
 
                 @Override
@@ -597,7 +597,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
 
-                    return "The height <b>(in pixels)</b> of the report within it's container. If the report height is higher than the available space then a vertical scroll bar will be shown";
+                    return "The height <b>(in pixels)</b> of the report within it's Page.";
                 }
 
                 @Override
@@ -638,6 +638,209 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     super.addEditorAssist(control);
                 }
             };
+            
+            
+            final AbstractTextDescriptor topMarginDescriptor = new AbstractTextDescriptor("Top Margin")
+            {
+                
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The Top Margin <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setMarginTop(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setMarginTop(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getMarginTop());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            
+            final AbstractTextDescriptor bottomMarginDescriptor = new AbstractTextDescriptor("Bottom Margin")
+            {
+                
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The Bottom Margin <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setMarginBottom(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setMarginBottom(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getMarginBottom());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            final AbstractTextDescriptor leftMarginDescriptor = new AbstractTextDescriptor("Left Margin")
+            {
+                
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The Left Margin <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setMarginLeft(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setMarginLeft(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getMarginLeft());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            final AbstractTextDescriptor rightMarginDescriptor = new AbstractTextDescriptor("Right Margin")
+            {
+                
+                
+                @Override
+                public String getTooltip()
+                {
+                    
+                    return "The Right Margin <b>(in pixels)</b> of the report within it's Page.";
+                }
+                
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setMarginRight(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setMarginRight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+                
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getMarginRight());
+                }
+                
+                Text text;
+                
+                @Override
+                public void addEditorAssist(Control control)
+                {
+                    
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+                    
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            
 
             
 
@@ -653,7 +856,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor };
+                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor,topMarginDescriptor,bottomMarginDescriptor,leftMarginDescriptor,rightMarginDescriptor };
                 }
             };
 
