@@ -234,7 +234,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 // project build errors
                 if (editor.getReportProperties() == null)
                     return new Object[0];
-                return new Object[] { baseNode = new ReportNode(editor.getReportProperties())};
+                return new Object[] { baseNode = new ReportNode(editor.getReportProperties()),new ReportBlockGroupNode(ReportDesignTreeSection.this)};
             }
         };
     }
