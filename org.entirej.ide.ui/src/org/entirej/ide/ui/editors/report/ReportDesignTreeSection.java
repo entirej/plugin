@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -56,12 +57,15 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockRenderers;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
+import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
@@ -69,6 +73,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.FormNodeTag;
+import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
+import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeContentProvider;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
@@ -213,12 +219,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     public Action[] getBaseActions()
     {
 
-        return new Action[] {  };
+        return new Action[] {  createNewBlockAction(false), createNewBlockAction(true), };
     }
 
     protected Action[] getNewBlockActions()
     {
-        return new Action[] {  };
+        return new Action[] {  createNewBlockAction(false), createNewBlockAction(true), };
     }
 
    
@@ -1141,5 +1147,94 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     static interface ReportPreviewer extends INodeDescriptorViewer
     {
         void refresh();
+    }
+    
+    
+    
+    public Action createNewBlockAction(final boolean controlBlock)
+    {
+
+        return new Action(controlBlock ? "New Report Control Block" : "New  Report Service Block")
+        {
+
+            @Override
+            public void runWithEvent(Event event)
+            {
+                DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
+                {
+
+                    public void addBlock(String blockName, String block, String canvas, boolean createCanvas, String serviceClass)
+                    {
+                        final EJPluginReportProperties formProperties = editor.getReportProperties();
+                        final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
+
+                        if (createCanvas)
+                        {
+                            //FIXME
+                            
+                        }
+
+                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
+                        blockProperties.setCanvasName(canvas);
+                        blockProperties.setBlockRendererName(block);
+                        // create items if service is also selected
+                        if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
+                        {
+                            blockProperties.setServiceClassName(serviceClass, true);
+                        }
+                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        {
+
+                            public void run()
+                            {
+                                editor.setDirty(true);
+                                refresh(findNode(formProperties.getBlockContainer()), true);
+                                //FIXME refresh(findNode(formProperties.getCanvasContainer()));
+                                selectNodes(true, findNode(blockProperties));
+
+                            }
+                        });
+
+                    }
+
+                    public List<String> getBlockRenderer()
+                    {
+                        
+                        return new ArrayList<String>(EJPluginReportBlockRenderers.getBlockRenderers());
+                    }
+
+                    public List<String> getCanvas()
+                    {
+                        //FIXME:
+                        return new ArrayList<String>();
+                    }
+
+                    public boolean hasBlock(String blockName)
+                    {
+                        return editor.getReportProperties().getBlockContainer().contains(blockName);
+                    }
+
+                    public boolean hasCanvas(String canvasName)
+                    {
+                      //FIXME:
+                        final EJPluginReportProperties formProperties = editor.getReportProperties();
+                        return false;
+                    }
+
+                    public IJavaProject getProject()
+                    {
+                        return editor.getJavaProject();
+                    }
+
+                    public boolean supportService()
+                    {
+                        return !controlBlock;
+                    }
+
+                });
+                wizard.open();
+            }
+
+        };
     }
 }

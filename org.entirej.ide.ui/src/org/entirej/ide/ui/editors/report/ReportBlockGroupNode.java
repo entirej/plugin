@@ -186,7 +186,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     public Action[] getActions()
     {
 
-        return new Action[] { createNewBlockGroupAction() };
+        return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null,createNewBlockGroupAction() };
     }
 
     public Action createNewBlockGroupAction()
@@ -448,8 +448,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         public Action[] getActions()
         {
 
-            // FIXME
-            return new Action[] { createCopyNameAction() };
+            return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null,createCopyNameAction() };
 
         }
 
