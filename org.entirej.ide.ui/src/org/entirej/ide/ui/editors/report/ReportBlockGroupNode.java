@@ -39,6 +39,7 @@ import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockRenderers;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
@@ -48,6 +49,7 @@ import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
@@ -595,6 +597,63 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
+            
+            
+            AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer", "The renderer you have chosen for your block")
+            {
+                Filter vfilter = new Filter()
+                               {
+
+                                   public boolean match(int tag, IMarker marker)
+                                   {
+
+                                       return (tag & FormNodeTag.RENDERER) != 0;
+                                   }
+                               };
+
+                @Override
+                public String getErrors()
+                {
+
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+
+                public String[] getOptions()
+                {
+                    return EJPluginReportBlockRenderers.getBlockRenderers().toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+
+                    return t;
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    source.setBlockRendererName(value);
+
+                    editor.setDirty(true);
+                    treeSection.refresh(BlockNode.this);
+                    if (treeSection.getDescriptorViewer() != null)
+                        treeSection.getDescriptorViewer().showDetails(BlockNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getBlockRendererName();
+                }
+            };
+
+            descriptors.add(rendererDescriptor);
             if (source.isControlBlock())
             {
                 AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(

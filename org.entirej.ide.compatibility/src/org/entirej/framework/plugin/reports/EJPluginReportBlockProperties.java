@@ -134,6 +134,11 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         return _blockRendererName;
     }
     
+    public void setBlockRendererName(String _blockRendererName)
+    {
+        this._blockRendererName = _blockRendererName;
+    }
+    
     public String getActionProcessorClassName()
     {
         return _actionProcessorClassName;
