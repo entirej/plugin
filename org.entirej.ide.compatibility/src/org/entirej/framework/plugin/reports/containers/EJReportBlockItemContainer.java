@@ -98,7 +98,7 @@ public class EJReportBlockItemContainer
         {
             EJPluginReportItemProperties item = iti.next();
             
-            if (item.getName().equalsIgnoreCase(itemName))
+            if (item.getName()!=null && item.getName().equalsIgnoreCase(itemName))
             {
                 return true;
             }

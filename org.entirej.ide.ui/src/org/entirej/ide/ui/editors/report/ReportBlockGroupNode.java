@@ -508,7 +508,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
 
             List<AbstractNode<?>> list = new ArrayList<AbstractNode<?>>();
-            // list.add(new BlockItemsGroupNode(treeSection, this));
+             list.add(new ReportBlockItemsGroupNode(treeSection, this));
 
             return list.toArray(new AbstractNode[0]);
         }
@@ -652,7 +652,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 }
             };
 
-            descriptors.add(rendererDescriptor);
+           
+           // descriptors.add(rendererDescriptor);
             if (source.isControlBlock())
             {
                 AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(

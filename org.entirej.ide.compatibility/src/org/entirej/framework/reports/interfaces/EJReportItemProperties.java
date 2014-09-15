@@ -84,12 +84,6 @@ public interface EJReportItemProperties extends Serializable
      */
     public boolean isBlockServiceItem();
     
-    /**
-     * Returns the name of the renderer to use for this item
-     * 
-     * @return This items renderer name
-     */
-    public String getItemRendererName();
     
     /**
      * Returns the data type of this item

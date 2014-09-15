@@ -58,7 +58,6 @@ import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayPro
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
-import org.entirej.framework.plugin.reports.EJPluginReportBlockRenderers;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
@@ -1154,7 +1153,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     public Action createNewBlockAction(final boolean controlBlock)
     {
 
-        return new Action(controlBlock ? "New Report Control Block" : "New  Report Service Block")
+        return new Action(controlBlock ? "New Report Control Block" : "New Report Service Block")
         {
 
             @Override
@@ -1163,20 +1162,15 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                 {
 
-                    public void addBlock(String blockName, String block, String canvas, boolean createCanvas, String serviceClass)
+                    public void addBlock(String blockName, String serviceClass)
                     {
                         final EJPluginReportProperties formProperties = editor.getReportProperties();
                         final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
 
-                        if (createCanvas)
-                        {
-                            //FIXME
-                            
-                        }
+                       
 
                         formProperties.getBlockContainer().addBlockProperties(blockProperties);
-                        blockProperties.setCanvasName(canvas);
-                        blockProperties.setBlockRendererName(block);
+                        
                         // create items if service is also selected
                         if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
                         {
@@ -1190,37 +1184,22 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                 editor.setDirty(true);
                                 refresh(findNode(formProperties.getBlockContainer()), true);
                                 //FIXME refresh(findNode(formProperties.getCanvasContainer()));
-                                selectNodes(true, findNode(blockProperties));
+                                AbstractNode<?> abstractNode = findNode(blockProperties,true);
+                                selectNodes(true, abstractNode);
+                                expand(abstractNode,2);
 
                             }
                         });
 
                     }
 
-                    public List<String> getBlockRenderer()
-                    {
-                        
-                        return new ArrayList<String>(EJPluginReportBlockRenderers.getBlockRenderers());
-                    }
-
-                    public List<String> getCanvas()
-                    {
-                        //FIXME:
-                        return new ArrayList<String>();
-                    }
 
                     public boolean hasBlock(String blockName)
                     {
                         return editor.getReportProperties().getBlockContainer().contains(blockName);
                     }
 
-                    public boolean hasCanvas(String canvasName)
-                    {
-                      //FIXME:
-                        final EJPluginReportProperties formProperties = editor.getReportProperties();
-                        return false;
-                    }
-
+                    
                     public IJavaProject getProject()
                     {
                         return editor.getJavaProject();

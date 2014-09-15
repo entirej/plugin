@@ -11,10 +11,8 @@ public class EJPluginReportItemProperties implements EJReportItemProperties
     private String                         _name;
     private String                         _dataTypeClassName      = "";
     private boolean                        _blockServiceItem       = false;
-    private String                         _itemRendererName       = "";
 
     private String                         _defaultQueryValue      = "";
-    private String                         _fieldName;
     
     public EJPluginReportItemProperties(EJPluginReportBlockProperties blockProperties)
     {
@@ -23,6 +21,7 @@ public class EJPluginReportItemProperties implements EJReportItemProperties
     public EJPluginReportItemProperties(EJPluginReportBlockProperties blockProperties,String itemName)
     {
         this.blockProperties = blockProperties;
+        this._name = itemName;
     }
     
     
@@ -122,32 +121,13 @@ public class EJPluginReportItemProperties implements EJReportItemProperties
         return null;
     }
     
-    public String getItemRendererName()
-    {
-        return _itemRendererName;
-    }
-    
-    
-    public void setItemRendererName(String rendererName, boolean addDefaultValues)
-    {
-        _itemRendererName = rendererName;
-        
-        //FIXME
-    }
+
     
     public String getFieldName()
     {
-        return _fieldName;
+        return null;
         
     }
     
-    /**
-     * Sets this items field name
-     * 
-     * @param fieldName
-     */
-    public void setFieldName(String fieldName)
-    {
-        _fieldName = fieldName;
-    }
+  
 }

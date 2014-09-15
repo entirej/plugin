@@ -29,10 +29,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
@@ -398,6 +400,25 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     {
        
         
+    }
+
+
+    public List<String> getBlockNames()
+    {
+        List<String> blockNames = new ArrayList<String>();
+        
+        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        {
+            blockNames.add(properties.getBlockRendererName()); 
+        }
+        
+        return blockNames;
+    }
+
+
+    public EJReportBlockItemContainer getBlockProperties(String blockName)
+    {
+        return blockContainer.getBlockProperties(blockName).getItemContainer();
     }
     
 }

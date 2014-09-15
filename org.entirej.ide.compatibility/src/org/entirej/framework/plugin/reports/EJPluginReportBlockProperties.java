@@ -40,11 +40,15 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     
     public EJPluginReportBlockProperties(EJPluginReportProperties formProperties, String blockName, boolean isCcontrolBlock)
     {
+        
+        _reportProperties = formProperties;
         _name = blockName;
         _isControlBlock = isCcontrolBlock;
         _mainScreenProperties = new EJPluginReportScreenProperties(this);
         _itemContainer = new EJReportBlockItemContainer(this);
     }
+    
+    
     
     @Override
     public EJPluginReportScreenProperties getMainScreenProperties()
@@ -110,7 +114,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     }
     
     @Override
-    public EJReportProperties getReportProperties()
+    public EJPluginReportProperties getReportProperties()
     {
         return _reportProperties;
     }

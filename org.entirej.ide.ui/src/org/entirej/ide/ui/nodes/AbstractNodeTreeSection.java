@@ -168,6 +168,17 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             treeview.expandToLevel(node, 1);
         }
     }
+    public void expand(AbstractNode<?> node,int level)
+    {
+        if (filteredTree != null && node != null)
+        {
+            TreeViewer treeview = filteredTree.getViewer();
+            
+                treeview.expandToLevel(node, level);
+            
+           
+        }
+    }
 
     public void refresh(AbstractNode<?> node)
     {

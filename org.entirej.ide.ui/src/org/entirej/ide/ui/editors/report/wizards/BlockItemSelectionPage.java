@@ -29,6 +29,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,27 +37,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 import org.entirej.ide.ui.utils.TypeAssistProvider;
 
-public class DataBlockServiceSelectionPage extends WizardPage
+public class BlockItemSelectionPage extends WizardPage
 {
-  
-    private final DataBlockWizardContext wizardContext;
-    private String                       blockName;
 
+    private final BlockItemWizardContext wizardContext;
+    private String                       blockItemName;
 
-    private String                       blockServiceClass;
+    private boolean                      serviceItem;
+    private String                       dataTypeClass = String.class.getName();
 
-    protected DataBlockServiceSelectionPage(DataBlockWizardContext wizardContext)
+    protected BlockItemSelectionPage(BlockItemWizardContext wizardContext)
     {
-        super("ej.data.service.selection");
+        super("ej.data.item.selection");
         this.wizardContext = wizardContext;
-        setTitle("Data Block");
-        setDescription("Properties for the new data block.");
+        setTitle("Report Block Item");
+        setDescription("Properties for the new block item.");
     }
 
     public void createControl(Composite parent)
@@ -71,12 +71,15 @@ public class DataBlockServiceSelectionPage extends WizardPage
         layout.numColumns = nColumns;
         composite.setLayout(layout);
         createBlockName(composite, nColumns);
-        if (wizardContext.supportService())
-        {
-            createBlockServiceControls(composite, nColumns);
-        }
-       
+        createDataTypeControls(composite, nColumns);
 
+        
+
+        if(!wizardContext.isContorl())
+        {
+            createSeparator(composite, nColumns);
+            createServiceItemOptionControls(composite, nColumns);
+        }
         setControl(composite);
 
         setPageComplete(false);
@@ -123,18 +126,44 @@ public class DataBlockServiceSelectionPage extends WizardPage
 
             public void modifyText(ModifyEvent e)
             {
-                blockName = blockNameText.getText();
+                blockItemName = blockNameText.getText();
                 doUpdateStatus();
             }
         });
         createEmptySpace(composite, 1);
     }
 
-  
-    private void createBlockServiceControls(Composite composite, int nColumns)
+   
+
+    private void createServiceItemOptionControls(Composite composite, int nColumns)
+    {
+        createEmptySpace(composite, 1);
+        final Button btnCreateService = new Button(composite, SWT.CHECK);
+        btnCreateService.setText("Block Service Item");
+        btnCreateService.setSelection(serviceItem);
+        btnCreateService.addSelectionListener(new SelectionListener()
+        {
+
+            public void widgetSelected(SelectionEvent e)
+            {
+                serviceItem = btnCreateService.getSelection();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e)
+            {
+                serviceItem = btnCreateService.getSelection();
+            }
+        });
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan = nColumns - 1;
+
+        btnCreateService.setLayoutData(gd);
+    }
+
+    private void createDataTypeControls(Composite composite, int nColumns)
     {
         Label serviceGenLabel = new Label(composite, SWT.NULL);
-        serviceGenLabel.setText("Block Service:");
+        serviceGenLabel.setText("Data Type:");
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         gd.horizontalSpan = 1;
         serviceGenLabel.setLayoutData(gd);
@@ -145,14 +174,14 @@ public class DataBlockServiceSelectionPage extends WizardPage
         gd.grabExcessHorizontalSpace = false;
         gd.horizontalSpan = 2;
         serviceGenText.setLayoutData(gd);
-        if (blockServiceClass != null)
-            serviceGenText.setText(blockServiceClass);
+        if (dataTypeClass != null)
+            serviceGenText.setText(dataTypeClass);
         serviceGenText.addModifyListener(new ModifyListener()
         {
 
             public void modifyText(ModifyEvent e)
             {
-                blockServiceClass = serviceGenText.getText().trim();
+                dataTypeClass = serviceGenText.getText().trim();
                 doUpdateStatus();
             }
         });
@@ -163,7 +192,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
             {
                 return wizardContext.getProject();
             }
-        }, IJavaElementSearchConstants.CONSIDER_CLASSES, EJBlockService.class.getName());
+        }, IJavaElementSearchConstants.CONSIDER_CLASSES, Object.class.getName());
         final Button browse = new Button(composite, SWT.PUSH);
         browse.setText("Browse...");
         browse.addSelectionListener(new SelectionAdapter()
@@ -172,7 +201,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
             {
                 String value = serviceGenText.getText();
                 IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), wizardContext.getProject().getResource(),
-                        IJavaElementSearchConstants.CONSIDER_CLASSES, value == null ? "" : value, EJBlockService.class.getName());
+                        IJavaElementSearchConstants.CONSIDER_CLASSES, value == null ? "" : value, Object.class.getName());
                 if (type != null)
                 {
                     serviceGenText.setText(type.getFullyQualifiedName('$'));
@@ -187,15 +216,20 @@ public class DataBlockServiceSelectionPage extends WizardPage
         browse.setLayoutData(gd);
     }
 
-    public String getBlockName()
+    public String getBlockItemName()
     {
-        return blockName;
+        return blockItemName;
     }
 
-    
-    public String getBlockServiceClass()
+
+    public boolean isServiceItem()
     {
-        return blockServiceClass;
+        return serviceItem;
+    }
+
+    public String getDataTypeClass()
+    {
+        return dataTypeClass;
     }
 
     protected void doUpdateStatus()
@@ -206,41 +240,49 @@ public class DataBlockServiceSelectionPage extends WizardPage
     protected boolean validatePage()
     {
 
-        if (blockName == null || blockName.trim().length() == 0)
+        if (blockItemName == null || blockItemName.trim().length() == 0)
         {
-            setErrorMessage("Block name can't be empty.");
+            setErrorMessage("Block item name can't be empty.");
             return false;
         }
-        else if (wizardContext.hasBlock(blockName))
+        else if (wizardContext.hasBlockItem(blockItemName))
         {
-            setErrorMessage("A block with this name already exists.");
+            setErrorMessage("A block item with this name already exists.");
             return false;
         }
 
-       
-
-        if (wizardContext.supportService() && blockServiceClass != null && blockServiceClass.trim().length() > 0)
+        if (dataTypeClass == null)
         {
-            IJavaProject javaProject = wizardContext.getProject();
-            if (javaProject != null)
+            setErrorMessage("A block renderer must be specified.");
+            return false;
+        }
+
+        IJavaProject javaProject = wizardContext.getProject();
+        if (javaProject != null)
+        {
+
+            if (dataTypeClass == null || dataTypeClass.trim().length() == 0)
             {
+                setErrorMessage("A data type must be specified.");
+                return false;
+            }
 
-                try
+            try
+            {
+                IType findType = javaProject.findType(dataTypeClass);
+                if (findType == null)
                 {
-                    IType findType = javaProject.findType(blockServiceClass);
-                    if (findType == null)
-                    {
-                        setErrorMessage(String.format("%s can't find in project build path.", blockServiceClass));
-                        return false;
-                    }
-                }
-                catch (CoreException e)
-                {
-                    setErrorMessage(e.getMessage());
+                    setErrorMessage(String.format("%s can't find in project build path.", dataTypeClass));
                     return false;
                 }
             }
+            catch (CoreException e)
+            {
+                setErrorMessage(e.getMessage());
+                return false;
+            }
         }
+
         setErrorMessage(null);
         setMessage(null);
         return true;

@@ -25,17 +25,17 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.wizards.NewWizard;
 
-public class DataBlockServiceWizard extends NewWizard
+public class BlockItemWizard extends NewWizard
 {
 
-    private int                           selection = Window.CANCEL;
-    private DataBlockServiceSelectionPage selectionPage;
-    private final DataBlockWizardContext  wizardContext;
+    private int                          selection = Window.CANCEL;
+    private BlockItemSelectionPage       selectionPage;
+    private final BlockItemWizardContext wizardContext;
 
-    public DataBlockServiceWizard(DataBlockWizardContext wizardContext)
+    public BlockItemWizard(BlockItemWizardContext wizardContext)
     {
         // setDialogSettings(EJUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle("New Report Data Block");
+        setWindowTitle("New Report Block Item");
         this.wizardContext = wizardContext;
     }
 
@@ -51,7 +51,7 @@ public class DataBlockServiceWizard extends NewWizard
     @Override
     public void addPages()
     {
-        addPage(selectionPage = new DataBlockServiceSelectionPage(wizardContext));
+        addPage(selectionPage = new BlockItemSelectionPage(wizardContext));
         super.addPages();
     }
 
@@ -59,8 +59,8 @@ public class DataBlockServiceWizard extends NewWizard
     protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException
     {
 
-      
-        wizardContext.addBlock(selectionPage.getBlockName(),  selectionPage.getBlockServiceClass());
+        wizardContext.addBlock(selectionPage.getBlockItemName(), selectionPage.getDataTypeClass(), 
+                selectionPage.isServiceItem());
 
     }
 

@@ -21,21 +21,16 @@ package org.entirej.ide.ui.editors.report.wizards;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
-import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 
-public interface DataBlockWizardContext
+public interface BlockItemWizardContext
 {
 
-    void addBlock(String blockName,String blockService);
+    void addBlock(String blockItemName, String dataType, boolean serviceItem);
 
- 
-
-    boolean hasBlock(String blockName);
-
+   boolean hasBlockItem(String blockName);
+    
+    boolean isContorl();
 
     IJavaProject getProject();
-
-    boolean supportService();
-
 }
