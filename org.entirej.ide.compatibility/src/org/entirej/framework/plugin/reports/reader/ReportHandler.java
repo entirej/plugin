@@ -19,13 +19,7 @@ package org.entirej.framework.plugin.reports.reader;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
-import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
-import org.entirej.framework.plugin.framework.properties.reader.BlockGroupHandler;
-import org.entirej.framework.plugin.framework.properties.reader.BlockHandler;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
-import org.entirej.framework.plugin.framework.properties.reader.LovDefinitionHandler;
-import org.entirej.framework.plugin.framework.properties.reader.ObjGroupDefinitionHandler;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.reports.interfaces.EJReportProperties.ORIENTATION;
 import org.xml.sax.Attributes;
@@ -50,6 +44,9 @@ public class ReportHandler extends EntireJTagHandler
     private static final String      ELEMENT_APPLICATION_PROPERTIES = "applicationProperties";
     private static final String      ELEMENT_PROPERTY               = "property";
     
+    private static final String      ELEMENT_BLOCK                  = "block";
+    private static final String      ELEMENT_BLOCK_GROUP            = "blockGroup";
+    
     private boolean                  _gettingApplicationProperties  = false;
     private String                   _lastApplicationPropertyName   = "";
     
@@ -68,24 +65,14 @@ public class ReportHandler extends EntireJTagHandler
         return _reportProperties;
     }
     
-    public EntireJTagHandler getBlockHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
+    public EntireJTagHandler getBlockHandler(EJPluginReportProperties formProperties)
     {
-        return new BlockHandler(formProperties, lovDefinitionProperties);
+        return new BlockHandler(formProperties);
     }
     
-    public EntireJTagHandler getBlockGroupHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
+    public EntireJTagHandler getBlockGroupHandler(EJPluginReportProperties formProperties)
     {
         return new BlockGroupHandler(formProperties);
-    }
-    
-    public EntireJTagHandler getLovDefinitionHandler(EJPluginFormProperties formProperties)
-    {
-        return new LovDefinitionHandler(formProperties);
-    }
-    
-    public EntireJTagHandler getObjectgroupDefinitionHandler(EJPluginFormProperties formProperties)
-    {
-        return new ObjGroupDefinitionHandler(formProperties);
     }
     
     public void startLocalElement(String name, Attributes attributes) throws SAXException
@@ -112,6 +99,14 @@ public class ReportHandler extends EntireJTagHandler
             String defaultValue = attributes.getValue("defaultValue");
             
             _reportProperties.addReportParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
+        }
+        else if (name.equals(ELEMENT_BLOCK))
+        {
+            setDelegate(getBlockHandler(_reportProperties));
+        }
+        else if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            setDelegate(getBlockGroupHandler(_reportProperties));
         }
         
     }
@@ -217,7 +212,16 @@ public class ReportHandler extends EntireJTagHandler
     
     public void cleanUpAfterDelegate(String name, EntireJTagHandler currentDelegate)
     {
+        if (name.equals(ELEMENT_BLOCK))
+        {
+            _reportProperties.getBlockContainer().addBlockProperties(((BlockHandler) currentDelegate).getBlockProperties());
+            return;
+        }
+        else if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            _reportProperties.getBlockContainer().addBlockProperties(((BlockGroupHandler) currentDelegate).getBlockGroup());
+            return;
+        }
         
-       
     }
 }

@@ -19,6 +19,7 @@ package org.entirej.framework.plugin.reports.writer;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +27,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
@@ -96,6 +103,13 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 endTAG(buffer, "applicationProperties");
                 
                 
+                // The block items will be added during the addBlockList method
+                startTAG(buffer, "blockList");
+                {
+                    addBlockList(form.getBlockContainer(), buffer);
+                }
+                endTAG(buffer, "blockList");
+                
             }
             endTAG(buffer, "report");
         }
@@ -120,6 +134,121 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
         catch (Exception e)
         {
             EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save report: " + form.getName());
+        }
+    }
+    
+    
+    protected void addBlockList(EJReportBlockContainer blockContainer, StringBuffer buffer)
+    {
+        
+        List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
+        for (BlockContainerItem item : blockContainerItems)
+        {
+            if(item instanceof EJPluginReportBlockProperties)
+            {
+                EJPluginReportBlockProperties blockProps = (EJPluginReportBlockProperties) item;
+               
+                
+                if (blockProps.isReferenceBlock())
+                {
+                    //FIXME
+                   // addReferencedBlockProperties(blockProps, buffer);
+                }
+                else
+                {
+                    addBlockProperties(blockProps, buffer);
+                }
+                continue;
+            }
+            //write Block groups
+            if(item instanceof BlockGroup)
+            {
+                BlockGroup group = (BlockGroup) item;
+                startOpenTAG(buffer, "blockGroup");
+                {
+                    writePROPERTY(buffer, "name", group.getName());
+                    closeOpenTAG(buffer);
+                    List<EJPluginReportBlockProperties> allBlockProperties = group.getAllBlockProperties();
+                    for (EJPluginReportBlockProperties blockProps : allBlockProperties)
+                    {
+                        
+                        
+                        if (blockProps.isReferenceBlock())
+                        {
+                            //FIXME
+                            //addReferencedBlockProperties(blockProps, buffer);
+                        }
+                        else
+                        {
+                            addBlockProperties(blockProps, buffer);
+                        }
+                        continue;
+                    }
+                }
+                endTAG(buffer, "blockGroup");
+            }
+        }
+        
+    }
+    
+    
+    protected void addBlockProperties(EJPluginReportBlockProperties blockProperties, StringBuffer buffer)
+    {
+        startOpenTAG(buffer, "block");
+        {
+            writePROPERTY(buffer, "name", blockProperties.getName());
+            writePROPERTY(buffer, "referenced", "false");
+            writePROPERTY(buffer, "controlBlock", "" + blockProperties.isControlBlock());
+            closeOpenTAG(buffer);
+            
+           
+            writeStringTAG(buffer, "description", blockProperties.getDescription());
+           
+            writeStringTAG(buffer, "canvasName", blockProperties.getCanvasName());
+            writeStringTAG(buffer, "blockRendererName", blockProperties.getBlockRendererName());
+
+            if(!blockProperties.isControlBlock())
+                writeStringTAG(buffer, "serviceClassName", blockProperties.getServiceClassName());
+            writeStringTAG(buffer, "actionProcessorClassName", blockProperties.getActionProcessorClassName());
+           
+      
+            
+           
+            
+          
+            
+          
+            
+            // Now add the block items
+            startTAG(buffer, "itemList");
+            {
+                addBlockItemProperties(blockProperties.getItemContainer(), buffer);
+            }
+            endTAG(buffer, "itemList");
+            
+           
+        }
+        endTAG(buffer, "block");
+    }
+    
+    protected void addBlockItemProperties(EJReportBlockItemContainer itemContainer, StringBuffer buffer)
+    {
+        Iterator<EJPluginReportItemProperties> items = itemContainer.getAllItemProperties().iterator();
+        while (items.hasNext())
+        {
+            EJPluginReportItemProperties itemProps = items.next();
+            
+            startOpenTAG(buffer, "item");
+            {
+                writePROPERTY(buffer, "name", itemProps.getName());
+                closeOpenTAG(buffer);
+                
+                writeBooleanTAG(buffer, "blockServiceItem", itemProps.isBlockServiceItem());
+                writeStringTAG(buffer, "dataTypeClassName", itemProps.getDataTypeClassName());
+                writeStringTAG(buffer, "defaultQueryValue", itemProps.getDefaultQueryValue());
+    
+            }
+            endTAG(buffer, "item");
         }
     }
   
