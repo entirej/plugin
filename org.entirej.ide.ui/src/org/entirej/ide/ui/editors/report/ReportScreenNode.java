@@ -174,6 +174,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
+                treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -245,6 +246,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
+                treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -294,6 +296,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
+                treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -343,6 +346,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
+                treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -413,7 +417,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
                 treeSection.expand(ReportScreenNode.this);
-
+                treeSection.refresh(blockGroupNode);
             }
 
             @Override
