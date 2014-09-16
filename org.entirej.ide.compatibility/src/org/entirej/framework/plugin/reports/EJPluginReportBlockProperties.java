@@ -14,8 +14,6 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.Bl
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
 import org.entirej.framework.reports.interfaces.EJReportItemProperties;
-import org.entirej.framework.reports.interfaces.EJReportProperties;
-import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
 import org.entirej.ide.core.EJCoreLog;
 
 public class EJPluginReportBlockProperties implements EJReportBlockProperties, BlockContainerItem
@@ -29,9 +27,8 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     
     private EJPluginReportProperties       _reportProperties;
     private String                         _name                     = "";
-    private String                         _blockRendererName        = "";
     
-    private EJPluginReportScreenProperties _mainScreenProperties;
+    private EJPluginReportScreenProperties _layoutScreenProperties;
     
     private String                         _serviceClassName;
     private String                         _actionProcessorClassName = "";
@@ -44,23 +41,19 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         _reportProperties = formProperties;
         _name = blockName;
         _isControlBlock = isCcontrolBlock;
-        _mainScreenProperties = new EJPluginReportScreenProperties(this);
+        _layoutScreenProperties = new EJPluginReportScreenProperties(this);
         _itemContainer = new EJReportBlockItemContainer(this);
     }
     
     
     
     @Override
-    public EJPluginReportScreenProperties getMainScreenProperties()
+    public EJPluginReportScreenProperties getLayoutScreenProperties()
     {
-        return _mainScreenProperties;
+        return _layoutScreenProperties;
     }
     
-    @Override
-    public EJReportScreenItemProperties getScreenItemProperties(String itemName)
-    {
-        return _mainScreenProperties.getScreenItemProperties(itemName);
-    }
+   
     
     @Override
     public Collection<EJReportItemProperties> getAllItemProperties()
@@ -131,17 +124,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
             _name = blockName;
         }
     }
-    
-    @Override
-    public String getBlockRendererName()
-    {
-        return _blockRendererName;
-    }
-    
-    public void setBlockRendererName(String _blockRendererName)
-    {
-        this._blockRendererName = _blockRendererName;
-    }
+ 
     
     public String getActionProcessorClassName()
     {
@@ -192,11 +175,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         return _itemContainer;
     }
     
-    @Override
-    public Collection<String> getScreenItemNames()
-    {
-        return _mainScreenProperties.getScreenItemNames();
-    }
+
     
     @Override
     public EJBlockService<?> getBlockService()

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -39,21 +40,23 @@ import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
-import org.entirej.framework.plugin.reports.EJPluginReportBlockRenderers;
+import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
+import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.FormNodeTag;
+import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
+import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 import org.entirej.ide.ui.nodes.INodeRenameProvider;
@@ -455,11 +458,17 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         public void addOverview(StyledString styledString)
         {
 
-            if (source.getBlockRendererName() != null && source.getBlockRendererName().length() != 0)
+            if(source.getLayoutScreenProperties().getScreenType()!=EJReportScreenType.NONE)
             {
-                styledString.append(" : ", StyledString.QUALIFIER_STYLER);
-                styledString.append(source.getBlockRendererName(), StyledString.DECORATIONS_STYLER);
-
+                styledString.append(" : ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getLayoutScreenProperties().getScreenType().toString(), StyledString.QUALIFIER_STYLER);
+            }
+            if(source.getLayoutScreenProperties().getScreenType()!=EJReportScreenType.NONE)
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append("(x,y) = ("+source.getLayoutScreenProperties().getX()+" ,"+source.getLayoutScreenProperties().getY()+")",StyledString.DECORATIONS_STYLER);
+         
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
             }
 
         }
@@ -509,6 +518,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
             List<AbstractNode<?>> list = new ArrayList<AbstractNode<?>>();
              list.add(new ReportBlockItemsGroupNode(treeSection, this));
+             list.add(new ReportScreenNode(treeSection,this,ReportBlockGroupNode.this, source.getLayoutScreenProperties()));
 
             return list.toArray(new AbstractNode[0]);
         }
@@ -598,62 +608,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
             
             
-            AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer", "The renderer you have chosen for your block")
-            {
-                Filter vfilter = new Filter()
-                               {
-
-                                   public boolean match(int tag, IMarker marker)
-                                   {
-
-                                       return (tag & FormNodeTag.RENDERER) != 0;
-                                   }
-                               };
-
-                @Override
-                public String getErrors()
-                {
-
-                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
-                }
-
-                @Override
-                public String getWarnings()
-                {
-                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
-                }
-
-                public String[] getOptions()
-                {
-                    return EJPluginReportBlockRenderers.getBlockRenderers().toArray(new String[0]);
-                }
-
-                public String getOptionText(String t)
-                {
-
-                    return t;
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    source.setBlockRendererName(value);
-
-                    editor.setDirty(true);
-                    treeSection.refresh(BlockNode.this);
-                    if (treeSection.getDescriptorViewer() != null)
-                        treeSection.getDescriptorViewer().showDetails(BlockNode.this);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return source.getBlockRendererName();
-                }
-            };
-
-           
-           // descriptors.add(rendererDescriptor);
+            
             if (source.isControlBlock())
             {
                 AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
@@ -838,6 +793,177 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
     }
 
+    class ScreenBlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor,  NodeOverview, NodeMoveProvider
+    {
+        public ScreenBlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
+        {
+            super(parent, source);
+    
+        }
+    
+        @Override
+        public <S> S getAdapter(Class<S> adapter)
+        {
+            return ReportBlockGroupNode.this.getAdapter(adapter);
+        }
+    
+        @Override
+        public String getName()
+        {
+            return source.getName();
+        }
+    
+        public void addOverview(StyledString styledString)
+        {
+            // todo:
+    
+        }
+    
+        public Action[] getActions()
+        {
+
+            return new Action[] { createNewSubBlockAction(false), createNewSubBlockAction(true) };
+        }
+        
+        public Action createNewSubBlockAction(final boolean controlBlock)
+        {
+
+            return new Action(controlBlock ? "New Report Control Block" : "New Report Service Block")
+            {
+
+                @Override
+                public void runWithEvent(Event event)
+                {
+                    DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
+                    {
+
+                        public void addBlock(String blockName, String serviceClass)
+                        {
+                            final EJPluginReportProperties formProperties = editor.getReportProperties();
+                            final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
+
+                           
+
+                            source.addBlockProperties(blockProperties);
+                            
+                            // create items if service is also selected
+                            if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
+                            {
+                                blockProperties.setServiceClassName(serviceClass, true);
+                            }
+                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                            {
+
+                                public void run()
+                                {
+                                    treeSection.getEditor().setDirty(true);
+                                    treeSection.refresh(getParent());
+                                    //FIXME refresh(findNode(formProperties.getCanvasContainer()));
+                                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties,true);
+                                    treeSection. selectNodes(true, abstractNode);
+                                    treeSection.expand(abstractNode,2);
+
+                                }
+                            });
+
+                        }
+
+
+                        public boolean hasBlock(String blockName)
+                        {
+                            return editor.getReportProperties().getBlockContainer().contains(blockName);
+                        }
+
+                        
+                        public IJavaProject getProject()
+                        {
+                            return editor.getJavaProject();
+                        }
+
+                        public boolean supportService()
+                        {
+                            return !controlBlock;
+                        }
+
+                    });
+                    wizard.open();
+                }
+
+            };
+        }
+        
+    
+        public Object getNeighborSource()
+        {
+            return source;
+        }
+    
+        @Override
+        public Image getImage()
+        {
+            return ReportBlockGroupNode.this.getImage();
+        }
+    
+        @Override
+        public INodeDeleteProvider getDeleteProvider()
+        {
+    
+           return null;
+        }
+    
+        @Override
+        public INodeRenameProvider getRenameProvider()
+        {
+            return null;
+        }
+    
+        @Override
+        public boolean isLeaf()
+        {
+            return source.isEmpty();
+        }
+    
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+    
+            List<EJPluginReportBlockProperties> allBlockProperties = source.getAllBlockProperties();
+            for (EJPluginReportBlockProperties properties : allBlockProperties)
+            {
+                nodes.add(new BlockNode(this, properties));
+            }
+    
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+    
+        public boolean canMove(Neighbor relation, Object source)
+        {
+            return source instanceof EJPluginReportBlockProperties;
+        }
+    
+        public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+    
+                    source.addBlockProperties(index, (EJPluginReportBlockProperties) dSource);
+                }
+            }
+            else
+                source.addBlockProperties((EJPluginReportBlockProperties) dSource);
+    
+        }
+    
+    }
+
     public boolean canMove(Neighbor relation, Object source)
     {
         return source instanceof BlockContainerItem;
@@ -861,5 +987,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         else
             source.addBlockProperties((BlockContainerItem) dSource);
 
+    }
+
+    public AbstractNode<?> createScreenGroupNode(ReportScreenNode reportScreenNode, BlockGroup subBlocks)
+    {
+        
+        return new ScreenBlockSubGroupNode(reportScreenNode, subBlocks);
     }
 }

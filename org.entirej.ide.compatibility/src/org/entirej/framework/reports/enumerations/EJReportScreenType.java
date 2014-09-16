@@ -17,30 +17,19 @@
  ******************************************************************************/
 package org.entirej.framework.reports.enumerations;
 
-public enum EJReportBandType
+public enum EJReportScreenType
 {
-    TITILE, PAGE_HEADER, CLOUMN_HEADER, DETAIL, CLOUMN_FOOTER, PAGE_FOOTER, LAST_PAGE_FOOTER, SUMMARY;
+    NONE,FORM_LATOUT, TABLE_LAYOUT;
     
     public String toString()
     {
         switch (this)
         {
-            case TITILE:
-                return "Title";
-            case PAGE_HEADER:
-                return "Page Header";
-            case CLOUMN_HEADER:
-                return "Column Header";
-            case DETAIL:
-                return "Detail";
-            case CLOUMN_FOOTER:
-                return "Column Footer";
-            case PAGE_FOOTER:
-                return "Page Footer";
-            case LAST_PAGE_FOOTER:
-                return "Last Page Footer";
-            case SUMMARY:
-                return "Summary";
+            
+            case FORM_LATOUT:
+                return "Form Layout";
+            case TABLE_LAYOUT:
+                return "Table Layout";
             default:
                 return super.toString();
         }

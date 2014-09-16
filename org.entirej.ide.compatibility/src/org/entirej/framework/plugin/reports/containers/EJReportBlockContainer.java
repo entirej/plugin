@@ -255,6 +255,15 @@ public class EJReportBlockContainer
     public static class BlockGroup implements BlockContainerItem
     {
         
+        public BlockGroup()
+        {
+        }
+        
+        public BlockGroup(String name)
+        {
+            this.name = name;
+        }
+        
         private String name;
         
         public void setName(String name)

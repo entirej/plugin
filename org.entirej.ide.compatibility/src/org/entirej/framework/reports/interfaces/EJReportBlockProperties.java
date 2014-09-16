@@ -30,19 +30,9 @@ public interface EJReportBlockProperties extends Serializable
      * 
      * @return the main screen properties for this block
      */
-    public EJReportScreenProperties getMainScreenProperties();
+    public EJReportScreenProperties getLayoutScreenProperties();
     
-    /**
-     * Returns the screen item properties for the given item
-     * 
-     * @param screenType
-     *            The screen to search
-     * @param itemName
-     *            The item that is required
-     * @return The screen properties of the given item or <code>null</code> if
-     *         there was no item with the given name on the given screen
-     */
-    public EJReportScreenItemProperties getScreenItemProperties(String itemName);
+
     
     /**
      * Returns the properties of each item defined within this block
@@ -125,13 +115,7 @@ public interface EJReportBlockProperties extends Serializable
      */
     public String getName();
     
-    /**
-     * The block renderer is the class that will be responsible for displaying
-     * the contents of this block
-     * 
-     * @return the blockRendererClassName
-     */
-    public String getBlockRendererName();
+
     
     /**
      * Gets the fully qualified class name of the service that is responsible
@@ -161,17 +145,7 @@ public interface EJReportBlockProperties extends Serializable
     public String getActionProcessorClassName();
 
     
-    /**
-     * Returns the item names displayed on the given screen type
-     * 
-     * @param screenType
-     *            Item displayed on this screen will be returned
-     * 
-     * @return A <code>List</code> containing all item names displayed on the
-     *         given screen
-     * 
-     */
-    public Collection<String> getScreenItemNames();
+
     
  
 

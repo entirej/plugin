@@ -409,7 +409,8 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
         {
-            blockNames.add(properties.getBlockRendererName()); 
+            
+            blockNames.add(properties.getName()); 
         }
         
         return blockNames;

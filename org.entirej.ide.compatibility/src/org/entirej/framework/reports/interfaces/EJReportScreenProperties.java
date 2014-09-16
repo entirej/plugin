@@ -19,6 +19,9 @@
 package org.entirej.framework.reports.interfaces;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.entirej.framework.reports.enumerations.EJReportScreenType;
 
 public interface EJReportScreenProperties extends Serializable
 {
@@ -48,7 +51,9 @@ public interface EJReportScreenProperties extends Serializable
     public int getY();
 
     
+    public EJReportScreenType getScreenType();
     
     
-    public EJReportScreenItemProperties getScreenItemProperties(String itemName);
+    
+    public Collection<? extends EJReportBlockProperties> getAllSubBlocks();
 }
