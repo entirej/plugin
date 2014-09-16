@@ -24,23 +24,28 @@ import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandle
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class BlockHandler extends EntireJTagHandler
 {
-    private EJPluginReportBlockProperties         _blockProperties;
-    private EJPluginReportProperties          _formProperties;
+    private EJPluginReportBlockProperties _blockProperties;
+    private EJPluginReportProperties      _formProperties;
     
-    private static final String             ELEMENT_BLOCK                             = "block";
-    private static final String             ELEMENT_DESCRIPTION                       = "description";
-    private static final String             ELEMENT_CANVAS                            = "canvasName";
-    private static final String             ELEMENT_SERVICE_CLASS_NAME                = "serviceClassName";
-    private static final String             ELEMENT_ACTION_PROCESSOR                  = "actionProcessorClassName";
-    
-    
-    private static final String             ELEMENT_ITEM                              = "item";
-    
+    private static final String           ELEMENT_BLOCK              = "block";
+    private static final String           ELEMENT_DESCRIPTION        = "description";
+    private static final String           ELEMENT_CANVAS             = "canvasName";
+    private static final String           ELEMENT_SERVICE_CLASS_NAME = "serviceClassName";
+    private static final String           ELEMENT_ACTION_PROCESSOR   = "actionProcessorClassName";
+    private static final String           ELEMENT_SCREEN_TYPE        = "screenType";
+    private static final String           ELEMENT_SCREEN_X           = "x";
+    private static final String           ELEMENT_SCREEN_Y           = "y";
+    private static final String           ELEMENT_SCREEN_WIDTH       = "width";
+    private static final String           ELEMENT_SCREEN_HEIGHT      = "height";
+
+    private static final String      ELEMENT_BLOCK_GROUP            = "blockGroup";
+    private static final String           ELEMENT_ITEM               = "item";
     
     public BlockHandler(EJPluginReportProperties formProperties)
     {
@@ -66,12 +71,15 @@ public class BlockHandler extends EntireJTagHandler
     
     public void startLocalElement(String name, Attributes attributes) throws SAXException
     {
-       
         
         if (name.equals(ELEMENT_ITEM))
         {
             setDelegate(new ItemHandler(_blockProperties));
             return;
+        }
+        else if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            setDelegate(new BlockGroupHandler(_formProperties,_blockProperties.getLayoutScreenProperties().getSubBlocks()));
         }
         
         if (name.equals(ELEMENT_BLOCK))
@@ -83,23 +91,24 @@ public class BlockHandler extends EntireJTagHandler
             
             if (Boolean.parseBoolean(referenced))
             {
-                //FIXME
+                // FIXME
                 
             }
             else
             {
-                _blockProperties = new EJPluginReportBlockProperties(_formProperties, blockName, Boolean.parseBoolean(isControlBlock == null ? "false" : isControlBlock));
-              
+                _blockProperties = new EJPluginReportBlockProperties(_formProperties, blockName, Boolean.parseBoolean(isControlBlock == null ? "false"
+                        : isControlBlock));
+                
             }
             if (_blockProperties != null)
             {
-                //_blockProperties.setd(Boolean.parseBoolean(referenced));
+                // _blockProperties.setd(Boolean.parseBoolean(referenced));
             }
         }
         
         if (_blockProperties == null || !_blockProperties.isReferenceBlock())
         {
-           //TODO
+            // TODO
         }
     }
     
@@ -111,27 +120,39 @@ public class BlockHandler extends EntireJTagHandler
             return;
         }
         
-        
-       
         else if (name.equals(ELEMENT_DESCRIPTION))
         {
             _blockProperties.setDescription(value);
         }
         
-       
         else if (name.equals(ELEMENT_CANVAS))
         {
             _blockProperties.setCanvasName(value);
         }
-
-       
+        
         else if (name.equals(ELEMENT_SERVICE_CLASS_NAME))
         {
             _blockProperties.setServiceClassName(value, false);
         }
-        else if (name.equals(ELEMENT_ACTION_PROCESSOR))
+        else if (name.equals(ELEMENT_SCREEN_TYPE))
         {
-            _blockProperties.setActionProcessorClassName(value);
+            _blockProperties.getLayoutScreenProperties().setScreenType(EJReportScreenType.valueOf(value));;
+        }
+        else if (name.equals(ELEMENT_SCREEN_X))
+        {
+            _blockProperties.getLayoutScreenProperties().setX(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_Y))
+        {
+            _blockProperties.getLayoutScreenProperties().setY(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_WIDTH))
+        {
+            _blockProperties.getLayoutScreenProperties().setWidth(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_HEIGHT))
+        {
+            _blockProperties.getLayoutScreenProperties().setHeight(Integer.parseInt(value));
         }
     }
     
@@ -153,7 +174,7 @@ public class BlockHandler extends EntireJTagHandler
             }
             if (_blockProperties.isReferenceBlock())
             {
-               //FIXME
+                // FIXME
             }
             else
             {

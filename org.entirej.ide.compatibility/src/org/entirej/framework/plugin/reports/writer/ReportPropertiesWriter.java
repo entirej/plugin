@@ -30,6 +30,7 @@ import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWrite
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
@@ -102,7 +103,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "applicationProperties");
                 
-                
                 // The block items will be added during the addBlockList method
                 startTAG(buffer, "blockList");
                 {
@@ -137,22 +137,20 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
         }
     }
     
-    
     protected void addBlockList(EJReportBlockContainer blockContainer, StringBuffer buffer)
     {
         
         List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
         for (BlockContainerItem item : blockContainerItems)
         {
-            if(item instanceof EJPluginReportBlockProperties)
+            if (item instanceof EJPluginReportBlockProperties)
             {
                 EJPluginReportBlockProperties blockProps = (EJPluginReportBlockProperties) item;
-               
                 
                 if (blockProps.isReferenceBlock())
                 {
-                    //FIXME
-                   // addReferencedBlockProperties(blockProps, buffer);
+                    // FIXME
+                    // addReferencedBlockProperties(blockProps, buffer);
                 }
                 else
                 {
@@ -160,8 +158,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 }
                 continue;
             }
-            //write Block groups
-            if(item instanceof BlockGroup)
+            // write Block groups
+            if (item instanceof BlockGroup)
             {
                 BlockGroup group = (BlockGroup) item;
                 startOpenTAG(buffer, "blockGroup");
@@ -172,11 +170,10 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     for (EJPluginReportBlockProperties blockProps : allBlockProperties)
                     {
                         
-                        
                         if (blockProps.isReferenceBlock())
                         {
-                            //FIXME
-                            //addReferencedBlockProperties(blockProps, buffer);
+                            // FIXME
+                            // addReferencedBlockProperties(blockProps, buffer);
                         }
                         else
                         {
@@ -191,7 +188,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
         
     }
     
-    
     protected void addBlockProperties(EJPluginReportBlockProperties blockProperties, StringBuffer buffer)
     {
         startOpenTAG(buffer, "block");
@@ -201,22 +197,19 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             writePROPERTY(buffer, "controlBlock", "" + blockProperties.isControlBlock());
             closeOpenTAG(buffer);
             
-           
             writeStringTAG(buffer, "description", blockProperties.getDescription());
-           
+            
             writeStringTAG(buffer, "canvasName", blockProperties.getCanvasName());
-
-            if(!blockProperties.isControlBlock())
-                writeStringTAG(buffer, "serviceClassName", blockProperties.getServiceClassName());
+            
+            if (!blockProperties.isControlBlock()) writeStringTAG(buffer, "serviceClassName", blockProperties.getServiceClassName());
+           
             writeStringTAG(buffer, "actionProcessorClassName", blockProperties.getActionProcessorClassName());
-           
-      
-            
-           
-            
-          
-            
-          
+            EJPluginReportScreenProperties layoutScreenProperties = blockProperties.getLayoutScreenProperties();
+            writeStringTAG(buffer, "screenType", layoutScreenProperties.getScreenType().name());
+            writeStringTAG(buffer, "x", layoutScreenProperties.getX() + "");
+            writeStringTAG(buffer, "y", layoutScreenProperties.getY() + "");
+            writeStringTAG(buffer, "width", layoutScreenProperties.getWidth() + "");
+            writeStringTAG(buffer, "height", layoutScreenProperties.getHeight() + "");
             
             // Now add the block items
             startTAG(buffer, "itemList");
@@ -225,7 +218,30 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             }
             endTAG(buffer, "itemList");
             
-           
+            
+            
+            BlockGroup group = layoutScreenProperties.getSubBlocks();
+            startOpenTAG(buffer, "blockGroup");
+            {
+                
+                closeOpenTAG(buffer);
+                List<EJPluginReportBlockProperties> allBlockProperties = group.getAllBlockProperties();
+                for (EJPluginReportBlockProperties blockProps : allBlockProperties)
+                {
+                    
+                    if (blockProps.isReferenceBlock())
+                    {
+                        // FIXME
+                        // addReferencedBlockProperties(blockProps, buffer);
+                    }
+                    else
+                    {
+                        addBlockProperties(blockProps, buffer);
+                    }
+                    continue;
+                }
+            }
+            endTAG(buffer, "blockGroup");
         }
         endTAG(buffer, "block");
     }
@@ -245,10 +261,10 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeBooleanTAG(buffer, "blockServiceItem", itemProps.isBlockServiceItem());
                 writeStringTAG(buffer, "dataTypeClassName", itemProps.getDataTypeClassName());
                 writeStringTAG(buffer, "defaultQueryValue", itemProps.getDefaultQueryValue());
-    
+                
             }
             endTAG(buffer, "item");
         }
     }
-  
+    
 }

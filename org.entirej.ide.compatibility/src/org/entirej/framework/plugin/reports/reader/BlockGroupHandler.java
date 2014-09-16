@@ -35,6 +35,12 @@ public class BlockGroupHandler extends EntireJTagHandler
     public BlockGroupHandler(EJPluginReportProperties formProperties)
     {
         _formProperties = formProperties;
+        _blockGroup = new BlockGroup();
+    }
+    public BlockGroupHandler(EJPluginReportProperties formProperties,BlockGroup _blockGroup)
+    {
+        _formProperties = formProperties;
+        this._blockGroup = _blockGroup;
     }
     
     public BlockGroup getBlockGroup()
@@ -46,8 +52,10 @@ public class BlockGroupHandler extends EntireJTagHandler
     {
         if (name.equals(ELEMENT_BLOCK_GROUP))
         {
-            _blockGroup = new BlockGroup();
-            _blockGroup.setName( attributes.getValue("name"));
+          
+            String value = attributes.getValue("name");
+            if(value!=null && value.trim().length()>0)
+                _blockGroup.setName(value);
            
         }
         else if (name.equals(ELEMENT_BLOCK))
