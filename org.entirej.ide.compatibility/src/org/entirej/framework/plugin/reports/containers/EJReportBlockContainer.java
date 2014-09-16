@@ -55,7 +55,8 @@ public class EJReportBlockContainer
             BlockContainerItem containerItem = iti.next();
             if ((containerItem instanceof BlockGroup))
             {
-                EJPluginReportBlockProperties blockProperties = ((BlockGroup) containerItem).getBlockProperties(blockName);
+                BlockGroup blockGroup = (BlockGroup) containerItem;
+                EJPluginReportBlockProperties blockProperties = blockGroup.getBlockProperties(blockName);
                 if (blockProperties != null)
                 {
                     return true;
@@ -64,6 +65,11 @@ public class EJReportBlockContainer
             }
             EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
             if (props.getName().equalsIgnoreCase(blockName))
+            {
+                return true;
+            }
+            EJPluginReportBlockProperties blockProperties = props.getLayoutScreenProperties().getSubBlocks().getBlockProperties(blockName);
+            if (blockProperties != null)
             {
                 return true;
             }
@@ -354,6 +360,11 @@ public class EJReportBlockContainer
                 if (props.getName().equalsIgnoreCase(blockName))
                 {
                     return props;
+                }
+                EJPluginReportBlockProperties blockProperties = props.getLayoutScreenProperties().getSubBlocks().getBlockProperties(blockName);
+                if(blockProperties!=null)
+                {
+                    return blockProperties;
                 }
             }
             return null;
