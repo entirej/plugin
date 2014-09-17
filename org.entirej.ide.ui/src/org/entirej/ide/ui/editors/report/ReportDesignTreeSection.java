@@ -62,6 +62,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
+import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -88,24 +89,24 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
     protected ReportPreviewer                     reportPreviewer;
 
-    protected AbstractNode<?>                   baseNode;
+    protected AbstractNode<?>                     baseNode;
     protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
-                                                               {
+                                                                 {
 
-                                                                   public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                   {
-                                                                       if (arg0 != null)
-                                                                       {
+                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
+                                                                     {
+                                                                         if (arg0 != null)
+                                                                         {
 
-                                                                           AbstractNode<?> findNode = findNode(arg0, true);
-                                                                           if (findNode != null)
-                                                                           {
-                                                                               selectNodes(true, findNode);
-                                                                           }
-                                                                       }
+                                                                             AbstractNode<?> findNode = findNode(arg0, true);
+                                                                             if (findNode != null)
+                                                                             {
+                                                                                 selectNodes(true, findNode);
+                                                                             }
+                                                                         }
 
-                                                                   }
-                                                               };
+                                                                     }
+                                                                 };
 
     public ReportDesignTreeSection(AbstractEJReportEditor editor, FormPage page, Composite parent)
     {
@@ -210,7 +211,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
         popupBlockMenuManager.addMenuListener(listenerBlock);
         popupBlockMenuManager.setRemoveAllWhenShown(true);
         final Menu menuBlock = popupBlockMenuManager.createContextMenu(toolbar);
- 
+
         toolBarManager.add(new Separator());
     }
 
@@ -218,15 +219,13 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     public Action[] getBaseActions()
     {
 
-        return new Action[] {  createNewBlockAction(false), createNewBlockAction(true), };
+        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), };
     }
 
     protected Action[] getNewBlockActions()
     {
-        return new Action[] {  createNewBlockAction(false), createNewBlockAction(true), };
+        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), };
     }
-
-   
 
     @Override
     public AbstractNodeContentProvider getContentProvider()
@@ -239,14 +238,14 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 // project build errors
                 if (editor.getReportProperties() == null)
                     return new Object[0];
-                return new Object[] { baseNode = new ReportNode(editor.getReportProperties()),new ReportBlockGroupNode(ReportDesignTreeSection.this)};
+                return new Object[] { baseNode = new ReportNode(editor.getReportProperties()), new ReportBlockGroupNode(ReportDesignTreeSection.this) };
             }
         };
     }
 
     private class ReportNode extends AbstractNode<EJPluginReportProperties> implements NodeOverview
     {
-        private final Image                 REPORT      = EJUIImages.getImage(EJUIImages.DESC_FORM);
+        private final Image                 REPORT    = EJUIImages.getImage(EJUIImages.DESC_FORM);
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
                                                       {
 
@@ -292,11 +291,11 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
         {
             return source.getName();
         }
-        
+
         @Override
         public String getNodeDescriptorDetails()
         {
-            
+
             return "Click <a href=\"http://docs.entirej.com/display/EJ1/Report+Properties#ReportProperties\">here</a> for more information on Report Properties. All mandatory properties are denoted by \"*\"";
         }
 
@@ -309,43 +308,34 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
             if (IReportPreviewProvider.class.isAssignableFrom(adapter))
             {
                 /*
-                return adapter.cast(new FormCanvasPreviewImpl()
-                {
-                    @Override
-                    protected void setPreviewBackground(Control control, Color color)
-                    {
-                        // IGNORE
-                    }
-
-                    @Override
-                    public String getDescription()
-                    {
-                        return "preview the defined layout in form.";
-                    }
-
-                    @Override
-                    protected void createComponent(Composite parent, EJPluginCanvasProperties component)
-                    {
-                        if (component.getPluginBlockProperties() != null)
-                        {
-                            EJPluginMainScreenProperties mainScreenProperties = component.getPluginBlockProperties().getMainScreenProperties();
-
-                            Composite layoutBody = new Composite(parent, SWT.NONE);
-
-                            layoutBody.setLayout(new FillLayout());
-
-                            layoutBody.setLayoutData(createGridData(component));
-                            component.getPluginBlockProperties().getBlockRendererDefinition()
-                                    .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit())
-                                    .addItemWidgetChosenListener(chosenListener);
-                        }
-                        else
-                        {
-                            super.createComponent(parent, component);
-                        }
-                    }
-                });
-                */
+                 * return adapter.cast(new FormCanvasPreviewImpl() {
+                 * 
+                 * @Override protected void setPreviewBackground(Control
+                 * control, Color color) { // IGNORE }
+                 * 
+                 * @Override public String getDescription() { return
+                 * "preview the defined layout in form."; }
+                 * 
+                 * @Override protected void createComponent(Composite parent,
+                 * EJPluginCanvasProperties component) { if
+                 * (component.getPluginBlockProperties() != null) {
+                 * EJPluginMainScreenProperties mainScreenProperties =
+                 * component.
+                 * getPluginBlockProperties().getMainScreenProperties();
+                 * 
+                 * Composite layoutBody = new Composite(parent, SWT.NONE);
+                 * 
+                 * layoutBody.setLayout(new FillLayout());
+                 * 
+                 * layoutBody.setLayoutData(createGridData(component));
+                 * component
+                 * .getPluginBlockProperties().getBlockRendererDefinition()
+                 * .addBlockControlToCanvas(mainScreenProperties,
+                 * component.getPluginBlockProperties(), layoutBody,
+                 * editor.getToolkit())
+                 * .addItemWidgetChosenListener(chosenListener); } else {
+                 * super.createComponent(parent, component); } } });
+                 */
             }
             return null;
         }
@@ -450,8 +440,6 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
             };
             titleDescriptor.setRequired(true);
-
-    
 
             AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor")
             {
@@ -643,11 +631,9 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     super.addEditorAssist(control);
                 }
             };
-            
-            
+
             final AbstractTextDescriptor topMarginDescriptor = new AbstractTextDescriptor("Top Margin")
             {
-                
 
                 @Override
                 public String getTooltip()
@@ -694,11 +680,9 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     super.addEditorAssist(control);
                 }
             };
-            
-            
+
             final AbstractTextDescriptor bottomMarginDescriptor = new AbstractTextDescriptor("Bottom Margin")
             {
-                
 
                 @Override
                 public String getTooltip()
@@ -745,10 +729,9 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     super.addEditorAssist(control);
                 }
             };
-            
+
             final AbstractTextDescriptor leftMarginDescriptor = new AbstractTextDescriptor("Left Margin")
             {
-                
 
                 @Override
                 public String getTooltip()
@@ -797,15 +780,14 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
             };
             final AbstractTextDescriptor rightMarginDescriptor = new AbstractTextDescriptor("Right Margin")
             {
-                
-                
+
                 @Override
                 public String getTooltip()
                 {
-                    
+
                     return "The Right Margin <b>(in pixels)</b> of the report within it's Page.";
                 }
-                
+
                 @Override
                 public void setValue(String value)
                 {
@@ -825,29 +807,25 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     editor.setDirty(true);
                     refresh(ReportNode.this);
                 }
-                
+
                 @Override
                 public String getValue()
                 {
                     return String.valueOf(source.getMarginRight());
                 }
-                
+
                 Text text;
-                
+
                 @Override
                 public void addEditorAssist(Control control)
                 {
-                    
+
                     text = (Text) control;
                     text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-                    
+
                     super.addEditorAssist(control);
                 }
             };
-            
-            
-
-            
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
@@ -861,11 +839,10 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor,topMarginDescriptor,bottomMarginDescriptor,leftMarginDescriptor,rightMarginDescriptor };
+                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor, topMarginDescriptor, bottomMarginDescriptor, leftMarginDescriptor,
+                            rightMarginDescriptor };
                 }
             };
-
-            
 
             AbstractGroupDescriptor parametersDes = new AbstractGroupDescriptor("Report Parameters")
             {
@@ -983,21 +960,16 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                         }
                     });
                     /*
-                    factory.createColumn("Default Value", 120, new ColumnLabelProvider()
-                    {
-                        
-                        @Override
-                        public String getText(Object element)
-                        {
-                            
-                            if (element instanceof EJPluginApplicationParameter)
-                            {
-                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
-                                return entry.getDefaultValue();
-                            }
-                            return "";
-                        }
-                    });*/
+                     * factory.createColumn("Default Value", 120, new
+                     * ColumnLabelProvider() {
+                     * 
+                     * @Override public String getText(Object element) {
+                     * 
+                     * if (element instanceof EJPluginApplicationParameter) {
+                     * EJPluginApplicationParameter entry =
+                     * (EJPluginApplicationParameter) element; return
+                     * entry.getDefaultValue(); } return ""; } });
+                     */
                     tableViewer.setContentProvider(new IStructuredContentProvider()
                     {
 
@@ -1096,33 +1068,23 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     };
                     typeDescriptor.setBaseClass(Object.class.getName());
                     /*
-                    AbstractTextDescriptor defaultValueDescriptor = new AbstractTextDescriptor("Default Value")
-                    {
-                        
-                        @Override
-                        public void setValue(String value)
-                        {
-                            entry.setDefaultValue(value);
-                            editor.setDirty(true);
-                            if (tableViewer != null)
-                            {
-                                tableViewer.refresh(entry);
-                            }
-                        }
-                        
-                        @Override
-                        public String getValue()
-                        {
-                            return entry.getDefaultValue();
-                        }
-                    };
-                    return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor,defaultValueDescriptor };*/
+                     * AbstractTextDescriptor defaultValueDescriptor = new
+                     * AbstractTextDescriptor("Default Value") {
+                     * 
+                     * @Override public void setValue(String value) {
+                     * entry.setDefaultValue(value); editor.setDirty(true); if
+                     * (tableViewer != null) { tableViewer.refresh(entry); } }
+                     * 
+                     * @Override public String getValue() { return
+                     * entry.getDefaultValue(); } }; return new
+                     * AbstractDescriptor<?>[] { nameDescriptor,
+                     * typeDescriptor,defaultValueDescriptor };
+                     */
                     return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor };
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor,  actionDescriptor, layoutGroupDescriptor, parametersDes,
-                    metadataGroupDescriptor };
+            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, layoutGroupDescriptor, parametersDes, metadataGroupDescriptor };
         }
 
         public void addOverview(StyledString styledString)
@@ -1140,6 +1102,13 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
             }
 
+            
+            styledString.append(
+                    String.format("[ %d, %d ] [ %d, %d, %d, %d ]", source.getReportWidth(), source.getReportHeight(), source.getMarginLeft(),
+                            source.getMarginTop(), source.getMarginRight(), source.getMarginBottom()), StyledString.DECORATIONS_STYLER);
+
+            
+
         }
     }
 
@@ -1147,9 +1116,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     {
         void refresh();
     }
-    
-    
-    
+
     public Action createNewBlockAction(final boolean controlBlock)
     {
 
@@ -1167,10 +1134,8 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                         final EJPluginReportProperties formProperties = editor.getReportProperties();
                         final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
 
-                       
-
                         formProperties.getBlockContainer().addBlockProperties(blockProperties);
-                        
+
                         // create items if service is also selected
                         if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
                         {
@@ -1183,23 +1148,22 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                             {
                                 editor.setDirty(true);
                                 refresh(findNode(formProperties.getBlockContainer()), true);
-                                //FIXME refresh(findNode(formProperties.getCanvasContainer()));
-                                AbstractNode<?> abstractNode = findNode(blockProperties,true);
+                                // FIXME
+                                // refresh(findNode(formProperties.getCanvasContainer()));
+                                AbstractNode<?> abstractNode = findNode(blockProperties, true);
                                 selectNodes(true, abstractNode);
-                                expand(abstractNode,2);
+                                expand(abstractNode, 2);
 
                             }
                         });
 
                     }
 
-
                     public boolean hasBlock(String blockName)
                     {
                         return editor.getReportProperties().getBlockContainer().contains(blockName);
                     }
 
-                    
                     public IJavaProject getProject()
                     {
                         return editor.getJavaProject();
