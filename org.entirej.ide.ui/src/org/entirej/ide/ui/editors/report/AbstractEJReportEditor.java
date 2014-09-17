@@ -93,5 +93,14 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
             return project;
         }
     }
+    
+    
+    public void select(Object objects )
+    {
+        if(formBasePage!=null )
+        {
+            formBasePage.select(objects);
+        }
+    }
 
 }

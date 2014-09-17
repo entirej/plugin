@@ -192,6 +192,10 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
         {
             previewProvider = selectedNode.getAdapter(IReportPreviewProvider.class);
         }
+        if(previewProvider==null)
+        {
+            previewProvider = new ReportPreviewImpl();
+        }
         try
         {
             if (previewProvider != null)
