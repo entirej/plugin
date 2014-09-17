@@ -1,10 +1,13 @@
 package org.entirej.framework.plugin.reports;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
+import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
 import org.entirej.framework.reports.interfaces.EJReportScreenProperties;
 
 public class EJPluginReportScreenProperties implements EJReportScreenProperties
@@ -15,7 +18,7 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     private int                     x, y, width, height;
     private EJReportScreenType      screenType = EJReportScreenType.NONE;
     
-    private final BlockGroup              subBlocks  = new BlockGroup("Sub Blocks");
+    private final BlockGroup        subBlocks  = new BlockGroup("Sub Blocks");
     
     public EJPluginReportScreenProperties(EJReportBlockProperties blockProperties)
     {
@@ -93,5 +96,13 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     public BlockGroup getSubBlocks()
     {
         return subBlocks;
+    }
+    
+    private List<EJPluginReportScreenItemProperties> itemProperties = new ArrayList<EJPluginReportScreenItemProperties>();
+    
+    @Override
+    public Collection<EJPluginReportScreenItemProperties> getScreenItems()
+    {
+        return itemProperties;
     }
 }

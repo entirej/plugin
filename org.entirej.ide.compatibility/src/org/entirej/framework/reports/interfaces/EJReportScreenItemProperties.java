@@ -21,29 +21,13 @@ package org.entirej.framework.reports.interfaces;
 import java.io.Serializable;
 
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
+import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
 
 public interface EJReportScreenItemProperties extends Serializable
 {
-    /**
-     * Returns the name of the data block item to which this item references
-     * <p>
-     * 
-     * @return The name of the block item that this item references
-     */
-    public abstract String getReferencedItemName();
+ 
     
 
-    /**
-     * Returns the label defined for this block item
-     * <p>
-     * It is the <code>BlockRenderer</code> that decides if and how the items
-     * label should be displayed
-     * 
-     * @return The label defined for this item
-     * @see #getBaseLabel()
-     */
-    public String getLabel();
-    
 
     /**
      * gets the visual attribute properties that should be used for this item
@@ -66,5 +50,6 @@ public interface EJReportScreenItemProperties extends Serializable
     public boolean isVisible();
     
 
+    public EJReportScreenItemType getType();
     
 }
