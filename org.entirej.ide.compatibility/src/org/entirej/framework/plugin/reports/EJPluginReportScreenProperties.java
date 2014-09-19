@@ -1,32 +1,35 @@
 package org.entirej.framework.plugin.reports;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
+import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
-import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
-import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
 import org.entirej.framework.reports.interfaces.EJReportScreenProperties;
 
 public class EJPluginReportScreenProperties implements EJReportScreenProperties
 {
     
-    private EJReportBlockProperties blockProperties;
+    private EJPluginReportBlockProperties blockProperties;
     
     private int                     x, y, width, height;
     private EJReportScreenType      screenType = EJReportScreenType.NONE;
     
     private final BlockGroup        subBlocks  = new BlockGroup("Sub Blocks");
     
-    public EJPluginReportScreenProperties(EJReportBlockProperties blockProperties)
+    private EJReportScreenItemContainer    _screenItemContainer;
+    
+    
+    
+    public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
         this.blockProperties = blockProperties;
+        _screenItemContainer = new EJReportScreenItemContainer(blockProperties);
     }
     
     @Override
-    public EJReportBlockProperties getBlockProperties()
+    public EJPluginReportBlockProperties getBlockProperties()
     {
         return blockProperties;
     }
@@ -98,11 +101,15 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
         return subBlocks;
     }
     
-    private List<EJPluginReportScreenItemProperties> itemProperties = new ArrayList<EJPluginReportScreenItemProperties>();
-    
+ 
     @Override
     public Collection<EJPluginReportScreenItemProperties> getScreenItems()
     {
-        return itemProperties;
+        return _screenItemContainer.getAllItemProperties();
+    }
+    
+    public EJReportScreenItemContainer getScreenItemContainer()
+    {
+        return _screenItemContainer;
     }
 }

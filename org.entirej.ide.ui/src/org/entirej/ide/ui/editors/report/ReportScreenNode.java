@@ -460,7 +460,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     {
 
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-        // TODO
+
+        nodes.add(new ReportBlockScreenItemsGroupNode(treeSection, this));
          nodes.add(blockGroupNode.createScreenGroupNode(this,source.getSubBlocks()));
         return nodes.toArray(new AbstractNode<?>[0]);
     }

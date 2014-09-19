@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.writer.ReportPropertiesWriter;
 import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
@@ -101,6 +102,15 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
         {
             formBasePage.select(objects);
         }
+    }
+
+    public void expand(Object objects)
+    {
+        if(formBasePage!=null )
+        {
+            formBasePage.expand(objects);
+        }
+        
     }
 
 }

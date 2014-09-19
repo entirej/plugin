@@ -232,4 +232,13 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
         
     }
 
+    public void expand(Object objects)
+    {
+        if(treeSection!=null)
+        {
+            treeSection.expand(treeSection.findNode(objects, true) );
+        }
+        
+    }
+
 }

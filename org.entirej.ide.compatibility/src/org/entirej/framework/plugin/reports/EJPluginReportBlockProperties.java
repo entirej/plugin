@@ -12,6 +12,7 @@ import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
 import org.entirej.framework.reports.interfaces.EJReportItemProperties;
 import org.entirej.ide.core.EJCoreLog;
@@ -34,6 +35,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     private String                         _actionProcessorClassName = "";
     
     private EJReportBlockItemContainer     _itemContainer;
+   
     
     public EJPluginReportBlockProperties(EJPluginReportProperties formProperties, String blockName, boolean isCcontrolBlock)
     {

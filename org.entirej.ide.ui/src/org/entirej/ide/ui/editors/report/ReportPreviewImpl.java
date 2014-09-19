@@ -116,6 +116,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 public void mouseUp(MouseEvent e)
                 {
                    editor.select(screenProperties);
+                   editor.expand(screenProperties);
                 }
             });
         }

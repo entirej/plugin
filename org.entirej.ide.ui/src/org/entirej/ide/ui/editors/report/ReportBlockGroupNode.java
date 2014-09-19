@@ -189,7 +189,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     public Action[] getActions()
     {
 
-        return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null,createNewBlockGroupAction() };
+        return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null, createNewBlockGroupAction() };
     }
 
     public Action createNewBlockGroupAction()
@@ -217,7 +217,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     blockGroup.setName(dlg.getValue());
                     source.addBlockProperties(blockGroup);
                     treeSection.refresh(ReportBlockGroupNode.this);
-                    treeSection.selectNodes(false, treeSection.findNode(blockGroup,true));
+                    treeSection.selectNodes(false, treeSection.findNode(blockGroup, true));
                 }
             }
         };
@@ -451,23 +451,24 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         public Action[] getActions()
         {
 
-            return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null,createCopyNameAction() };
+            return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null, createCopyNameAction() };
 
         }
 
         public void addOverview(StyledString styledString)
         {
 
-            if(source.getLayoutScreenProperties().getScreenType()!=EJReportScreenType.NONE)
+            if (source.getLayoutScreenProperties().getScreenType() != EJReportScreenType.NONE)
             {
                 styledString.append(" : ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getLayoutScreenProperties().getScreenType().toString(), StyledString.QUALIFIER_STYLER);
             }
-            if(source.getLayoutScreenProperties().getScreenType()!=EJReportScreenType.NONE)
+            if (source.getLayoutScreenProperties().getScreenType() != EJReportScreenType.NONE)
             {
                 styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
-                styledString.append("(x,y) = ("+source.getLayoutScreenProperties().getX()+" ,"+source.getLayoutScreenProperties().getY()+")",StyledString.DECORATIONS_STYLER);
-         
+                styledString.append("(x,y) = (" + source.getLayoutScreenProperties().getX() + " ," + source.getLayoutScreenProperties().getY() + ")",
+                        StyledString.DECORATIONS_STYLER);
+
                 styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
             }
 
@@ -517,8 +518,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
 
             List<AbstractNode<?>> list = new ArrayList<AbstractNode<?>>();
-             list.add(new ReportBlockItemsGroupNode(treeSection, this));
-             list.add(new ReportScreenNode(treeSection,this,ReportBlockGroupNode.this, source.getLayoutScreenProperties()));
+            list.add(new ReportBlockItemsGroupNode(treeSection, this));
+            list.add(new ReportScreenNode(treeSection, this, ReportBlockGroupNode.this, source.getLayoutScreenProperties()));
 
             return list.toArray(new AbstractNode[0]);
         }
@@ -606,9 +607,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
-            
-            
-            
             if (source.isControlBlock())
             {
                 AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
@@ -793,38 +791,38 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
     }
 
-    class ScreenBlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor,  NodeOverview, NodeMoveProvider
+    class ScreenBlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor, NodeOverview, NodeMoveProvider
     {
         public ScreenBlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
         {
             super(parent, source);
-    
+
         }
-    
+
         @Override
         public <S> S getAdapter(Class<S> adapter)
         {
             return ReportBlockGroupNode.this.getAdapter(adapter);
         }
-    
+
         @Override
         public String getName()
         {
             return source.getName();
         }
-    
+
         public void addOverview(StyledString styledString)
         {
             // todo:
-    
+
         }
-    
+
         public Action[] getActions()
         {
 
             return new Action[] { createNewSubBlockAction(false), createNewSubBlockAction(true) };
         }
-        
+
         public Action createNewSubBlockAction(final boolean controlBlock)
         {
 
@@ -842,10 +840,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                             final EJPluginReportProperties formProperties = editor.getReportProperties();
                             final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
 
-                           
-
                             source.addBlockProperties(blockProperties);
-                            
+
                             // create items if service is also selected
                             if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
                             {
@@ -858,23 +854,22 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                 {
                                     treeSection.getEditor().setDirty(true);
                                     treeSection.refresh(getParent());
-                                    //FIXME refresh(findNode(formProperties.getCanvasContainer()));
-                                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties,true);
-                                    treeSection. selectNodes(true, abstractNode);
-                                    treeSection.expand(abstractNode,2);
+                                    // FIXME
+                                    // refresh(findNode(formProperties.getCanvasContainer()));
+                                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
+                                    treeSection.selectNodes(true, abstractNode);
+                                    treeSection.expand(abstractNode, 2);
 
                                 }
                             });
 
                         }
 
-
                         public boolean hasBlock(String blockName)
                         {
                             return editor.getReportProperties().getBlockContainer().contains(blockName);
                         }
 
-                        
                         public IJavaProject getProject()
                         {
                             return editor.getJavaProject();
@@ -891,57 +886,56 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
             };
         }
-        
-    
+
         public Object getNeighborSource()
         {
             return source;
         }
-    
+
         @Override
         public Image getImage()
         {
             return ReportBlockGroupNode.this.getImage();
         }
-    
+
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-    
-           return null;
+
+            return null;
         }
-    
+
         @Override
         public INodeRenameProvider getRenameProvider()
         {
             return null;
         }
-    
+
         @Override
         public boolean isLeaf()
         {
             return source.isEmpty();
         }
-    
+
         @Override
         public AbstractNode<?>[] getChildren()
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-    
+
             List<EJPluginReportBlockProperties> allBlockProperties = source.getAllBlockProperties();
             for (EJPluginReportBlockProperties properties : allBlockProperties)
             {
                 nodes.add(new BlockNode(this, properties));
             }
-    
+
             return nodes.toArray(new AbstractNode<?>[0]);
         }
-    
+
         public boolean canMove(Neighbor relation, Object source)
         {
             return source instanceof EJPluginReportBlockProperties;
         }
-    
+
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
             if (neighbor != null)
@@ -953,15 +947,15 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     int index = items.indexOf(methodNeighbor);
                     if (!before)
                         index++;
-    
+
                     source.addBlockProperties(index, (EJPluginReportBlockProperties) dSource);
                 }
             }
             else
                 source.addBlockProperties((EJPluginReportBlockProperties) dSource);
-    
+
         }
-    
+
     }
 
     public boolean canMove(Neighbor relation, Object source)
@@ -991,7 +985,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
     public AbstractNode<?> createScreenGroupNode(ReportScreenNode reportScreenNode, BlockGroup subBlocks)
     {
-        
+
         return new ScreenBlockSubGroupNode(reportScreenNode, subBlocks);
     }
 }

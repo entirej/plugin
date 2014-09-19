@@ -52,4 +52,30 @@ public interface EJReportScreenItemProperties extends Serializable
 
     public EJReportScreenItemType getType();
     
+    
+    
+    
+    /**
+     * @return Returns the width of this canvas
+     */
+    public int getWidth();
+    
+    /**
+     * @return Returns the height of this canvas
+     */
+    public int getHeight();
+    
+    /**
+     * @return Returns the X of this canvas
+     */
+    public int getX();
+    
+    /**
+     * @return Returns the Y of this canvas
+     */
+    public int getY();
+    
+    
+    public String getName();
+    
 }
