@@ -71,17 +71,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 {
     private final FormDesignTreeSection treeSection;
     private final AbstractEJFormEditor  editor;
-    private final static Image          MAIN     = EJUIImages.getImage(EJUIImages.DESC_LAYOUT_COMP);
-    private final static Image          BLOCK    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK);
-    private final static Image          GROUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP);
-    private final static Image          FORM    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM);
-    private final static Image          STACKED  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
-    private final static Image          POPUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
-    private final static Image          TAB      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
-    private final static Image          TAB_PAGE = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE);
+    private final static Image          MAIN         = EJUIImages.getImage(EJUIImages.DESC_LAYOUT_COMP);
+    private final static Image          BLOCK        = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK);
+    private final static Image          GROUP        = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP);
+    private final static Image          FORM         = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM);
+    private final static Image          STACKED      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
+    private final static Image          POPUP        = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
+    private final static Image          TAB          = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
+    private final static Image          TAB_PAGE     = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE);
     private final static Image          BLOCK_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK_REF);
     private final static Image          GROUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP_REF);
-    private final static Image          FORM_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM_REF);
+    private final static Image          FORM_REF     = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM_REF);
     private final static Image          STACKED_REF  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED_REF);
     private final static Image          POPUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP_REF);
     private final static Image          TAB_REF      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_REF);
@@ -241,9 +241,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             {
                 if (isRoot)
                     return new Action[] { createAction(EJCanvasType.BLOCK), createAction(EJCanvasType.GROUP), createAction(EJCanvasType.SPLIT),
-                            createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.POPUP),createAction(EJCanvasType.FORM) };
+                            createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.POPUP),
+                            createAction(EJCanvasType.FORM) };
                 return new Action[] { createAction(EJCanvasType.BLOCK), createAction(EJCanvasType.GROUP), createAction(EJCanvasType.SPLIT),
-                        createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED),createAction(EJCanvasType.FORM) };
+                        createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.FORM) };
             }
 
         };
@@ -298,7 +299,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
     public boolean canMove(Neighbor relation, Object source)
     {
-        return source instanceof EJPluginCanvasProperties && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup());
+        return source instanceof EJPluginCanvasProperties
+                && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup());
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -350,17 +352,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             {
                 case GROUP:
                 case SPLIT:
-                    return source.isImportFromObjectGroup()?GROUP_REF: GROUP;
+                    return source.isImportFromObjectGroup() ? GROUP_REF : GROUP;
                 case POPUP:
-                    return source.isImportFromObjectGroup()?POPUP_REF:POPUP;
+                    return source.isImportFromObjectGroup() ? POPUP_REF : POPUP;
                 case FORM:
-                    return source.isImportFromObjectGroup()?FORM_REF:FORM;
+                    return source.isImportFromObjectGroup() ? FORM_REF : FORM;
                 case TAB:
-                    return source.isImportFromObjectGroup()?TAB_REF:TAB;
+                    return source.isImportFromObjectGroup() ? TAB_REF : TAB;
                 case STACKED:
-                    return source.isImportFromObjectGroup()?STACKED_REF:STACKED;
+                    return source.isImportFromObjectGroup() ? STACKED_REF : STACKED;
                 default:
-                    return source.isImportFromObjectGroup()?BLOCK_REF:BLOCK;
+                    return source.isImportFromObjectGroup() ? BLOCK_REF : BLOCK;
             }
 
         }
@@ -447,13 +449,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public void addOverview(StyledString styledString)
         {
 
-            if(source.isImportFromObjectGroup())
+            if (source.isImportFromObjectGroup())
             {
                 styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
                 styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
             }
-            
+
             styledString.append(" [ ", StyledString.QUALIFIER_STYLER);
             styledString.append(source.getType().name(), StyledString.QUALIFIER_STYLER);
             styledString.append(" ] ", StyledString.QUALIFIER_STYLER);
@@ -486,7 +488,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             if (source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
 
             final EJPluginBlockProperties blockProperties = source.getPluginBlockProperties();
@@ -543,6 +545,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
+                        final EJCanvasSplitOrientation orientation = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation();
+
                         final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Weight")
                         {
 
@@ -551,11 +555,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             {
                                 try
                                 {
-                                    blockProperties.getMainScreenProperties().setWidth(Integer.parseInt(value));
+                                    if (orientation == EJCanvasSplitOrientation.HORIZONTAL)
+                                        blockProperties.getMainScreenProperties().setWidth(Integer.parseInt(value));
+                                    else
+                                        blockProperties.getMainScreenProperties().setHeight(Integer.parseInt(value));
                                 }
                                 catch (NumberFormatException e)
                                 {
-                                    blockProperties.getMainScreenProperties().setWidth(0);
+                                    if (orientation == EJCanvasSplitOrientation.HORIZONTAL)
+                                        blockProperties.getMainScreenProperties().setWidth(0);
+                                    else
+                                        blockProperties.getMainScreenProperties().setHeight(0);
                                     if (text != null)
                                     {
                                         text.setText(getValue());
@@ -569,7 +579,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             @Override
                             public String getValue()
                             {
-                                return String.valueOf(blockProperties.getMainScreenProperties().getWidth());
+                                if (orientation == EJCanvasSplitOrientation.HORIZONTAL)
+                                    return String.valueOf(blockProperties.getMainScreenProperties().getWidth());
+
+                                return String.valueOf(blockProperties.getMainScreenProperties().getHeight());
                             }
 
                             Text text;
@@ -593,7 +606,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             }
                         };
                         descriptors.add(layoutGroupDescriptor);
-                        if(source.isObjectGroupRoot())
+                        if (source.isObjectGroupRoot())
                         {
 
                             return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
@@ -604,8 +617,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         AbstractGroupDescriptor groupDescriptor = MainDisplayItemGroup.getLayoutDescriptors(blockProperties.getMainScreenProperties(),
                                 treeSection, this, editor);
                         descriptors.add(groupDescriptor);
-                        
-                        if(source.isObjectGroupRoot())
+
+                        if (source.isObjectGroupRoot())
                         {
 
                             return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), groupDescriptor };
@@ -615,10 +628,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             }
             else
             {
-                if(source.isObjectGroupRoot())
+                if (source.isObjectGroupRoot())
                 {
 
-                    return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source)};
+                    return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
                 }
                 AbstractTextDropDownDescriptor canvasDescriptor = new AbstractTextDropDownDescriptor("Assigne Block")
                 {
@@ -674,13 +687,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public void addOverview(StyledString styledString)
         {
-            
-           
-            
+
             final EJPluginBlockProperties blockProperties = source.getPluginBlockProperties();
             if (blockProperties != null)
-            { 
-                if(source.isImportFromObjectGroup())
+            {
+                if (source.isImportFromObjectGroup())
                 {
                     styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                     styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
@@ -721,8 +732,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
         }
     }
-    
-    
+
     private class FormCanvasNode extends AbstractCanvas
     {
 
@@ -734,13 +744,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
-           
+
             if (source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final FormCanvasNode node = FormCanvasNode.this;
-           
+
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
 
@@ -957,38 +967,35 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
-                        widthHintDescriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { widthHintDescriptor, };
+
+                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
+                                : heightHintDescriptor;
+                        descriptor.setText("Weight");
+                        return new AbstractDescriptor<?>[] { descriptor, };
                     }
 
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
                             heightHintDescriptor };
                 }
             };
-            if(source.isObjectGroupRoot())
+            if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
             return new AbstractDescriptor<?>[] { layoutGroupDescriptor };
-                
-            
+
         }
 
         public void addOverview(StyledString styledString)
         {
-            
-           
-            
-           
-                if(source.isImportFromObjectGroup())
-                {
-                    styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
-                    styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
-                    styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
-                }
-                
-           
+
+            if (source.isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
 
         }
 
@@ -1006,7 +1013,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 public void delete(boolean cleanup)
                 {
 
-                  
                     source.getParentCanvasContainer().removeCanvasProperties(source);
                     editor.setDirty(true);
                     treeSection.refresh(FormCanvasNode.this.getParent());
@@ -1015,9 +1021,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
         }
     }
-    
-    
-    
 
     private void cleanBlockAssignment(EJPluginCanvasProperties source)
     {
@@ -1073,9 +1076,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return (!GroupCanvasNode.this.source.isImportFromObjectGroup() ) && source instanceof EJPluginCanvasProperties
-                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup()) && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
-                    && !isAncestorCanvas(GroupCanvasNode.this.source, source);
+            return (!GroupCanvasNode.this.source.isImportFromObjectGroup()) && source instanceof EJPluginCanvasProperties
+                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup())
+                    && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(GroupCanvasNode.this.source, source);
         }
 
         @Override
@@ -1115,7 +1118,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             if (source.getGroupFrameTitle() != null && source.getGroupFrameTitle().trim().length() > 0)
             {
-                if(source.isImportFromObjectGroup())
+                if (source.isImportFromObjectGroup())
                 {
                     styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                     styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
@@ -1173,7 +1176,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             if (!source.isObjectGroupRoot() && source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final GroupCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
@@ -1474,15 +1477,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
-                        widthHintDescriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { widthHintDescriptor, };
+                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
+                                : heightHintDescriptor;
+                        descriptor.setText("Weight");
+                        return new AbstractDescriptor<?>[] { descriptor, };
                     }
 
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
                             heightHintDescriptor };
                 }
             };
-            if(source.isObjectGroupRoot())
+            if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
@@ -1503,8 +1508,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public boolean canMove(Neighbor relation, Object source)
         {
             return (!SplitCanvasNode.this.source.isImportFromObjectGroup()) && source instanceof EJPluginCanvasProperties
-                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup()) && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
-                    && !isAncestorCanvas(SplitCanvasNode.this.source, source);
+                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup())
+                    && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(SplitCanvasNode.this.source, source);
         }
 
         @Override
@@ -1547,7 +1552,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             }
             if (source.getGroupFrameTitle() != null && source.getGroupFrameTitle().trim().length() > 0)
             {
-                
+
                 styledString.append(" : ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getGroupFrameTitle(), StyledString.COUNTER_STYLER);
             }
@@ -1600,7 +1605,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             if (source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final SplitCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
@@ -1849,14 +1854,16 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
-                        widthHintDescriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { widthHintDescriptor, };
+                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
+                                : heightHintDescriptor;
+                        descriptor.setText("Weight");
+                        return new AbstractDescriptor<?>[] { descriptor, };
                     }
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
                             heightHintDescriptor };
                 }
             };
-            if(source.isObjectGroupRoot())
+            if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
@@ -1931,8 +1938,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         public boolean canMove(Neighbor relation, Object source)
         {
             return !TabCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginTabPageProperties
-                    
-                    && (TabCanvasNode.this.source.equals(((EJPluginTabPageProperties) source).getTabCanvasProperties()));
+
+            && (TabCanvasNode.this.source.equals(((EJPluginTabPageProperties) source).getTabCanvasProperties()));
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -1970,7 +1977,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             if (!source.isObjectGroupRoot() && source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final TabCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
@@ -2191,8 +2198,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
-                        widthHintDescriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { widthHintDescriptor, };
+                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
+                                : heightHintDescriptor;
+                        descriptor.setText("Weight");
+                        return new AbstractDescriptor<?>[] { descriptor, };
                     }
 
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
@@ -2227,7 +2236,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
-            if(source.isObjectGroupRoot())
+            if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
@@ -2340,7 +2349,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             if (!source.isObjectGroupRoot() && source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
 
             final StackedCanvasNode node = this;
@@ -2562,8 +2571,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
-                        widthHintDescriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { widthHintDescriptor, };
+                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
+                                : heightHintDescriptor;
+                        descriptor.setText("Weight");
+                        return new AbstractDescriptor<?>[] { descriptor, };
                     }
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
                             heightHintDescriptor };
@@ -2603,7 +2614,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
-            if(source.isObjectGroupRoot())
+            if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
@@ -2702,9 +2713,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return( !PopupCanvasNode.this.source.isImportFromObjectGroup()) && source instanceof EJPluginCanvasProperties
-                    &&(((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup()) && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
-                    && !isAncestorCanvas(PopupCanvasNode.this.source, source);
+            return (!PopupCanvasNode.this.source.isImportFromObjectGroup()) && source instanceof EJPluginCanvasProperties
+                    && (((EJPluginCanvasProperties) source).isObjectGroupRoot() || !((EJPluginCanvasProperties) source).isImportFromObjectGroup())
+                    && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP && !isAncestorCanvas(PopupCanvasNode.this.source, source);
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -2769,13 +2780,14 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             if (!source.isObjectGroupRoot() && source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source)};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final PopupCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
             if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                     && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
             {
+                final EJCanvasSplitOrientation orientation = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation();
                 final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Weight")
                 {
 
@@ -2784,11 +2796,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     {
                         try
                         {
-                            source.setWidth(Integer.parseInt(value));
+                            if (orientation == EJCanvasSplitOrientation.HORIZONTAL)
+                                source.setWidth(Integer.parseInt(value));
+                            else
+                                source.setHeight(Integer.parseInt(value));
                         }
                         catch (NumberFormatException e)
                         {
-                            source.setWidth(0);
+                            if (orientation == EJCanvasSplitOrientation.HORIZONTAL)
+                                source.setWidth(0);
+                            else
+                                source.setHeight(0);
                             if (text != null)
                             {
                                 text.setText(getValue());
@@ -2802,7 +2820,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     @Override
                     public String getValue()
                     {
-                        return String.valueOf(source.getWidth());
+                        if (orientation == EJCanvasSplitOrientation.HORIZONTAL)
+                            return String.valueOf(source.getWidth());
+
+                        return String.valueOf(source.getHeight());
                     }
 
                     Text text;
@@ -3054,7 +3075,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Image getImage()
         {
-            return source.getTabCanvasProperties().isImportFromObjectGroup()? TAB_PAGE_REF :TAB_PAGE;
+            return source.getTabCanvasProperties().isImportFromObjectGroup() ? TAB_PAGE_REF : TAB_PAGE;
 
         }
 
@@ -3146,7 +3167,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public void addOverview(StyledString styledString)
         {
-            if(source.getTabCanvasProperties().isImportFromObjectGroup())
+            if (source.getTabCanvasProperties().isImportFromObjectGroup())
             {
                 styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getTabCanvasProperties().getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
@@ -3240,7 +3261,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             if (source.getTabCanvasProperties().isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source.getTabCanvasProperties())};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source.getTabCanvasProperties()) };
             }
             final TabCanvasPageNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
@@ -3521,7 +3542,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         @Override
         public Image getImage()
         {
-            return source.getStackedCanvasProperties().isImportFromObjectGroup()? TAB_PAGE_REF :TAB_PAGE;
+            return source.getStackedCanvasProperties().isImportFromObjectGroup() ? TAB_PAGE_REF : TAB_PAGE;
 
         }
 
@@ -3614,7 +3635,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public void addOverview(StyledString styledString)
         {
-            if(source.getStackedCanvasProperties().isImportFromObjectGroup())
+            if (source.getStackedCanvasProperties().isImportFromObjectGroup())
             {
                 styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getStackedCanvasProperties().getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
@@ -3702,7 +3723,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         {
             if (source.getStackedCanvasProperties().isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{getObjectGroupDescriptor(source.getStackedCanvasProperties())};
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source.getStackedCanvasProperties()) };
             }
             final StackedCanvasPageNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
