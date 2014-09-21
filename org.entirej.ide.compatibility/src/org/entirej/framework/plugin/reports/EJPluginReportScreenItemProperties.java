@@ -1,8 +1,11 @@
 package org.entirej.framework.plugin.reports;
 
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
+import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
+import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
 import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 public abstract class EJPluginReportScreenItemProperties implements EJReportScreenItemProperties
 {
@@ -115,10 +118,12 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         this.name = name;
     }
     
-    public static class Label extends EJPluginReportScreenItemProperties
+    public static class Label extends AlignmentBaseItem implements RotatableItem
     {
         
-        private String text;
+        private String                 text;
+        
+        private EJReportScreenRotation rotation = EJReportScreenRotation.NONE;
         
         public Label(EJPluginReportBlockProperties blockProperties)
         {
@@ -140,9 +145,20 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.text = text;
         }
+        
+        public EJReportScreenRotation getRotation()
+        {
+            return rotation;
+        }
+        
+        public void setRotation(EJReportScreenRotation rotation)
+        {
+            this.rotation = rotation;
+        }
     }
-    public static class Text extends ValueBaseItem
+    public static class Text extends ValueBaseItem implements RotatableItem
     {
+        private EJReportScreenRotation rotation = EJReportScreenRotation.NONE;
         
         public Text(EJPluginReportBlockProperties blockProperties)
         {
@@ -155,8 +171,58 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             return EJReportScreenItemType.TEXT;
         }
         
+        public EJReportScreenRotation getRotation()
+        {
+            return rotation;
+        }
+        
+        public void setRotation(EJReportScreenRotation rotation)
+        {
+            this.rotation = rotation;
+        }
+        
     }
-    public static abstract class ValueBaseItem extends EJPluginReportScreenItemProperties
+    
+    public static interface RotatableItem
+    {
+        public EJReportScreenRotation getRotation();
+        
+        public void setRotation(EJReportScreenRotation rotation);
+    }
+    
+    public static abstract class AlignmentBaseItem extends EJPluginReportScreenItemProperties
+    {
+        
+        private EJReportScreenAlignment hAlignment = EJReportScreenAlignment.LEFT;
+        private EJReportScreenAlignment vAlignment = EJReportScreenAlignment.TOP;
+        
+        public AlignmentBaseItem(EJPluginReportBlockProperties blockProperties)
+        {
+            super(blockProperties);
+        }
+        
+        public EJReportScreenAlignment getHAlignment()
+        {
+            return hAlignment;
+        }
+        
+        public void setHAlignment(EJReportScreenAlignment hAlignment)
+        {
+            this.hAlignment = hAlignment;
+        }
+        
+        public EJReportScreenAlignment getVAlignment()
+        {
+            return vAlignment;
+        }
+        
+        public void setVAlignment(EJReportScreenAlignment vAlignment)
+        {
+            this.vAlignment = vAlignment;
+        }
+        
+    }
+    public static abstract class ValueBaseItem extends AlignmentBaseItem
     {
         
         private String value;
@@ -175,9 +241,18 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.value = value;
         }
+        
     }
-    public static class Number extends ValueBaseItem
+    public static class Number extends ValueBaseItem implements RotatableItem
     {
+        private EJReportScreenRotation rotation     = EJReportScreenRotation.NONE;
+        private String                 manualFormat;
+        private NumberFormats          localeFormat = NumberFormats.NUMBER;
+        public enum NumberFormats
+        {
+            NUMBER, INTEGER, CURRENCY, PERCENT;
+            
+        }
         
         public Number(EJPluginReportBlockProperties blockProperties)
         {
@@ -190,9 +265,55 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             return EJReportScreenItemType.NUMBER;
         }
         
+        public EJReportScreenRotation getRotation()
+        {
+            return rotation;
+        }
+        
+        public void setRotation(EJReportScreenRotation rotation)
+        {
+            this.rotation = rotation;
+        }
+        
+        public String getManualFormat()
+        {
+            return manualFormat;
+        }
+        
+        public void setManualFormat(String manualFormat)
+        {
+            this.manualFormat = manualFormat;
+        }
+        
+        
+        public NumberFormats getLocaleFormat()
+        {
+            return localeFormat;
+        }
+        
+        public void setLocaleFormat(NumberFormats localeFormat)
+        {
+            this.localeFormat = localeFormat;
+        }
+        
     }
-    public static class Date extends ValueBaseItem
+    public static class Date extends ValueBaseItem implements RotatableItem
     {
+        private EJReportScreenRotation rotation     = EJReportScreenRotation.NONE;
+        
+        private DateFormats            localeFormat = DateFormats.DATE_SHORT;
+        
+        private String                 manualFormat;
+        
+        public enum DateFormats
+        {
+            DATE_LONG, DATE_MEDIUM, DATE_SHORT, DATE_FULL,
+            
+            DATE_TIME_LONG, DATE_TIME_MEDIUM, DATE_TIME_SHORT, DATE_TIME_FULL,
+            
+            TIME_LONG, TIME_MEDIUM, TIME_SHORT, TIME_FULL,
+            
+        }
         
         public Date(EJPluginReportBlockProperties blockProperties)
         {
@@ -205,6 +326,35 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             return EJReportScreenItemType.DATE;
         }
         
+        public EJReportScreenRotation getRotation()
+        {
+            return rotation;
+        }
+        
+        public void setRotation(EJReportScreenRotation rotation)
+        {
+            this.rotation = rotation;
+        }
+        
+        public void setLocaleFormat(DateFormats localeFormat)
+        {
+            this.localeFormat = localeFormat;
+        }
+        
+        public DateFormats getLocaleFormat()
+        {
+            return localeFormat;
+        }
+        
+        public String getManualFormat()
+        {
+            return manualFormat;
+        }
+        
+        public void setManualFormat(String manualFormat)
+        {
+            this.manualFormat = manualFormat;
+        }
     }
     
     public static class Image extends ValueBaseItem

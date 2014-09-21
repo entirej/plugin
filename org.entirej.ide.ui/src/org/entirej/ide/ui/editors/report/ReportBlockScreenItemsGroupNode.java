@@ -50,10 +50,16 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
+import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
+import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -678,7 +684,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         editor.setDirty(true);
                         treeSection.refresh(ScreenItemNode.this);
                     }
-                    
+
                     @Override
                     public String getDefaultBlockValue()
                     {
@@ -687,6 +693,117 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                 };
                 descriptors.add(valueProvider);
+            }
+
+            if (source instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) source;
+                AbstractTextDropDownDescriptor hAlignment = new AbstractTextDropDownDescriptor("Horizontal Alignment")
+                {
+                    @Override
+                    public String getValue()
+                    {
+                        return item.getHAlignment().name();
+                    }
+
+                    public String[] getOptions()
+                    {
+                        List<String> options = new ArrayList<String>();
+                        options.add(EJReportScreenAlignment.LEFT.name());
+                        options.add(EJReportScreenAlignment.CENTER.name());
+                        options.add(EJReportScreenAlignment.RIGHT.name());
+                        options.add(EJReportScreenAlignment.JUSTIFIED.name());
+                        return options.toArray(new String[0]);
+                    }
+
+                    public String getOptionText(String t)
+                    {
+
+                        return EJReportScreenAlignment.valueOf(t).toString();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        item.setHAlignment(EJReportScreenAlignment.valueOf(value));
+
+                    }
+
+                };
+                AbstractTextDropDownDescriptor vAlignment = new AbstractTextDropDownDescriptor("Vertical Alignment")
+                {
+                    @Override
+                    public String getValue()
+                    {
+                        return item.getVAlignment().name();
+                    }
+
+                    public String[] getOptions()
+                    {
+                        List<String> options = new ArrayList<String>();
+                        options.add(EJReportScreenAlignment.TOP.name());
+                        options.add(EJReportScreenAlignment.CENTER.name());
+                        options.add(EJReportScreenAlignment.BOTTOM.name());
+                        options.add(EJReportScreenAlignment.JUSTIFIED.name());
+                        return options.toArray(new String[0]);
+                    }
+
+                    public String getOptionText(String t)
+                    {
+
+                        return EJReportScreenAlignment.valueOf(t).toString();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        item.setVAlignment(EJReportScreenAlignment.valueOf(value));
+
+                    }
+
+                };
+
+                descriptors.add(hAlignment);
+                descriptors.add(vAlignment);
+            }
+
+            if (source instanceof EJPluginReportScreenItemProperties.RotatableItem)
+            {
+                final EJPluginReportScreenItemProperties.RotatableItem item = (RotatableItem) source;
+                AbstractTextDropDownDescriptor rotation = new AbstractTextDropDownDescriptor("Rotation")
+                {
+                    @Override
+                    public String getValue()
+                    {
+                        return item.getRotation().name();
+                    }
+
+                    public String[] getOptions()
+                    {
+                        List<String> options = new ArrayList<String>();
+                        options.add(EJReportScreenRotation.NONE.name());
+                        options.add(EJReportScreenRotation.LEFT.name());
+                        options.add(EJReportScreenRotation.RIGHT.name());
+                        options.add(EJReportScreenRotation.UPSIDEDOWN.name());
+                        return options.toArray(new String[0]);
+                    }
+
+                    public String getOptionText(String t)
+                    {
+
+                        return EJReportScreenRotation.valueOf(t).toString();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        item.setRotation(EJReportScreenRotation.valueOf(value));
+
+                    }
+
+                };
+
+                descriptors.add(rotation);
             }
 
             switch (source.getType())
@@ -722,8 +839,123 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     descriptors.add(textDescriptor);
                 }
                     break;
+                case NUMBER:
+                {
+                    final EJPluginReportScreenItemProperties.Number number = (EJPluginReportScreenItemProperties.Number) source;
+                    final AbstractTextDescriptor mformatDescriptor = new AbstractTextDescriptor("Manual Format")
+                    {
 
-                    
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setManualFormat(value);
+                            treeSection.getEditor().setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getManualFormat();
+                        }
+
+                    };
+
+                    AbstractTextDropDownDescriptor lformat = new AbstractTextDropDownDescriptor("Locale Format")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getLocaleFormat().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            for (NumberFormats formats : NumberFormats.values())
+                            {
+                                options.add(formats.name());
+                            }
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return NumberFormats.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setLocaleFormat(NumberFormats.valueOf(value));
+
+                        }
+
+                    };
+                    descriptors.add(lformat);
+                    descriptors.add(mformatDescriptor);
+                }
+                    break;
+
+                case DATE:
+                {
+                    final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) source;
+                    final AbstractTextDescriptor mformatDescriptor = new AbstractTextDescriptor("Manual Format")
+                    {
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setManualFormat(value);
+                            treeSection.getEditor().setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getManualFormat();
+                        }
+
+                    };
+
+                    AbstractTextDropDownDescriptor lformat = new AbstractTextDropDownDescriptor("Locale Format")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getLocaleFormat().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            for (DateFormats formats : DateFormats.values())
+                            {
+                                options.add(formats.name());
+                            }
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return DateFormats.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setLocaleFormat(DateFormats.valueOf(value));
+
+                        }
+
+                    };
+                    descriptors.add(lformat);
+                    descriptors.add(mformatDescriptor);
+                }
+                    break;
 
                 default:
                     break;
@@ -744,11 +976,11 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
         private void addTypeBaseOverview(EJPluginReportScreenItemProperties source, StyledString styledString)
         {
-            
+
             if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
             {
                 final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-                if (item.getValue()!=null && !item.getValue().isEmpty())
+                if (item.getValue() != null && !item.getValue().isEmpty())
                 {
                     styledString.append(" ");
                     String value = item.getValue();
@@ -756,9 +988,9 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     {
                         styledString.append(value.substring(value.indexOf(":") + 1), StyledString.QUALIFIER_STYLER);
                     }
-                  
+
                 }
-                
+
             }
             switch (source.getType())
             {
@@ -1200,7 +1432,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                                     }
                                 }
                                 IStructuredSelection selection = (IStructuredSelection) blockViewer.getSelection();
-                                if(selection.isEmpty())
+                                if (selection.isEmpty())
                                 {
                                     blockViewer.setSelection(new StructuredSelection(getDefaultBlockValue()));
                                     itemViewer.setSelection(new StructuredSelection());
@@ -1231,7 +1463,6 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                         } };
 
-                    
                 }
             return new AbstractDescriptor<?>[0];
         }
@@ -1241,6 +1472,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
         {
             return null;
         }
+
         public String getDefaultBlockValue()
         {
             return null;
