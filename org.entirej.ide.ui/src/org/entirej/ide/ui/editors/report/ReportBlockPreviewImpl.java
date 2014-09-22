@@ -20,11 +20,22 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.List;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,11 +46,12 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.ide.ui.EJUIImages;
 
 public class ReportBlockPreviewImpl implements IReportPreviewProvider
 {
     protected final Color                         COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
-    protected final Color                         COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240,240,240));
+    protected final Color                         COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
     protected final Color                         COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
     protected final Color                         COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
     protected final Color                         COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
@@ -67,7 +79,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
         Composite pContent = new Composite(previewComposite, SWT.NONE);
 
         EJPluginReportProperties formProperties = getReportProperties(editor);
-       
+
         previewComposite.setContent(pContent);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
         previewComposite.setExpandHorizontal(true);
@@ -76,16 +88,13 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 
-     
-
         Composite reportBody = new Composite(pContent, SWT.BORDER);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
         EJPluginReportScreenProperties layoutScreenProperties = properties.getLayoutScreenProperties();
 
-        reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(),
-                layoutScreenProperties.getHeight());
+        reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), layoutScreenProperties.getHeight());
 
         List<EJPluginReportScreenItemProperties> allItemProperties = layoutScreenProperties.getScreenItemContainer().getAllItemProperties();
         for (EJPluginReportScreenItemProperties screenItemProperties : allItemProperties)
@@ -95,79 +104,363 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
         for (EJPluginReportBlockProperties properties : layoutScreenProperties.getAllSubBlocks())
         {
-            createBlockPreview(editor,reportBody, properties);
+            createBlockPreview(editor, reportBody, properties);
         }
 
-        
-        
-        previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, layoutScreenProperties.getHeight() + 20);// add offset
+        previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, layoutScreenProperties.getHeight() + 20);// add
+                                                                                                                     // offset
 
-    }
+        final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
-    
-    protected void createItemPreview(final AbstractEJReportEditor editor, Composite reportBody,final EJPluginReportScreenItemProperties screenItemProperties)
-    {
-        
-        
-        
-            
-            Composite block = new Composite(reportBody, SWT.BORDER);
-            setPreviewBackground(block, COLOR_BLOCK_ITEM);
-            
-            block.setBounds(screenItemProperties.getX(), screenItemProperties.getY(), screenItemProperties.getWidth(), screenItemProperties.getHeight());
-            
-            block.setLayout(null);
-            
-            Label hint = new Label(block, SWT.NONE);
-            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", screenItemProperties.getName(), screenItemProperties.getX(), screenItemProperties.getY(),
-                    screenItemProperties.getWidth(), screenItemProperties.getHeight()));
-            hint.setToolTipText(hint.getText());
-            hint.setBounds(5, 5, screenItemProperties.getWidth() - 5, 25);
-            hint.addMouseListener(new MouseAdapter()
+        final DropTargetAdapter dragAdapter = new DropTargetAdapter()
+        {
+
+            @Override
+            public void dragOver(DropTargetEvent event)
             {
-                
-                @Override
-                public void mouseUp(MouseEvent e)
+                event.detail = DND.DROP_NONE;
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+
+                if (droppedObj != null)
                 {
-                    editor.select(screenItemProperties);
+                    droppedObj.setBond(event.x, event.y);
                 }
-            });
-        
+            }
+
+        };
+
+        final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
+        dropTarget.setTransfer(new Transfer[] { transfer });
+        dropTarget.addDropListener(dragAdapter);
     }
 
-    
-    protected void createBlockPreview(final AbstractEJReportEditor editor,Composite reportBody, EJPluginReportBlockProperties properties)
+    protected void createItemPreview(final AbstractEJReportEditor editor, final Composite reportBody, final EJPluginReportScreenItemProperties properties)
+    {
+
+        final Composite block = new Composite(reportBody, SWT.BORDER);
+        setPreviewBackground(block, COLOR_BLOCK_ITEM);
+
+        block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+
+        block.setLayout(null);
+        block.moveAbove(null);
+        block.addMouseListener(new MouseAdapter()
+        {
+
+            @Override
+            public void mouseDown(MouseEvent e)
+            {
+                block.moveAbove(null);
+            }
+        });
+
+        final Label hint = new Label(block, SWT.NONE);
+        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
+                properties.getHeight()));
+
+        hint.setToolTipText(hint.getText());
+        hint.setBounds(10, 0, properties.getWidth() - 10, 25);
+        hint.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseDoubleClick(MouseEvent e)
+            {
+                editor.select(properties);
+            }
+
+            @Override
+            public void mouseUp(MouseEvent e)
+            {
+                block.moveAbove(null);
+            }
+
+        });
+
+        final Label move = new Label(block, SWT.NONE);
+        move.setImage(EJUIImages.getImage(EJUIImages.DESC_FORM_MOVE_OBJ));
+        move.setBounds(0, 0, 10, 10);
+        final Label resize = new Label(block, SWT.NONE);
+        resize.setImage(EJUIImages.getImage(EJUIImages.DESC_FORM_RESIZE_OBJ));
+        resize.setBounds(properties.getWidth() - 12, properties.getHeight() - 12, 10, 10);
+
+        move.setToolTipText("Move");
+        resize.setToolTipText("Resize");
+        resize.moveAbove(null);
+        final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
+
+        final DragObject dragObjectResize = new DragObject()
+        {
+
+            public void setBond(int x, int y)
+            {
+
+                Point display = reportBody.toControl(x, y);
+
+                if (display.x >= properties.getX() && display.y >= properties.getY())
+                {
+
+                    properties.setWidth((display.x - properties.getX()));
+                    properties.setHeight(display.y - properties.getY());
+                    block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+
+                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
+                            properties.getHeight()));
+                    resize.setBounds(properties.getWidth() - 12, properties.getHeight() - 12, 10, 10);
+                    hint.setBounds(10, 0, properties.getWidth() - 10, 25);
+                    editor.setDirty(true);
+                    editor.refresh(properties);
+                }
+
+            }
+        };
+        final DragObject dragObjectMove = new DragObject()
+        {
+
+            public void setBond(int x, int y)
+            {
+
+                Point display = reportBody.toControl(x, y);
+                properties.setX(display.x);
+                properties.setY(display.y);
+                block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+
+                hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
+                        properties.getHeight()));
+                editor.setDirty(true);
+                editor.refresh(properties);
+            }
+        };
+
+        move.addMouseListener(new MouseAdapter()
+        {
+
+            @Override
+            public void mouseDown(MouseEvent e)
+            {
+                block.moveAbove(null);
+                transfer.setSelection(new StructuredSelection(dragObjectMove));
+            }
+        });
+        resize.addMouseListener(new MouseAdapter()
+        {
+
+            @Override
+            public void mouseDown(MouseEvent e)
+            {
+                block.moveAbove(null);
+                transfer.setSelection(new StructuredSelection(dragObjectResize));
+            }
+        });
+
+        final DragSourceAdapter resizeMoveAdapter = new DragSourceAdapter()
+        {
+            @Override
+            public void dragSetData(final DragSourceEvent event)
+            {
+
+                transfer.setSelection(new StructuredSelection(dragObjectResize));
+            }
+
+            @Override
+            public void dragFinished(DragSourceEvent event)
+            {
+                editor.refreshProperties();
+            }
+        };
+
+        final DragSource dragSourceResize = new DragSource(resize, DND.DROP_MOVE | DND.DROP_COPY);
+        dragSourceResize.setTransfer(new Transfer[] { transfer });
+        dragSourceResize.addDragListener(resizeMoveAdapter);
+
+        final DragSourceAdapter dragMoveAdapter = new DragSourceAdapter()
+        {
+            @Override
+            public void dragSetData(final DragSourceEvent event)
+            {
+
+                transfer.setSelection(new StructuredSelection(dragObjectMove));
+            }
+
+            @Override
+            public void dragFinished(DragSourceEvent event)
+            {
+                editor.refreshProperties();
+            }
+        };
+
+        final DragSource dragSourceMove = new DragSource(move, DND.DROP_MOVE | DND.DROP_COPY);
+        dragSourceMove.setTransfer(new Transfer[] { transfer });
+        dragSourceMove.addDragListener(dragMoveAdapter);
+
+    }
+
+    protected void createBlockPreview(final AbstractEJReportEditor editor, final Composite reportBody, final EJPluginReportBlockProperties properties)
     {
 
         final EJPluginReportScreenProperties screenProperties = properties.getLayoutScreenProperties();
         if (screenProperties.getScreenType() != EJReportScreenType.NONE)
         {
 
-            Composite block = new Composite(reportBody, SWT.BORDER);
+            final Composite block = new Composite(reportBody, SWT.BORDER);
             setPreviewBackground(block, COLOR_BLOCK);
 
             block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
 
             block.setLayout(null);
+            block.moveAbove(null);
+            block.addMouseListener(new MouseAdapter()
+            {
 
-            Label hint = new Label(block, SWT.NONE);
-            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]",properties.getName(), screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(),
-                    screenProperties.getHeight()));
+                @Override
+                public void mouseDown(MouseEvent e)
+                {
+                    block.moveAbove(null);
+                }
+            });
+
+            final Label hint = new Label(block, SWT.NONE);
+            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                    screenProperties.getWidth(), screenProperties.getHeight()));
+
             hint.setToolTipText(hint.getText());
-            hint.setBounds(5, 5, screenProperties.getWidth()-5, 25);
+            hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
             hint.addMouseListener(new MouseAdapter()
             {
-                
+                @Override
+                public void mouseDoubleClick(MouseEvent e)
+                {
+                    editor.select(screenProperties);
+                    editor.expand(screenProperties);
+                }
+
                 @Override
                 public void mouseUp(MouseEvent e)
                 {
-                   editor.select(screenProperties);
-                   editor.expand(screenProperties);
+                    block.moveAbove(null);
+                }
+
+            });
+
+            final Label move = new Label(block, SWT.NONE);
+            move.setImage(EJUIImages.getImage(EJUIImages.DESC_FORM_MOVE_OBJ));
+            move.setBounds(0, 0, 10, 10);
+            final Label resize = new Label(block, SWT.NONE);
+            resize.setImage(EJUIImages.getImage(EJUIImages.DESC_FORM_RESIZE_OBJ));
+            resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
+
+            move.setToolTipText("Move");
+            resize.setToolTipText("Resize");
+            resize.moveAbove(null);
+
+            final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
+
+            final DragObject dragObjectResize = new DragObject()
+            {
+
+                public void setBond(int x, int y)
+                {
+
+                    Point display = reportBody.toControl(x, y);
+
+                    if (display.x >= screenProperties.getX() && display.y >= screenProperties.getY())
+                    {
+
+                        screenProperties.setWidth((display.x - screenProperties.getX()));
+                        screenProperties.setHeight(display.y - screenProperties.getY());
+                        block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+
+                        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                                screenProperties.getWidth(), screenProperties.getHeight()));
+                        resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
+                        hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
+                        editor.setDirty(true);
+                        editor.refresh(properties);
+                    }
+
+                }
+            };
+            final DragObject dragObjectMove = new DragObject()
+            {
+
+                public void setBond(int x, int y)
+                {
+
+                    Point display = reportBody.toControl(x, y);
+                    screenProperties.setX(display.x);
+                    screenProperties.setY(display.y);
+                    block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+
+                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                            screenProperties.getWidth(), screenProperties.getHeight()));
+                    editor.setDirty(true);
+                    editor.refresh(properties);
+                }
+            };
+
+            move.addMouseListener(new MouseAdapter()
+            {
+
+                @Override
+                public void mouseDown(MouseEvent e)
+                {
+                    block.moveAbove(null);
+                    transfer.setSelection(new StructuredSelection(dragObjectMove));
                 }
             });
+            resize.addMouseListener(new MouseAdapter()
+            {
+
+                @Override
+                public void mouseDown(MouseEvent e)
+                {
+                    block.moveAbove(null);
+                    transfer.setSelection(new StructuredSelection(dragObjectResize));
+                }
+            });
+
+            final DragSourceAdapter resizeMoveAdapter = new DragSourceAdapter()
+            {
+                @Override
+                public void dragSetData(final DragSourceEvent event)
+                {
+
+                    transfer.setSelection(new StructuredSelection(dragObjectResize));
+                }
+
+                @Override
+                public void dragFinished(DragSourceEvent event)
+                {
+                    editor.refreshProperties();
+                }
+            };
+
+            final DragSource dragSourceResize = new DragSource(resize, DND.DROP_MOVE | DND.DROP_COPY);
+            dragSourceResize.setTransfer(new Transfer[] { transfer });
+            dragSourceResize.addDragListener(resizeMoveAdapter);
+
+            final DragSourceAdapter dragMoveAdapter = new DragSourceAdapter()
+            {
+                @Override
+                public void dragSetData(final DragSourceEvent event)
+                {
+
+                    transfer.setSelection(new StructuredSelection(dragObjectMove));
+                }
+
+                @Override
+                public void dragFinished(DragSourceEvent event)
+                {
+                    editor.refreshProperties();
+                }
+            };
+
+            final DragSource dragSourceMove = new DragSource(move, DND.DROP_MOVE | DND.DROP_COPY);
+            dragSourceMove.setTransfer(new Transfer[] { transfer });
+            dragSourceMove.addDragListener(dragMoveAdapter);
         }
     }
-    
+
     protected void setPreviewBackground(Control control, Color color)
     {
         control.setBackground(color);
@@ -178,4 +471,8 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
         return "preview the defined canvas layout in form.";
     }
 
+    private static interface DragObject
+    {
+        void setBond(int x, int y);
+    }
 }

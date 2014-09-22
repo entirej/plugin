@@ -112,5 +112,21 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
         }
         
     }
+    public void refresh(Object objects)
+    {
+        if(formBasePage!=null )
+        {
+            formBasePage.refresh(objects);
+        }
+        
+    }
+    public void refreshProperties()
+    {
+        if(formBasePage!=null )
+        {
+            formBasePage.refreshProperties();
+        }
+        
+    }
 
 }

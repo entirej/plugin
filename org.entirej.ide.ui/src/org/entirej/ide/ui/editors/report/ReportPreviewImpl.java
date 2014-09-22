@@ -140,7 +140,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
 
             block.setLayout(null);
-
+            block.moveAbove(null);
             block.addMouseListener(new MouseAdapter()
             {
 
@@ -183,7 +183,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
             move.setToolTipText("Move");
             resize.setToolTipText("Resize");
-
+            resize.moveAbove(null);
             final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
             final DragObject dragObjectResize = new DragObject()
@@ -204,7 +204,10 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                         hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
                                 screenProperties.getWidth(), screenProperties.getHeight()));
                         resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
+                        hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
                         editor.setDirty(true);
+                        editor.refresh(properties);
+                        editor.refresh(screenProperties);
                     }
 
                 }
@@ -223,6 +226,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                     hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
                             screenProperties.getWidth(), screenProperties.getHeight()));
                     editor.setDirty(true);
+                    editor.refresh(properties);
+                    editor.refresh(screenProperties);
                 }
             };
 
@@ -255,6 +260,12 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                     transfer.setSelection(new StructuredSelection(dragObjectResize));
                 }
+                
+                @Override
+                public void dragFinished(DragSourceEvent event)
+                {
+                   editor.refreshProperties();
+                }
             };
 
             final DragSource dragSourceResize = new DragSource(resize, DND.DROP_MOVE | DND.DROP_COPY);
@@ -268,6 +279,12 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 {
 
                     transfer.setSelection(new StructuredSelection(dragObjectMove));
+                }
+                
+                @Override
+                public void dragFinished(DragSourceEvent event)
+                {
+                   editor.refreshProperties();
                 }
             };
 

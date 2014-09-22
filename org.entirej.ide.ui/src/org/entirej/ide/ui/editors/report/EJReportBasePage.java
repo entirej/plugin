@@ -34,6 +34,7 @@ import org.entirej.ide.ui.editors.EditorLayoutFactory;
 import org.entirej.ide.ui.editors.handlers.NodeElementDeleteHandler;
 import org.entirej.ide.ui.editors.handlers.PageActionHandler;
 import org.entirej.ide.ui.editors.handlers.PageActionHandlerProvider;
+import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.NodeDescriptorPart;
 
 public class EJReportBasePage extends AbstractEditorPage implements PageActionHandlerProvider
@@ -237,6 +238,26 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
         if(treeSection!=null)
         {
             treeSection.expand(treeSection.findNode(objects, true) );
+        }
+        
+    }
+
+    public void refreshProperties()
+    {
+        if(descriptorPart!=null)
+        {
+            descriptorPart.buildUI();
+        }
+        
+    }
+
+    public void refresh(Object objects)
+    {
+        if(treeSection!=null)
+        {
+            AbstractNode<?> findNode = treeSection.findNode(objects, false);
+            if(findNode!=null)
+                treeSection.refresh(findNode);
         }
         
     }
