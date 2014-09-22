@@ -438,7 +438,10 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
     public <S> S getAdapter(Class<S> adapter)
     {
-        // TODO
+        if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+        {
+            return getParent().getAdapter(adapter);
+        }
         return null;
     }
 

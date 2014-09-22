@@ -158,6 +158,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                 }
             });
         }
+        
+        
+        if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+        {
+            return getParent().getAdapter(adapter);
+        }
         return super.getAdapter(adapter);
     }
 

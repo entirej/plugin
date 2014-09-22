@@ -481,6 +481,10 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             {
                 return adapter.cast(validator);
             }
+            if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+            {
+                return adapter.cast(new  ReportBlockPreviewImpl(source));
+            }
 
             return null;
         }

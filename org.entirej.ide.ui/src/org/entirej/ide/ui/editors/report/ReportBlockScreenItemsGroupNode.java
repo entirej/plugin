@@ -155,6 +155,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 }
             });
         }
+        
+        if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+        {
+            return getParent().getAdapter(adapter);
+        }
+        
         return super.getAdapter(adapter);
     }
 
@@ -231,6 +237,11 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             if (NodeValidateProvider.class.isAssignableFrom(adapter))
             {
                 return adapter.cast(validator);
+            }
+            
+            if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+            {
+                return getParent().getAdapter(adapter);
             }
             return super.getAdapter(adapter);
         }
