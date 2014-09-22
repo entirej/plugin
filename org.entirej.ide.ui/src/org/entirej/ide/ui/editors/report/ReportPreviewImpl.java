@@ -108,6 +108,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             Label hint = new Label(block, SWT.NONE);
             hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]",properties.getName(), screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(),
                     screenProperties.getHeight()));
+            
+            hint.setToolTipText(hint.getText());
             hint.setBounds(5, 5, screenProperties.getWidth()-5, 25);
             hint.addMouseListener(new MouseAdapter()
             {
