@@ -119,7 +119,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             block.setLayout(null);
             
             Label hint = new Label(block, SWT.NONE);
-            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenItemProperties.getX(), screenItemProperties.getY(),
+            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", screenItemProperties.getName(), screenItemProperties.getX(), screenItemProperties.getY(),
                     screenItemProperties.getWidth(), screenItemProperties.getHeight()));
             hint.setToolTipText(hint.getText());
             hint.setBounds(5, 5, screenItemProperties.getWidth() - 5, 25);

@@ -97,6 +97,8 @@ public class EJUIImages
     public static final ImageDescriptor DESC_SELECT_ALL              = create(PATH_ETOOLS16, "select_all.gif");                                        //$NON-NLS-1$
     public static final ImageDescriptor DESC_FORM_EDIT_PROP          = create(PATH_ETOOLS16, "form_edit_prop.gif");                                    //$NON-NLS-1$
     public static final ImageDescriptor DESC_FORM_EDIT_TREE          = create(PATH_ETOOLS16, "form_edit_tree.gif");                                    //$NON-NLS-1$
+    public static final ImageDescriptor DESC_FORM_MOVE_OBJ           = create(PATH_ETOOLS16, "move_object.png");                                       //$NON-NLS-1$
+    public static final ImageDescriptor DESC_FORM_RESIZE_OBJ         = create(PATH_ETOOLS16, "resize_object.gif");                                     //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_MENU_GROUP              = create(PATH_OBJ16, "menu_group.gif");                                           //$NON-NLS-1$
     public static final ImageDescriptor DESC_ACTION                  = create(PATH_OBJ16, "action.gif");                                               //$NON-NLS-1$
@@ -110,19 +112,19 @@ public class EJUIImages
     public static final ImageDescriptor DESC_LAYOUT_TAB              = create(PATH_OBJ16, "layout_tab.gif");                                           //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_CANVAS_TAB_PAGE         = create(PATH_OBJ16, "canvas_tab_page.png");                                      //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_TAB_PAGE_REF        = create(PATH_OBJ16, "canvas_tab_page_ref.png");                                      //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_TAB_PAGE_REF     = create(PATH_OBJ16, "canvas_tab_page_ref.png");                                  //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_TAB              = create(PATH_OBJ16, "canvas_tab.png");                                           //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_BLOCK            = create(PATH_OBJ16, "canvas_block.png");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_GROUP            = create(PATH_OBJ16, "canvas_group.png");                                         //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_FORM            = create(PATH_OBJ16, "form_canvas.png");                                         //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_FORM             = create(PATH_OBJ16, "form_canvas.png");                                          //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_STACKED          = create(PATH_OBJ16, "canvas_stacked.png");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_CANVAS_POPUP            = create(PATH_OBJ16, "canvas_popup.png");                                         //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_TAB_REF              = create(PATH_OBJ16, "canvas_tab_ref.png");                                           //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_BLOCK_REF            = create(PATH_OBJ16, "canvas_block_ref.png");                                         //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_GROUP_REF            = create(PATH_OBJ16, "canvas_group_ref.png");                                         //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_FORM_REF            = create(PATH_OBJ16, "form_canvas_ref.png");                                         //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_STACKED_REF          = create(PATH_OBJ16, "canvas_stacked_ref.png");                                       //$NON-NLS-1$
-    public static final ImageDescriptor DESC_CANVAS_POPUP_REF            = create(PATH_OBJ16, "canvas_popup_ref.png");                                         //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_TAB_REF          = create(PATH_OBJ16, "canvas_tab_ref.png");                                       //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_BLOCK_REF        = create(PATH_OBJ16, "canvas_block_ref.png");                                     //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_GROUP_REF        = create(PATH_OBJ16, "canvas_group_ref.png");                                     //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_FORM_REF         = create(PATH_OBJ16, "form_canvas_ref.png");                                      //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_STACKED_REF      = create(PATH_OBJ16, "canvas_stacked_ref.png");                                   //$NON-NLS-1$
+    public static final ImageDescriptor DESC_CANVAS_POPUP_REF        = create(PATH_OBJ16, "canvas_popup_ref.png");                                     //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_SCHEMA                  = create(PATH_OBJ16, "schema.gif");                                               //$NON-NLS-1$
     public static final ImageDescriptor DESC_BLOCK_ITEM_ND           = create(PATH_OBJ16, "block_item_nd.png");                                        //$NON-NLS-1$
@@ -134,7 +136,7 @@ public class EJUIImages
     public static final ImageDescriptor DESC_TABLE                   = create(PATH_OBJ16, "table.gif");                                                //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_FORM                    = create(PATH_OBJ16, "form.png");                                                 //$NON-NLS-1$
-    public static final ImageDescriptor DESC_OBJGROUP                = create(PATH_OBJ16, "object_group.png");                                                 //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OBJGROUP                = create(PATH_OBJ16, "object_group.png");                                         //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_LOV_DEF                 = create(PATH_OBJ16, "lov_def.png");                                              //$NON-NLS-1$
     public static final ImageDescriptor DESC_LOV_REF                 = create(PATH_OBJ16, "lov_ref.png");                                              //$NON-NLS-1$
@@ -143,12 +145,12 @@ public class EJUIImages
     public static final ImageDescriptor DESC_BLOCK                   = create(PATH_OBJ16, "block.png");                                                //$NON-NLS-1$
     public static final ImageDescriptor DESC_BLOCK_REF               = create(PATH_OBJ16, "block_ref.png");                                            //$NON-NLS-1$
     public static final ImageDescriptor DESC_BLOCK_MIRROR            = create(PATH_OBJ16, "block_mirror.png");                                         //$NON-NLS-1$
-    public static final ImageDescriptor DESC_BLOCK_MIRROR_REF            = create(PATH_OBJ16, "block_mirror_ref.png");                                         //$NON-NLS-1$
+    public static final ImageDescriptor DESC_BLOCK_MIRROR_REF        = create(PATH_OBJ16, "block_mirror_ref.png");                                     //$NON-NLS-1$
     public static final ImageDescriptor DESC_BLOCK_NTB               = create(PATH_OBJ16, "block_ntb.png");
-    public static final ImageDescriptor DESC_BLOCK_NTB_REF               = create(PATH_OBJ16, "block_ntb_ref.png");
-    
+    public static final ImageDescriptor DESC_BLOCK_NTB_REF           = create(PATH_OBJ16, "block_ntb_ref.png");
+
     public static final ImageDescriptor DESC_BLOCK_RELATION          = create(PATH_OBJ16, "block_relation.png");                                       //$NON-NLS-1$
-    public static final ImageDescriptor DESC_BLOCK_RELATION_REF          = create(PATH_OBJ16, "block_relation_ref.png");                                       //$NON-NLS-1$
+    public static final ImageDescriptor DESC_BLOCK_RELATION_REF      = create(PATH_OBJ16, "block_relation_ref.png");                                   //$NON-NLS-1$
     public static final ImageDescriptor DESC_BLOCK_RELATION_LINK     = create(PATH_OBJ16, "block_relation_link.gif");                                  //$NON-NLS-1$
 
     public static final Image           SHARED_FIELD_PROTECTED       = JavaUI.getSharedImages().getImage(ISharedImages.IMG_FIELD_PROTECTED);
