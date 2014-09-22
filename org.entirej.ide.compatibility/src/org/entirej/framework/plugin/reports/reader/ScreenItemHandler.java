@@ -1,0 +1,198 @@
+/*******************************************************************************
+ * Copyright 2013 Mojave Innovations GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * Contributors: Mojave Innovations GmbH - initial API and implementation
+ ******************************************************************************/
+package org.entirej.framework.plugin.reports.reader;
+
+import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
+import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
+import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
+import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+public class ScreenItemHandler extends EntireJTagHandler
+{
+    private EJPluginReportScreenItemProperties _itemProperties;
+    private EJPluginReportProperties           _formProperties;
+    private EJPluginReportBlockProperties      _blockProperties;
+    
+    private static final String                ELEMENT_ITEM                  = "screenitem";
+    private static final String                ELEMENT_SCREEN_X              = "x";
+    private static final String                ELEMENT_SCREEN_Y              = "y";
+    private static final String                ELEMENT_SCREEN_WIDTH          = "width";
+    private static final String                ELEMENT_SCREEN_HEIGHT         = "height";
+    private static final String                ELEMENT_SCREEN_VISIBLE        = "visible";
+    private static final String                ELEMENT_SCREEN_VA             = "va";
+    private static final String                ELEMENT_SCREEN_VALUE_PROVIDER = "valueProvider";
+    private static final String                ELEMENT_SCREEN_HALIGNMENT     = "hAlignment";
+    private static final String                ELEMENT_SCREEN_VALIGNMENT     = "vAlignment";
+    private static final String                ELEMENT_SCREEN_ROTATION       = "rotation";
+    private static final String                ELEMENT_SCREEN_TEXT           = "text";
+    private static final String                ELEMENT_SCREEN_MANUAL_FORMAT  = "manualFormat";
+    private static final String                ELEMENT_SCREEN_LOCALE_FORMAT  = "localeFormat";
+    
+    public ScreenItemHandler(EJPluginReportBlockProperties blockProperties)
+    {
+        _formProperties = blockProperties.getReportProperties();
+        _blockProperties = blockProperties;
+        
+    }
+    
+    public EJPluginReportScreenItemProperties getItemProperties()
+    {
+        return _itemProperties;
+    }
+    
+    public void startLocalElement(String name, Attributes attributes) throws SAXException
+    {
+        if (name.equals(ELEMENT_ITEM))
+        {
+            String type = attributes.getValue("type");
+            EJReportScreenItemType screenItemType = EJReportScreenItemType.valueOf(type);
+            
+            String itemname = attributes.getValue("name");
+            
+            _itemProperties = _blockProperties.getLayoutScreenProperties().getScreenItemContainer().createItem(screenItemType, itemname, -1);
+            
+        }
+        
+    }
+    
+    public void endLocalElement(String name, String value, String untrimmedValue)
+    {
+        if (name.equals(ELEMENT_ITEM))
+        {
+            quitAsDelegate();
+            return;
+        }
+        
+        else if (name.equals(ELEMENT_SCREEN_X))
+        {
+            _itemProperties.setX(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_Y))
+        {
+            _itemProperties.setY(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_WIDTH))
+        {
+            _itemProperties.setWidth(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_HEIGHT))
+        {
+            _itemProperties.setHeight(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_VISIBLE))
+        {
+            _itemProperties.setVisible(Boolean.parseBoolean(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_VA))
+        {
+            _itemProperties.setVisualAttributeName(value);
+        }
+        else if (name.equals(ELEMENT_SCREEN_VALUE_PROVIDER))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) _itemProperties;
+                item.setValue(value);
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_HALIGNMENT))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.setHAlignment(EJReportScreenAlignment.valueOf(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_VALIGNMENT))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.setVAlignment(EJReportScreenAlignment.valueOf(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_ROTATION))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.RotatableItem)
+            {
+                final EJPluginReportScreenItemProperties.RotatableItem item = (RotatableItem) _itemProperties;
+                item.setRotation(EJReportScreenRotation.valueOf(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_TEXT))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Label)
+            {
+                final EJPluginReportScreenItemProperties.Label item = (EJPluginReportScreenItemProperties.Label) _itemProperties;
+                item.setText(value);
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_MANUAL_FORMAT))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Number)
+            {
+                final EJPluginReportScreenItemProperties.Number item = (EJPluginReportScreenItemProperties.Number) _itemProperties;
+                item.setManualFormat(value);
+                
+            }
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Date)
+            {
+                final EJPluginReportScreenItemProperties.Date item = (EJPluginReportScreenItemProperties.Date) _itemProperties;
+                item.setManualFormat(value);
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_LOCALE_FORMAT))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Number)
+            {
+                final EJPluginReportScreenItemProperties.Number item = (EJPluginReportScreenItemProperties.Number) _itemProperties;
+                item.setLocaleFormat(NumberFormats.valueOf(value));
+                
+            }
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Date)
+            {
+                final EJPluginReportScreenItemProperties.Date item = (EJPluginReportScreenItemProperties.Date) _itemProperties;
+                item.setLocaleFormat(DateFormats.valueOf(value));
+                
+            }
+        }
+    }
+    
+    @Override
+    protected void cleanUpAfterDelegate(String name, EntireJTagHandler currentDelegate)
+    {
+        
+    }
+    
+}

@@ -30,11 +30,16 @@ import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWrite
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
@@ -202,7 +207,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "canvasName", blockProperties.getCanvasName());
             
             if (!blockProperties.isControlBlock()) writeStringTAG(buffer, "serviceClassName", blockProperties.getServiceClassName());
-           
+            
             writeStringTAG(buffer, "actionProcessorClassName", blockProperties.getActionProcessorClassName());
             EJPluginReportScreenProperties layoutScreenProperties = blockProperties.getLayoutScreenProperties();
             writeStringTAG(buffer, "screenType", layoutScreenProperties.getScreenType().name());
@@ -218,7 +223,12 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             }
             endTAG(buffer, "itemList");
             
-            
+            // Now add the block items
+            startTAG(buffer, "screenItemList");
+            {
+                addBlockScreenItemProperties(blockProperties.getLayoutScreenProperties().getScreenItemContainer(), buffer);
+            }
+            endTAG(buffer, "screenItemList");
             
             BlockGroup group = layoutScreenProperties.getSubBlocks();
             startOpenTAG(buffer, "blockGroup");
@@ -244,6 +254,83 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             endTAG(buffer, "blockGroup");
         }
         endTAG(buffer, "block");
+    }
+    
+    protected void addBlockScreenItemProperties(EJReportScreenItemContainer screenItemContainer, StringBuffer buffer)
+    {
+        List<EJPluginReportScreenItemProperties> itemProperties = screenItemContainer.getAllItemProperties();
+        
+        for (EJPluginReportScreenItemProperties itemProps : itemProperties)
+        {
+            startOpenTAG(buffer, "screenitem");
+            {
+                writePROPERTY(buffer, "name", itemProps.getName());
+                writePROPERTY(buffer, "type", itemProps.getType().name());
+                closeOpenTAG(buffer);
+                writeStringTAG(buffer, "x", itemProps.getX() + "");
+                writeStringTAG(buffer, "y", itemProps.getY() + "");
+                writeStringTAG(buffer, "width", itemProps.getWidth() + "");
+                writeStringTAG(buffer, "height", itemProps.getHeight() + "");
+                writeStringTAG(buffer, "visible", String.valueOf(itemProps.isVisible()));
+                if (itemProps.getVisualAttributeName() != null) writeStringTAG(buffer, "va", itemProps.getVisualAttributeName());
+                
+                // add type base properties
+                
+                if (itemProps instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
+                {
+                    final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) itemProps;
+                    if (item.getValue() != null)
+                    {
+                        writeStringTAG(buffer, "valueProvider", item.getValue());
+                    }
+                    
+                }
+                if (itemProps instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+                {
+                    final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) itemProps;
+                    
+                    writeStringTAG(buffer, "hAlignment", item.getHAlignment().name());
+                    writeStringTAG(buffer, "vAlignment", item.getVAlignment().name());
+                }
+                if (itemProps instanceof EJPluginReportScreenItemProperties.RotatableItem)
+                {
+                    final EJPluginReportScreenItemProperties.RotatableItem item = (RotatableItem) itemProps;
+                    
+                    writeStringTAG(buffer, "rotation", item.getRotation().name());
+                }
+                
+                switch (itemProps.getType())
+                {
+                    case LABEL:
+                    {
+                        final EJPluginReportScreenItemProperties.Label label = (EJPluginReportScreenItemProperties.Label) itemProps;
+                        writeStringTAG(buffer, "text", label.getText());
+                    }
+                        break;
+                    case NUMBER:
+                    {
+                        final EJPluginReportScreenItemProperties.Number number = (EJPluginReportScreenItemProperties.Number) itemProps;
+                        writeStringTAG(buffer, "manualFormat", number.getManualFormat());
+                        writeStringTAG(buffer, "localeFormat", number.getLocaleFormat().name());
+                    }
+                        break;
+                    
+                    case DATE:
+                    {
+                        final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) itemProps;
+                        writeStringTAG(buffer, "manualFormat", number.getManualFormat());
+                        writeStringTAG(buffer, "localeFormat", number.getLocaleFormat().name());
+                    }
+                        break;
+                    
+                    default:
+                        break;
+                }
+                
+            }
+            endTAG(buffer, "screenitem");
+        }
+        
     }
     
     protected void addBlockItemProperties(EJReportBlockItemContainer itemContainer, StringBuffer buffer)

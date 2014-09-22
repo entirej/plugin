@@ -31,7 +31,7 @@ public enum EJReportScreenRotation
             case RIGHT:
                 return "Right";
             case NONE:
-                return "Note";
+                return "None";
             case UPSIDEDOWN:
                 return "UpsideDown";
             default:
