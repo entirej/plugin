@@ -149,6 +149,10 @@ public class EJReportScreenItemContainer
                 itemProperties = new EJPluginReportScreenItemProperties.Image(_blockProperties);
                 break;
             
+            case LINE:
+                itemProperties = new EJPluginReportScreenItemProperties.Line(_blockProperties);
+                break;
+                
             default:
                 return null;
         }

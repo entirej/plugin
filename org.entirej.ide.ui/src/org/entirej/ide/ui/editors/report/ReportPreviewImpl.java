@@ -55,7 +55,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     protected final Color COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
     protected final Color COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 
-    protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZEE);
+    protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
     protected final Cursor MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
     public void dispose()
     {

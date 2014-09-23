@@ -156,6 +156,27 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             this.rotation = rotation;
         }
     }
+    
+    
+    public static class Line extends EJPluginReportScreenItemProperties
+    {
+        
+      
+        
+        
+        public Line(EJPluginReportBlockProperties blockProperties)
+        {
+            super(blockProperties);
+        }
+        
+        @Override
+        public EJReportScreenItemType getType()
+        {
+            return EJReportScreenItemType.LINE;
+        }
+        
+     
+    }
     public static class Text extends ValueBaseItem implements RotatableItem
     {
         private EJReportScreenRotation rotation = EJReportScreenRotation.NONE;

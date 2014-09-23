@@ -19,7 +19,7 @@ package org.entirej.framework.reports.enumerations;
 
 public enum EJReportScreenItemType
 {
-    LABEL,TEXT,NUMBER,DATE,IMAGE;
+    LABEL,TEXT,NUMBER,DATE,IMAGE,LINE;
     
     public String toString()
     {
@@ -28,6 +28,8 @@ public enum EJReportScreenItemType
             
             case LABEL:
                 return "Label";
+            case LINE:
+                return "Line";
             case TEXT:
                 return "Text";
             case NUMBER:

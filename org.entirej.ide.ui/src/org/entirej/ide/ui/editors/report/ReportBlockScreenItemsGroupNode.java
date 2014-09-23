@@ -1094,7 +1094,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         // set default width/height
 
                         itemProperties.setWidth(80);
-                        itemProperties.setHeight(22);
+                        itemProperties.setHeight(itemProperties.getType()==EJReportScreenItemType.LINE?1:22);
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
 
