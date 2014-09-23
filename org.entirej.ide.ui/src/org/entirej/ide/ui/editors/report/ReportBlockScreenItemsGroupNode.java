@@ -52,6 +52,8 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineDirection;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
@@ -155,12 +157,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 }
             });
         }
-        
+
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
             return getParent().getAdapter(adapter);
         }
-        
+
         return super.getAdapter(adapter);
     }
 
@@ -238,7 +240,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             {
                 return adapter.cast(validator);
             }
-            
+
             if (IReportPreviewProvider.class.isAssignableFrom(adapter))
             {
                 return getParent().getAdapter(adapter);
@@ -968,6 +970,130 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 }
                     break;
 
+                case LINE:
+                {
+                    final EJPluginReportScreenItemProperties.Line number = (EJPluginReportScreenItemProperties.Line) source;
+
+                    AbstractTextDropDownDescriptor lineStyle = new AbstractTextDropDownDescriptor("Line Style")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getLineStyle().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            for (LineStyle formats : LineStyle.values())
+                            {
+                                options.add(formats.name());
+                            }
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return LineStyle.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setLineStyle(LineStyle.valueOf(value));
+
+                        }
+
+                    };
+                    AbstractTextDropDownDescriptor lineDirection = new AbstractTextDropDownDescriptor("Line Direction")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getLineDirection().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            for (LineDirection formats : LineDirection.values())
+                            {
+                                options.add(formats.name());
+                            }
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return LineDirection.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setLineDirection(LineDirection.valueOf(value));
+
+                        }
+
+                    };
+
+                    final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Line Width")
+                    {
+
+                        @Override
+                        public String getTooltip()
+                        {
+
+                            return "The width <b>(in pixels)</b> of the Line.";
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            try
+                            {
+                                number.setLineWidth(Double.parseDouble(value));
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                number.setLineWidth(1);
+                                if (text != null)
+                                {
+                                    text.setText(getValue());
+                                    text.selectAll();
+                                }
+                            }
+                            treeSection.getEditor().setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return String.valueOf(number.getLineWidth());
+                        }
+
+                        Text text;
+
+                        @Override
+                        public void addEditorAssist(Control control)
+                        {
+
+                            text = (Text) control;
+                            text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                            super.addEditorAssist(control);
+                        }
+                    };
+
+                    descriptors.add(lineStyle);
+                    descriptors.add(lineDirection);
+                    descriptors.add(widthDescriptor);
+                }
+                    break;
+
                 default:
                     break;
             }
@@ -1094,7 +1220,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         // set default width/height
 
                         itemProperties.setWidth(80);
-                        itemProperties.setHeight(itemProperties.getType()==EJReportScreenItemType.LINE?1:22);
+                        itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 22);
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
 

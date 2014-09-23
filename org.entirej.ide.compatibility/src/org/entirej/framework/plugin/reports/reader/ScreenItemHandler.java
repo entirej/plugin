@@ -23,6 +23,8 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineDirection;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
@@ -52,6 +54,9 @@ public class ScreenItemHandler extends EntireJTagHandler
     private static final String                ELEMENT_SCREEN_TEXT           = "text";
     private static final String                ELEMENT_SCREEN_MANUAL_FORMAT  = "manualFormat";
     private static final String                ELEMENT_SCREEN_LOCALE_FORMAT  = "localeFormat";
+    private static final String                ELEMENT_SCREEN_LINE_STYLE     = "lineStyle";
+    private static final String                ELEMENT_SCREEN_LINE_WIDTH     = "lineWidth";
+    private static final String                ELEMENT_SCREEN_LINE_DIRECTION = "lineDirection";
     
     public ScreenItemHandler(EJPluginReportBlockProperties blockProperties)
     {
@@ -154,6 +159,33 @@ public class ScreenItemHandler extends EntireJTagHandler
             {
                 final EJPluginReportScreenItemProperties.Label item = (EJPluginReportScreenItemProperties.Label) _itemProperties;
                 item.setText(value);
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_LINE_WIDTH))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Line)
+            {
+                final EJPluginReportScreenItemProperties.Line item = (EJPluginReportScreenItemProperties.Line) _itemProperties;
+                item.setLineWidth(Double.parseDouble(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_LINE_STYLE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Line)
+            {
+                final EJPluginReportScreenItemProperties.Line item = (EJPluginReportScreenItemProperties.Line) _itemProperties;
+                item.setLineStyle(LineStyle.valueOf(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_LINE_DIRECTION))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Line)
+            {
+                final EJPluginReportScreenItemProperties.Line item = (EJPluginReportScreenItemProperties.Line) _itemProperties;
+                item.setLineDirection(LineDirection.valueOf(value));
                 
             }
         }

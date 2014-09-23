@@ -54,6 +54,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineDirection;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
@@ -190,7 +192,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
                             itemProperties.setX(x);
                             itemProperties.setY(y);
                             itemProperties.setWidth(80);
-                            itemProperties.setHeight(itemProperties.getType()==EJReportScreenItemType.LINE? 1 : 22);
+                            itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 22);
                             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                             {
 
@@ -236,7 +238,6 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
         block.setLayout(null);
         block.moveAbove(null);
-        
 
         final Label hint = new Label(block, SWT.NONE);
         hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
@@ -270,26 +271,50 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             @Override
             public void mouseDoubleClick(MouseEvent e)
             {
+                
                 editor.select(properties);
+                editor.expand(properties);
             }
 
             @Override
             public void mouseDown(MouseEvent e)
             {
-                block.moveAbove(null);
+               
                 transfer.setSelection(new StructuredSelection(dragObjectMove));
+            }
+            @Override
+            public void mouseUp(MouseEvent e)
+            {
+                
+                
+                block.moveAbove(null);
             }
 
         });
-        
+
         block.addMouseListener(new MouseAdapter()
         {
 
             @Override
+            public void mouseDoubleClick(MouseEvent e)
+            {
+                
+                editor.select(properties);
+                editor.expand(properties);
+            }
+
+            @Override
             public void mouseDown(MouseEvent e)
             {
-                block.moveAbove(null);
+               
                 transfer.setSelection(new StructuredSelection(dragObjectMove));
+            }
+            @Override
+            public void mouseUp(MouseEvent e)
+            {
+                
+                
+                block.moveAbove(null);
             }
         });
 
@@ -396,8 +421,14 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
         if (properties.getType() == EJReportScreenItemType.LINE)
         {
+            final EJPluginReportScreenItemProperties.Line line = (Line) properties;
             final DragSource dragSourceMoveLine = new DragSource(block, DND.DROP_MOVE | DND.DROP_COPY);
             block.setCursor(MOVE);
+            resize.setImage(null);
+            move.setImage(null);
+            
+            
+            block.setToolTipText(line.getName());
             dragSourceMoveLine.setTransfer(new Transfer[] { transfer });
             dragSourceMoveLine.addDragListener(dragMoveAdapter);
             hint.setVisible(false);
@@ -405,9 +436,29 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             {
                 public void paintControl(PaintEvent e)
                 {
+                    int lineWidth = (int) Math.ceil(line.getLineWidth());
+                    e.gc.setLineWidth(lineWidth);
+
+                    switch (line.getLineStyle())
+                    {
+                        case DOTTED:
+                            e.gc.setLineStyle(SWT.LINE_DOT);
+                            break;
+                        case DASHED:
+                            e.gc.setLineStyle(SWT.LINE_DASH);
+                            break;
+
+                        default:
+                            e.gc.setLineStyle(SWT.LINE_SOLID);
+                            break;
+                    }
                     
-                    e.gc.drawLine(0, 0, block.getBounds().width == 1 ? 0 : block.getBounds().width, block.getBounds().height == 1 ? 0
-                            : block.getBounds().height);
+                    if(line.getLineDirection()==LineDirection.TO_DOWN)
+                        e.gc.drawLine(0, 0, block.getBounds().width <= lineWidth ? 0 : block.getBounds().width, block.getBounds().height <= lineWidth ? 0
+                                : block.getBounds().height);
+                    else
+                        e.gc.drawLine(0, block.getBounds().height <= lineWidth ? 0
+                                : block.getBounds().height, block.getBounds().width <= lineWidth ? 0 : block.getBounds().width, 0);
                 }
             });
         }
