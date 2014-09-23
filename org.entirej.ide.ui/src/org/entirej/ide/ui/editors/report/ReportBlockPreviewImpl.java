@@ -20,8 +20,11 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
@@ -34,19 +37,27 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
+import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
+import org.entirej.ide.ui.EJUIPlugin;
 
 public class ReportBlockPreviewImpl implements IReportPreviewProvider
 {
@@ -55,8 +66,11 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
     protected final Color                         COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
     protected final Color                         COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
     protected final Color                         COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-
+    protected final Cursor                        RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZEE);
+    protected final Cursor                        MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
     protected final EJPluginReportBlockProperties properties;
+
+    private int                                   x, y;
 
     public ReportBlockPreviewImpl(EJPluginReportBlockProperties properties)
     {
@@ -65,7 +79,10 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
     public void dispose()
     {
+        COLOR_BLOCK_ITEM.dispose();
         COLOR_BLOCK.dispose();
+        RESIZE.dispose();
+        MOVE.dispose();
     }
 
     protected EJPluginReportProperties getReportProperties(AbstractEJReportEditor editor)
@@ -133,6 +150,72 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
         final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
         dropTarget.setTransfer(new Transfer[] { transfer });
         dropTarget.addDropListener(dragAdapter);
+
+        // create menu
+        final Menu menu = new Menu(editor.getEditorSite().getShell(), SWT.POP_UP);
+        final EJReportScreenItemContainer container = layoutScreenProperties.getScreenItemContainer();
+
+        for (final EJReportScreenItemType type : EJReportScreenItemType.values())
+        {
+            MenuItem item = new MenuItem(menu, SWT.PUSH);
+            item.setText(String.format("New Screen Item : [%s]", type.toString()));
+            item.addSelectionListener(new SelectionAdapter()
+            {
+                @Override
+                public void widgetSelected(SelectionEvent e)
+                {
+                    InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("New Screen Item : [%s]", type.toString()),
+                            "Item Name", null, new IInputValidator()
+                            {
+
+                                public String isValid(String newText)
+                                {
+                                    if (newText == null || newText.trim().length() == 0)
+                                        return "Item name can't be empty.";
+                                    if (container.contains(newText.trim()))
+                                        return "Item with this name already exists.";
+
+                                    return null;
+                                }
+                            });
+                    if (dlg.open() == Window.OK)
+                    {
+                        final EJPluginReportScreenItemProperties itemProperties = container.createItem(type, dlg.getValue(), -1);
+                        if (itemProperties != null)
+                        {
+                            // set default width/height
+
+                            itemProperties.setX(x);
+                            itemProperties.setY(y);
+                            itemProperties.setWidth(80);
+                            itemProperties.setHeight(22);
+                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                            {
+
+                                public void run()
+                                {
+                                    editor.setDirty(true);
+                                    editor.refresh(container);
+                                    editor.select(itemProperties);
+
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+        reportBody.setMenu(menu);
+        reportBody.addMouseListener(new MouseAdapter()
+        {
+
+            @Override
+            public void mouseDown(MouseEvent e)
+            {
+                x = e.x;
+                y = e.y;
+            }
+        });
     }
 
     protected void createItemPreview(final AbstractEJReportEditor editor, final Composite reportBody, final EJPluginReportScreenItemProperties properties)
@@ -186,6 +269,8 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
         move.setToolTipText("Move");
         resize.setToolTipText("Resize");
+        move.setCursor(MOVE);
+        resize.setCursor(RESIZE);
         resize.moveAbove(null);
         final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
@@ -351,6 +436,8 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
             move.setToolTipText("Move");
             resize.setToolTipText("Resize");
+            move.setCursor(MOVE);
+            resize.setCursor(RESIZE);
             resize.moveAbove(null);
 
             final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();

@@ -33,6 +33,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
@@ -54,9 +55,13 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     protected final Color COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
     protected final Color COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 
+    protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZEE);
+    protected final Cursor MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
     public void dispose()
     {
         COLOR_BLOCK.dispose();
+        RESIZE.dispose();
+        MOVE.dispose();
     }
 
     protected EJPluginReportProperties getReportProperties(AbstractEJReportEditor editor)
@@ -110,7 +115,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             @Override
             public void dragOver(DropTargetEvent event)
             {
-                event.detail = DND.DROP_NONE;
+              
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
 
@@ -183,6 +188,9 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
             move.setToolTipText("Move");
             resize.setToolTipText("Resize");
+            move.setCursor(MOVE  );
+            resize.setCursor(RESIZE  );
+            
             resize.moveAbove(null);
             final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
@@ -254,6 +262,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
             final DragSourceAdapter resizeMoveAdapter = new DragSourceAdapter()
             {
+                
                 @Override
                 public void dragSetData(final DragSourceEvent event)
                 {
