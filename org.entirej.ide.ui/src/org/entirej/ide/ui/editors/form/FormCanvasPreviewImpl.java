@@ -196,10 +196,11 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                 if (canvas.getType() == EJCanvasType.BLOCK && canvas.getBlockProperties() != null
                         && canvas.getBlockProperties().getMainScreenProperties() != null)
                 {
-                    weights[items.indexOf(canvas)] = (canvas.getBlockProperties().getMainScreenProperties().getWidth()) + 1;
+                    int width = canvas.getSplitOrientation() ==EJCanvasSplitOrientation.HORIZONTAL ?canvas.getBlockProperties().getMainScreenProperties().getWidth():canvas.getBlockProperties().getMainScreenProperties().getHeight();
+                    weights[items.indexOf(canvas)] = width + 1;
                 }
                 else
-                    weights[items.indexOf(canvas)] = (canvas.getWidth()) + 1;
+                    weights[items.indexOf(canvas)] = (canvas.getSplitOrientation() ==EJCanvasSplitOrientation.HORIZONTAL ? canvas.getWidth():canvas.getHeight()) + 1;
                 switch (canvas.getType())
                 {
                     case GROUP:
