@@ -397,7 +397,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
         if (properties.getType() == EJReportScreenItemType.LINE)
         {
             final DragSource dragSourceMoveLine = new DragSource(block, DND.DROP_MOVE | DND.DROP_COPY);
-            hint.setCursor(MOVE);
+            block.setCursor(MOVE);
             dragSourceMoveLine.setTransfer(new Transfer[] { transfer });
             dragSourceMoveLine.addDragListener(dragMoveAdapter);
             hint.setVisible(false);
@@ -405,6 +405,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             {
                 public void paintControl(PaintEvent e)
                 {
+                    
                     e.gc.drawLine(0, 0, block.getBounds().width == 1 ? 0 : block.getBounds().width, block.getBounds().height == 1 ? 0
                             : block.getBounds().height);
                 }

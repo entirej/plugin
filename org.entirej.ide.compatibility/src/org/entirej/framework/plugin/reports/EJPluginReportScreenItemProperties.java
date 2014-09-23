@@ -162,7 +162,20 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     {
         
       
+        private double lineWidth = 1.0;
+        private LineStyle lineStyle = LineStyle.SOLID;
+        private LineDirection lineDirection = LineDirection.TO_DOWN;
         
+        public enum LineStyle
+        {
+            SOLID, DASHED, DOTTED, DOUBLE;
+            
+        }
+        public enum LineDirection
+        {
+            TO_DOWN, BOTTOM_UP;
+            
+        }
         
         public Line(EJPluginReportBlockProperties blockProperties)
         {
@@ -175,6 +188,38 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             return EJReportScreenItemType.LINE;
         }
         
+        
+        public double getLineWidth()
+        {
+            return lineWidth;
+        }
+           
+        public void setLineWidth(double lineWidth)
+        {
+            this.lineWidth = lineWidth;
+        }
+        
+        
+        public LineStyle getLineStyle()
+        {
+            return lineStyle;
+        }
+        
+        public void setLineStyle(LineStyle lineStyle)
+        {
+            this.lineStyle = lineStyle;
+        }
+        
+        
+        public LineDirection getLineDirection()
+        {
+            return lineDirection;
+        }
+        
+        public void setLineDirection(LineDirection lineDirection)
+        {
+            this.lineDirection = lineDirection;
+        }
      
     }
     public static class Text extends ValueBaseItem implements RotatableItem
