@@ -315,6 +315,14 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "lineDirection", line.getLineDirection().name());
                     }
                     break;
+                    case RECTANGLE:
+                    {
+                        final EJPluginReportScreenItemProperties.Rectangle line = (EJPluginReportScreenItemProperties.Rectangle) itemProps;
+                        writeStringTAG(buffer, "lineWidth", line.getLineWidth()+"");
+                        writeStringTAG(buffer, "lineStyle", line.getLineStyle().name());
+                        writeStringTAG(buffer, "rectRadius",  line.getRadius()+"");
+                    }
+                    break;
                     case NUMBER:
                     {
                         final EJPluginReportScreenItemProperties.Number number = (EJPluginReportScreenItemProperties.Number) itemProps;

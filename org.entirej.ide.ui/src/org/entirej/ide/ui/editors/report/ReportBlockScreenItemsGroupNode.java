@@ -1093,6 +1093,146 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     descriptors.add(widthDescriptor);
                 }
                     break;
+                case RECTANGLE:
+                {
+                    final EJPluginReportScreenItemProperties.Rectangle number = (EJPluginReportScreenItemProperties.Rectangle) source;
+
+                    AbstractTextDropDownDescriptor lineStyle = new AbstractTextDropDownDescriptor("Line Style")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return number.getLineStyle().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            for (LineStyle formats : LineStyle.values())
+                            {
+                                options.add(formats.name());
+                            }
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return LineStyle.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            number.setLineStyle(LineStyle.valueOf(value));
+
+                        }
+
+                    };
+
+                    final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Line Width")
+                    {
+
+                        @Override
+                        public String getTooltip()
+                        {
+
+                            return "The width <b>(in pixels)</b> of the Line.";
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            try
+                            {
+                                number.setLineWidth(Double.parseDouble(value));
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                number.setLineWidth(1);
+                                if (text != null)
+                                {
+                                    text.setText(getValue());
+                                    text.selectAll();
+                                }
+                            }
+                            treeSection.getEditor().setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return String.valueOf(number.getLineWidth());
+                        }
+
+                        Text text;
+
+                        @Override
+                        public void addEditorAssist(Control control)
+                        {
+
+                            text = (Text) control;
+                            text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                            super.addEditorAssist(control);
+                        }
+                    };
+                    final AbstractTextDescriptor radiusDescriptor = new AbstractTextDescriptor("Radius")
+                    {
+
+                        @Override
+                        public String getTooltip()
+                        {
+
+                            return "The radius <b>(in pixels)</b> of the rectangle.";
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            try
+                            {
+                                number.setRadius(Integer.parseInt(value));
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                number.setRadius(0);
+                                if (text != null)
+                                {
+                                    text.setText(getValue());
+                                    text.selectAll();
+                                }
+                            }
+                            treeSection.getEditor().setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return String.valueOf(number.getRadius());
+                        }
+
+                        Text text;
+
+                        @Override
+                        public void addEditorAssist(Control control)
+                        {
+
+                            text = (Text) control;
+                            text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                            super.addEditorAssist(control);
+                        }
+                    };
+
+                    descriptors.add(lineStyle);
+
+                    descriptors.add(widthDescriptor);
+                    descriptors.add(radiusDescriptor);
+                }
+                    break;
 
                 default:
                     break;

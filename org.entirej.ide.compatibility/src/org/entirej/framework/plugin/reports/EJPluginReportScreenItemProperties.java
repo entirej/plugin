@@ -1,11 +1,11 @@
 package org.entirej.framework.plugin.reports;
 
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
 import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
 import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
 import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 public abstract class EJPluginReportScreenItemProperties implements EJReportScreenItemProperties
 {
@@ -221,6 +221,63 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             this.lineDirection = lineDirection;
         }
      
+    }
+    public static class Rectangle extends EJPluginReportScreenItemProperties
+    {
+        
+        
+        private double lineWidth = 1.0;
+        private int radius;
+        private LineStyle lineStyle = LineStyle.SOLID;
+        
+       
+        
+        public Rectangle(EJPluginReportBlockProperties blockProperties)
+        {
+            super(blockProperties);
+        }
+        
+        @Override
+        public EJReportScreenItemType getType()
+        {
+            return EJReportScreenItemType.RECTANGLE;
+        }
+        
+        
+        public double getLineWidth()
+        {
+            return lineWidth;
+        }
+        
+        public void setLineWidth(double lineWidth)
+        {
+            this.lineWidth = lineWidth;
+        }
+        
+        
+        public LineStyle getLineStyle()
+        {
+            return lineStyle;
+        }
+        
+        public void setLineStyle(LineStyle lineStyle)
+        {
+            this.lineStyle = lineStyle;
+        }
+        
+        
+        public void setRadius(int radius)
+        {
+            this.radius = radius;
+        }
+        
+        public int getRadius()
+        {
+            return radius;
+        }
+        
+       
+        
     }
     public static class Text extends ValueBaseItem implements RotatableItem
     {

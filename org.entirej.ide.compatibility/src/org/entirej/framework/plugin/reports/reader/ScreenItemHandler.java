@@ -57,6 +57,7 @@ public class ScreenItemHandler extends EntireJTagHandler
     private static final String                ELEMENT_SCREEN_LINE_STYLE     = "lineStyle";
     private static final String                ELEMENT_SCREEN_LINE_WIDTH     = "lineWidth";
     private static final String                ELEMENT_SCREEN_LINE_DIRECTION = "lineDirection";
+    private static final String                ELEMENT_SCREEN_RECT_RADIUS    = "rectRadius";
     
     public ScreenItemHandler(EJPluginReportBlockProperties blockProperties)
     {
@@ -170,7 +171,64 @@ public class ScreenItemHandler extends EntireJTagHandler
                 item.setLineWidth(Double.parseDouble(value));
                 
             }
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Rectangle)
+            {
+                final EJPluginReportScreenItemProperties.Rectangle item = (EJPluginReportScreenItemProperties.Rectangle) _itemProperties;
+                item.setLineWidth(Double.parseDouble(value));
+                
+            }
         }
+        else if (name.equals(ELEMENT_SCREEN_RECT_RADIUS))
+        {
+            
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Rectangle)
+            {
+                final EJPluginReportScreenItemProperties.Rectangle item = (EJPluginReportScreenItemProperties.Rectangle) _itemProperties;
+                item.setRadius(Integer.parseInt(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_LINE_STYLE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Line)
+            {
+                final EJPluginReportScreenItemProperties.Line item = (EJPluginReportScreenItemProperties.Line) _itemProperties;
+                item.setLineStyle(LineStyle.valueOf(value));
+                
+            }
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Rectangle)
+            {
+                final EJPluginReportScreenItemProperties.Rectangle item = (EJPluginReportScreenItemProperties.Rectangle) _itemProperties;
+                item.setLineStyle(LineStyle.valueOf(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_LINE_DIRECTION))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Line)
+            {
+                final EJPluginReportScreenItemProperties.Line item = (EJPluginReportScreenItemProperties.Line) _itemProperties;
+                item.setLineDirection(LineDirection.valueOf(value));
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_MANUAL_FORMAT))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Number)
+            {
+                final EJPluginReportScreenItemProperties.Number item = (EJPluginReportScreenItemProperties.Number) _itemProperties;
+                item.setManualFormat(value);
+                
+            }
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Date)
+            {
+                final EJPluginReportScreenItemProperties.Date item = (EJPluginReportScreenItemProperties.Date) _itemProperties;
+                item.setManualFormat(value);
+                
+            }
+        }
+        
+        
         else if (name.equals(ELEMENT_SCREEN_LINE_STYLE))
         {
             if (_itemProperties instanceof EJPluginReportScreenItemProperties.Line)
@@ -204,6 +262,7 @@ public class ScreenItemHandler extends EntireJTagHandler
                 
             }
         }
+        
         else if (name.equals(ELEMENT_SCREEN_LOCALE_FORMAT))
         {
             if (_itemProperties instanceof EJPluginReportScreenItemProperties.Number)

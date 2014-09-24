@@ -227,7 +227,11 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
 
         int style = SWT.NONE;
 
-        if (properties.getType() != EJReportScreenItemType.LINE)
+        if (properties.getType() == EJReportScreenItemType.LINE || properties.getType() == EJReportScreenItemType.RECTANGLE)
+        {
+            style = SWT.NONE;
+        }
+        else
         {
             style = SWT.BORDER;
         }
@@ -271,7 +275,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             @Override
             public void mouseDoubleClick(MouseEvent e)
             {
-                
+
                 editor.select(properties);
                 editor.expand(properties);
             }
@@ -279,14 +283,14 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             @Override
             public void mouseDown(MouseEvent e)
             {
-               
+
                 transfer.setSelection(new StructuredSelection(dragObjectMove));
             }
+
             @Override
             public void mouseUp(MouseEvent e)
             {
-                
-                
+
                 block.moveAbove(null);
             }
 
@@ -298,7 +302,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             @Override
             public void mouseDoubleClick(MouseEvent e)
             {
-                
+
                 editor.select(properties);
                 editor.expand(properties);
             }
@@ -306,14 +310,14 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             @Override
             public void mouseDown(MouseEvent e)
             {
-               
+
                 transfer.setSelection(new StructuredSelection(dragObjectMove));
             }
+
             @Override
             public void mouseUp(MouseEvent e)
             {
-                
-                
+
                 block.moveAbove(null);
             }
         });
@@ -426,8 +430,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
             block.setCursor(MOVE);
             resize.setImage(null);
             move.setImage(null);
-            
-            
+
             block.setToolTipText(line.getName());
             dragSourceMoveLine.setTransfer(new Transfer[] { transfer });
             dragSourceMoveLine.addDragListener(dragMoveAdapter);
@@ -452,13 +455,57 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
                             e.gc.setLineStyle(SWT.LINE_SOLID);
                             break;
                     }
-                    
-                    if(line.getLineDirection()==LineDirection.TO_DOWN)
+
+                    if (line.getLineDirection() == LineDirection.TO_DOWN)
                         e.gc.drawLine(0, 0, block.getBounds().width <= lineWidth ? 0 : block.getBounds().width, block.getBounds().height <= lineWidth ? 0
                                 : block.getBounds().height);
                     else
-                        e.gc.drawLine(0, block.getBounds().height <= lineWidth ? 0
-                                : block.getBounds().height, block.getBounds().width <= lineWidth ? 0 : block.getBounds().width, 0);
+                        e.gc.drawLine(0, block.getBounds().height <= lineWidth ? 0 : block.getBounds().height,
+                                block.getBounds().width <= lineWidth ? 0 : block.getBounds().width, 0);
+
+                }
+            });
+        }
+        if (properties.getType() == EJReportScreenItemType.RECTANGLE)
+        {
+            final EJPluginReportScreenItemProperties.Rectangle line = (EJPluginReportScreenItemProperties.Rectangle) properties;
+            final DragSource dragSourceMoveLine = new DragSource(block, DND.DROP_MOVE | DND.DROP_COPY);
+            block.setCursor(MOVE);
+            resize.setImage(null);
+            move.setImage(null);
+
+            block.setToolTipText(line.getName());
+            dragSourceMoveLine.setTransfer(new Transfer[] { transfer });
+            dragSourceMoveLine.addDragListener(dragMoveAdapter);
+            hint.setVisible(false);
+            block.addPaintListener(new PaintListener()
+            {
+                public void paintControl(PaintEvent e)
+                {
+                    int lineWidth = (int) Math.ceil(line.getLineWidth());
+                    e.gc.setLineWidth(lineWidth);
+
+                    switch (line.getLineStyle())
+                    {
+                        case DOTTED:
+                            e.gc.setLineStyle(SWT.LINE_DOT);
+                            break;
+                        case DASHED:
+                            e.gc.setLineStyle(SWT.LINE_DASH);
+                            break;
+
+                        default:
+                            e.gc.setLineStyle(SWT.LINE_SOLID);
+                            break;
+                    }
+
+                    int x = lineWidth > 1 ? lineWidth : 0;
+                    int y = lineWidth > 1 ? lineWidth : 0;
+                    if(line.getRadius()==0)
+                        e.gc.drawRectangle(x, y, block.getBounds().width - (lineWidth + x), block.getBounds().height - (lineWidth + y));
+                    else
+                        e.gc.drawRoundRectangle(x, y, block.getBounds().width - (lineWidth + x), block.getBounds().height - (lineWidth + y), line.getRadius(), line.getRadius());
+
                 }
             });
         }

@@ -152,6 +152,9 @@ public class EJReportScreenItemContainer
             case LINE:
                 itemProperties = new EJPluginReportScreenItemProperties.Line(_blockProperties);
                 break;
+            case RECTANGLE:
+                itemProperties = new EJPluginReportScreenItemProperties.Rectangle(_blockProperties);
+                break;
                 
             default:
                 return null;
