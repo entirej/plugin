@@ -18,8 +18,6 @@
 package org.entirej.framework.plugin.reports.reader;
 
 import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
-import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
-import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
@@ -28,6 +26,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.L
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
 import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
@@ -37,8 +36,7 @@ import org.xml.sax.SAXException;
 public class ScreenItemHandler extends EntireJTagHandler
 {
     private EJPluginReportScreenItemProperties _itemProperties;
-    private EJPluginReportProperties           _formProperties;
-    private EJPluginReportBlockProperties      _blockProperties;
+    private EJPluginReportScreenProperties      _blockProperties;
     
     private static final String                ELEMENT_ITEM                  = "screenitem";
     private static final String                ELEMENT_SCREEN_X              = "x";
@@ -59,9 +57,8 @@ public class ScreenItemHandler extends EntireJTagHandler
     private static final String                ELEMENT_SCREEN_LINE_DIRECTION = "lineDirection";
     private static final String                ELEMENT_SCREEN_RECT_RADIUS    = "rectRadius";
     
-    public ScreenItemHandler(EJPluginReportBlockProperties blockProperties)
+    public ScreenItemHandler(EJPluginReportScreenProperties blockProperties)
     {
-        _formProperties = blockProperties.getReportProperties();
         _blockProperties = blockProperties;
         
     }
@@ -80,7 +77,7 @@ public class ScreenItemHandler extends EntireJTagHandler
             
             String itemname = attributes.getValue("name");
             
-            _itemProperties = _blockProperties.getLayoutScreenProperties().getScreenItemContainer().createItem(screenItemType, itemname, -1);
+            _itemProperties = _blockProperties.getScreenItemContainer().createItem(screenItemType, itemname, -1);
             
         }
         

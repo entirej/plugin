@@ -459,7 +459,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
-            return adapter.cast(new  ReportScreenPreviewImpl(source));
+            if(source.getScreenType()==EJReportScreenType.FORM_LATOUT)
+                return adapter.cast(new  ReportScreenPreviewImpl(source));
         }
         return null;
     }

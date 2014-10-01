@@ -28,6 +28,7 @@ import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
@@ -39,8 +40,10 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
+import org.entirej.framework.reports.enumerations.EJReportScreenType;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
 {
@@ -224,34 +227,80 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             endTAG(buffer, "itemList");
             
             // Now add the block items
-            startTAG(buffer, "screenItemList");
+            if(layoutScreenProperties.getScreenType()==EJReportScreenType.FORM_LATOUT)
             {
-                addBlockScreenItemProperties(blockProperties.getLayoutScreenProperties().getScreenItemContainer(), buffer);
-            }
-            endTAG(buffer, "screenItemList");
-            
-            BlockGroup group = layoutScreenProperties.getSubBlocks();
-            startOpenTAG(buffer, "blockGroup");
-            {
+                startTAG(buffer, "screenItemList");
+                {
+                    addBlockScreenItemProperties(blockProperties.getLayoutScreenProperties().getScreenItemContainer(), buffer);
+                }
+                endTAG(buffer, "screenItemList");
                 
-                closeOpenTAG(buffer);
-                List<EJPluginReportBlockProperties> allBlockProperties = group.getAllBlockProperties();
-                for (EJPluginReportBlockProperties blockProps : allBlockProperties)
+                BlockGroup group = layoutScreenProperties.getSubBlocks();
+                startOpenTAG(buffer, "blockGroup");
                 {
                     
-                    if (blockProps.isReferenceBlock())
+                    closeOpenTAG(buffer);
+                    List<EJPluginReportBlockProperties> allBlockProperties = group.getAllBlockProperties();
+                    for (EJPluginReportBlockProperties blockProps : allBlockProperties)
                     {
-                        // FIXME
-                        // addReferencedBlockProperties(blockProps, buffer);
+                        
+                        if (blockProps.isReferenceBlock())
+                        {
+                            // FIXME
+                            // addReferencedBlockProperties(blockProps, buffer);
+                        }
+                        else
+                        {
+                            addBlockProperties(blockProps, buffer);
+                        }
+                        continue;
                     }
-                    else
-                    {
-                        addBlockProperties(blockProps, buffer);
-                    }
-                    continue;
                 }
+                endTAG(buffer, "blockGroup");
             }
-            endTAG(buffer, "blockGroup");
+            else  if(layoutScreenProperties.getScreenType()==EJReportScreenType.TABLE_LAYOUT)
+            {
+                startTAG(buffer, "screenColumnList");
+                
+                EJReportColumnContainer columnContainer = layoutScreenProperties.getColumnContainer();
+                List<EJPluginReportColumnProperties> allColumnProperties = columnContainer.getAllColumnProperties();
+                for (EJPluginReportColumnProperties column : allColumnProperties)
+                {
+                    startOpenTAG(buffer, "columnitem");
+                    {
+                        writePROPERTY(buffer, "name", column.getName());
+                        writePROPERTY(buffer, "showHeader", column.isShowHeader()+"");
+                        writePROPERTY(buffer, "showFooter", column.isShowFooter()+"");
+                        closeOpenTAG(buffer);
+                        
+                        {
+                            startTAG(buffer, "headerScreen");
+                            writeStringTAG(buffer, "width", column.getHeaderScreen().getWidth() + "");
+                            writeStringTAG(buffer, "height", column.getHeaderScreen().getHeight() + "");
+                            addBlockScreenItemProperties(column.getHeaderScreen().getScreenItemContainer(), buffer);
+                            endTAG(buffer, "headerScreen");
+                        }
+                        
+                        {
+                            startTAG(buffer, "detailScreen");
+                            writeStringTAG(buffer, "width", column.getDetailScreen().getWidth() + "");
+                            writeStringTAG(buffer, "height", column.getDetailScreen().getHeight() + "");
+                            addBlockScreenItemProperties(column.getDetailScreen().getScreenItemContainer(), buffer);
+                            endTAG(buffer, "detailScreen");
+                        }
+                        
+                        {
+                            startTAG(buffer, "footerScreen");
+                            writeStringTAG(buffer, "width", column.getFooterScreen().getWidth() + "");
+                            writeStringTAG(buffer, "height", column.getFooterScreen().getHeight() + "");
+                            addBlockScreenItemProperties(column.getFooterScreen().getScreenItemContainer(), buffer);
+                            endTAG(buffer, "footerScreen");
+                        }
+                    }
+                    endTAG(buffer, "columnitem");
+                }
+                endTAG(buffer, "screenColumnList");
+            }
         }
         endTAG(buffer, "block");
     }

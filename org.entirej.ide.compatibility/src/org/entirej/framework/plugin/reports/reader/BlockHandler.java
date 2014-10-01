@@ -47,6 +47,7 @@ public class BlockHandler extends EntireJTagHandler
     private static final String           ELEMENT_BLOCK_GROUP        = "blockGroup";
     private static final String           ELEMENT_ITEM               = "item";
     private static final String           ELEMENT_SCREEN_ITEM        = "screenitem";
+    private static final String           ELEMENT_SCREEN_COLUMN      = "columnitem";
     
     public BlockHandler(EJPluginReportProperties formProperties)
     {
@@ -80,7 +81,12 @@ public class BlockHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_SCREEN_ITEM))
         {
-            setDelegate(new ScreenItemHandler(_blockProperties));
+            setDelegate(new ScreenItemHandler(_blockProperties.getLayoutScreenProperties()));
+            return;
+        }
+        else if (name.equals(ELEMENT_SCREEN_COLUMN))
+        {
+            setDelegate(new ScreenColumnHandler(_blockProperties));
             return;
         }
         else if (name.equals(ELEMENT_BLOCK_GROUP))
@@ -188,7 +194,6 @@ public class BlockHandler extends EntireJTagHandler
             }
             return;
         }
-    
         
         if (_blockProperties == null || !_blockProperties.isReferenceBlock())
         {
