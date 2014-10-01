@@ -52,6 +52,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     static final Image                    ITEMS_SPACE = EJUIImages.getImage(EJUIImages.DESC_ITEMS_SPACE);
     private final ReportDesignTreeSection treeSection;
     private final ReportBlockGroupNode blockGroupNode;
+    private boolean forColumnSection;
     private AbstractMarkerNodeValidator   validator   = new AbstractMarkerNodeValidator()
                                                       {
 
@@ -84,6 +85,13 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         this.treeSection = treeSection;
         this.blockGroupNode = node;
     }
+    public ReportScreenNode(ReportDesignTreeSection treeSection,AbstractNode<?> parent, EJPluginReportScreenProperties group)
+    {
+        super(parent, group);
+        this.treeSection = treeSection;
+        this.blockGroupNode = null;
+        forColumnSection = true;
+    }
 
     @Override
     public String getName()
@@ -101,7 +109,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             styledString.append(" : ", StyledString.DECORATIONS_STYLER);
             styledString.append(source.getScreenType().toString(), StyledString.QUALIFIER_STYLER);
         }
-        if(source.getScreenType()!=EJReportScreenType.NONE)
+        if(source.getScreenType()==EJReportScreenType.FORM_LATOUT)
         {
             styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
             styledString.append("(width,height) = ("+source.getWidth()+" ,"+source.getHeight()+")",StyledString.DECORATIONS_STYLER);
@@ -174,7 +182,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                treeSection.refresh(blockGroupNode);
+                if(blockGroupNode!=null)
+                    treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -246,7 +255,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                treeSection.refresh(blockGroupNode);
+                if(blockGroupNode!=null)
+                    treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -296,7 +306,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                treeSection.refresh(blockGroupNode);
+                if(blockGroupNode!=null)
+                    treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -346,7 +357,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                treeSection.refresh(blockGroupNode);
+                if(blockGroupNode!=null)
+                    treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -417,7 +429,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
                 treeSection.expand(ReportScreenNode.this);
-                treeSection.refresh(blockGroupNode);
+                if(blockGroupNode!=null)
+                    treeSection.refresh(blockGroupNode);
             }
 
             @Override
@@ -427,10 +440,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             }
         };
 
-
-        descriptors.add(rendererDescriptor);
-        descriptors.add(xDescriptor);
-        descriptors.add(yDescriptor);
+        if(!forColumnSection)
+        {
+            descriptors.add(rendererDescriptor);
+            
+            descriptors.add(xDescriptor);
+            descriptors.add(yDescriptor);
+        }
+        
         descriptors.add(widthDescriptor);
         descriptors.add(heightDescriptor);
         return descriptors.toArray(new AbstractDescriptor<?>[0]);
@@ -438,9 +455,11 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
     public <S> S getAdapter(Class<S> adapter)
     {
+       
+        
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
-            return getParent().getAdapter(adapter);
+            return adapter.cast(new  ReportScreenPreviewImpl(source));
         }
         return null;
     }
@@ -464,8 +483,16 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
 
-        nodes.add(new ReportBlockScreenItemsGroupNode(treeSection, this));
-         nodes.add(blockGroupNode.createScreenGroupNode(this,source.getSubBlocks()));
+        if(source.getScreenType()==EJReportScreenType.FORM_LATOUT)
+        {
+            nodes.add(new ReportBlockScreenItemsGroupNode(treeSection, this,forColumnSection));
+            if(blockGroupNode!=null)
+                nodes.add(blockGroupNode.createScreenGroupNode(this,source.getSubBlocks()));
+        }
+        else if (source.getScreenType()==EJReportScreenType.TABLE_LAYOUT)
+        {
+            nodes.add(new ReportBlockColumnGroupNode(treeSection, this));
+        }
         return nodes.toArray(new AbstractNode<?>[0]);
     }
 
@@ -475,6 +502,9 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         return false;
     }
 
+    
+   
+    
     @Override
     public Action[] getActions()
     {

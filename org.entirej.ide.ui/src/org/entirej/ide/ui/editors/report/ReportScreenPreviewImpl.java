@@ -63,7 +63,7 @@ import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 
-public class ReportBlockPreviewImpl implements IReportPreviewProvider
+public class ReportScreenPreviewImpl implements IReportPreviewProvider
 {
     protected final Color                         COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
     protected final Color                         COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
@@ -72,11 +72,11 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
     protected final Color                         COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
     protected final Cursor                        RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
     protected final Cursor                        MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-    protected final EJPluginReportBlockProperties properties;
+    protected final EJPluginReportScreenProperties properties;
 
     private int                                   x, y;
 
-    public ReportBlockPreviewImpl(EJPluginReportBlockProperties properties)
+    public ReportScreenPreviewImpl(EJPluginReportScreenProperties properties)
     {
         this.properties = properties;
     }
@@ -113,7 +113,7 @@ public class ReportBlockPreviewImpl implements IReportPreviewProvider
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
-        EJPluginReportScreenProperties layoutScreenProperties = properties.getLayoutScreenProperties();
+        EJPluginReportScreenProperties layoutScreenProperties = properties;
 
         reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), layoutScreenProperties.getHeight());
 

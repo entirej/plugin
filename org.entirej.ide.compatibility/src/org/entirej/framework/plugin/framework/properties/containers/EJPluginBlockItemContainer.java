@@ -118,7 +118,7 @@ public class EJPluginBlockItemContainer implements EJDevBlockItemDisplayProperti
      * 
      * @return A set containing all IItemProperties contained within this block.
      * 
-     * @see com.ottomobil.dsys.sprintframework.dataobjects.properties.interfaces.IBlockProperties#addItemProperties(IItemProperties)
+     * @see com.ottomobil.dsys.sprintframework.dataobjects.properties.interfaces.IBlockProperties#addColumnProperties(IItemProperties)
      * @see com.ottomobil.dsys.sprintframework.dataobjects.properties.interfaces.IBlockProperties#getItemProperties()
      */
     public List<EJPluginBlockItemProperties> getAllItemProperties()

@@ -182,6 +182,12 @@ public class EJReportBlockContainer
             {
                 return props;
             }
+            
+            EJPluginReportBlockProperties blockProperties = props.getLayoutScreenProperties().getSubBlocks().getBlockProperties(blockName);
+            if (blockProperties != null)
+            {
+                return blockProperties;
+            }
         }
         return null;
     }

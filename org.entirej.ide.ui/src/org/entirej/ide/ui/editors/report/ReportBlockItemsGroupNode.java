@@ -58,6 +58,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
@@ -387,7 +388,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         {
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
-            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(source.getBlockProperties().getReportProperties(), "Default Query Value")
+            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(source.getBlockProperties().getReportProperties(),source.getBlockProperties(), "Default Query Value")
             {
                 @Override
                 public String getValue()
@@ -611,11 +612,11 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         };
     }
 
-    private static class ItemDefaultValue extends AbstractGroupDescriptor
+    public static class ItemDefaultValue extends AbstractGroupDescriptor
     {
 
         final EJPluginReportProperties formProp;
-
+        final EJPluginReportBlockProperties blockProperties; 
         @Override
         public boolean isExpand()
         {
@@ -648,10 +649,16 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
         TYPE entry;
 
-        public ItemDefaultValue(EJPluginReportProperties formProp, String lable)
+        public ItemDefaultValue(EJPluginReportProperties formProp,EJPluginReportBlockProperties blockProperties, String lable)
         {
             super(lable);
             this.formProp = formProp;
+            this.blockProperties = blockProperties;
+        }
+        
+        public String getDefaultBlockValue()
+        {
+            return null;
         }
 
         public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
@@ -867,7 +874,11 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     public Object[] getElements(Object inputElement)
                                     {
 
-                                        return formProp.getBlockNames().toArray();
+                                        List<String> blockNames = new ArrayList<String>(formProp.getBlockNamesWithParents(blockProperties));
+                                        
+                                        
+                                        
+                                        return blockNames.toArray();
                                     }
                                 });
                                 itemViewer.setContentProvider(new IStructuredContentProvider()
@@ -896,6 +907,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     }
                                 });
 
+                                
+                                blockViewer.setSelection(new StructuredSelection(getDefaultBlockValue()));
                                 blockViewer.addSelectionChangedListener(new ISelectionChangedListener()
                                 {
 
@@ -955,168 +968,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
                         } };
 
-                    case CLASS_FIELD:
-                        return new AbstractDescriptor<?>[] { new AbstractCustomDescriptor<String>("Class Field", "")
-                        {
-                            Text        classNameText;
-                            ComboViewer itemViewer;
-
-                            @Override
-                            public void setValue(String value)
-                            {
-                                if (value != null && value.trim().length() > 0)
-                                {
-                                    ItemDefaultValue.this.setValue(String.format("%s:%s", entry.name(), value));
-                                }
-                                else
-                                    ItemDefaultValue.this.setValue("");
-                            }
-
-                            @Override
-                            public String getValue()
-                            {
-                                String value = ItemDefaultValue.this.getValue();
-                                if (value != null && value.trim().length() > 0 && value.indexOf(":") > 0)
-                                {
-                                    return value.substring(value.indexOf(":") + 1);
-                                }
-                                return "";
-                            }
-
-                            private void updateUIState()
-                            {
-                                if (classNameText != null && itemViewer != null)
-                                {
-                                    itemViewer.getCombo().setEnabled(classNameText.getText().length() > 0);
-                                }
-                            }
-
-                            public boolean isUseLabel()
-                            {
-                                return true;
-                            }
-
-                            public Control createBody(Composite parent, GridData gd)
-                            {
-                                String defaultValue = getValue();
-                                Composite body = new Composite(parent, SWT.NULL);
-                                gd.verticalSpan = 2;
-                                body.setLayoutData(gd);
-                                if (isUseLabel())
-                                    new Label(parent, SWT.NULL);
-                                else
-                                {
-                                    gd.horizontalSpan = 2;
-                                }
-                                GridLayout layout = new GridLayout(2, false);
-                                layout.marginWidth = 0;
-                                layout.marginRight = 0;
-                                layout.marginLeft = 0;
-                                layout.marginHeight = 0;
-                                layout.marginTop = 0;
-                                layout.marginBottom = 0;
-                                body.setLayout(layout);
-                                classNameText = new Text(body, SWT.BORDER);
-
-                                classNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-                                classNameText.setEditable(false);
-                                Button typeSelect = new Button(body, SWT.PUSH);
-                                typeSelect.setText("Type");
-                                typeSelect.addSelectionListener(new SelectionAdapter()
-                                {
-                                    @Override
-                                    public void widgetSelected(SelectionEvent e)
-                                    {
-                                        IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), formProp.getJavaProject().getResource(),
-                                                IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
-                                        if (type != null)
-                                        {
-                                            classNameText.setText(type.getFullyQualifiedName('$'));
-                                            itemViewer.setInput(type.getFullyQualifiedName('$'));
-                                            itemViewer.getCombo().select(-1);
-
-                                            updateUIState();
-                                        }
-                                    }
-                                });
-
-                                itemViewer = new ComboViewer(body, SWT.READ_ONLY);
-                                GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-                                gridData.horizontalSpan = 2;
-                                itemViewer.getCombo().setLayoutData(gridData);
-
-                                itemViewer.setContentProvider(new IStructuredContentProvider()
-                                {
-
-                                    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-                                    {
-                                    }
-
-                                    public void dispose()
-                                    {
-                                    }
-
-                                    public Object[] getElements(Object inputElement)
-                                    {
-
-                                        List<String> itemNames = new ArrayList<String>();
-
-                                        if (inputElement != null && ((String) inputElement).trim().length() > 0)
-                                        {
-                                            try
-                                            {
-                                                IType findType = formProp.getJavaProject().findType((String) inputElement);
-                                                if (findType != null)
-                                                {
-                                                    itemNames.addAll(JavaAccessUtils.getStaticFieldsOfType(findType));
-                                                }
-                                            }
-                                            catch (JavaModelException e)
-                                            {
-                                                // ignore
-                                            }
-                                            catch (CoreException e)
-                                            {
-                                                // ignore
-                                            }
-                                        }
-
-                                        return itemNames.toArray();
-
-                                    }
-                                });
-
-                                if (defaultValue != null)
-                                {
-                                    int lastIndexOf = defaultValue.lastIndexOf(".");
-                                    if (lastIndexOf > 0)
-                                    {
-                                        classNameText.setText(defaultValue.substring(0, lastIndexOf));
-                                        itemViewer.setInput(classNameText.getText());
-                                        itemViewer.setSelection(new StructuredSelection(defaultValue.substring(lastIndexOf + 1)));
-                                    }
-                                }
-
-                                itemViewer.addSelectionChangedListener(new ISelectionChangedListener()
-                                {
-
-                                    public void selectionChanged(SelectionChangedEvent event)
-                                    {
-
-                                        String lov = classNameText.getText();
-                                        if (itemViewer.getSelection() instanceof IStructuredSelection)
-                                        {
-                                            String item = (String) ((IStructuredSelection) itemViewer.getSelection()).getFirstElement();
-                                            setValue(String.format("%s.%s", lov, item));
-                                        }
-                                    }
-                                });
-
-                                updateUIState();
-                                return body;
-                            }
-
-                        } };
+                    
 
                 }
             return new AbstractDescriptor<?>[0];

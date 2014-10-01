@@ -23,22 +23,30 @@ import java.util.List;
 
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
 
 public class EJReportScreenItemContainer
 {
     private List<EJPluginReportScreenItemProperties> _itemProperties;
     private EJPluginReportBlockProperties            _blockProperties;
+    private EJPluginReportScreenProperties           _screenProperties;
     
-    public EJReportScreenItemContainer(EJPluginReportBlockProperties blockProperties)
+    public EJReportScreenItemContainer(EJPluginReportBlockProperties blockProperties, EJPluginReportScreenProperties screenProperties)
     {
         _blockProperties = blockProperties;
+        _screenProperties = screenProperties;
         _itemProperties = new ArrayList<EJPluginReportScreenItemProperties>();
     }
     
     public EJPluginReportBlockProperties getBlockProperties()
     {
         return _blockProperties;
+    }
+    
+    public EJPluginReportScreenProperties getScreenProperties()
+    {
+        return _screenProperties;
     }
     
     public void addItemProperties(EJPluginReportScreenItemProperties itemProperties)
@@ -155,7 +163,7 @@ public class EJReportScreenItemContainer
             case RECTANGLE:
                 itemProperties = new EJPluginReportScreenItemProperties.Rectangle(_blockProperties);
                 break;
-                
+            
             default:
                 return null;
         }

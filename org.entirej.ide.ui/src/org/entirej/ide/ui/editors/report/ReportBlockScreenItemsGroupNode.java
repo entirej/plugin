@@ -19,41 +19,25 @@
 package org.entirej.ide.ui.editors.report;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
-import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
-import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
-import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineDirection;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
@@ -66,9 +50,7 @@ import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractCustomDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
@@ -92,19 +74,21 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
     private final ReportDesignTreeSection treeSection;
     private final AbstractEJReportEditor  editor;
-
-    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, ReportScreenNode node)
+    boolean forColumn ;
+    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, ReportScreenNode node,boolean forColumn)
     {
         super(node, node.getSource().getScreenItemContainer());
         this.editor = treeSection.getEditor();
         this.treeSection = treeSection;
+        this.forColumn = forColumn;
     }
 
-    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, AbstractNode<?> node, EJReportScreenItemContainer container)
+    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, AbstractNode<?> node, EJReportScreenItemContainer container,boolean forColumn)
     {
         super(node, container);
         this.editor = treeSection.getEditor();
         this.treeSection = treeSection;
+        this.forColumn = forColumn;
     }
 
     @Override
@@ -682,7 +666,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
             {
                 final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-                ItemValueProvider valueProvider = new ItemValueProvider(source.getBlockProperties().getReportProperties(), "Value Provider")
+                ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(source.getBlockProperties().getReportProperties(),source.getBlockProperties(), "Value Provider")
                 {
                     @Override
                     public String getValue()
@@ -1359,8 +1343,18 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     {
                         // set default width/height
 
-                        itemProperties.setWidth(80);
-                        itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 22);
+                        
+                       if(forColumn)
+                       {
+                           itemProperties.setWidth(source.getScreenProperties().getWidth());
+                           itemProperties.setHeight(source.getScreenProperties().getHeight());
+                       }
+                       else
+                       {
+                           itemProperties.setWidth(80);
+                           itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 22);
+                       }
+                        
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
 
@@ -1390,371 +1384,6 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             }
 
         };
-    }
-
-    private static class ItemValueProvider extends AbstractGroupDescriptor
-    {
-
-        final EJPluginReportProperties formProp;
-
-        @Override
-        public boolean isExpand()
-        {
-            return true;
-        }
-
-        enum TYPE
-        {
-            EMPTY, BLOCK_ITEM, FORM_PARAMETER, APP_PARAMETER;
-
-            public String toString()
-            {
-                switch (this)
-                {
-                    case EMPTY:
-                        return "";
-                    case BLOCK_ITEM:
-                        return "Block Item";
-                    case APP_PARAMETER:
-                        return "Applcation Level Parameter";
-                    case FORM_PARAMETER:
-                        return "Form Parameter";
-                    default:
-                        return super.toString();
-                }
-            }
-        }
-
-        TYPE entry;
-
-        public ItemValueProvider(EJPluginReportProperties formProp, String lable)
-        {
-            super(lable);
-            this.formProp = formProp;
-        }
-
-        public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
-        {
-            final ComboViewer comboViewer = new ComboViewer(parent, SWT.READ_ONLY | SWT.BORDER);
-
-            gd.verticalSpan = 2;
-            gd.widthHint = 100;
-            gd.horizontalIndent = 0;
-            comboViewer.getCombo().setLayoutData(gd);
-
-            comboViewer.setContentProvider(new IStructuredContentProvider()
-            {
-
-                public void inputChanged(Viewer arg0, Object arg1, Object arg2)
-                {
-                }
-
-                public void dispose()
-                {
-                }
-
-                public Object[] getElements(Object arg0)
-                {
-
-                    return TYPE.values();
-                }
-            });
-
-            comboViewer.setInput(new Object());
-
-            String value = getValue();
-            if (value != null && value.trim().length() > 0 && value.indexOf(":") > 0)
-            {
-                try
-                {
-                    entry = TYPE.valueOf(value.substring(0, value.indexOf(":")));
-
-                }
-                catch (IllegalArgumentException e)
-                {
-
-                }
-
-            }
-            else
-            {
-                entry = TYPE.EMPTY;
-            }
-            comboViewer.setSelection(new StructuredSelection(entry));
-            comboViewer.addSelectionChangedListener(new ISelectionChangedListener()
-            {
-
-                public void selectionChanged(SelectionChangedEvent event)
-                {
-                    TYPE newEntry = null;
-                    if (comboViewer.getSelection() instanceof IStructuredSelection)
-                        newEntry = (TYPE) ((IStructuredSelection) comboViewer.getSelection()).getFirstElement();
-                    if ((newEntry == null && entry != null) || (!newEntry.equals(entry)))
-                    {
-                        entry = newEntry;
-                        setValue("");// clear old value
-                        handler.refresh();
-                    }
-
-                }
-            });
-
-            return comboViewer.getCombo();
-        }
-
-        public AbstractDescriptor<?>[] getDescriptors()
-        {
-            if (entry != null)
-                switch (entry)
-                {
-                    case FORM_PARAMETER:
-                    case APP_PARAMETER:
-                        return new AbstractDescriptor<?>[] { new AbstractTextDropDownDescriptor("Parameter")
-                        {
-
-                            public String[] getOptions()
-                            {
-                                List<String> list = new ArrayList<String>();
-                                list.add("");
-                                if (entry == ItemValueProvider.TYPE.FORM_PARAMETER)
-                                {
-                                    Collection<EJPluginApplicationParameter> allFormParameters = formProp.getAllReportParameters();
-                                    for (EJPluginApplicationParameter parameter : allFormParameters)
-                                    {
-                                        list.add(parameter.getName());
-                                    }
-                                }
-                                if (entry == ItemValueProvider.TYPE.APP_PARAMETER)
-                                {
-                                    Collection<EJPluginApplicationParameter> allFormParameters = formProp.getEntireJProperties()
-                                            .getAllApplicationLevelParameters();
-                                    for (EJPluginApplicationParameter parameter : allFormParameters)
-                                    {
-                                        list.add(parameter.getName());
-                                    }
-                                }
-
-                                return list.toArray(new String[0]);
-                            }
-
-                            public String getOptionText(String t)
-                            {
-                                return t;
-                            }
-
-                            @Override
-                            public void setValue(String value)
-                            {
-                                if (value != null && value.trim().length() > 0)
-                                {
-                                    ItemValueProvider.this.setValue(String.format("%s:%s", entry.name(), value));
-                                }
-                                else
-                                    ItemValueProvider.this.setValue("");
-
-                            }
-
-                            @Override
-                            public String getValue()
-                            {
-                                String value = ItemValueProvider.this.getValue();
-                                if (value != null && value.trim().length() > 0 && value.indexOf(":") > 0)
-                                {
-                                    return value.substring(value.indexOf(":") + 1);
-                                }
-                                return "";
-                            }
-                        } };
-                    case BLOCK_ITEM:
-                        return new AbstractDescriptor<?>[] { new AbstractCustomDescriptor<String>("Block Item", "")
-                        {
-                            ComboViewer blockViewer;
-                            ComboViewer itemViewer;
-
-                            @Override
-                            public void setValue(String value)
-                            {
-                                if (value != null && value.trim().length() > 0)
-                                {
-                                    ItemValueProvider.this.setValue(String.format("%s:%s", entry.name(), value));
-                                }
-                                else
-                                    ItemValueProvider.this.setValue("");
-                            }
-
-                            @Override
-                            public String getValue()
-                            {
-                                String value = ItemValueProvider.this.getValue();
-                                if (value != null && value.trim().length() > 0 && value.indexOf(":") > 0)
-                                {
-                                    return value.substring(value.indexOf(":") + 1);
-                                }
-                                return "";
-                            }
-
-                            private void updateUIState()
-                            {
-                                if (blockViewer != null && itemViewer != null)
-                                {
-                                    itemViewer.getCombo().setEnabled(blockViewer.getCombo().getSelectionIndex() != -1);
-                                }
-                            }
-
-                            public boolean isUseLabel()
-                            {
-                                return true;
-                            }
-
-                            public Control createBody(Composite parent, GridData gd)
-                            {
-                                String defaultValue = getValue();
-                                Composite body = new Composite(parent, SWT.NULL);
-                                gd.verticalSpan = 2;
-                                body.setLayoutData(gd);
-                                if (isUseLabel())
-                                    new Label(parent, SWT.NULL);
-                                else
-                                {
-                                    gd.horizontalSpan = 2;
-                                }
-                                GridLayout layout = new GridLayout(1, true);
-                                layout.marginWidth = 0;
-                                layout.marginRight = 0;
-                                layout.marginLeft = 0;
-                                layout.marginHeight = 0;
-                                layout.marginTop = 0;
-                                layout.marginBottom = 0;
-                                body.setLayout(layout);
-                                GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-                                blockViewer = new ComboViewer(body, SWT.READ_ONLY);
-                                blockViewer.getCombo().setLayoutData(gridData);
-                                itemViewer = new ComboViewer(body, SWT.READ_ONLY);
-                                itemViewer.getCombo().setLayoutData(gridData);
-
-                                blockViewer.setContentProvider(new IStructuredContentProvider()
-                                {
-
-                                    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-                                    {
-                                    }
-
-                                    public void dispose()
-                                    {
-                                    }
-
-                                    public Object[] getElements(Object inputElement)
-                                    {
-
-                                        return formProp.getBlockNames().toArray();
-                                    }
-                                });
-                                itemViewer.setContentProvider(new IStructuredContentProvider()
-                                {
-
-                                    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-                                    {
-                                    }
-
-                                    public void dispose()
-                                    {
-                                    }
-
-                                    public Object[] getElements(Object inputElement)
-                                    {
-                                        Collection<EJPluginReportItemProperties> allItemProperties = formProp.getBlockProperties((String) inputElement)
-                                                .getAllItemProperties();
-                                        List<String> blockItemNames = new ArrayList<String>();
-                                        for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
-                                        {
-
-                                            blockItemNames.add(ejItemProperties.getName());
-                                        }
-                                        return blockItemNames.toArray();
-
-                                    }
-                                });
-
-                                blockViewer.addSelectionChangedListener(new ISelectionChangedListener()
-                                {
-
-                                    public void selectionChanged(SelectionChangedEvent event)
-                                    {
-                                        String lov = null;
-                                        if (blockViewer.getSelection() instanceof IStructuredSelection)
-                                        {
-                                            lov = (String) ((IStructuredSelection) blockViewer.getSelection()).getFirstElement();
-
-                                        }
-                                        itemViewer.getCombo().select(-1);
-
-                                        itemViewer.setInput(lov);
-                                        if (itemViewer.getCombo().getItemCount() > 0)
-                                        {
-                                            itemViewer.setSelection(new StructuredSelection(itemViewer.getCombo().getItem(0)));
-                                        }
-                                        updateUIState();
-
-                                    }
-                                });
-
-                                blockViewer.setInput(new Object());
-                                if (defaultValue != null)
-                                {
-                                    String[] split = defaultValue.split("\\.");
-                                    if (split.length == 2)
-                                    {
-                                        blockViewer.setSelection(new StructuredSelection(split[0]));
-                                        itemViewer.setSelection(new StructuredSelection(split[1]));
-                                    }
-                                }
-                                IStructuredSelection selection = (IStructuredSelection) blockViewer.getSelection();
-                                if (selection.isEmpty())
-                                {
-                                    blockViewer.setSelection(new StructuredSelection(getDefaultBlockValue()));
-                                    itemViewer.setSelection(new StructuredSelection());
-                                }
-
-                                itemViewer.addSelectionChangedListener(new ISelectionChangedListener()
-                                {
-
-                                    public void selectionChanged(SelectionChangedEvent event)
-                                    {
-                                        if (blockViewer.getSelection() instanceof IStructuredSelection)
-                                        {
-                                            String lov = (String) ((IStructuredSelection) blockViewer.getSelection()).getFirstElement();
-                                            if (itemViewer.getSelection() instanceof IStructuredSelection)
-                                            {
-                                                String item = (String) ((IStructuredSelection) itemViewer.getSelection()).getFirstElement();
-                                                setValue(String.format("%s.%s", lov, item));
-                                            }
-
-                                        }
-
-                                    }
-                                });
-
-                                updateUIState();
-                                return body;
-                            }
-
-                        } };
-
-                }
-            return new AbstractDescriptor<?>[0];
-        }
-
-        @Override
-        public String getValue()
-        {
-            return null;
-        }
-
-        public String getDefaultBlockValue()
-        {
-            return null;
-        }
-
     }
 
 }

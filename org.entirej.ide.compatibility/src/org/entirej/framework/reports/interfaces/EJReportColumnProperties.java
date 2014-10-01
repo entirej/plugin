@@ -22,36 +22,20 @@ import java.util.Collection;
 
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
 
-public interface EJReportScreenProperties extends Serializable
+public interface EJReportColumnProperties extends Serializable
 {
+ 
+    public String getName();
     
     public EJReportBlockProperties getBlockProperties();
     
-    /**
-     * @return Returns the width of this canvas
-     */
-    public int getWidth();
+    boolean isShowHeader();
     
-    /**
-     * @return Returns the height of this canvas
-     */
-    public int getHeight();
+    boolean isShowFooter();
     
-    /**
-     * @return Returns the X of this canvas
-     */
-    public int getX();
+    EJReportScreenProperties getHeaderScreen();
     
-    /**
-     * @return Returns the Y of this canvas
-     */
-    public int getY();
+    EJReportScreenProperties getDetailScreen();
     
-    public EJReportScreenType getScreenType();
-    
-    Collection<? extends EJReportScreenItemProperties> getScreenItems();
-    
-    public Collection<? extends EJReportBlockProperties> getAllSubBlocks();
-    
-    public Collection<? extends EJReportColumnProperties> getAllColumns();
+    EJReportScreenProperties getFooterScreen();
 }

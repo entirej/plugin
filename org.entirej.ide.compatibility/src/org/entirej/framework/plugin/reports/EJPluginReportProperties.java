@@ -34,6 +34,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportProperties;
 
@@ -415,7 +416,50 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         
         return blockNames;
     }
+    public List<String> getBlockNamesWithParents(EJPluginReportBlockProperties sub)
+    {
+        List<String> blockNames = new ArrayList<String>();
+        
+        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        {
+          findParents(sub.getName(), properties.getLayoutScreenProperties().getSubBlocks(),blockNames);
+        }
+        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        {
+            
+            
+            
+            blockNames.add(properties.getName()); 
+        }
+        
+        
+        if(!blockNames.contains(sub.getName()))
+        {
+            blockNames.add(sub.getName());
+        }
+        
+        return blockNames;
+    }
 
+    
+    private boolean findParents(String child, BlockGroup bGroup,List<String> blockNames)
+    {
+        List<EJPluginReportBlockProperties> allBlockProperties = bGroup.getAllBlockProperties();
+        for (EJPluginReportBlockProperties properties : allBlockProperties)
+        {
+            if(child.equals(properties.getName()))
+            {
+                return true;
+            }
+            if(findParents(child, properties.getLayoutScreenProperties().getSubBlocks(),blockNames))
+            {
+                blockNames.add(properties.getName());
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     public EJReportBlockItemContainer getBlockProperties(String blockName)
     {

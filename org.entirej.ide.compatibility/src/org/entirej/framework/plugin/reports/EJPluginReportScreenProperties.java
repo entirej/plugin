@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
+import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.reports.interfaces.EJReportColumnProperties;
 import org.entirej.framework.reports.interfaces.EJReportScreenProperties;
 
 public class EJPluginReportScreenProperties implements EJReportScreenProperties
@@ -13,19 +15,19 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     
     private EJPluginReportBlockProperties blockProperties;
     
-    private int                     x, y, width, height;
-    private EJReportScreenType      screenType = EJReportScreenType.NONE;
+    private int                           x, y, width, height;
+    private EJReportScreenType            screenType = EJReportScreenType.NONE;
     
-    private final BlockGroup        subBlocks  = new BlockGroup("Sub Blocks");
+    private final BlockGroup              subBlocks  = new BlockGroup("Sub Blocks");
     
-    private EJReportScreenItemContainer    _screenItemContainer;
-    
-    
+    private EJReportScreenItemContainer   _screenItemContainer;
+    private EJReportColumnContainer       _columnContainer;
     
     public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
         this.blockProperties = blockProperties;
-        _screenItemContainer = new EJReportScreenItemContainer(blockProperties);
+        _screenItemContainer = new EJReportScreenItemContainer(blockProperties,this);
+        _columnContainer  = new EJReportColumnContainer(blockProperties);
     }
     
     @Override
@@ -101,7 +103,6 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
         return subBlocks;
     }
     
- 
     @Override
     public Collection<EJPluginReportScreenItemProperties> getScreenItems()
     {
@@ -111,5 +112,16 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     public EJReportScreenItemContainer getScreenItemContainer()
     {
         return _screenItemContainer;
+    }
+    
+    public EJReportColumnContainer getColumnContainer()
+    {
+        return _columnContainer;
+    }
+    
+    @Override
+    public Collection<? extends EJReportColumnProperties> getAllColumns()
+    {
+        return _columnContainer.getAllColumnProperties();
     }
 }
