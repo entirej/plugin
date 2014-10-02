@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
 
 public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 {
@@ -41,6 +42,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
     protected final Color                          COLOR_LINE         = new Color(Display.getCurrent(), new RGB(118, 118, 118));
     protected final Color                          COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
     protected final Color                          COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+    protected final Color                          COLOR_BLACK        = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
     protected final Color                          COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 
     protected final EJPluginReportScreenProperties properties;
@@ -175,9 +177,12 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         {
             public void paintControl(PaintEvent e)
             {
-                boolean addX = false;
+            
+                
+                int colLocation = 0;
                 for (EJPluginReportColumnProperties column : columnProperties)
                 {
+                   
                     e.gc.setLineStyle(SWT.LINE_DASH);
                     e.gc.setForeground(COLOR_LINE);
                     int x = column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
@@ -185,26 +190,95 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                             .getFooterScreen().getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column
                             .getDetailScreen().getWidth());
 
+                            
+                            
+                    EJReportBorderProperties borderProperties  = null;        
                     if (header && !footer && column.isShowHeader())
                     {
-                        e.gc.drawText(column.getName(), addX ? x + (x / 4) : (x / 4), (composite.getBounds().height / 2) - 10);
+                        e.gc.drawText(column.getName(), colLocation+(x/2), (composite.getBounds().height / 2) - 10);
+                        borderProperties = column.getHeaderBorderProperties();
                     }
                     if (!header && footer && column.isShowFooter())
                     {
-                        e.gc.drawText(column.getName(), addX ? x + (x / 4) : (x / 4), (composite.getBounds().height / 2) - 10);
+                        e.gc.drawText(column.getName(), colLocation+(x/2), (composite.getBounds().height / 2) - 10);
+                        borderProperties = column.getFooterBorderProperties();
                     }
                     if (!header && !footer)
                     {
-                        e.gc.drawText(column.getName(), addX ? x + (x / 4) : (x / 4), (composite.getBounds().height / 2) - 10);
+                        e.gc.drawText(column.getName(), colLocation+(x/2), (composite.getBounds().height / 2) - 10);
+                        borderProperties = column.getDetailBorderProperties();
                     }
 
-                    e.gc.setLineWidth(1);
-                  
+                    
+                    if(borderProperties!=null)
+                    {
+                        if(!borderProperties.isShowRightLine())
+                        {
+                            //add dummy maker
+                            e.gc.setLineWidth(1);
+                            
 
-                    e.gc.drawLine(x, 0, x, composite.getBounds().height);
+                            e.gc.drawLine( (colLocation+x)-1, 0, (colLocation+x)-1, composite.getBounds().height);
+                        }
+                        
+                        int lineWidth = (int) Math.ceil(borderProperties.getLineWidth());
+                        e.gc.setLineWidth(lineWidth);
+                        e.gc.setForeground(COLOR_BLACK);
+                        
+                        
+                        switch (borderProperties.getLineStyle())
+                        {
+                            case DOTTED:
+                                e.gc.setLineStyle(SWT.LINE_DOT);
+                                break;
+                            case DASHED:
+                                e.gc.setLineStyle(SWT.LINE_DASH);
+                                break;
 
-                    addX = true;
+                            default:
+                                e.gc.setLineStyle(SWT.LINE_SOLID);
+                                break;
+                        }
+                        if(borderProperties.isShowTopLine())
+                        {
+                           
 
+                            e.gc.drawLine(colLocation, 0, colLocation+x, 0);
+                        }
+                        if(borderProperties.isShowBottomLine())
+                        {
+                           
+                            
+                            
+                            e.gc.drawLine(colLocation, composite.getBounds().height-lineWidth, colLocation+x, composite.getBounds().height-lineWidth);
+                        }
+                        if(borderProperties.isShowLeftLine())
+                        {
+                            
+                            
+                            
+                            e.gc.drawLine(colLocation, 0, colLocation, composite.getBounds().height);
+                        }
+                        
+                        if(borderProperties.isShowRightLine())
+                        {
+                            
+
+                            e.gc.drawLine((colLocation+x)-lineWidth, 0, (colLocation+x)-lineWidth, composite.getBounds().height);
+                        }
+                        
+                        
+                    }
+                    else
+                    {
+                        e.gc.setLineWidth(1);
+                        
+
+                        e.gc.drawLine((colLocation+x)-1, 0, (colLocation+x)-1, composite.getBounds().height);
+                    }
+                   
+
+                    colLocation+=x;
                 }
 
             }
