@@ -79,6 +79,7 @@ public class EJUIImages
     public static final ImageDescriptor DESC_NEWEJPRJ_WIZ            = create(PATH_WIZBAN, "newejprj_wiz.png");                                        //$NON-NLS-1$
     public static final ImageDescriptor DESC_NEWEJFRM_WIZ            = create(PATH_WIZBAN, "newejfrm_wiz.png");                                        //$NON-NLS-1$
     public static final ImageDescriptor DESC_NEWEJPOJO_SERV_WIZ      = create(PATH_WIZBAN, "newservpojo_wiz.png");                                     //$NON-NLS-1$
+    public static final ImageDescriptor DESC_NEWEJREPORT_SERV_WIZ      = create(PATH_WIZBAN, "newejreport_wiz.png");                                     //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_HELP                    = create(PATH_ETOOLS16, "help.gif");                                              //$NON-NLS-1$
 

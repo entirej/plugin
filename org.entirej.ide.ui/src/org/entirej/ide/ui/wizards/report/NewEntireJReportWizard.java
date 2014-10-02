@@ -37,7 +37,7 @@ public class NewEntireJReportWizard extends NewWizard implements IExecutableExte
 
     public NewEntireJReportWizard()
     {
-        setDefaultPageImageDescriptor(EJUIImages.DESC_NEWEJFRM_WIZ);
+        setDefaultPageImageDescriptor(EJUIImages.DESC_NEWEJREPORT_SERV_WIZ);
         setDialogSettings(EJUIPlugin.getDefault().getDialogSettings());
         setWindowTitle(EJUIMessages.NewReportWizard_title);
 
