@@ -24,7 +24,7 @@ import org.entirej.framework.reports.enumerations.EJReportScreenType;
 
 public interface EJReportColumnProperties extends Serializable
 {
- 
+    
     public String getName();
     
     public EJReportBlockProperties getBlockProperties();
@@ -38,4 +38,10 @@ public interface EJReportColumnProperties extends Serializable
     EJReportScreenProperties getDetailScreen();
     
     EJReportScreenProperties getFooterScreen();
+    
+    EJReportBorderProperties getHeaderBorderProperties();
+    
+    EJReportBorderProperties getDetailBorderProperties();
+    
+    EJReportBorderProperties getFooterBorderProperties();
 }

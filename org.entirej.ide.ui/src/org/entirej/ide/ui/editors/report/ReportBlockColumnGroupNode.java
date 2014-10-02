@@ -19,6 +19,7 @@
 package org.entirej.ide.ui.editors.report;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -28,19 +29,27 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
+import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.FormNodeTag;
+import org.entirej.ide.ui.editors.report.ReportBlockScreenItemsGroupNode.ScreenItemNode;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 import org.entirej.ide.ui.nodes.INodeRenameProvider;
@@ -272,48 +281,272 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 }
             };
         }
-        
+
         @Override
         public AbstractNode<?>[] getChildren()
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-            
-            if(source.isShowHeader())
-            nodes.add(new ReportScreenNode(treeSection, this,  source.getHeaderScreen()){
-                
-                @Override
-                public String getName()
+
+            if (source.isShowHeader())
+                nodes.add(new ReportScreenNode(treeSection, this, source.getHeaderScreen())
                 {
-                    return "Column Header";
-                }
-               
-                
-            });
-            nodes.add(new ReportScreenNode(treeSection, this,  source.getDetailScreen()){
-                
+
+                    @Override
+                    public String getName()
+                    {
+                        return "Column Header";
+                    }
+
+                    @Override
+                    public AbstractDescriptor<?>[] getNodeDescriptors()
+                    {
+
+                        return addBorderDescriptors(super.getNodeDescriptors(), ScreenColumnNode.this.source.getHeaderBorderProperties());
+                    }
+
+                });
+            nodes.add(new ReportScreenNode(treeSection, this, source.getDetailScreen())
+            {
+
                 @Override
                 public String getName()
                 {
                     return "Detail";
                 }
-                
-                
-            });
-            if(source.isShowFooter())
-            nodes.add(new ReportScreenNode(treeSection, this,  source.getFooterScreen()){
-                
+
                 @Override
-                public String getName()
+                public AbstractDescriptor<?>[] getNodeDescriptors()
                 {
-                    return "Column Footer";
+
+                    return addBorderDescriptors(super.getNodeDescriptors(), ScreenColumnNode.this.source.getDetailBorderProperties());
                 }
-                
-                
+
             });
-            
+            if (source.isShowFooter())
+                nodes.add(new ReportScreenNode(treeSection, this, source.getFooterScreen())
+                {
+
+                    @Override
+                    public String getName()
+                    {
+                        return "Column Footer";
+                    }
+
+                    @Override
+                    public AbstractDescriptor<?>[] getNodeDescriptors()
+                    {
+
+                        return addBorderDescriptors(super.getNodeDescriptors(), ScreenColumnNode.this.source.getFooterBorderProperties());
+                    }
+
+                });
+
             return nodes.toArray(new AbstractNode<?>[0]);
         }
-        
+
+        AbstractDescriptor<?>[] addBorderDescriptors(AbstractDescriptor<?>[] current, final EJPluginReportBorderProperties borderProperties)
+        {
+
+            List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>(Arrays.asList(current));
+
+            AbstractTextDropDownDescriptor lineStyle = new AbstractTextDropDownDescriptor("Border Line Style")
+            {
+                @Override
+                public String getValue()
+                {
+                    return borderProperties.getLineStyle().name();
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> options = new ArrayList<String>();
+                    for (EJReportBorderProperties.LineStyle formats : EJReportBorderProperties.LineStyle.values())
+                    {
+                        options.add(formats.name());
+                    }
+                    return options.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+
+                    return EJReportBorderProperties.LineStyle.valueOf(t).toString();
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    borderProperties.setLineStyle(EJReportBorderProperties.LineStyle.valueOf(value));
+
+                }
+
+            };
+
+            final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Border Line Width")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The width <b>(in pixels)</b> of the Line.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        borderProperties.setLineWidth(Double.parseDouble(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        borderProperties.setLineWidth(1);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(ScreenColumnNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(borderProperties.getLineWidth());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            AbstractTextDropDownDescriptor vaDescriptor = new AbstractTextDropDownDescriptor("Border Visual Attributes", "")
+            {
+                List<String> visualAttributeNames = new ArrayList<String>(editor.getReportProperties().getEntireJProperties().getVisualAttributesContainer()
+                                                          .getVisualAttributeNames());
+
+                @Override
+                public void setValue(String value)
+                {
+                    borderProperties.setVisualAttributeName(value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return borderProperties.getVisualAttributeName();
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> list = new ArrayList<String>();
+
+                    list.add("");
+
+                    list.addAll(visualAttributeNames);
+
+                    if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                    {
+                        list.add(getValue());
+                    }
+                    return list.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+                    if (t.length() > 0 && !visualAttributeNames.contains(t))
+                    {
+                        return String.format("Undefined !< %s >", t);
+                    }
+
+                    return t;
+                }
+            };
+
+            descriptors.add(lineStyle);
+            descriptors.add(widthDescriptor);
+            descriptors.add(vaDescriptor);
+            descriptors.add(new AbstractBooleanDescriptor("Border Top Line")
+            {
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    borderProperties.setShowTopLine(value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public Boolean getValue()
+                {
+                    return borderProperties.isShowTopLine();
+                }
+            });
+            descriptors.add(new AbstractBooleanDescriptor("Border Bottom Line")
+            {
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    borderProperties.setShowBottomLine(value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public Boolean getValue()
+                {
+                    return borderProperties.isShowBottomLine();
+                }
+            });
+            descriptors.add(new AbstractBooleanDescriptor("Border Left Line")
+            {
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    borderProperties.setShowLeftLine(value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public Boolean getValue()
+                {
+                    return borderProperties.isShowLeftLine();
+                }
+            });
+            descriptors.add(new AbstractBooleanDescriptor("Border Right Line")
+            {
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    borderProperties.setShowRightLine(value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public Boolean getValue()
+                {
+                    return borderProperties.isShowRightLine();
+                }
+            });
+
+            return descriptors.toArray(new AbstractDescriptor<?>[0]);
+
+        }
+
         @Override
         public boolean isLeaf()
         {
@@ -480,7 +713,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     {
                         // set default width/height
                         itemProperties.setName(dlg.getValue());
-                        
+
                         itemProperties.getHeaderScreen().setWidth(120);
                         itemProperties.getHeaderScreen().setHeight(30);
                         itemProperties.getDetailScreen().setWidth(120);

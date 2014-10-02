@@ -28,6 +28,7 @@ import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
@@ -44,6 +45,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
 {
@@ -227,7 +229,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             endTAG(buffer, "itemList");
             
             // Now add the block items
-            if(layoutScreenProperties.getScreenType()==EJReportScreenType.FORM_LATOUT)
+            if (layoutScreenProperties.getScreenType() == EJReportScreenType.FORM_LATOUT)
             {
                 startTAG(buffer, "screenItemList");
                 {
@@ -258,7 +260,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "blockGroup");
             }
-            else  if(layoutScreenProperties.getScreenType()==EJReportScreenType.TABLE_LAYOUT)
+            else if (layoutScreenProperties.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
             {
                 startTAG(buffer, "screenColumnList");
                 
@@ -269,14 +271,23 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     startOpenTAG(buffer, "columnitem");
                     {
                         writePROPERTY(buffer, "name", column.getName());
-                        writePROPERTY(buffer, "showHeader", column.isShowHeader()+"");
-                        writePROPERTY(buffer, "showFooter", column.isShowFooter()+"");
+                        writePROPERTY(buffer, "showHeader", column.isShowHeader() + "");
+                        writePROPERTY(buffer, "showFooter", column.isShowFooter() + "");
                         closeOpenTAG(buffer);
                         
                         {
                             startTAG(buffer, "headerScreen");
                             writeStringTAG(buffer, "width", column.getHeaderScreen().getWidth() + "");
                             writeStringTAG(buffer, "height", column.getHeaderScreen().getHeight() + "");
+                            
+                            EJPluginReportBorderProperties borderProperties = column.getHeaderBorderProperties();
+                            writeStringTAG(buffer, "showTopLine", borderProperties.isShowTopLine() + "");
+                            writeStringTAG(buffer, "showBottomLine", borderProperties.isShowBottomLine() + "");
+                            writeStringTAG(buffer, "showLeftLine", borderProperties.isShowLeftLine() + "");
+                            writeStringTAG(buffer, "showRightLine", borderProperties.isShowRightLine() + "");
+                            writeStringTAG(buffer, "lineWidth", borderProperties.getLineWidth() + "");
+                            writeStringTAG(buffer, "lineStyle", borderProperties.getLineStyle().name());
+                            writeStringTAG(buffer, "lineVA", borderProperties.getVisualAttributeName());
                             addBlockScreenItemProperties(column.getHeaderScreen().getScreenItemContainer(), buffer);
                             endTAG(buffer, "headerScreen");
                         }
@@ -285,6 +296,14 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                             startTAG(buffer, "detailScreen");
                             writeStringTAG(buffer, "width", column.getDetailScreen().getWidth() + "");
                             writeStringTAG(buffer, "height", column.getDetailScreen().getHeight() + "");
+                            EJPluginReportBorderProperties borderProperties = column.getDetailBorderProperties();
+                            writeStringTAG(buffer, "showTopLine", borderProperties.isShowTopLine() + "");
+                            writeStringTAG(buffer, "showBottomLine", borderProperties.isShowBottomLine() + "");
+                            writeStringTAG(buffer, "showLeftLine", borderProperties.isShowLeftLine() + "");
+                            writeStringTAG(buffer, "showRightLine", borderProperties.isShowRightLine() + "");
+                            writeStringTAG(buffer, "lineWidth", borderProperties.getLineWidth() + "");
+                            writeStringTAG(buffer, "lineStyle", borderProperties.getLineStyle().name());
+                            writeStringTAG(buffer, "lineVA", borderProperties.getVisualAttributeName());
                             addBlockScreenItemProperties(column.getDetailScreen().getScreenItemContainer(), buffer);
                             endTAG(buffer, "detailScreen");
                         }
@@ -293,6 +312,14 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                             startTAG(buffer, "footerScreen");
                             writeStringTAG(buffer, "width", column.getFooterScreen().getWidth() + "");
                             writeStringTAG(buffer, "height", column.getFooterScreen().getHeight() + "");
+                            EJPluginReportBorderProperties borderProperties = column.getFooterBorderProperties();
+                            writeStringTAG(buffer, "showTopLine", borderProperties.isShowTopLine() + "");
+                            writeStringTAG(buffer, "showBottomLine", borderProperties.isShowBottomLine() + "");
+                            writeStringTAG(buffer, "showLeftLine", borderProperties.isShowLeftLine() + "");
+                            writeStringTAG(buffer, "showRightLine", borderProperties.isShowRightLine() + "");
+                            writeStringTAG(buffer, "lineWidth", borderProperties.getLineWidth() + "");
+                            writeStringTAG(buffer, "lineStyle", borderProperties.getLineStyle().name());
+                            writeStringTAG(buffer, "lineVA", borderProperties.getVisualAttributeName());
                             addBlockScreenItemProperties(column.getFooterScreen().getScreenItemContainer(), buffer);
                             endTAG(buffer, "footerScreen");
                         }
@@ -359,19 +386,19 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     case LINE:
                     {
                         final EJPluginReportScreenItemProperties.Line line = (EJPluginReportScreenItemProperties.Line) itemProps;
-                        writeStringTAG(buffer, "lineWidth", line.getLineWidth()+"");
+                        writeStringTAG(buffer, "lineWidth", line.getLineWidth() + "");
                         writeStringTAG(buffer, "lineStyle", line.getLineStyle().name());
                         writeStringTAG(buffer, "lineDirection", line.getLineDirection().name());
                     }
-                    break;
+                        break;
                     case RECTANGLE:
                     {
                         final EJPluginReportScreenItemProperties.Rectangle line = (EJPluginReportScreenItemProperties.Rectangle) itemProps;
-                        writeStringTAG(buffer, "lineWidth", line.getLineWidth()+"");
+                        writeStringTAG(buffer, "lineWidth", line.getLineWidth() + "");
                         writeStringTAG(buffer, "lineStyle", line.getLineStyle().name());
-                        writeStringTAG(buffer, "rectRadius",  line.getRadius()+"");
+                        writeStringTAG(buffer, "rectRadius", line.getRadius() + "");
                     }
-                    break;
+                        break;
                     case NUMBER:
                     {
                         final EJPluginReportScreenItemProperties.Number number = (EJPluginReportScreenItemProperties.Number) itemProps;

@@ -2,6 +2,7 @@ package org.entirej.framework.plugin.reports;
 
 import org.entirej.framework.reports.enumerations.EJReportScreenType;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
+import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
 import org.entirej.framework.reports.interfaces.EJReportColumnProperties;
 
 public class EJPluginReportColumnProperties implements EJReportColumnProperties
@@ -16,6 +17,10 @@ public class EJPluginReportColumnProperties implements EJReportColumnProperties
     private EJPluginReportScreenProperties header;
     private EJPluginReportScreenProperties detail;
     private EJPluginReportScreenProperties footer;
+    
+    private EJPluginReportBorderProperties headerBorderProperties = new EJPluginReportBorderProperties();
+    private EJPluginReportBorderProperties detailBorderProperties = new EJPluginReportBorderProperties();
+    private EJPluginReportBorderProperties footerBorderProperties = new EJPluginReportBorderProperties();
     
     public EJPluginReportColumnProperties(EJPluginReportBlockProperties blockProperties)
     {
@@ -81,4 +86,24 @@ public class EJPluginReportColumnProperties implements EJReportColumnProperties
     {
         this.name = name;
     }
+    
+    @Override
+    public EJPluginReportBorderProperties getHeaderBorderProperties()
+    {
+        return headerBorderProperties;
+    }
+    
+    @Override
+    public EJPluginReportBorderProperties getDetailBorderProperties()
+    {
+        return detailBorderProperties;
+    }
+    
+    
+    @Override
+    public EJPluginReportBorderProperties getFooterBorderProperties()
+    {
+        return footerBorderProperties;
+    }
+   
 }
