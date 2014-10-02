@@ -103,7 +103,7 @@
             contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
             default="true"
             extensions="ejreport"
-            icon="icons/obj16/form.png"
+            icon="icons/obj16/report_16.png"
             id="org.entirej.ide.ui.editors.ej.report"
             name="%org.entirej.ide.ui.editors.ej.report.name">
          <contentTypeBinding
@@ -232,7 +232,7 @@
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.report.NewEntireJReportWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
-            icon="icons/etools16/newejform_wiz.png"
+            icon="icons/etools16/newejreport_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEntireJReportWizard"
             name="%new.entirejReport.name"
             project="false">
@@ -246,6 +246,14 @@
       <actionSet
             id="org.entirej.ide.ui.ActionSet"
             label="EntireJ">
+         <action
+               class="org.entirej.ide.ui.wizards.report.NewReportAction"
+               icon="icons/etools16/newejreport_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.NewReportAction"
+               label="%new.entirejReport.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejReport.description">
+         </action>
          <action
                class="org.entirej.ide.ui.wizards.form.NewRefLovAction"
                icon="icons/etools16/newejreflov_wiz.png"
@@ -277,14 +285,6 @@
                label="%new.entirejForm.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejForm.description">
-         </action>
-         <action
-               class="org.entirej.ide.ui.wizards.report.NewReportAction"
-               icon="icons/etools16/newejform_wiz.png"
-               id="org.entirej.ide.ui.wizards.report.NewReportAction"
-               label="%new.entirejReport.name"
-               toolbarPath="entirejGroup"
-               tooltip="%new.entirejReport.description">
          </action>
          <action
                class="org.entirej.ide.ui.wizards.service.NewPojoServiceAction"

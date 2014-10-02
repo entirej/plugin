@@ -245,7 +245,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
     private class ReportNode extends AbstractNode<EJPluginReportProperties> implements NodeOverview
     {
-        private final Image                 REPORT    = EJUIImages.getImage(EJUIImages.DESC_FORM);
+        private final Image                 REPORT    = EJUIImages.getImage(EJUIImages.DESC_REPORT);
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
                                                       {
 

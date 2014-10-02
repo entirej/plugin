@@ -136,6 +136,7 @@ public class EJUIImages
     public static final ImageDescriptor DESC_TABLE                   = create(PATH_OBJ16, "table.gif");                                                //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_FORM                    = create(PATH_OBJ16, "form.png");                                                 //$NON-NLS-1$
+    public static final ImageDescriptor DESC_REPORT                    = create(PATH_OBJ16, "report_16.png");                                                 //$NON-NLS-1$
     public static final ImageDescriptor DESC_OBJGROUP                = create(PATH_OBJ16, "object_group.png");                                         //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_LOV_DEF                 = create(PATH_OBJ16, "lov_def.png");                                              //$NON-NLS-1$
