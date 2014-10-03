@@ -9,10 +9,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.entirej.framework.core.service.EJBlockService;
-import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
-import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
 import org.entirej.framework.reports.interfaces.EJReportItemProperties;
 import org.entirej.ide.core.EJCoreLog;
@@ -185,7 +183,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         return null;
     }
     
-    public EJPluginEntireJProperties getEntireJProperties()
+    public EJPluginEntireJReportProperties getEntireJProperties()
     {
         return _reportProperties.getEntireJProperties();
     }

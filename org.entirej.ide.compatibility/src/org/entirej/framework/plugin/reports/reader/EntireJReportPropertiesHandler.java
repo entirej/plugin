@@ -34,7 +34,7 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
     private static final String            CONNECTION_FACTORY_CLASS_NAME     = "connectionFactoryClassName";
     private static final String            TRANSLATOR_CLASS_NAME             = "translatorClassName";
     private static final String            APPLICATION_LEVEL_PARAMETER       = "appicationLevelParameter";
-    private static final String            FORMS_PACKAGE                     = "formsPackage";
+    private static final String            FORMS_PACKAGE                     = "reportPackage";
     
 
     

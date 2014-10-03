@@ -51,6 +51,7 @@ public class EJUIMessages extends NLS
     public static String NodeAction_help;
 
     public static String EJPropertiesPage_title;
+    public static String EJReportPropertiesPage_title;
     public static String EJDefinedPropertiesPage_title;
     public static String EJRenderersPage_title;
     public static String EJMenuPage_title;

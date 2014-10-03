@@ -110,6 +110,17 @@
                contentTypeId="org.entirej.ide.ui.editors.ej.form.file">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="org.entirej.ide.ui.editors.prop.EJReportPropertiesEditor"
+            contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
+            default="true"
+            icon="icons/etools16/entirej.png"
+            id="org.entirej.ide.ui.editors.ej.report.properties"
+            name="%org.entirej.ide.ui.editors.ej.report.properties.name">
+         <contentTypeBinding
+               contentTypeId="org.entirej.ide.ui.editors.ej.report.properties.file">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
@@ -147,6 +158,12 @@
             file-extensions="ejreport"
             id="org.entirej.ide.ui.editors.ej.report.file"
             name="%org.entirej.ide.ui.editors.ej.report.file.name"
+            priority="high">
+      </content-type>
+      <content-type
+            file-names="report.ejprop"
+            id="org.entirej.ide.ui.editors.ej.report.properties.file"
+            name="%org.entirej.ide.ui.editors.ej.report.properties.file.name"
             priority="high">
       </content-type>
    </extension>

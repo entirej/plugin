@@ -101,7 +101,7 @@ public class EJPluginEntireJReportPropertiesLoader
         {
             try
             {
-                properties = EntirejPropertiesUtils.retrieveEntirejProperties(javaProject);
+                properties = EntirejReportPropertiesUtils.retrieveEntirejProperties(javaProject);
                 WEAK_LOADERS.put(javaProject, properties);
             }
             catch (CoreException e)

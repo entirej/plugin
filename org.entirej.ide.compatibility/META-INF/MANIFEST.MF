@@ -32,5 +32,6 @@ Export-Package: org.entirej.framework.plugin,
  org.entirej.framework.reports.actionprocessor,
  org.entirej.framework.reports.actionprocessor.interfaces,
  org.entirej.framework.reports.enumerations,
- org.entirej.framework.reports.interfaces
+ org.entirej.framework.reports.interfaces,
+ org.entirej.framework.reports.properties
 Bundle-ActivationPolicy: lazy

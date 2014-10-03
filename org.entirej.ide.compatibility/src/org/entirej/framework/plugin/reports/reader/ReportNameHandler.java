@@ -19,9 +19,9 @@ package org.entirej.framework.plugin.reports.reader;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
-import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
+import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
+import org.entirej.framework.plugin.reports.EntirejReportPropertiesUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -33,9 +33,9 @@ public class ReportNameHandler extends EntireJTagHandler
     private String              reportName;
     private String              reportDisplayName;
     
-    public EJPluginEntireJProperties createNewEntireJPluginProperties(IJavaProject javaProject) throws CoreException
+    public EJPluginEntireJReportProperties createNewEntireJPluginProperties(IJavaProject javaProject) throws CoreException
     {
-        return EntirejPropertiesUtils.retrieveEntirejProperties(javaProject);
+        return EntirejReportPropertiesUtils.retrieveEntirejProperties(javaProject);
     }
     
     public void startLocalElement(String name, Attributes attributes) throws SAXException

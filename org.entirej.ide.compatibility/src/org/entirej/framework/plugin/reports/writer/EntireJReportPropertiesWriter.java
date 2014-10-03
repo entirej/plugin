@@ -72,7 +72,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
                     String name = formPackageNames.next();
                     if (name != null && name.trim().length() > 0)
                     {
-                        startOpenTAG(buffer, "formsPackage");
+                        startOpenTAG(buffer, "reportPackage");
                         {
                             writePROPERTY(buffer, "name", name);
                         }

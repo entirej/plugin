@@ -20,23 +20,26 @@ package org.entirej.framework.plugin.reports;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.reports.reader.EntireJReportPropertiesReader;
+import org.entirej.framework.plugin.reports.writer.EntireJReportPropertiesWriter;
 
-public class EntirejPropertiesUtils
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+
+public class EntirejReportPropertiesUtils
 {
-    private static final String ENTIREJ_PROPERTY_FILE_NAME = "report.ejprop";
+    private static final String ENTIREJ_PROPERTY_FILE_NAME = "src/report.ejprop";
     
     public static void varifyEntirejProperties(IJavaProject project) throws CoreException
     {
-        IFile file = project.getProject().getFile("src/report.ejprop");
-        if (file == null)
+        IFile file = project.getProject().getFile(ENTIREJ_PROPERTY_FILE_NAME);
+        if (!file.exists())
         {
-            throw new CoreException(new Status(IStatus.ERROR, EntireJFrameworkPlugin.PLUGIN_ID, "Unable to load the " + ENTIREJ_PROPERTY_FILE_NAME
-                    + " from project path"));
+            createDefaultFile(project);
         }
     }
     
@@ -44,16 +47,15 @@ public class EntirejPropertiesUtils
     {
         if (project == null) return null;
         
-        IFile file = project.getProject().getFile("src/report.ejprop");
-        if (file == null)
+        IFile file = project.getProject().getFile(ENTIREJ_PROPERTY_FILE_NAME);
+        if (!file.exists())
         {
-            throw new CoreException(new Status(IStatus.ERROR, EntireJFrameworkPlugin.PLUGIN_ID, "Unable to load the " + ENTIREJ_PROPERTY_FILE_NAME
-                    + " from project path"));
+            createDefaultFile(project);
         }
         try
         {
             EJPluginEntireJReportProperties entirejProperties = new EJPluginEntireJReportProperties(project);
-            EntireJReportPropertiesReader.readProperties(entirejProperties,project, file.getContents(),file);
+            EntireJReportPropertiesReader.readProperties(entirejProperties, project, file.getContents(), file);
             
             file = null;
             return entirejProperties;
@@ -63,5 +65,15 @@ public class EntirejPropertiesUtils
             throw new CoreException(new Status(IStatus.ERROR, EntireJFrameworkPlugin.PLUGIN_ID, e.getMessage(), e));
         }
         
+    }
+    
+    static IFile createDefaultFile(IJavaProject project) throws CoreException
+    {
+        IFile file = project.getProject().getFile(ENTIREJ_PROPERTY_FILE_NAME);
+        file.create(new ByteInputStream(new byte[0], 0), true, new NullProgressMonitor());
+        EJPluginEntireJReportProperties entirejProperties = new EJPluginEntireJReportProperties(project);
+        new EntireJReportPropertiesWriter().saveEntireJProperitesFile(entirejProperties, file, new NullProgressMonitor());
+        
+        return file;
     }
 }

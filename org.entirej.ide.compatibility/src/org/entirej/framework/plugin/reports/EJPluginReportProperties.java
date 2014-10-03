@@ -29,10 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
-import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginEntireJPropertiesLoader;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
@@ -94,9 +91,9 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
      * 
      * @return The name of the <b>EntireJProperties</b> file
      */
-    public EJPluginEntireJProperties getEntireJProperties()
+    public EJPluginEntireJReportProperties getEntireJProperties()
     {
-        return EJPluginEntireJPropertiesLoader.getEntireJProperties(getJavaProject());
+        return EJPluginEntireJReportPropertiesLoader.getEntireJProperties(getJavaProject());
     }
     
     /**
