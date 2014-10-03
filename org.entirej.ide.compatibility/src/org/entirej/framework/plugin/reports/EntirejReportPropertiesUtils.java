@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.reports;
 
+import java.io.ByteArrayInputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +30,6 @@ import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.reports.reader.EntireJReportPropertiesReader;
 import org.entirej.framework.plugin.reports.writer.EntireJReportPropertiesWriter;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 public class EntirejReportPropertiesUtils
 {
@@ -70,7 +71,7 @@ public class EntirejReportPropertiesUtils
     static IFile createDefaultFile(IJavaProject project) throws CoreException
     {
         IFile file = project.getProject().getFile(ENTIREJ_PROPERTY_FILE_NAME);
-        file.create(new ByteInputStream(new byte[0], 0), true, new NullProgressMonitor());
+        file.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
         EJPluginEntireJReportProperties entirejProperties = new EJPluginEntireJReportProperties(project);
         new EntireJReportPropertiesWriter().saveEntireJProperitesFile(entirejProperties, file, new NullProgressMonitor());
         
