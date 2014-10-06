@@ -37,7 +37,7 @@ public class FXCFRuntimeClasspathContainer implements IClasspathContainer
     public FXCFRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFFXPlugin.getDefault().getBundle(), new Path("/extlibs/"));
-        description = "EntireJ JavaFX CF [2.3.2] Runtime Libraries.";
+        description = "EntireJ JavaFX CF [2.3.3] Runtime Libraries.";
     }
 
     final String           description;
