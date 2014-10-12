@@ -6,9 +6,9 @@ import java.util.List;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
-import org.entirej.framework.reports.interfaces.EJReportColumnProperties;
-import org.entirej.framework.reports.interfaces.EJReportScreenProperties;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
+import org.entirej.framework.report.interfaces.EJReportColumnProperties;
+import org.entirej.framework.report.interfaces.EJReportScreenProperties;
 
 public class EJPluginReportScreenProperties implements EJReportScreenProperties
 {

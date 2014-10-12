@@ -1,7 +1,8 @@
 package org.entirej.framework.plugin.reports;
 
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
-import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EJPluginReportBorderProperties implements EJReportBorderProperties
 {
@@ -87,7 +88,7 @@ public class EJPluginReportBorderProperties implements EJReportBorderProperties
     }
     
     @Override
-    public EJCoreVisualAttributeProperties getVisualAttributeProperties()
+    public EJReportVisualAttributeProperties getVisualAttributeProperties()
     {
         // igmore this in PLUGIN
         return null;

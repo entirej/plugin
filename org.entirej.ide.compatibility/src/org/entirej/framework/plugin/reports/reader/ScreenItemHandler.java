@@ -27,9 +27,9 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.N
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
-import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
-import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
+import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenRotation;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

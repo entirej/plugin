@@ -37,7 +37,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
-import org.entirej.framework.reports.properties.EJReportVisualAttributeProperties;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EntireJReportPropertiesWriter extends AbstractXmlWriter
 {

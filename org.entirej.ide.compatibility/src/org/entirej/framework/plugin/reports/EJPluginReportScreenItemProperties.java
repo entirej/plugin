@@ -1,11 +1,11 @@
 package org.entirej.framework.plugin.reports;
 
-import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
-import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
-import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
-import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
-import org.entirej.framework.reports.interfaces.EJReportScreenItemProperties;
+import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenRotation;
+import org.entirej.framework.report.interfaces.EJReportScreenItemProperties;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public abstract class EJPluginReportScreenItemProperties implements EJReportScreenItemProperties
 {
@@ -26,7 +26,7 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     }
     
     @Override
-    public EJCoreVisualAttributeProperties getVisualAttributeProperties()
+    public EJReportVisualAttributeProperties getVisualAttributeProperties()
     {
         
         return null;

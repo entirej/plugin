@@ -44,9 +44,10 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
-import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
-import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
+import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
+import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -725,7 +726,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     }
 
                 };
-                serivceDescriptor.setBaseClass(EJBlockService.class.getName());
+                serivceDescriptor.setBaseClass(EJReportBlockService.class.getName());
                 AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
                         editor,
                         "Action Processor",

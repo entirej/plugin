@@ -8,11 +8,11 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
-import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
-import org.entirej.framework.reports.interfaces.EJReportItemProperties;
+import org.entirej.framework.report.interfaces.EJReportBlockProperties;
+import org.entirej.framework.report.interfaces.EJReportItemProperties;
+import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.core.EJCoreLog;
 
 public class EJPluginReportBlockProperties implements EJReportBlockProperties, BlockContainerItem
@@ -178,7 +178,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
 
     
     @Override
-    public EJBlockService<?> getBlockService()
+    public EJReportBlockService<?> getBlockService()
     {
         return null;
     }
@@ -203,7 +203,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
                 {
                     String typeErasure = Signature.getTypeErasure(Signature.toString(superInterface));
                     
-                    if (typeErasure != null && EJBlockService.class.getSimpleName().equals(typeErasure))
+                    if (typeErasure != null && EJReportBlockService.class.getSimpleName().equals(typeErasure))
                     {
                         String[] typeArguments = Signature.getTypeArguments(superInterface);
                         if (typeArguments.length == 1)

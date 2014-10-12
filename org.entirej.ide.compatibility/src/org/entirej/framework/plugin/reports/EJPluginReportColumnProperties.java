@@ -1,9 +1,8 @@
 package org.entirej.framework.plugin.reports;
 
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
-import org.entirej.framework.reports.interfaces.EJReportBlockProperties;
-import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
-import org.entirej.framework.reports.interfaces.EJReportColumnProperties;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
+import org.entirej.framework.report.interfaces.EJReportBlockProperties;
+import org.entirej.framework.report.interfaces.EJReportColumnProperties;
 
 public class EJPluginReportColumnProperties implements EJReportColumnProperties
 {

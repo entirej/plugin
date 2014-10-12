@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EntirejPluginPropertiesEnterpriseEdition;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesReader;
-import org.entirej.framework.plugin.framework.properties.reader.EntireJRendererReader;
 import org.entirej.framework.plugin.framework.properties.writer.EntireJPropertiesWriter;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJProject;

@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;

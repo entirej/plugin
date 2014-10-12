@@ -17,11 +17,10 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.reports.reader;
 
-import org.entirej.framework.core.enumerations.EJFontStyle;
-import org.entirej.framework.core.enumerations.EJFontWeight;
-import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
-import org.entirej.framework.reports.properties.EJReportVisualAttributeProperties;
+import org.entirej.framework.report.enumerations.EJReportFontStyle;
+import org.entirej.framework.report.enumerations.EJReportFontWeight;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -85,14 +84,14 @@ public class ReportVisualAttributeHandler extends EntireJTagHandler
         {
             if (value.length() > 0)
             {
-                _vaProperties.setFontWeight(EJFontWeight.valueOf(value));
+                _vaProperties.setFontWeight(EJReportFontWeight.valueOf(value));
             }
         }
         else if (name.equals(STYLE))
         {
             if (value.length() > 0)
             {
-                _vaProperties.setFontStyle(EJFontStyle.valueOf(value));
+                _vaProperties.setFontStyle(EJReportFontStyle.valueOf(value));
             }
         }
         else if (name.equals(FOREGROUND_COLOR))

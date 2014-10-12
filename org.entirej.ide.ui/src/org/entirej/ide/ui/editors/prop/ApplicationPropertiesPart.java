@@ -31,10 +31,10 @@ import org.entirej.framework.core.application.definition.interfaces.EJApplicatio
 import org.entirej.framework.core.interfaces.EJConnectionFactory;
 import org.entirej.framework.core.interfaces.EJTranslator;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
+import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractPackageDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 
 public class ApplicationPropertiesPart extends AbstractDescriptorPart
 {

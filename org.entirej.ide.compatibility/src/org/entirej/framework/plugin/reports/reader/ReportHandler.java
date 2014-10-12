@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
-import org.entirej.framework.reports.interfaces.EJReportProperties.ORIENTATION;
+import org.entirej.framework.report.interfaces.EJReportProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -206,7 +206,7 @@ public class ReportHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_REPORT_ORIENTATION))
         {
-            _reportProperties.setOrientation(ORIENTATION.valueOf(value));
+            _reportProperties.setOrientation(EJReportProperties.ORIENTATION.valueOf(value));
         }
     }
     

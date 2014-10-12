@@ -36,7 +36,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -45,7 +44,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 
 public class ReportPreviewImpl implements IReportPreviewProvider

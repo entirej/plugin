@@ -50,4 +50,11 @@ Export-Package: org.entirej.core.runtime,
  org.entirej.framework.dev.properties,
  org.entirej.framework.dev.properties.interfaces,
  org.entirej.framework.dev.renderer.definition,
- org.entirej.framework.dev.renderer.definition.interfaces
+ org.entirej.framework.dev.renderer.definition.interfaces,
+ org.entirej.framework.report,
+ org.entirej.framework.report.actionprocessor,
+ org.entirej.framework.report.actionprocessor.interfaces,
+ org.entirej.framework.report.enumerations,
+ org.entirej.framework.report.interfaces,
+ org.entirej.framework.report.properties,
+ org.entirej.framework.report.service

@@ -23,11 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -44,17 +40,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
@@ -83,7 +75,6 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.utils.JavaAccessUtils;
 
 public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemContainer> implements NodeMoveProvider
 {
@@ -625,7 +616,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
         enum TYPE
         {
-            EMPTY, BLOCK_ITEM, FORM_PARAMETER, APP_PARAMETER, CLASS_FIELD;
+            EMPTY, BLOCK_ITEM, REPORT_PARAMETER, APP_PARAMETER, CLASS_FIELD;
 
             public String toString()
             {
@@ -636,9 +627,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     case BLOCK_ITEM:
                         return "Block Item";
                     case APP_PARAMETER:
-                        return "Applcation Level Parameter";
-                    case FORM_PARAMETER:
-                        return "Form Parameter";
+                        return "Runtime Level Parameter";
+                    case REPORT_PARAMETER:
+                        return "Report Parameter";
                     case CLASS_FIELD:
                         return "Class Field";
                     default:
@@ -735,7 +726,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
             if (entry != null)
                 switch (entry)
                 {
-                    case FORM_PARAMETER:
+                    case REPORT_PARAMETER:
                     case APP_PARAMETER:
                         return new AbstractDescriptor<?>[] { new AbstractTextDropDownDescriptor("Parameter")
                         {
@@ -744,7 +735,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             {
                                 List<String> list = new ArrayList<String>();
                                 list.add("");
-                                if (entry == ItemDefaultValue.TYPE.FORM_PARAMETER)
+                                if (entry == ItemDefaultValue.TYPE.REPORT_PARAMETER)
                                 {
                                     Collection<EJPluginApplicationParameter> allFormParameters = formProp.getAllReportParameters();
                                     for (EJPluginApplicationParameter parameter : allFormParameters)

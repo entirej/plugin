@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
-import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.ide.core.EJCoreLog;
 

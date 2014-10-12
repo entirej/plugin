@@ -24,7 +24,7 @@ import java.util.List;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 
 public class EJReportScreenItemContainer
 {

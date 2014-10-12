@@ -19,22 +19,14 @@ package org.entirej.framework.plugin.reports.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
-import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
-import org.entirej.framework.plugin.framework.properties.reader.EJRWTEJApplicationPropertiesFixV1;
-import org.entirej.framework.plugin.framework.properties.reader.EJRWTRendererConfigFix;
-import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesHandler;
-import org.entirej.framework.plugin.framework.properties.reader.EntireJRendererReader;
-import org.entirej.framework.plugin.framework.properties.writer.EntireJPropertiesWriter;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.xml.sax.SAXException;
 

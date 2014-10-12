@@ -45,7 +45,6 @@ import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.EntirejPluginPropertiesEnterpriseEdition;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesReader;
-import org.entirej.framework.plugin.framework.properties.reader.EntireJRendererReader;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.core.project.EJPluginEntireJClassLoader;

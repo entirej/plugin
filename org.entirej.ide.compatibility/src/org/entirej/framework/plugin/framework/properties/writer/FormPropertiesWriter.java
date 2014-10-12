@@ -46,9 +46,9 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginInsertScreenItemProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovItemMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;

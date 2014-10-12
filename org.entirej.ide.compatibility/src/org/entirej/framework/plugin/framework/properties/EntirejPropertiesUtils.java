@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesReader;
-import org.entirej.framework.plugin.framework.properties.reader.EntireJRendererReader;
 import org.entirej.ide.core.project.EJProject;
 
 public class EntirejPropertiesUtils

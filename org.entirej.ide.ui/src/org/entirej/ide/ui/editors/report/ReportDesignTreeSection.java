@@ -60,9 +60,8 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.framework.reports.actionprocessor.EJDefaultReportActionProcessor;
-import org.entirej.framework.reports.actionprocessor.interfaces.EJReportActionProcessor;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
+import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;

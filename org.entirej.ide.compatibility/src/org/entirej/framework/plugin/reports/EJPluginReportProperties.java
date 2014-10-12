@@ -33,7 +33,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
-import org.entirej.framework.reports.interfaces.EJReportProperties;
+import org.entirej.framework.report.interfaces.EJReportProperties;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
 {

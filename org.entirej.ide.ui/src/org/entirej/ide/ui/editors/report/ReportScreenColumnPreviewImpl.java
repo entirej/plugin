@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.interfaces.EJReportBorderProperties;
 
 public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 {

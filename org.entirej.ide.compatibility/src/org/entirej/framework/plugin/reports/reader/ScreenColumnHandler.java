@@ -23,7 +23,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.interfaces.EJReportBorderProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

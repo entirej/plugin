@@ -50,8 +50,8 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkE
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevAppComponentRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
-import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.ide.ui.EJUIImages;

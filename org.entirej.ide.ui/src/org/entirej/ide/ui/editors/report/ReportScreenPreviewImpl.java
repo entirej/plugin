@@ -58,8 +58,8 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.L
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineDirection;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
-import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 

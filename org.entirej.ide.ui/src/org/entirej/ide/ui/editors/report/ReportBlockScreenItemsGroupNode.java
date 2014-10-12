@@ -43,9 +43,9 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.R
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.framework.reports.enumerations.EJReportScreenAlignment;
-import org.entirej.framework.reports.enumerations.EJReportScreenItemType;
-import org.entirej.framework.reports.enumerations.EJReportScreenRotation;
+import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenRotation;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;

@@ -30,9 +30,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
-import org.entirej.framework.reports.interfaces.EJEntireJReportProperties;
-import org.entirej.framework.reports.properties.EJReportVisualAttributeContainer;
-import org.entirej.framework.reports.properties.EJReportVisualAttributeProperties;
+import org.entirej.framework.report.interfaces.EJEntireJReportProperties;
+import org.entirej.framework.report.properties.EJReportVisualAttributeContainer;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EJPluginEntireJReportProperties implements EJEntireJReportProperties
 {

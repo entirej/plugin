@@ -24,7 +24,7 @@ import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandle
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

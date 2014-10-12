@@ -28,14 +28,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
-import org.entirej.framework.plugin.framework.properties.EntirejPluginPropertiesEnterpriseEdition;
-import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesReader;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.entirej.framework.plugin.reports.reader.EntireJReportPropertiesReader;
 import org.entirej.framework.plugin.reports.writer.EntireJReportPropertiesWriter;
 import org.entirej.ide.core.EJCoreLog;
-import org.entirej.ide.core.project.EJProject;
 import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
 

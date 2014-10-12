@@ -44,8 +44,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContaine
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
-import org.entirej.framework.reports.enumerations.EJReportScreenType;
-import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
 {

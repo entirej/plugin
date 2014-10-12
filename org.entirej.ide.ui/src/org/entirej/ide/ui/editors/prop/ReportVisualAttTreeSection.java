@@ -57,13 +57,13 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.editor.FormPage;
-import org.entirej.framework.core.enumerations.EJFontStyle;
-import org.entirej.framework.core.enumerations.EJFontWeight;
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.framework.reports.properties.EJReportVisualAttributeContainer;
-import org.entirej.framework.reports.properties.EJReportVisualAttributeProperties;
+import org.entirej.framework.report.enumerations.EJReportFontStyle;
+import org.entirej.framework.report.enumerations.EJReportFontWeight;
+import org.entirej.framework.report.properties.EJReportVisualAttributeContainer;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
@@ -535,21 +535,21 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            final AbstractDropDownDescriptor<EJFontStyle> fontStyle = new AbstractDropDownDescriptor<EJFontStyle>("Style")
+            final AbstractDropDownDescriptor<EJReportFontStyle> fontStyle = new AbstractDropDownDescriptor<EJReportFontStyle>("Style")
             {
 
-                public EJFontStyle[] getOptions()
+                public EJReportFontStyle[] getOptions()
                 {
-                    return EJFontStyle.values();
+                    return EJReportFontStyle.values();
                 }
 
-                public String getOptionText(EJFontStyle t)
+                public String getOptionText(EJReportFontStyle t)
                 {
                     return t.name();
                 }
 
                 @Override
-                public void setValue(EJFontStyle value)
+                public void setValue(EJReportFontStyle value)
                 {
                     source.setFontStyle(value);
                     editor.setDirty(true);
@@ -558,26 +558,28 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                 }
 
                 @Override
-                public EJFontStyle getValue()
+                public EJReportFontStyle getValue()
                 {
                     return source.getFontStyle();
                 }
+
+                
             };
-            final AbstractDropDownDescriptor<EJFontWeight> fontWeight = new AbstractDropDownDescriptor<EJFontWeight>("Weight")
+            final AbstractDropDownDescriptor<EJReportFontWeight> fontWeight = new AbstractDropDownDescriptor<EJReportFontWeight>("Weight")
             {
 
-                public EJFontWeight[] getOptions()
+                public EJReportFontWeight[] getOptions()
                 {
-                    return EJFontWeight.values();
+                    return EJReportFontWeight.values();
                 }
 
-                public String getOptionText(EJFontWeight t)
+                public String getOptionText(EJReportFontWeight t)
                 {
                     return t.name();
                 }
 
                 @Override
-                public void setValue(EJFontWeight value)
+                public void setValue(EJReportFontWeight value)
                 {
                     source.setFontWeight(value);
                     editor.setDirty(true);
@@ -586,7 +588,7 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                 }
 
                 @Override
-                public EJFontWeight getValue()
+                public EJReportFontWeight getValue()
                 {
                     return source.getFontWeight();
                 }
@@ -976,8 +978,8 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
             Font font = null;
 
             if (visualAttributeProperties.getFontName().equals(EJCoreVisualAttributeProperties.UNSPECIFIED)
-                    && visualAttributeProperties.getFontStyle() == EJFontStyle.Unspecified
-                    && visualAttributeProperties.getFontWeight() == EJFontWeight.Unspecified && !visualAttributeProperties.isFontSizeSet())
+                    && visualAttributeProperties.getFontStyle() == EJReportFontStyle.Unspecified
+                    && visualAttributeProperties.getFontWeight() == EJReportFontWeight.Unspecified && !visualAttributeProperties.isFontSizeSet())
             {
                 return null;
             }
@@ -997,7 +999,7 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
             if (name == null)
                 return null;
 
-            EJFontStyle fontStyle = visualAttributeProperties.getFontStyle();
+            EJReportFontStyle fontStyle = visualAttributeProperties.getFontStyle();
             switch (fontStyle)
             {
                 case Italic:
@@ -1009,7 +1011,7 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                     break;
             }
 
-            EJFontWeight fontWeight = visualAttributeProperties.getFontWeight();
+            EJReportFontWeight fontWeight = visualAttributeProperties.getFontWeight();
             switch (fontWeight)
             {
                 case Bold:

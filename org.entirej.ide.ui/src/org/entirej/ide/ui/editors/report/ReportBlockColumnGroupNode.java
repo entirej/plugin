@@ -38,7 +38,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
-import org.entirej.framework.reports.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.interfaces.EJReportBorderProperties;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;

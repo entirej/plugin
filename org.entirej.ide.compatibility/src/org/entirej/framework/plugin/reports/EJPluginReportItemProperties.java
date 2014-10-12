@@ -1,6 +1,6 @@
 package org.entirej.framework.plugin.reports;
 
-import org.entirej.framework.reports.interfaces.EJReportItemProperties;
+import org.entirej.framework.report.interfaces.EJReportItemProperties;
 
 public class EJPluginReportItemProperties implements EJReportItemProperties
 {
