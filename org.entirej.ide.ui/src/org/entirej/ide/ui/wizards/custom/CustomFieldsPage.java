@@ -60,6 +60,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.entirej.framework.core.service.EJTableColumn;
+import org.entirej.framework.report.service.EJReportParameterType;
+import org.entirej.framework.report.service.EJReportTableColumn;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
@@ -115,9 +117,26 @@ public class CustomFieldsPage extends WizardPage implements IJavaProjectProvider
         super.dispose();
     }
 
-    public Set<EJTableColumn> getSelectedColumns()
+  
+    
+    
+    public List<EJReportTableColumn> getReportColumns()
     {
-        return new HashSet<EJTableColumn>(selectedColumns);
+        List<EJReportTableColumn> columns =  new ArrayList<EJReportTableColumn>();
+        
+        for (EJTableColumn column : selectedColumns)
+        {
+            EJReportTableColumn reportTableColumn = new EJReportTableColumn();
+            reportTableColumn.setArray(column.isArray());
+            reportTableColumn.setDatatypeName(column.getDatatypeName());
+            reportTableColumn.setName(column.getName());
+           
+            
+            columns.add(reportTableColumn);
+            
+        }
+        
+        return columns;
     }
 
     public List<EJTableColumn> getColumns()

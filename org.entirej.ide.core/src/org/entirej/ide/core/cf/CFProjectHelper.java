@@ -45,6 +45,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.entirej.ide.core.cf.lib.CoreRuntimeClasspathContainerInitializer;
+import org.entirej.ide.core.report.lib.ReportRuntimeClasspathContainerInitializer;
 import org.osgi.framework.Bundle;
 
 /**
@@ -87,6 +88,15 @@ public class CFProjectHelper
     public static void addEntireJBaseLibraries(IJavaProject project, IClasspathAttribute[] attributes) throws JavaModelException
     {
         addToClasspath(project, JavaCore.newContainerEntry(CoreRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
+    }
+    public static void addEntireJReportLibraries(IJavaProject project) throws JavaModelException
+    {
+        addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, true));
+    }
+    
+    public static void addEntireJReportLibraries(IJavaProject project, IClasspathAttribute[] attributes) throws JavaModelException
+    {
+        addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
     }
 
     public static void setClasspathVariable(String var, IPath ejCoreJar) throws JavaModelException

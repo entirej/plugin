@@ -68,6 +68,8 @@ import org.eclipse.ui.PlatformUI;
 import org.entirej.framework.core.service.EJTableColumn;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage;
+import org.entirej.framework.report.service.EJReportParameterType;
+import org.entirej.framework.report.service.EJReportTableColumn;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -171,6 +173,24 @@ public class DBColumnSelectionPage extends WizardPage
     public List<EJTableColumn> getColumns()
     {
         return new ArrayList<EJTableColumn>(selectedColumns);
+    }
+    public List<EJReportTableColumn> getReportColumns()
+    {
+        List<EJReportTableColumn> columns =  new ArrayList<EJReportTableColumn>();
+        
+        for (EJTableColumn column : selectedColumns)
+        {
+            EJReportTableColumn reportTableColumn = new EJReportTableColumn();
+            reportTableColumn.setArray(column.isArray());
+            reportTableColumn.setDatatypeName(column.getDatatypeName());
+            reportTableColumn.setName(column.getName());
+           
+          
+            columns.add(reportTableColumn);
+            
+        }
+        
+        return columns;
     }
 
     public void createControl(Composite parent)

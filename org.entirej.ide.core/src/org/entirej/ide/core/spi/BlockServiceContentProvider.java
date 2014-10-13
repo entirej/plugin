@@ -26,6 +26,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.report.service.EJReportPojoGeneratorType;
+import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 
 public interface BlockServiceContentProvider
 {
@@ -45,6 +47,7 @@ public interface BlockServiceContentProvider
     public interface BlockServiceWizardProvider
     {
         void init(GeneratorContext context);
+        void init(ReportGeneratorContext context);
 
         List<IWizardPage> getPages();
 
@@ -55,6 +58,8 @@ public interface BlockServiceContentProvider
         void createRequiredResources(IProgressMonitor monitor);
 
         BlockServiceContent getContent();
+        
+        ReportBlockServiceContent getReportContent();
     }
 
     public interface GeneratorContext
@@ -66,6 +71,16 @@ public interface BlockServiceContentProvider
         boolean skipService();
 
         String createPojoClass(EJPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception;
+    }
+    public interface ReportGeneratorContext
+    {
+        IPackageFragmentRoot getPackageFragmentRoot();
+        
+        IJavaProject getProject();
+        
+        boolean skipService();
+        
+        String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception;
     }
 
     public class BlockServiceContent
@@ -85,6 +100,29 @@ public interface BlockServiceContentProvider
         }
 
         public EJPojoGeneratorType getpPojoGeneratorType()
+        {
+            return pojoGeneratorType;
+        }
+    }
+    
+    
+    public class ReportBlockServiceContent
+    {
+        private final EJReportServiceGeneratorType serviceGeneratorType;
+        private final EJReportPojoGeneratorType    pojoGeneratorType;
+        
+        public ReportBlockServiceContent(EJReportServiceGeneratorType serviceGeneratorType, EJReportPojoGeneratorType pojoGeneratorType)
+        {
+            this.serviceGeneratorType = serviceGeneratorType;
+            this.pojoGeneratorType = pojoGeneratorType;
+        }
+        
+        public EJReportServiceGeneratorType getServiceGeneratorType()
+        {
+            return serviceGeneratorType;
+        }
+        
+        public EJReportPojoGeneratorType getpPojoGeneratorType()
         {
             return pojoGeneratorType;
         }

@@ -38,6 +38,22 @@
           name="EntireJ Core Runtime"
           class="org.entirej.ide.core.cf.lib.CoreRuntimeContainerPage"/>
    </extension>
+   
+   
+ <extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.core.runtime.EJ_REPORT_CONTAINER"
+          class="org.entirej.ide.core.report.lib.ReportRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.core.runtime.EJ_REPORT_CONTAINER"
+          name="EntireJ Report Runtime"
+          class="org.entirej.ide.core.report.lib.ReportRuntimeContainerPage"/>
+   </extension>
+     
 <extension
        point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer

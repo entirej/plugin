@@ -26,6 +26,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.report.service.EJReportPojoGeneratorType;
+import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
 
 public class CustomBlockServiceContentProvider implements BlockServiceContentProvider
@@ -66,6 +68,11 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
                 columnSelectionPage.init(context.getProject());
 
             }
+            public void init(ReportGeneratorContext context)
+            {
+                columnSelectionPage.init(context.getProject());
+                
+            }
 
             public boolean canFinish(IWizardPage page)
             {
@@ -95,8 +102,20 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
                     EJServiceGeneratorType serviceGeneratorType = new EJServiceGeneratorType();
                     EJPojoGeneratorType pojoGeneratorType = new EJPojoGeneratorType();
 
-                    pojoGeneratorType.setColumnNames(columnSelectionPage.getSelectedColumns());
+                    pojoGeneratorType.setColumnNames(columnSelectionPage.getColumns());
                     return new BlockServiceContent(serviceGeneratorType, pojoGeneratorType);
+                }
+                return null;
+            }
+            public ReportBlockServiceContent getReportContent()
+            {
+                if (columnSelectionPage.isPageComplete())
+                {
+                    EJReportServiceGeneratorType serviceGeneratorType = new EJReportServiceGeneratorType();
+                    EJReportPojoGeneratorType pojoGeneratorType = new EJReportPojoGeneratorType();
+                    
+                    pojoGeneratorType.setColumnNames(columnSelectionPage.getReportColumns());
+                    return new ReportBlockServiceContent(serviceGeneratorType, pojoGeneratorType);
                 }
                 return null;
             }

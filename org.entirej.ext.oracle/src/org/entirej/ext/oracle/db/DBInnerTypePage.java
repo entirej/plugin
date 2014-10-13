@@ -21,6 +21,7 @@ package org.entirej.ext.oracle.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -48,7 +49,7 @@ import org.entirej.ide.core.spi.BlockServiceContentProvider.GeneratorContext;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 
-public class DBInnerTypePage extends WizardPage
+public abstract class DBInnerTypePage extends WizardPage
 {
 
     private TreeViewer             dbfilteredTree;
@@ -57,12 +58,11 @@ public class DBInnerTypePage extends WizardPage
     private LabelProvider          labelProvider;
 
     private List<TypeMapper>       typeMappers = new ArrayList<DBInnerTypePage.TypeMapper>();
-    private final GeneratorContext context;
+    
 
-    public DBInnerTypePage(GeneratorContext context)
+    public DBInnerTypePage()
     {
         super("ej.db.db.inner.types");
-        this.context = context;
         setTitle("Inner Types");
         setDescription("Select/Generate Inner Types for Funtion/Procedure.");
     }
@@ -221,7 +221,7 @@ public class DBInnerTypePage extends WizardPage
                 if (node instanceof TypeMapper)
                 {
                     TypeMapper mapper = (TypeMapper) node;
-                    IType type = JavaAccessUtils.selectClassType(getShell(), context.getProject().getResource(), (mapper.mapedClass != null ? mapper.mapedClass
+                    IType type = JavaAccessUtils.selectClassType(getShell(), getProject().getResource(), (mapper.mapedClass != null ? mapper.mapedClass
                             : "*"), null);
                     if (type != null)
                     {
@@ -234,6 +234,9 @@ public class DBInnerTypePage extends WizardPage
             }
         });
 
+        
+       
+        
         viewer.setContentProvider(contentProvider = new InnerTypeContentProvider());
         viewer.setLabelProvider(labelProvider = new InnerLabelProvider());
         viewer.addSelectionChangedListener(new ISelectionChangedListener()
@@ -256,6 +259,8 @@ public class DBInnerTypePage extends WizardPage
         });
     }
 
+    public abstract IJavaProject getProject();
+    
     protected void doUpdateStatus()
     {
         setPageComplete(validatePage());

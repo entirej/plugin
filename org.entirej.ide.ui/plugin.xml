@@ -223,6 +223,18 @@
       </wizard>
       <wizard
             category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.report.service.NewEJReportPojoServiceWizard"
+            finalPerspective="org.entirej.ide.ui.perspective"
+            icon="icons/etools16/newejbservice_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEJReportPojoServiceWizard"
+            name="%new.entirejrbservice.name"
+            project="false">
+         <description>
+            %new.entirejrbservice.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.form.NewEntireJRefLovWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
             icon="icons/etools16/newejreflov_wiz.png"
@@ -270,6 +282,14 @@
                label="%new.entirejReport.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejReport.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
+               icon="icons/etools16/newejbservice_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
+               label="%new.entirejrbservice.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejrbservice.description">
          </action>
          <action
                class="org.entirej.ide.ui.wizards.form.NewRefLovAction"

@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms
 Bundle-ClassPath: .,
  extlibs/entirej-core.jar,
- extlibs-dev/entirej-development.jar
+ extlibs-dev/entirej-development.jar,
+ extlibs-report/entirej-report.jar
 Bundle-Activator: org.entirej.core.runtime.EJRuntimePlugin
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy

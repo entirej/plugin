@@ -26,6 +26,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.report.service.EJReportPojoGeneratorType;
+import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
 
 public class StatementBlockServiceContentProvider implements BlockServiceContentProvider
@@ -57,11 +59,17 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
             private DBSelectStatementWizardPage columnSelectionPage  = new DBSelectStatementWizardPage();
             private DBStatementsWizardPage      statementsWizardPage = new DBStatementsWizardPage();
             private GeneratorContext            context;
+            private ReportGeneratorContext            rcontext;
 
             public void init(GeneratorContext context)
             {
                 columnSelectionPage.init(context.getProject());
                 this.context = context;
+            }
+            public void init(ReportGeneratorContext context)
+            {
+                columnSelectionPage.init(context.getProject());
+                this.rcontext = context;
             }
 
             public boolean canFinish(IWizardPage page)
@@ -76,7 +84,7 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
 
             public List<IWizardPage> getPages()
             {
-                if (context.skipService())
+                if ((context!=null && context.skipService()) || (rcontext!=null && rcontext.skipService()))
                     return Arrays.<IWizardPage> asList(columnSelectionPage);
 
                 return Arrays.<IWizardPage> asList(columnSelectionPage, statementsWizardPage);
@@ -100,6 +108,18 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
                     EJPojoGeneratorType pojoGeneratorType = new EJPojoGeneratorType();
                     pojoGeneratorType.setColumnNames(columnSelectionPage.getColumns());
                     return new BlockServiceContent(serviceGeneratorType, pojoGeneratorType);
+                }
+                return null;
+            }
+            public ReportBlockServiceContent getReportContent()
+            {
+                if (columnSelectionPage.isPageComplete())
+                {
+                    EJReportServiceGeneratorType serviceGeneratorType = new EJReportServiceGeneratorType();
+                    serviceGeneratorType.setQueryStatement(escapeNextLine(columnSelectionPage.getSelectStatement()));
+                    EJReportPojoGeneratorType pojoGeneratorType = new EJReportPojoGeneratorType();
+                    pojoGeneratorType.setColumnNames(columnSelectionPage.getReportColumns());
+                    return new ReportBlockServiceContent(serviceGeneratorType, pojoGeneratorType);
                 }
                 return null;
             }

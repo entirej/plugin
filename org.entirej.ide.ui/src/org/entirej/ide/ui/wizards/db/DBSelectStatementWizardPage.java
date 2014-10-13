@@ -59,6 +59,8 @@ import org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage;
 import org.entirej.framework.plugin.ui.wizards.utils.InvalidStatementException;
 import org.entirej.framework.plugin.ui.wizards.utils.StatementValidator;
 import org.entirej.framework.plugin.ui.wizards.utils.SyntaxHighlightListener;
+import org.entirej.framework.report.service.EJReportParameterType;
+import org.entirej.framework.report.service.EJReportTableColumn;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -158,6 +160,26 @@ public class DBSelectStatementWizardPage extends WizardPage
         return new ArrayList<EJTableColumn>(selectedColumns);
     }
 
+    
+    public List<EJReportTableColumn> getReportColumns()
+    {
+        List<EJReportTableColumn> columns =  new ArrayList<EJReportTableColumn>();
+        
+        for (EJTableColumn column : selectedColumns)
+        {
+            EJReportTableColumn reportTableColumn = new EJReportTableColumn();
+            reportTableColumn.setArray(column.isArray());
+            reportTableColumn.setDatatypeName(column.getDatatypeName());
+            reportTableColumn.setName(column.getName());
+           
+            
+            columns.add(reportTableColumn);
+            
+        }
+        
+        return columns;
+    }
+    
     protected void doUpdateStatus()
     {
         setPageComplete(validatePage());
