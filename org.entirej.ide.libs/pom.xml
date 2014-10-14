@@ -48,6 +48,7 @@
 							<outputDirectory>../org.entirej.core.runtime/extlibs</outputDirectory>
 							<destFileName>entirej-core.jar</destFileName>
 						</artifactItem>
+						
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-core</artifactId>

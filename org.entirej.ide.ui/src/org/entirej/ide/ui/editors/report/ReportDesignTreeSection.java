@@ -62,12 +62,15 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
+import org.entirej.framework.report.enumerations.EJReportExportType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
@@ -826,6 +829,68 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
+            
+            AbstractTextDropDownDescriptor exportTypeDescriptor = new AbstractTextDropDownDescriptor("Export Type")
+            {
+                Filter vfilter = new Filter()
+                               {
+
+                                   public boolean match(int tag, IMarker marker)
+                                   {
+
+                                       return (tag & FormNodeTag.RENDERER) != 0;
+                                   }
+                               };
+
+                @Override
+                public String getErrors()
+                {
+
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> options = new ArrayList<String>();
+                    for (EJReportExportType type : EJReportExportType.values())
+                    {
+                        options.add(type.name());
+                    }
+                    return options.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+
+                    return EJReportExportType.valueOf(t).toString();
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    source.setExportType(EJReportExportType.valueOf(value));
+
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getExportType().name();
+                }
+            };
+            
+            
+           
+            
+            
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
 
@@ -1083,7 +1148,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, layoutGroupDescriptor, parametersDes, metadataGroupDescriptor };
+            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor,exportTypeDescriptor, layoutGroupDescriptor, parametersDes, metadataGroupDescriptor };
         }
 
         public void addOverview(StyledString styledString)

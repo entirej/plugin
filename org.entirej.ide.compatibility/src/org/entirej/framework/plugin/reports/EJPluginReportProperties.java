@@ -33,36 +33,38 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
+import org.entirej.framework.report.enumerations.EJReportExportType;
 import org.entirej.framework.report.interfaces.EJReportProperties;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
 {
     
-    private boolean                              _isReusableBlock          = false;
-    private boolean                              _isObjectGroup            = false;
-    private IJavaProject                         _reportProject;
+    private boolean                            _isReusableBlock          = false;
+    private boolean                            _isObjectGroup            = false;
+    private IJavaProject                       _reportProject;
     
-    private String                               _name                     = "";
-    private String                               _reportTitle              = "";
-    private String                               _reportDisplayName        = "";
+    private String                             _name                     = "";
+    private String                             _reportTitle              = "";
+    private String                             _reportDisplayName        = "";
     
-    private String                               _actionProcessorClassName = "";
+    private String                             _actionProcessorClassName = "";
     
-    private List<EJPluginApplicationParameter>   _reportParameters;
-    private HashMap<String, String>              _applicationProperties;
+    private List<EJPluginApplicationParameter> _reportParameters;
+    private HashMap<String, String>            _applicationProperties;
     
     // Display Properties
-    private int                                  _reportWidth;
-    private int                                  _reportHeight;
-    private int                                  _marginTop;
-    private int                                  _marginBottom;
-    private int                                  _marginLeft;
-    private int                                  _marginRight;
+    private int                                _reportWidth;
+    private int                                _reportHeight;
+    private int                                _marginTop;
+    private int                                _marginBottom;
+    private int                                _marginLeft;
+    private int                                _marginRight;
     
-    private EJReportProperties.ORIENTATION       _orientation              = ORIENTATION.PORTRAIT;
+    private EJReportProperties.ORIENTATION     _orientation              = ORIENTATION.PORTRAIT;
     
+    private EJReportExportType                 exportType                = EJReportExportType.PDF;
     
-    private EJReportBlockContainer blockContainer;
+    private EJReportBlockContainer             blockContainer;
     
     public EJPluginReportProperties(String reportName, IJavaProject javaProject)
     {
@@ -74,12 +76,10 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         
     }
     
-    
     public EJReportBlockContainer getBlockContainer()
     {
         return blockContainer;
     }
-    
     
     public IJavaProject getJavaProject()
     {
@@ -120,8 +120,6 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     {
         _name = newName;
     }
- 
-
     
     /**
      * the title of the report. This will be the translated title code if a
@@ -215,8 +213,6 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     {
         _reportHeight = reportHeight;
     }
-    
-
     
     public int getMarginTop()
     {
@@ -393,14 +389,12 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     {
         return _name;
     }
-
+    
     public void initialisationCompleted()
     {
-       
         
     }
-
-
+    
     public List<String> getBlockNames()
     {
         List<String> blockNames = new ArrayList<String>();
@@ -408,47 +402,44 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
         {
             
-            blockNames.add(properties.getName()); 
+            blockNames.add(properties.getName());
         }
         
         return blockNames;
     }
+    
     public List<String> getBlockNamesWithParents(EJPluginReportBlockProperties sub)
     {
         List<String> blockNames = new ArrayList<String>();
         
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
         {
-          findParents(sub.getName(), properties.getLayoutScreenProperties().getSubBlocks(),blockNames);
+            findParents(sub.getName(), properties.getLayoutScreenProperties().getSubBlocks(), blockNames);
         }
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
         {
             
-            
-            
-            blockNames.add(properties.getName()); 
+            blockNames.add(properties.getName());
         }
         
-        
-        if(!blockNames.contains(sub.getName()))
+        if (!blockNames.contains(sub.getName()))
         {
             blockNames.add(sub.getName());
         }
         
         return blockNames;
     }
-
     
-    private boolean findParents(String child, BlockGroup bGroup,List<String> blockNames)
+    private boolean findParents(String child, BlockGroup bGroup, List<String> blockNames)
     {
         List<EJPluginReportBlockProperties> allBlockProperties = bGroup.getAllBlockProperties();
         for (EJPluginReportBlockProperties properties : allBlockProperties)
         {
-            if(child.equals(properties.getName()))
+            if (child.equals(properties.getName()))
             {
                 return true;
             }
-            if(findParents(child, properties.getLayoutScreenProperties().getSubBlocks(),blockNames))
+            if (findParents(child, properties.getLayoutScreenProperties().getSubBlocks(), blockNames))
             {
                 blockNames.add(properties.getName());
                 return true;
@@ -457,10 +448,21 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         
         return false;
     }
-
+    
     public EJReportBlockItemContainer getBlockProperties(String blockName)
     {
         return blockContainer.getBlockProperties(blockName).getItemContainer();
+    }
+    
+    @Override
+    public EJReportExportType getExportType()
+    {
+        return exportType;
+    }
+    
+    public void setExportType(EJReportExportType exportType)
+    {
+        this.exportType = exportType;
     }
     
 }
