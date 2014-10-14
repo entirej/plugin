@@ -35,7 +35,6 @@ public class BlockHandler extends EntireJTagHandler
     
     private static final String           ELEMENT_BLOCK              = "block";
     private static final String           ELEMENT_DESCRIPTION        = "description";
-    private static final String           ELEMENT_CANVAS             = "canvasName";
     private static final String           ELEMENT_SERVICE_CLASS_NAME = "serviceClassName";
     private static final String           ELEMENT_ACTION_PROCESSOR   = "actionProcessorClassName";
     private static final String           ELEMENT_SCREEN_TYPE        = "screenType";
@@ -137,14 +136,15 @@ public class BlockHandler extends EntireJTagHandler
             _blockProperties.setDescription(value);
         }
         
-        else if (name.equals(ELEMENT_CANVAS))
-        {
-            _blockProperties.setCanvasName(value);
-        }
+     
         
         else if (name.equals(ELEMENT_SERVICE_CLASS_NAME))
         {
             _blockProperties.setServiceClassName(value, false);
+        }
+        else if (name.equals(ELEMENT_ACTION_PROCESSOR))
+        {
+            _blockProperties.setActionProcessorClassName(value);
         }
         else if (name.equals(ELEMENT_SCREEN_TYPE))
         {

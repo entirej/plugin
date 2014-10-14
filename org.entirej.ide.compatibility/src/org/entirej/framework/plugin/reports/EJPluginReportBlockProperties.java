@@ -22,7 +22,6 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     
     private String                         _blockDescription         = "";
     private boolean                        _isReferenced             = false;
-    private String                         _canvasName               = "";
     
     private EJPluginReportProperties       _reportProperties;
     private String                         _name                     = "";
@@ -67,16 +66,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
         return _itemContainer.getItemProperties(itemName);
     }
     
-    @Override
-    public String getCanvasName()
-    {
-        return _canvasName;
-    }
-    
-    public void setCanvasName(String canvasName)
-    {
-        this._canvasName = canvasName;
-    }
+   
     
     @Override
     public boolean isControlBlock()

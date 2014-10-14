@@ -208,7 +208,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             
             writeStringTAG(buffer, "description", blockProperties.getDescription());
             
-            writeStringTAG(buffer, "canvasName", blockProperties.getCanvasName());
             
             if (!blockProperties.isControlBlock()) writeStringTAG(buffer, "serviceClassName", blockProperties.getServiceClassName());
             
