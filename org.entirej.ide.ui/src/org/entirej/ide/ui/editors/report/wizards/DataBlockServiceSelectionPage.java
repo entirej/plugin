@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.core.service.EJBlockService;
+import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
@@ -163,7 +163,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
             {
                 return wizardContext.getProject();
             }
-        }, IJavaElementSearchConstants.CONSIDER_CLASSES, EJBlockService.class.getName());
+        }, IJavaElementSearchConstants.CONSIDER_CLASSES, EJReportBlockService.class.getName());
         final Button browse = new Button(composite, SWT.PUSH);
         browse.setText("Browse...");
         browse.addSelectionListener(new SelectionAdapter()
@@ -172,7 +172,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
             {
                 String value = serviceGenText.getText();
                 IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), wizardContext.getProject().getResource(),
-                        IJavaElementSearchConstants.CONSIDER_CLASSES, value == null ? "" : value, EJBlockService.class.getName());
+                        IJavaElementSearchConstants.CONSIDER_CLASSES, value == null ? "" : value, EJReportBlockService.class.getName());
                 if (type != null)
                 {
                     serviceGenText.setText(type.getFullyQualifiedName('$'));
