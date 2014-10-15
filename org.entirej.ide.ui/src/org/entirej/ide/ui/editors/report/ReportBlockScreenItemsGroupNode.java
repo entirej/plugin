@@ -567,7 +567,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 @Override
                 public String getValue()
                 {
-                    return String.valueOf(source.getX());
+                    return String.valueOf(source.getY());
                 }
 
                 Text text;
@@ -723,7 +723,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     public void setValue(String value)
                     {
                         item.setHAlignment(EJReportScreenAlignment.valueOf(value));
-
+                        editor.setDirty(true);
                     }
 
                 };
@@ -755,7 +755,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     public void setValue(String value)
                     {
                         item.setVAlignment(EJReportScreenAlignment.valueOf(value));
-
+                        editor.setDirty(true);
                     }
 
                 };
@@ -795,7 +795,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     public void setValue(String value)
                     {
                         item.setRotation(EJReportScreenRotation.valueOf(value));
-
+                        editor.setDirty(true);
                     }
 
                 };
@@ -886,7 +886,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         public void setValue(String value)
                         {
                             number.setLocaleFormat(NumberFormats.valueOf(value));
-
+                            editor.setDirty(true);
                         }
 
                     };
@@ -945,7 +945,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         public void setValue(String value)
                         {
                             number.setLocaleFormat(DateFormats.valueOf(value));
-
+                            editor.setDirty(true);
                         }
 
                     };
@@ -986,7 +986,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         public void setValue(String value)
                         {
                             number.setLineStyle(LineStyle.valueOf(value));
-
+                            editor.setDirty(true);
                         }
 
                     };
@@ -1018,7 +1018,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         public void setValue(String value)
                         {
                             number.setLineDirection(LineDirection.valueOf(value));
-
+                            editor.setDirty(true);
                         }
 
                     };
@@ -1109,7 +1109,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         public void setValue(String value)
                         {
                             number.setLineStyle(LineStyle.valueOf(value));
-
+                            editor.setDirty(true);
                         }
 
                     };
