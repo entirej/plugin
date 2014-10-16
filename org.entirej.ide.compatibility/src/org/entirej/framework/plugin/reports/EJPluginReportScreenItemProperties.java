@@ -491,7 +491,7 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         @Override
         public EJReportScreenItemType getType()
         {
-            return EJReportScreenItemType.DATE;
+            return EJReportScreenItemType.IMAGE;
         }
         
     }
