@@ -649,7 +649,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         
         public String getDefaultBlockValue()
         {
-            return null;
+            return "";
         }
 
         public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
