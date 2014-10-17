@@ -364,7 +364,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             @Override
             public String getValue()
             {
-                return String.valueOf(source.getX());
+                return String.valueOf(source.getY());
             }
 
             Text text;
