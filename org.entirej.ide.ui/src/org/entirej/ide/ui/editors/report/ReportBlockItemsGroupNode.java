@@ -899,7 +899,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 });
 
                                 
-                                blockViewer.setSelection(new StructuredSelection(getDefaultBlockValue()));
+                                
                                 blockViewer.addSelectionChangedListener(new ISelectionChangedListener()
                                 {
 
@@ -924,6 +924,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 });
 
                                 blockViewer.setInput(new Object());
+                                blockViewer.setSelection(new StructuredSelection(getDefaultBlockValue()));
                                 if (defaultValue != null)
                                 {
                                     String[] split = defaultValue.split("\\.");
