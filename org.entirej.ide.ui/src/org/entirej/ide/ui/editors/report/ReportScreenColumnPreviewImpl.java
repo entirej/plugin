@@ -142,9 +142,26 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                     footerW = column.getFooterScreen().getWidth();
                 }
             }
-            totalW += column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
-                    .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth()) : (column.getFooterScreen()
-                    .getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column.getDetailScreen().getWidth());
+            
+            
+            if(column.isShowHeader() && column.isShowFooter())
+            {
+                totalW += column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
+                        .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth()) : (column
+                        .getFooterScreen().getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column
+                        .getDetailScreen().getWidth());
+            }
+            else if(!column.isShowFooter() && column.isShowHeader())
+            {
+                totalW += column.getHeaderScreen().getWidth() > column
+                        .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth() ;
+            }
+            else
+            {
+                totalW += column
+                        .getDetailScreen().getWidth();
+            }
+           
         }
 
         header.setBounds(0, 0, totalW, headerH);
@@ -185,27 +202,43 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                    
                     e.gc.setLineStyle(SWT.LINE_DASH);
                     e.gc.setForeground(COLOR_LINE);
-                    int x = column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
-                            .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth()) : (column
-                            .getFooterScreen().getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column
-                            .getDetailScreen().getWidth());
+                    
+                    int x ;
+                    if(column.isShowHeader() && column.isShowFooter())
+                    {
+                        x = column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
+                                .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth()) : (column
+                                .getFooterScreen().getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column
+                                .getDetailScreen().getWidth());
+                    }
+                    else if(!column.isShowFooter() && column.isShowHeader())
+                    {
+                        x = column.getHeaderScreen().getWidth() > column
+                                .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth() ;
+                    }
+                    else
+                    {
+                        x = column
+                                .getDetailScreen().getWidth();
+                    }
+                    
 
                             
                             
                     EJReportBorderProperties borderProperties  = null;        
                     if (header && !footer && column.isShowHeader())
                     {
-                        e.gc.drawText(column.getName(), colLocation+(x/2), (composite.getBounds().height / 2) - 10);
+                        e.gc.drawText(column.getName(), colLocation+(5), (composite.getBounds().height / 2) - 10);
                         borderProperties = column.getHeaderBorderProperties();
                     }
                     if (!header && footer && column.isShowFooter())
                     {
-                        e.gc.drawText(column.getName(), colLocation+(x/2), (composite.getBounds().height / 2) - 10);
+                        e.gc.drawText(column.getName(), colLocation+(5), (composite.getBounds().height / 2) - 10);
                         borderProperties = column.getFooterBorderProperties();
                     }
                     if (!header && !footer)
                     {
-                        e.gc.drawText(column.getName(), colLocation+(x/2), (composite.getBounds().height / 2) - 10);
+                        e.gc.drawText(column.getName(), colLocation+(5), (composite.getBounds().height / 2) - 10);
                         borderProperties = column.getDetailBorderProperties();
                     }
 
