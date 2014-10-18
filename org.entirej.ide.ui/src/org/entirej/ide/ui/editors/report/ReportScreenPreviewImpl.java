@@ -65,16 +65,16 @@ import org.entirej.ide.ui.EJUIPlugin;
 
 public class ReportScreenPreviewImpl implements IReportPreviewProvider
 {
-    protected final Color                         COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
-    protected final Color                         COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
-    protected final Color                         COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    protected final Color                         COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-    protected final Color                         COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-    protected final Cursor                        RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
-    protected final Cursor                        MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+    protected final Color                          COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
+    protected final Color                          COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
+    protected final Color                          COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+    protected final Color                          COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+    protected final Color                          COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+    protected final Cursor                         RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
+    protected final Cursor                         MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
     protected final EJPluginReportScreenProperties properties;
 
-    private int                                   x, y;
+    private int                                    x, y;
 
     public ReportScreenPreviewImpl(EJPluginReportScreenProperties properties)
     {
@@ -94,6 +94,34 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
 
+    void updateSize(final AbstractEJReportEditor editor,EJPluginReportScreenProperties layoutScreenProperties, Composite parent)
+    {
+
+        int width = layoutScreenProperties.getWidth();
+        int height = layoutScreenProperties.getHeight();
+
+        boolean updated = false;
+        Control[] children = parent.getChildren();
+        for (Control control : children)
+        {
+            if (width < (control.getBounds().x+control.getBounds().width))
+            {
+                width = (control.getBounds().x+control.getBounds().width);
+                updated = true;
+            }
+            if (height < (control.getBounds().y+control.getBounds().height))
+            {
+                height = (control.getBounds().y+control.getBounds().height);
+                updated = true;
+            }
+        }
+        
+        if(updated)
+        {
+            parent.setBounds(parent.getBounds().x, parent.getBounds().y, width, height);
+        }
+    }
+
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
     {
         // layout canvas preview
@@ -109,18 +137,18 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 
-        Composite reportBody = new Composite(pContent, SWT.BORDER);
+        final Composite reportBody = new Composite(pContent, SWT.BORDER);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
-        EJPluginReportScreenProperties layoutScreenProperties = properties;
+       final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
         reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), layoutScreenProperties.getHeight());
 
         List<EJPluginReportScreenItemProperties> allItemProperties = layoutScreenProperties.getScreenItemContainer().getAllItemProperties();
         for (EJPluginReportScreenItemProperties screenItemProperties : allItemProperties)
         {
-            createItemPreview(editor, reportBody, screenItemProperties);
+            createItemPreview(editor,layoutScreenProperties, reportBody, screenItemProperties);
         }
 
         for (EJPluginReportBlockProperties properties : layoutScreenProperties.getAllSubBlocks())
@@ -201,7 +229,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                                     editor.setDirty(true);
                                     editor.refresh(container);
                                     editor.select(itemProperties);
-
+                                    updateSize(editor, layoutScreenProperties, reportBody);
                                 }
                             });
                         }
@@ -220,9 +248,10 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                 y = e.y;
             }
         });
+        updateSize(editor, layoutScreenProperties, reportBody);
     }
 
-    protected void createItemPreview(final AbstractEJReportEditor editor, final Composite reportBody, final EJPluginReportScreenItemProperties properties)
+    protected void createItemPreview(final AbstractEJReportEditor editor,final EJPluginReportScreenProperties layoutScreenProperties, final Composite reportBody, final EJPluginReportScreenItemProperties properties)
     {
 
         int style = SWT.NONE;
@@ -357,6 +386,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                     hint.setBounds(10, 0, properties.getWidth() - 10, 25);
                     editor.setDirty(true);
                     editor.refresh(properties);
+                    updateSize(editor, layoutScreenProperties, reportBody);
                 }
 
             }
@@ -501,10 +531,11 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
                     int x = lineWidth > 1 ? lineWidth : 0;
                     int y = lineWidth > 1 ? lineWidth : 0;
-                    if(line.getRadius()==0)
+                    if (line.getRadius() == 0)
                         e.gc.drawRectangle(x, y, block.getBounds().width - (lineWidth + x), block.getBounds().height - (lineWidth + y));
                     else
-                        e.gc.drawRoundRectangle(x, y, block.getBounds().width - (lineWidth + x), block.getBounds().height - (lineWidth + y), line.getRadius(), line.getRadius());
+                        e.gc.drawRoundRectangle(x, y, block.getBounds().width - (lineWidth + x), block.getBounds().height - (lineWidth + y), line.getRadius(),
+                                line.getRadius());
 
                 }
             });
