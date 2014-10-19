@@ -23,22 +23,50 @@ import org.eclipse.swt.events.VerifyListener;
 
 public class EJPluginEntireJNumberVerifier implements VerifyListener
 {
+    
+    
+    protected boolean validate(String value)
+    {
+        
+        try
+        {
+            int intValue = Integer.parseInt(value);
+            
+            if (intValue >= 0)
+            {
+                return true;
+            }
+            else
+            {
+               return false;
+            }
+        }
+        catch (NumberFormatException exception)
+        {
+           //ignore
+        }
+        
+        return false;
+    }
+    
     public void verifyText(VerifyEvent e)
     {
         String value = e.text;
         
+        
+        if(value.equals(".")){
+            e.doit = true;
+            return ;
+        }
         // Backspace and Delete
         if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS)
         {
             e.doit = true;
-            try
-            {
-                Integer.parseInt(value);
-                
-            }
-            catch (NumberFormatException exception)
+            
+            if(!validate(value))
             {
                 e.text = "";
+                
             }
         }
         else
@@ -49,23 +77,7 @@ public class EJPluginEntireJNumberVerifier implements VerifyListener
             }
             else
             {
-                try
-                {
-                    int intValue = Integer.parseInt(value);
-                    
-                    if (intValue >= 0)
-                    {
-                        e.doit = true;
-                    }
-                    else
-                    {
-                        e.doit = false;
-                    }
-                }
-                catch (NumberFormatException exception)
-                {
-                    e.doit = false;
-                }
+                e.doit = validate(value);
             }
         }
     }

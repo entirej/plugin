@@ -1066,7 +1066,35 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
 
                             text = (Text) control;
-                            text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+                            text.addVerifyListener(new EJPluginEntireJNumberVerifier()
+                            {
+                                
+                                
+                                @Override
+                                protected boolean validate(String value)
+                                {
+                                    try
+                                    {
+                                        Double intValue = Double.parseDouble(value);
+                                        
+                                        if (intValue > -1)
+                                        {
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                           return false;
+                                        }
+                                    }
+                                    catch (NumberFormatException exception)
+                                    {
+                                       //ignore
+                                    }
+                                    
+                                    return false;
+                                }
+                                
+                            });
 
                             super.addEditorAssist(control);
                         }
@@ -1157,7 +1185,33 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
 
                             text = (Text) control;
-                            text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+                            text.addVerifyListener(new EJPluginEntireJNumberVerifier(){
+                                
+                                @Override
+                                protected boolean validate(String value)
+                                {
+                                    try
+                                    {
+                                        Double intValue = Double.parseDouble(value);
+                                        
+                                        if (intValue > -1)
+                                        {
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                           return false;
+                                        }
+                                    }
+                                    catch (NumberFormatException exception)
+                                    {
+                                       //ignore
+                                    }
+                                    
+                                    return false;
+                                }
+                                
+                            });
 
                             super.addEditorAssist(control);
                         }
