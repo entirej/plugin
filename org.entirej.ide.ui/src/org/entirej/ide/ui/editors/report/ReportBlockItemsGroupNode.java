@@ -925,6 +925,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
                                 blockViewer.setInput(new Object());
                                 blockViewer.setSelection(new StructuredSelection(getDefaultBlockValue()));
+                                itemViewer.getCombo().select(-1);
                                 if (defaultValue != null)
                                 {
                                     String[] split = defaultValue.split("\\.");
