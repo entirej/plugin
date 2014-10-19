@@ -51,8 +51,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     private static final Image            GROUP_ITEM  = EJUIImages.getImage(EJUIImages.DESC_ITEMS_GROUP);
     static final Image                    ITEMS_SPACE = EJUIImages.getImage(EJUIImages.DESC_ITEMS_SPACE);
     private final ReportDesignTreeSection treeSection;
-    private final ReportBlockGroupNode blockGroupNode;
-    private boolean forColumnSection;
+    private final ReportBlockGroupNode    blockGroupNode;
+    private boolean                       forColumnSection;
     private AbstractMarkerNodeValidator   validator   = new AbstractMarkerNodeValidator()
                                                       {
 
@@ -79,13 +79,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                                                           }
                                                       };
 
-    public ReportScreenNode(ReportDesignTreeSection treeSection,AbstractNode<?> parent, ReportBlockGroupNode node, EJPluginReportScreenProperties group)
+    public ReportScreenNode(ReportDesignTreeSection treeSection, AbstractNode<?> parent, ReportBlockGroupNode node, EJPluginReportScreenProperties group)
     {
         super(parent, group);
         this.treeSection = treeSection;
         this.blockGroupNode = node;
     }
-    public ReportScreenNode(ReportDesignTreeSection treeSection,AbstractNode<?> parent, EJPluginReportScreenProperties group)
+
+    public ReportScreenNode(ReportDesignTreeSection treeSection, AbstractNode<?> parent, EJPluginReportScreenProperties group)
     {
         super(parent, group);
         this.treeSection = treeSection;
@@ -103,17 +104,17 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     public void addOverview(StyledString styledString)
     {
         // source.addOverview(styledString);
-        
-        if(source.getScreenType()!=EJReportScreenType.NONE)
+
+        if (source.getScreenType() != EJReportScreenType.NONE)
         {
             styledString.append(" : ", StyledString.DECORATIONS_STYLER);
             styledString.append(source.getScreenType().toString(), StyledString.QUALIFIER_STYLER);
         }
-        if(source.getScreenType()==EJReportScreenType.FORM_LATOUT)
+        if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
         {
             styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
-            styledString.append("(width,height) = ("+source.getWidth()+" ,"+source.getHeight()+")",StyledString.DECORATIONS_STYLER);
-     
+            styledString.append("(width,height) = (" + source.getWidth() + " ," + source.getHeight() + ")", StyledString.DECORATIONS_STYLER);
+
             styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
         }
 
@@ -182,7 +183,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                if(blockGroupNode!=null)
+                if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
 
@@ -255,7 +256,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                if(blockGroupNode!=null)
+                if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
 
@@ -306,7 +307,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                if(blockGroupNode!=null)
+                if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
 
@@ -357,7 +358,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
-                if(blockGroupNode!=null)
+                if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
 
@@ -429,7 +430,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
                 treeSection.expand(ReportScreenNode.this);
-                if(blockGroupNode!=null)
+                if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
 
@@ -440,30 +441,123 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             }
         };
 
-        if(!forColumnSection)
+        if (!forColumnSection)
         {
             descriptors.add(rendererDescriptor);
-            
+
             descriptors.add(xDescriptor);
             descriptors.add(yDescriptor);
         }
-        
+
         descriptors.add(widthDescriptor);
         descriptors.add(heightDescriptor);
+
+        if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
+        {
+            AbstractTextDropDownDescriptor vaOddDescriptor = new AbstractTextDropDownDescriptor("Odd Record VA", "")
+            {
+                List<String> visualAttributeNames = new ArrayList<String>(treeSection.getEditor().getReportProperties().getEntireJProperties()
+                                                          .getVisualAttributesContainer().getVisualAttributeNames());
+
+                @Override
+                public void setValue(String value)
+                {
+                    source.setOddRowVAName(value);
+                    treeSection.getEditor().setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getOddRowVAName();
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> list = new ArrayList<String>();
+
+                    list.add("");
+
+                    list.addAll(visualAttributeNames);
+
+                    if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                    {
+                        list.add(getValue());
+                    }
+                    return list.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+                    if (t.length() > 0 && !visualAttributeNames.contains(t))
+                    {
+                        return String.format("Undefined !< %s >", t);
+                    }
+
+                    return t;
+                }
+            };
+            AbstractTextDropDownDescriptor vaEvenDescriptor = new AbstractTextDropDownDescriptor("Even Record VA", "")
+            {
+                List<String> visualAttributeNames = new ArrayList<String>(treeSection.getEditor().getReportProperties().getEntireJProperties()
+                                                          .getVisualAttributesContainer().getVisualAttributeNames());
+
+                @Override
+                public void setValue(String value)
+                {
+                    source.setEvenRowVAName(value);
+                    treeSection.getEditor().setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getEvenRowVAName();
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> list = new ArrayList<String>();
+
+                    list.add("");
+
+                    list.addAll(visualAttributeNames);
+
+                    if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                    {
+                        list.add(getValue());
+                    }
+                    return list.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+                    if (t.length() > 0 && !visualAttributeNames.contains(t))
+                    {
+                        return String.format("Undefined !< %s >", t);
+                    }
+
+                    return t;
+                }
+            };
+
+            descriptors.add(vaOddDescriptor);
+            descriptors.add(vaEvenDescriptor);
+        }
+
         return descriptors.toArray(new AbstractDescriptor<?>[0]);
     }
 
     public <S> S getAdapter(Class<S> adapter)
     {
-       
-        
+
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
-            if(source.getScreenType()==EJReportScreenType.FORM_LATOUT)
-                return adapter.cast(new  ReportScreenPreviewImpl(source));
-            
-            if(source.getScreenType()==EJReportScreenType.TABLE_LAYOUT)
-                return adapter.cast(new  ReportScreenColumnPreviewImpl(source));
+            if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                return adapter.cast(new ReportScreenPreviewImpl(source));
+
+            if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
+                return adapter.cast(new ReportScreenColumnPreviewImpl(source));
         }
         return null;
     }
@@ -487,13 +581,13 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
 
-        if(source.getScreenType()==EJReportScreenType.FORM_LATOUT)
+        if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
         {
-            nodes.add(new ReportBlockScreenItemsGroupNode(treeSection, this,forColumnSection));
-            if(blockGroupNode!=null)
-                nodes.add(blockGroupNode.createScreenGroupNode(this,source.getSubBlocks()));
+            nodes.add(new ReportBlockScreenItemsGroupNode(treeSection, this, forColumnSection));
+            if (blockGroupNode != null)
+                nodes.add(blockGroupNode.createScreenGroupNode(this, source.getSubBlocks()));
         }
-        else if (source.getScreenType()==EJReportScreenType.TABLE_LAYOUT)
+        else if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
         {
             nodes.add(new ReportBlockColumnGroupNode(treeSection, this));
         }
@@ -506,9 +600,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         return false;
     }
 
-    
-   
-    
     @Override
     public Action[] getActions()
     {

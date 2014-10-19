@@ -126,7 +126,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
                 
                 writeStringTAG(buffer, "fontName", visAttr.getFontName());
                 writeIntTAG(buffer, "fontSize", visAttr.getFontSize());
-                writeBooleanTAG(buffer, "fontSizeAsPercentage", visAttr.isFontSizeAsPercentage());
+                writeBooleanTAG(buffer, "useAsDynamicVA", visAttr.isUsedAsDynamicVA());
                 writeStringTAG(buffer, "style", visAttr.getFontStyle().toString());
                 writeStringTAG(buffer, "weight", visAttr.getFontWeight().toString());
                 writeStringTAG(buffer, "foregroundColor", getColorString(visAttr.getForegroundColor()));

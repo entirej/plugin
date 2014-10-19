@@ -214,6 +214,10 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "actionProcessorClassName", blockProperties.getActionProcessorClassName());
             EJPluginReportScreenProperties layoutScreenProperties = blockProperties.getLayoutScreenProperties();
             writeStringTAG(buffer, "screenType", layoutScreenProperties.getScreenType().name());
+            if(layoutScreenProperties.getOddRowVAName()!=null)
+                writeStringTAG(buffer, "oddVA", layoutScreenProperties.getOddRowVAName());
+            if(layoutScreenProperties.getEvenRowVAName()!=null)
+                writeStringTAG(buffer, "evenVA", layoutScreenProperties.getEvenRowVAName());
             writeStringTAG(buffer, "x", layoutScreenProperties.getX() + "");
             writeStringTAG(buffer, "y", layoutScreenProperties.getY() + "");
             writeStringTAG(buffer, "width", layoutScreenProperties.getWidth() + "");

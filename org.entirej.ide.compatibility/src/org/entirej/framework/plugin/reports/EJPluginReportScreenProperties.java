@@ -9,6 +9,8 @@ import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContain
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.framework.report.interfaces.EJReportColumnProperties;
 import org.entirej.framework.report.interfaces.EJReportScreenProperties;
+import org.entirej.framework.report.properties.EJCoreReportRuntimeProperties;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EJPluginReportScreenProperties implements EJReportScreenProperties
 {
@@ -23,11 +25,14 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     private EJReportScreenItemContainer   _screenItemContainer;
     private EJReportColumnContainer       _columnContainer;
     
+    private String                        oddRowVAName;
+    private String                        evenRowVAName;
+    
     public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
         this.blockProperties = blockProperties;
-        _screenItemContainer = new EJReportScreenItemContainer(blockProperties,this);
-        _columnContainer  = new EJReportColumnContainer(blockProperties);
+        _screenItemContainer = new EJReportScreenItemContainer(blockProperties, this);
+        _columnContainer = new EJReportColumnContainer(blockProperties);
     }
     
     @Override
@@ -123,5 +128,39 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     public Collection<? extends EJReportColumnProperties> getAllColumns()
     {
         return _columnContainer.getAllColumnProperties();
+    }
+    
+    
+    
+    public String getOddRowVAName()
+    {
+        return oddRowVAName;
+    }
+
+    public void setOddRowVAName(String oddRowVAName)
+    {
+        this.oddRowVAName = oddRowVAName;
+    }
+
+    public String getEvenRowVAName()
+    {
+        return evenRowVAName;
+    }
+
+    public void setEvenRowVAName(String evenRowVAName)
+    {
+        this.evenRowVAName = evenRowVAName;
+    }
+
+    @Override
+    public EJReportVisualAttributeProperties getOddVAProperties()
+    {
+        return null;
+    }
+    
+    @Override
+    public EJReportVisualAttributeProperties getEvenVAProperties()
+    {
+        return null;
     }
 }

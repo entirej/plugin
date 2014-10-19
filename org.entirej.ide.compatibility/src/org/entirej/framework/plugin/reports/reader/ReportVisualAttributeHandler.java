@@ -28,15 +28,15 @@ public class ReportVisualAttributeHandler extends EntireJTagHandler
 {
     private EJReportVisualAttributeProperties _vaProperties;
     
-    private static final String             VISUAL_ATTRIBUTE        = "visualAttribute";
-    private static final String             FONT_NAME               = "fontName";
-    private static final String             FONT_SIZE               = "fontSize";
-    private static final String             STYLE                   = "style";
+    private static final String               VISUAL_ATTRIBUTE  = "visualAttribute";
+    private static final String               FONT_NAME         = "fontName";
+    private static final String               FONT_SIZE         = "fontSize";
+    private static final String               STYLE             = "style";
     
-    private static final String             FONT_SIZE_AS_PERCENTAGE = "fontSizeAsPercentage";
-    private static final String             WEIGHT                  = "weight";
-    private static final String             FOREGROUND_COLOR        = "foregroundColor";
-    private static final String             BACKGROUND_COLOR        = "backgroundColor";
+    private static final String               USE_AS_DYNAMIC_VA = "useAsDynamicVA";
+    private static final String               WEIGHT            = "weight";
+    private static final String               FOREGROUND_COLOR  = "foregroundColor";
+    private static final String               BACKGROUND_COLOR  = "backgroundColor";
     
     @Override
     public void startLocalElement(String name, Attributes attributes) throws SAXException
@@ -73,11 +73,11 @@ public class ReportVisualAttributeHandler extends EntireJTagHandler
                 _vaProperties.setFontSize(Integer.parseInt(value));
             }
         }
-        else if (name.equals(FONT_SIZE_AS_PERCENTAGE))
+        else if (name.equals(USE_AS_DYNAMIC_VA))
         {
             if (value.length() > 0)
             {
-                _vaProperties.setFontSizeAsPercentage(Boolean.valueOf(value));
+                _vaProperties.setUsedAsDynamicVA(Boolean.valueOf(value));
             }
         }
         else if (name.equals(WEIGHT))

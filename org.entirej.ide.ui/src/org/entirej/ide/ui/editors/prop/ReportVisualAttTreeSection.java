@@ -83,9 +83,9 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
 {
     private final EJReportPropertiesEditor editor;
 
-    private boolean                  sorted;
-    private static final String      SORTED_STORE = "VisualAttTreeSection_SortAction.isChecked"; //$NON-NLS-1$;
-    private ViewerComparator         comparator;
+    private boolean                        sorted;
+    private static final String            SORTED_STORE = "VisualAttTreeSection_SortAction.isChecked"; //$NON-NLS-1$;
+    private ViewerComparator               comparator;
 
     public ReportVisualAttTreeSection(EJReportPropertiesEditor editor, FormPage page, Composite parent)
     {
@@ -508,30 +508,24 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                     super.addEditorAssist(control);
                 }
             };
-            
-            final AbstractBooleanDescriptor fontSizeAsPercentage = new AbstractBooleanDescriptor("Size As Percentage","")
+
+            final AbstractBooleanDescriptor fontSizeAsPercentage = new AbstractBooleanDescriptor("Use As Dynamic VA", "")
             {
-                
+
                 @Override
                 public void setValue(Boolean value)
                 {
-                   source.setFontSizeAsPercentage(value);
-                   if(value)
-                   {
-                       source.setFontSize(100);  
-                   }
-                   else
-                   {
-                       source.setFontSize(-1);
-                   }
-                   handler.refresh();
+                    source.setUsedAsDynamicVA(value);
+                    editor.setDirty(true);
+                    handler.refresh();
+
                 }
-                
+
                 @Override
                 public Boolean getValue()
                 {
-                   
-                    return source.isFontSizeAsPercentage();
+
+                    return source.isUsedAsDynamicVA();
                 }
             };
 
@@ -563,7 +557,6 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                     return source.getFontStyle();
                 }
 
-                
             };
             final AbstractDropDownDescriptor<EJReportFontWeight> fontWeight = new AbstractDropDownDescriptor<EJReportFontWeight>("Weight")
             {
@@ -599,7 +592,7 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { fontNameDescriptor, sizeDescriptor,fontSizeAsPercentage, fontStyle, fontWeight };
+                    return new AbstractDescriptor<?>[] { fontNameDescriptor, sizeDescriptor, fontSizeAsPercentage, fontStyle, fontWeight };
                 }
 
             };
@@ -614,11 +607,11 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
              * final AbstractTextDescriptor preview = new
              * AbstractTextDescriptor("Preview") { private Text previewText =
              * null; private Color currentBG; private Color currentFG;
-             *
+             * 
              * @Override public void setValue(String value) { }
-             *
+             * 
              * @Override public String getValue() { return "Preview text"; }
-             *
+             * 
              * @Override public void addEditorAssist(Control control) {
              * previewText = (Text) control; previewText.setEditable(false); }
              * };
@@ -1020,19 +1013,9 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
             }
             if (visualAttributeProperties.getFontSize() > 0)
             {
-                if(visualAttributeProperties.isFontSizeAsPercentage())
-                {
-                    if(visualAttributeProperties.getFontSize()!=100)
-                    {
-                        double fontSizeP = visualAttributeProperties.getFontSize();
-                        size = (int)(size* (fontSizeP/100)); 
-                    }
-                }
-                else
-                {
 
-                    size = visualAttributeProperties.getFontSize();
-                }
+                size = visualAttributeProperties.getFontSize();
+
             }
             font = new Font(Display.getDefault(), name, size, style);
             return font;
