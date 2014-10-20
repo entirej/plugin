@@ -84,7 +84,7 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
 
             public List<IWizardPage> getPages()
             {
-                if ((context!=null && context.skipService()) || (rcontext!=null && rcontext.skipService()))
+                if ((context!=null && context.skipService()) || (rcontext!=null))
                     return Arrays.<IWizardPage> asList(columnSelectionPage);
 
                 return Arrays.<IWizardPage> asList(columnSelectionPage, statementsWizardPage);
