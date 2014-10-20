@@ -52,7 +52,10 @@ public class StatementValidator
                 {
                     EJTableColumn param = new EJTableColumn();
                     param.setName(metaData.getColumnLabel(i));
-                    param.setDatatypeName(metaData.getColumnClassName(i));
+                    String columnClassName = metaData.getColumnClassName(i);
+                    
+                            
+                    param.setDatatypeName(columnClassName.equals("[B")?"Object":columnClassName);
                     columns.add(param);
                 }
                 

@@ -738,12 +738,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                         // set default width/height
                         itemProperties.setName(dlg.getValue());
 
-                        itemProperties.getHeaderScreen().setWidth(120);
-                        itemProperties.getHeaderScreen().setHeight(30);
-                        itemProperties.getDetailScreen().setWidth(120);
-                        itemProperties.getDetailScreen().setHeight(30);
-                        itemProperties.getFooterScreen().setWidth(120);
-                        itemProperties.getFooterScreen().setHeight(30);
+                        itemProperties.getHeaderScreen().setWidth(90);
+                        itemProperties.getHeaderScreen().setHeight(20);
+                        itemProperties.getDetailScreen().setWidth(90);
+                        itemProperties.getDetailScreen().setHeight(20);
+                        itemProperties.getFooterScreen().setWidth(90);
+                        itemProperties.getFooterScreen().setHeight(20);
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
 
