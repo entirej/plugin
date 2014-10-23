@@ -32,6 +32,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
@@ -49,13 +51,14 @@ import org.entirej.ide.ui.EJUIImages;
 
 public class ReportPreviewImpl implements IReportPreviewProvider
 {
-    protected final Color COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
-    protected final Color COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    protected final Color COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-    protected final Color COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+    protected final Color  COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
+    protected final Color  COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+    protected final Color  COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+    protected final Color  COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 
     protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
     protected final Cursor MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+
     public void dispose()
     {
         COLOR_BLOCK.dispose();
@@ -71,9 +74,9 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
     {
         // layout canvas preview
-        Composite pContent = new Composite(previewComposite, SWT.NONE);
+        final Composite pContent = new Composite(previewComposite, SWT.NONE);
 
-        EJPluginReportProperties formProperties = getReportProperties(editor);
+        final EJPluginReportProperties formProperties = getReportProperties(editor);
         int width = formProperties.getReportWidth();
         int height = formProperties.getReportHeight();
         previewComposite.setContent(pContent);
@@ -84,19 +87,73 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 
+        
+        
+        pContent.addPaintListener(new PaintListener()
+        {
+
+            public void paintControl(PaintEvent e)
+            {
+                if (formProperties.getHeaderSectionHeight() > 0)
+                {
+                    int y1 = formProperties.getHeaderSectionHeight()+10+formProperties.getMarginTop()+1;
+                    e.gc.drawLine(0, y1, pContent.getBounds().width,y1);
+                    e.gc.drawString("H", 5,y1>20?y1-20:2, true);
+                }
+                if (formProperties.getFooterSectionHeight() > 0)
+                {
+
+                    
+                    int y1 = pContent.getBounds().height - (formProperties.getFooterSectionHeight()+10+formProperties.getMarginBottom());
+                    e.gc.drawLine(0, y1, pContent.getBounds().width, y1);
+                    
+                    e.gc.drawString("F", 5,y1>20?y1-20:y1, true);
+
+                }
+
+            }
+        });
         Composite report = new Composite(pContent, SWT.BORDER);
         setPreviewBackground(report, COLOR_LIGHT_SHADOW);
 
-        report.setBounds(10, 10, width, height);
+        report.setBounds(25, 10, width, height);
         report.setLayout(null);
 
-        Composite reportBody = new Composite(report, SWT.BORDER);
+        final Composite reportBody = new Composite(report, SWT.BORDER);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
         reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
                 (height - (formProperties.getMarginBottom() + formProperties.getMarginTop())));
+
+        reportBody.addPaintListener(new PaintListener()
+        {
+
+            public void paintControl(PaintEvent e)
+            {
+                if (formProperties.getHeaderSectionHeight() > 0)
+                {
+                    e.gc.drawLine(0, formProperties.getHeaderSectionHeight(), reportBody.getBounds().width, formProperties.getHeaderSectionHeight());
+                    int x= reportBody.getBounds().width / 2;
+                    int y = formProperties.getHeaderSectionHeight()
+                            / 2;
+                    
+                    e.gc.drawString("HEADER SECTION", x>30?x-30:0, y, true);
+                }
+                if (formProperties.getFooterSectionHeight() > 0)
+                {
+
+                    int y1 = reportBody.getBounds().height - formProperties.getFooterSectionHeight();
+                    e.gc.drawLine(0, y1, reportBody.getBounds().width, y1);
+
+                    int y = y1+(formProperties.getFooterSectionHeight()/2);
+                    int x= reportBody.getBounds().width / 2;
+                    e.gc.drawString("FOOTER SECTION", x>30?x-30:0, formProperties.getFooterSectionHeight()-y>20?y:y1+2, true);
+                }
+
+            }
+        });
 
         EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
@@ -114,7 +171,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             @Override
             public void dragOver(DropTargetEvent event)
             {
-              
+
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
 
@@ -187,9 +244,9 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
             move.setToolTipText("Move");
             resize.setToolTipText("Resize");
-            move.setCursor(MOVE  );
-            resize.setCursor(RESIZE  );
-            
+            move.setCursor(MOVE);
+            resize.setCursor(RESIZE);
+
             resize.moveAbove(null);
             final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
@@ -261,18 +318,18 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
             final DragSourceAdapter resizeMoveAdapter = new DragSourceAdapter()
             {
-                
+
                 @Override
                 public void dragSetData(final DragSourceEvent event)
                 {
 
                     transfer.setSelection(new StructuredSelection(dragObjectResize));
                 }
-                
+
                 @Override
                 public void dragFinished(DragSourceEvent event)
                 {
-                   editor.refreshProperties();
+                    editor.refreshProperties();
                 }
             };
 
@@ -288,11 +345,11 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                     transfer.setSelection(new StructuredSelection(dragObjectMove));
                 }
-                
+
                 @Override
                 public void dragFinished(DragSourceEvent event)
                 {
-                   editor.refreshProperties();
+                    editor.refreshProperties();
                 }
             };
 

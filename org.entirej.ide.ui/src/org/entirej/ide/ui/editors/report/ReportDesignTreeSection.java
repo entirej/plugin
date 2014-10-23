@@ -63,7 +63,6 @@ import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.framework.report.enumerations.EJReportExportType;
-import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -634,6 +633,103 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
+            final AbstractTextDescriptor headerSectionDescriptor = new AbstractTextDescriptor("Header Height")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The Header section height <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setHeaderSectionHeight((Integer.parseInt(value)));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setHeaderSectionHeight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getHeaderSectionHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            final AbstractTextDescriptor footerSectionDescriptor = new AbstractTextDescriptor("Footer Height")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The Footer section height <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setFooterSectionHeight((Integer.parseInt(value)));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setFooterSectionHeight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getFooterSectionHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
             final AbstractTextDescriptor topMarginDescriptor = new AbstractTextDescriptor("Top Margin")
             {
 
@@ -829,7 +925,6 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            
             AbstractTextDropDownDescriptor exportTypeDescriptor = new AbstractTextDropDownDescriptor("Export Type")
             {
                 Filter vfilter = new Filter()
@@ -886,11 +981,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     return source.getExportType().name();
                 }
             };
-            
-            
-           
-            
-            
+
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
 
@@ -903,8 +994,8 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor, topMarginDescriptor, bottomMarginDescriptor, leftMarginDescriptor,
-                            rightMarginDescriptor };
+                    return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor, headerSectionDescriptor, footerSectionDescriptor,
+                            topMarginDescriptor, bottomMarginDescriptor, leftMarginDescriptor, rightMarginDescriptor };
                 }
             };
 
@@ -1148,7 +1239,8 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor,exportTypeDescriptor, layoutGroupDescriptor, parametersDes, metadataGroupDescriptor };
+            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, exportTypeDescriptor, layoutGroupDescriptor, parametersDes,
+                    metadataGroupDescriptor };
         }
 
         public void addOverview(StyledString styledString)
@@ -1166,12 +1258,9 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
             }
 
-            
             styledString.append(
                     String.format("[ %d, %d ] [ %d, %d, %d, %d ]", source.getReportWidth(), source.getReportHeight(), source.getMarginLeft(),
                             source.getMarginTop(), source.getMarginRight(), source.getMarginBottom()), StyledString.DECORATIONS_STYLER);
-
-            
 
         }
     }

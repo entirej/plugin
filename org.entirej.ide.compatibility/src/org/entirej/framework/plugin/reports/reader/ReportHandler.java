@@ -36,6 +36,9 @@ public class ReportHandler extends EntireJTagHandler
     private static final String      ELEMENT_MARGIN_BOTTOM          = "marginBottom";
     private static final String      ELEMENT_MARGIN_LEFT            = "marginLeft";
     private static final String      ELEMENT_MARGIN_RIGHT           = "marginRight";
+
+    private static final String    ELEMENT_HEADER_SECTION_HEIGHT  = "headerHeight";
+    private static final String    ELEMENT_FOOTER_SECTION_HEIGHT  = "footerHeight";
     private static final String      ELEMENT_REPORT_ORIENTATION     = "orientation";
     private static final String      ELEMENT_REPORT_HEIGHT          = "height";
     private static final String      ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
@@ -176,6 +179,28 @@ public class ReportHandler extends EntireJTagHandler
             else
             {
                 _reportProperties.setMarginBottom(1);
+            }
+        }
+        else if (name.equals(ELEMENT_HEADER_SECTION_HEIGHT))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setHeaderSectionHeight(Integer.parseInt(value));
+            }
+            else
+            {
+                _reportProperties.setHeaderSectionHeight(0);
+            }
+        }
+        else if (name.equals(ELEMENT_FOOTER_SECTION_HEIGHT))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setFooterSectionHeight(Integer.parseInt(value));
+            }
+            else
+            {
+                _reportProperties.setFooterSectionHeight(1);
             }
         }
         else if (name.equals(ELEMENT_MARGIN_LEFT))

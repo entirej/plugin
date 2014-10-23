@@ -59,7 +59,8 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private int                                _marginBottom;
     private int                                _marginLeft;
     private int                                _marginRight;
-    
+    private int                                _headerSectionHeight      = 30;//plugin default
+    private int                                _footerSectionHeight      = 20;//plugin default
     private EJReportProperties.ORIENTATION     _orientation              = ORIENTATION.PORTRAIT;
     
     private EJReportExportType                 exportType                = EJReportExportType.PDF;
@@ -465,4 +466,25 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         this.exportType = exportType;
     }
     
+    @Override
+    public int getHeaderSectionHeight()
+    {
+        return _headerSectionHeight;
+    }
+    
+    public void setHeaderSectionHeight(int headerSectionHeight)
+    {
+        this._headerSectionHeight = headerSectionHeight;
+    }
+    
+    @Override
+    public int getFooterSectionHeight()
+    {
+        return _footerSectionHeight;
+    }
+    
+    public void setFooterSectionHeight(int footerSectionHeight)
+    {
+        this._footerSectionHeight = footerSectionHeight;
+    }
 }
