@@ -19,20 +19,36 @@
 package org.entirej.ide.ui.editors.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
@@ -51,6 +67,7 @@ import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
@@ -1357,8 +1374,13 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
     public Action createNewScreenItemAction(final EJReportScreenItemContainer container, final int index)
     {
 
+        
+        
         return new AbstractSubActions("New Screen Item")
         {
+            
+            
+            
             Action createAction(final EJReportScreenItemType type)
             {
 
@@ -1376,6 +1398,9 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
             void addScreenItem(final EJReportScreenItemType type, String name)
             {
+                
+                final EJPluginReportScreenItemProperties itemProperties = container.newItem(type);
+                
                 InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("New Screen Item : [%s]", name), "Item Name", null,
                         new IInputValidator()
                         {
@@ -1389,15 +1414,70 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                                 return null;
                             }
-                        });
+                        })
+                
+                {
+                
+                    
+                    
+                    @Override
+                    protected Control createDialogArea(Composite parent)
+                    {
+                        Composite createDialogArea = (Composite) super.createDialogArea(parent);
+                        
+                       
+                            
+                        
+                        Composite body = new Group(createDialogArea, SWT.NONE);
+                        body.setLayout(new GridLayout());
+                       
+                        
+                        GridData layoutData = new GridData(GridData.FILL_BOTH
+                                | GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL);
+                        layoutData.heightHint =500;
+                        body.setLayoutData(layoutData);
+                        
+                        
+                        
+                       new Label(parent, SWT.NULL);
+                        final  ScreenItemNode node = new ScreenItemNode(null, itemProperties);
+                       AbstractDescriptorPart part = new AbstractDescriptorPart(editor.getToolkit(),body,true)
+                    {
+                        
+                        @Override
+                        public String getSectionTitle()
+                        {
+                            return "Screen Item Settings";
+                        }
+                        
+                        @Override
+                        public String getSectionDescription()
+                        {
+                            return "";
+                        }
+                        
+                        @Override
+                        public AbstractDescriptor<?>[] getDescriptors()
+                        {
+                            // TODO Auto-generated method stub
+                            return node.getNodeDescriptors();
+                        }
+                    }; 
+                        
+                    part.buildUI();
+                        return createDialogArea;
+                        
+                    }
+                };
                 if (dlg.open() == Window.OK)
                 {
-                    final EJPluginReportScreenItemProperties itemProperties = container.createItem(type, dlg.getValue(), index);
+                   
                     if (itemProperties != null)
                     {
                         // set default width/height
 
-                        
+                        itemProperties.setName(dlg.getValue());
+                        container.addItemProperties(index, itemProperties);
                        if(forColumn&& container.getItemCount()==1)
                        {
                            itemProperties.setX(5);

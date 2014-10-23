@@ -75,7 +75,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
     public FormPreviewPart(AbstractEJFormEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, true);
+        super(editor.getToolkit(), parent, true);
         this.editor = editor;
         buildUI();
 

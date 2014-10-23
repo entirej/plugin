@@ -36,7 +36,7 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
 
     public NodeDescriptorPart(AbstractEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, true);
+        super(editor.getToolkit(),  parent, true);
     }
 
     @Override

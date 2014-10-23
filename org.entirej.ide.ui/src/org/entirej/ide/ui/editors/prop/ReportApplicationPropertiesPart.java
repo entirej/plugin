@@ -39,7 +39,7 @@ public class ReportApplicationPropertiesPart extends AbstractDescriptorPart
 
     public ReportApplicationPropertiesPart(final EJReportPropertiesEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, false);
+        super(editor.getToolkit(),  parent, false);
      
         connectionFactoryClass = new AbstractTypeDescriptor(editor, "Connection Factory")
         {

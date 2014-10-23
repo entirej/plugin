@@ -65,7 +65,7 @@ public class LayoutPreviewPart extends AbstractDescriptorPart implements INodeDe
 
     public LayoutPreviewPart(EJPropertiesEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, true);
+        super(editor.getToolkit(),  parent, true);
         this.editor = editor;
         buildUI();
 

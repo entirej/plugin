@@ -76,26 +76,26 @@ import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
 
 public abstract class AbstractDescriptorPart extends SectionPart
 {
-    protected Composite      body;
+    protected Composite   body;
 
-    protected AbstractEditor editor;
+    protected FormToolkit toolkit;
 
-    private boolean          activeForcus = false;
+    private boolean       activeForcus = false;
 
-    private final boolean    enableScroll;
+    private final boolean enableScroll;
 
-    public AbstractDescriptorPart(AbstractEditor editor, FormPage page, Composite parent, boolean enableScroll)
+    public AbstractDescriptorPart(FormToolkit toolkit, Composite parent, boolean enableScroll)
     {
-        this(editor, page, parent,  ExpandableComposite.TITLE_BAR, enableScroll);
+        this(toolkit, parent, ExpandableComposite.TITLE_BAR, enableScroll);
     }
 
-    public AbstractDescriptorPart(AbstractEditor editor, FormPage page, Composite parent, int style, boolean enableScroll)
+    public AbstractDescriptorPart(FormToolkit toolkit, Composite parent, int style, boolean enableScroll)
     {
-        super(parent, page.getManagedForm().getToolkit(), style);
-        this.editor = editor;
+        super(parent, toolkit, style);
+        this.toolkit = toolkit;
 
-        buildBody(getSection(), page.getEditor().getToolkit());
-        createSectionToolbar(getSection(), page.getEditor().getToolkit(), getToolbarActions());
+        buildBody(getSection(), toolkit);
+        createSectionToolbar(getSection(), toolkit, getToolbarActions());
         parent.setBackground(getSection().getBackground());
         this.enableScroll = enableScroll;
     }
@@ -110,10 +110,10 @@ public abstract class AbstractDescriptorPart extends SectionPart
         section.setLayout(EditorLayoutFactory.createClearTableWrapLayout(false, 1));
         GridData sectionData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
         section.setLayoutData(sectionData);
-        
+
         final FormText decFormText = toolkit.createFormText(section, true);
         decFormText.setWhitespaceNormalized(true);
-        
+
         decFormText.addHyperlinkListener(new HyperlinkAdapter()
         {
 
@@ -153,7 +153,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
     public void buildUI()
     {
 
-        FormToolkit toolkit = editor.getToolkit();
+        FormToolkit toolkit = this.toolkit;
         final Section section = getSection();
 
         section.setRedraw(false);
@@ -166,16 +166,16 @@ public abstract class AbstractDescriptorPart extends SectionPart
         AbstractDescriptor<?>[] descriptors = getDescriptors();
 
         String sectionDescription = getSectionDescription();
-        
+
         if (sectionDescription == null || sectionDescription.trim().length() == 0)
         {
             sectionDescription = "";
         }
-        if(section.getDescriptionControl() instanceof FormText)
+        if (section.getDescriptionControl() instanceof FormText)
         {
-            ((FormText)section.getDescriptionControl()).setText(String.format("<form><p>%s</p></form>", sectionDescription), true, true);
+            ((FormText) section.getDescriptionControl()).setText(String.format("<form><p>%s</p></form>", sectionDescription), true, true);
         }
-        
+
         body = toolkit.createComposite(section);
         section.setClient(body);
         body.setLayout(new GridLayout());
@@ -238,7 +238,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         }
 
         toolkit.paintBordersFor(body);
-       
+
         section.layout();
         section.setRedraw(true);
 
@@ -285,7 +285,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                 if (descriptor instanceof IGroupProvider)
                 {
                     IGroupProvider groupProvider = (IGroupProvider) descriptor;
-                    createAdvancedSection(body, groupProvider, descriptor.getText(), descriptor.getTooltip(), editor.getToolkit(), groupProvider.isExpand());
+                    createAdvancedSection(body, groupProvider, descriptor.getText(), descriptor.getTooltip(), toolkit, groupProvider.isExpand());
 
                 }
                 break;
@@ -348,7 +348,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         section.setTextClient(toolbar);
     }
 
-    protected Composite createAdvancedSection(final Composite body, final IGroupProvider groupProvider, String text, String tooltip, FormToolkit toolkit,
+    protected Composite createAdvancedSection(final Composite body, final IGroupProvider groupProvider, String text, String tooltip, final FormToolkit toolkit,
             boolean expand)
     {
         final Composite advnComp;
@@ -416,7 +416,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                     AbstractEditorSection<?> editorSection = createEditorSection(advnComp, sub);
                     if (editorSection != null)
 
-                        editorSection.createContents(descripterBody, editor.getToolkit());
+                        editorSection.createContents(descripterBody, toolkit);
                 }
                 if (advnSection.isExpanded())
                     EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()

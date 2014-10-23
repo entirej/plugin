@@ -49,7 +49,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
 
     public ApplicationPropertiesPart(final EJPropertiesEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, false);
+        super(editor.getToolkit(), parent, false);
         applicationManagerClass = new AbstractTypeDescriptor(editor, "Application Definition")
         {
             boolean changed = false;

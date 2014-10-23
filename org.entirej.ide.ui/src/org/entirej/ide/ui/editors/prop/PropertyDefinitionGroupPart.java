@@ -108,7 +108,7 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
 
     public PropertyDefinitionGroupPart(final EJPropertiesEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, ExpandableComposite.TITLE_BAR, false);
+        super(editor.getToolkit(),  parent, ExpandableComposite.TITLE_BAR, false);
         this.editor = editor;
     }
 

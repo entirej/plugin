@@ -75,7 +75,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 
     public ReportPreviewPart(AbstractEJReportEditor editor, FormPage page, Composite parent)
     {
-        super(editor, page, parent, true);
+        super(editor.getToolkit(), parent, true);
         this.editor = editor;
         buildUI();
 

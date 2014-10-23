@@ -139,6 +139,27 @@ public class EJReportScreenItemContainer
     public EJPluginReportScreenItemProperties createItem(EJReportScreenItemType type, String name, int index)
     {
         EJPluginReportScreenItemProperties itemProperties = null;
+        itemProperties = newItem(type);
+        
+        if(itemProperties==null)return null;
+        
+        itemProperties.setName(name);
+        
+        if (index == -1)
+        {
+            addItemProperties(itemProperties);
+        }
+        else
+        {
+            addItemProperties(index, itemProperties);
+        }
+        
+        return itemProperties;
+    }
+
+    public EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type)
+    {
+        EJPluginReportScreenItemProperties itemProperties;
         switch (type)
         {
             case LABEL:
@@ -165,20 +186,8 @@ public class EJReportScreenItemContainer
                 break;
             
             default:
-                return null;
+                itemProperties = null;
         }
-        
-        itemProperties.setName(name);
-        
-        if (index == -1)
-        {
-            addItemProperties(itemProperties);
-        }
-        else
-        {
-            addItemProperties(index, itemProperties);
-        }
-        
         return itemProperties;
     }
     
