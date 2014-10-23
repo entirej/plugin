@@ -455,6 +455,13 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
             public void createRequiredResources(IProgressMonitor monitor)
             {
+                if(context!=null)
+                    createFormResources(monitor);
+                else if(rcontext!=null)
+                    createReportResources(monitor);
+            }
+            private void createFormResources(IProgressMonitor monitor)
+            {
                 List<String> addedInner = new ArrayList<String>();
                 List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
                 Procedure procedure = columnSelectionPage.getProcedure();
@@ -503,6 +510,67 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     try
                     {
                         String clazz = context.createPojoClass(inner, monitor);
+                        innerClass.put(objName, clazz);
+                    }
+                    catch (Exception e)
+                    {
+
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            
+            private void createReportResources(IProgressMonitor monitor)
+            {
+                List<String> addedInner = new ArrayList<String>();
+                List<EJReportPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJReportPojoGeneratorType>();
+                Procedure procedure = columnSelectionPage.getProcedure();
+                ObjectArgument collectionType = procedure.getCollectionType();
+
+                if (collectionType != null)
+                {
+                    for (Argument argument : collectionType.getArguments())
+                    {
+                        EJReportTableColumn tableColumn = new EJReportTableColumn();
+                        tableColumn.setName(argument._name);
+
+                        if (argument instanceof ObjectArgument)
+                        {
+                            ObjectArgument objectArgument = (ObjectArgument) argument;
+
+                            String mappedClass = innerTypePage.getMappedClass(objectArgument);
+                            if (mappedClass != null)
+                            {
+                                innerClass.put(objectArgument.objName, mappedClass);
+                                continue;
+                            }
+
+                            if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
+                            {
+                                EJReportPojoGeneratorType inner = new EJReportPojoGeneratorType();
+                                if (objectArgument.tableName != null)
+                                    inner.setProperty("TABLE_NAME", objectArgument.tableName);
+                                if (objectArgument.objName != null)
+                                    inner.setProperty("OBJECT_NAME", objectArgument.objName);
+                                inner.setColumnNames(createReportPojoCloumns(objectArgument));
+                                inner.setClassName(objectArgument.objName);
+                                addedInner.add(objectArgument.objName);
+                                innerPojoGeneratorTypes.add(inner);
+                            }
+                        }
+                    }
+
+                }
+                Collections.reverse(innerPojoGeneratorTypes);
+                for (EJReportPojoGeneratorType inner : innerPojoGeneratorTypes)
+                {
+                    String objName = inner.getClassName();
+
+                    inner.setClassName(objName);
+                    try
+                    {
+                        String clazz = rcontext.createPojoClass(inner, monitor);
                         innerClass.put(objName, clazz);
                     }
                     catch (Exception e)

@@ -435,6 +435,7 @@ public class DBTypeSelectionPage extends WizardPage
                                     catch (Exception e)
                                     {
                                         dbError = e.getMessage();
+                                        e.printStackTrace();
 
                                     }
                                     finally
@@ -453,7 +454,7 @@ public class DBTypeSelectionPage extends WizardPage
                             catch (Exception e)
                             {
                                 dbError = e.getMessage();
-
+                                e.printStackTrace();
                             }
                             finally
                             {
@@ -604,7 +605,8 @@ public class DBTypeSelectionPage extends WizardPage
                     else
                         argument.type = Type.IN;
 
-                    proc.addArgument(argument);
+                    if(proc!=null)
+                        proc.addArgument(argument);
                 }
 
                 procedures.addAll(functions);
@@ -758,7 +760,7 @@ public class DBTypeSelectionPage extends WizardPage
         {
 
             Statement statement = con.createStatement();
-            ResultSet rset = statement.executeQuery("SELECT TYPECODE FROM USER_TYPES WHERE TYPE_NAME = '" + attrTypeName + "' ");
+            ResultSet rset = statement.executeQuery("SELECT TYPECODE FROM ALL_TYPES WHERE TYPE_NAME = '" + attrTypeName + "' ");
             String type = null;
             try
             {
