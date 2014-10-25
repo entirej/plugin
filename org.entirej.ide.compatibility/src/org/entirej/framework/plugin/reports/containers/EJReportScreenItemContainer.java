@@ -62,7 +62,15 @@ public class EJReportScreenItemContainer
     {
         if (itemProperties != null)
         {
-            _itemProperties.add(index, itemProperties);
+            if(index==-1)
+            {
+                _itemProperties.add( itemProperties);
+            }
+            else
+            {
+                _itemProperties.add(index, itemProperties);
+            }
+            
             
         }
     }

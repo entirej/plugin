@@ -1400,7 +1400,17 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             {
                 
                 final EJPluginReportScreenItemProperties itemProperties = container.newItem(type);
-                
+                if(forColumn&& container.getItemCount()==0)
+                {
+                    itemProperties.setX(5);
+                    itemProperties.setWidth(source.getScreenProperties().getWidth()-10);
+                    itemProperties.setHeight(source.getScreenProperties().getHeight()-5);
+                }
+                else
+                {
+                    itemProperties.setWidth(80);
+                    itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 20);
+                }
                 InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("New Screen Item : [%s]", name), "Item Name", null,
                         new IInputValidator()
                         {
@@ -1463,7 +1473,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                             return node.getNodeDescriptors();
                         }
                     }; 
-                        
+                    createDialogArea.setBackground(parent.getBackground());   
                     part.buildUI();
                         return createDialogArea;
                         
@@ -1478,17 +1488,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                         itemProperties.setName(dlg.getValue());
                         container.addItemProperties(index, itemProperties);
-                       if(forColumn&& container.getItemCount()==1)
-                       {
-                           itemProperties.setX(5);
-                           itemProperties.setWidth(source.getScreenProperties().getWidth()-10);
-                           itemProperties.setHeight(source.getScreenProperties().getHeight()-5);
-                       }
-                       else
-                       {
-                           itemProperties.setWidth(80);
-                           itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 20);
-                       }
+                       
                         
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
