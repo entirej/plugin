@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -34,10 +35,15 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.interfaces.EJReportBorderProperties;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
@@ -48,6 +54,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.FormNodeTag;
+import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizard;
+import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 import org.entirej.ide.ui.nodes.INodeRenameProvider;
@@ -160,7 +168,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
     public Action[] getActions()
     {
 
-        return new Action[] { createNewColumnAction(source, -1) };
+        return new Action[] { createNewEmptyColumnAction(source, -1) };
     }
 
     class ScreenColumnNode extends AbstractNode<EJPluginReportColumnProperties> implements Neighbor, Movable, NodeOverview
@@ -237,7 +245,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
         {
 
             int indexOf = ReportBlockColumnGroupNode.this.source.getAllColumnProperties().indexOf(source);
-            return new Action[] { createNewColumnAction(ReportBlockColumnGroupNode.this.source, ++indexOf), };
+            return new Action[] { createNewEmptyColumnAction(ReportBlockColumnGroupNode.this.source, ++indexOf), };
         }
 
         public boolean canMove()
@@ -423,32 +431,33 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 {
 
                     text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier(){
-                        
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier()
+                    {
+
                         @Override
                         protected boolean validate(String value)
                         {
                             try
                             {
                                 Double intValue = Double.parseDouble(value);
-                                
+
                                 if (intValue > -1)
                                 {
                                     return true;
                                 }
                                 else
                                 {
-                                   return false;
+                                    return false;
                                 }
                             }
                             catch (NumberFormatException exception)
                             {
-                               //ignore
+                                // ignore
                             }
-                            
+
                             return false;
                         }
-                        
+
                     });
 
                     super.addEditorAssist(control);
@@ -702,7 +711,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
     }
 
-    public Action createNewColumnAction(final EJReportColumnContainer container, final int index)
+    public Action createNewEmptyColumnAction(final EJReportColumnContainer container, final int index)
     {
 
         return new Action("New Screen Column")
@@ -710,53 +719,110 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             @Override
             public void runWithEvent(Event event)
             {
-                addScreenColumn(getText());
+                addScreenColumn();
             }
 
-            void addScreenColumn(String name)
+            void addScreenColumn()
             {
-                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("New Screen Column : [%s]", name), "Column Name", null,
-                        new IInputValidator()
-                        {
-
-                            public String isValid(String newText)
-                            {
-                                if (newText == null || newText.trim().length() == 0)
-                                    return "Column name can't be empty.";
-                                if (container.contains(newText.trim()))
-                                    return "Column with this name already exists.";
-
-                                return null;
-                            }
-                        });
-                if (dlg.open() == Window.OK)
+                BlockColumnWizardContext context = new BlockColumnWizardContext()
                 {
-                    final EJPluginReportColumnProperties itemProperties = new EJPluginReportColumnProperties(container.getBlockProperties());
-                    container.addColumnProperties(itemProperties);
-                    if (itemProperties != null)
+
+                    public boolean hasBlockColumn(String name)
                     {
-                        // set default width/height
-                        itemProperties.setName(dlg.getValue());
-
-                        itemProperties.getHeaderScreen().setWidth(90);
-                        itemProperties.getHeaderScreen().setHeight(20);
-                        itemProperties.getDetailScreen().setWidth(90);
-                        itemProperties.getDetailScreen().setHeight(20);
-                        itemProperties.getFooterScreen().setWidth(90);
-                        itemProperties.getFooterScreen().setHeight(20);
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                treeSection.refresh(ReportBlockColumnGroupNode.this);
-                                treeSection.selectNodes(true, treeSection.findNode(itemProperties, true));
-
-                            }
-                        });
+                        return container.contains(name.trim());
                     }
-                }
+
+                    public EJPluginReportScreenItemProperties newScreenItem(EJReportScreenItemType type)
+                    {
+                        return EJReportScreenItemContainer.newItem(type, container.getBlockProperties());
+                    }
+
+                    public String getDefaultBlockValue()
+                    {
+                        return source.getBlockProperties().getName();
+                    }
+
+                    public IJavaProject getProject()
+                    {
+                        return editor.getJavaProject();
+                    }
+
+                    public void addBlockColumn(String name, String label, EJPluginReportScreenItemProperties screenItem)
+                    {
+                        final EJPluginReportColumnProperties itemProperties = new EJPluginReportColumnProperties(container.getBlockProperties());
+                        container.addColumnProperties(itemProperties);
+                        if (itemProperties != null)
+                        {
+                            // set default width/height
+                            itemProperties.setName(name);
+
+                            itemProperties.getHeaderScreen().setWidth(90);
+                            itemProperties.getHeaderScreen().setHeight(20);
+                            itemProperties.getDetailScreen().setWidth(90);
+                            itemProperties.getDetailScreen().setHeight(20);
+                            itemProperties.getFooterScreen().setWidth(90);
+                            itemProperties.getFooterScreen().setHeight(20);
+
+                            if (screenItem != null)
+                            {
+                                screenItem.setX(5);
+                                screenItem.setWidth(itemProperties.getDetailScreen().getWidth() - 10);
+                                screenItem.setHeight(itemProperties.getDetailScreen().getHeight() - 5);
+
+                                screenItem.setName(name);
+                                itemProperties.getDetailScreen().getScreenItemContainer().addItemProperties(screenItem);
+                            }
+                            if (label != null)
+                            {
+                                itemProperties.setShowHeader(true);
+                                EJPluginReportScreenItemProperties.Label screenLabelItem = new EJPluginReportScreenItemProperties.Label(
+                                        container.getBlockProperties());
+                                screenLabelItem.setX(5);
+                                screenLabelItem.setWidth(itemProperties.getHeaderScreen().getWidth() - 10);
+                                screenLabelItem.setHeight(itemProperties.getHeaderScreen().getHeight() - 5);
+                                screenLabelItem.setText(label);
+                                screenLabelItem.setName(name);
+                                
+                                if(screenItem instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+                                {
+                                    EJPluginReportScreenItemProperties.AlignmentBaseItem  al = (AlignmentBaseItem) screenItem;
+                                    screenLabelItem.setHAlignment(al.getHAlignment());
+                                    screenLabelItem.setVAlignment(al.getVAlignment());
+                                }
+                                itemProperties.getHeaderScreen().getScreenItemContainer().addItemProperties(screenLabelItem);
+                            }
+
+                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                            {
+
+                                public void run()
+                                {
+                                    editor.setDirty(true);
+                                    treeSection.refresh(ReportBlockColumnGroupNode.this);
+                                    treeSection.selectNodes(true, treeSection.findNode(itemProperties, true));
+
+                                }
+                            });
+                        }
+
+                    }
+
+                    public List<EJReportScreenItemType> getBlockItemTypes()
+                    {
+
+                        return Arrays.asList(EJReportScreenItemType.TEXT, EJReportScreenItemType.DATE, EJReportScreenItemType.DATE,
+                                EJReportScreenItemType.NUMBER, EJReportScreenItemType.IMAGE, EJReportScreenItemType.LABEL);
+                    }
+
+                    public FormToolkit getToolkit()
+                    {
+                        return editor.getToolkit();
+                    }
+                };
+
+                BlockColumnWizard wizard = new BlockColumnWizard(context);
+                wizard.open();
+
             }
 
         };

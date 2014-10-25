@@ -164,8 +164,14 @@ public class EJReportScreenItemContainer
         
         return itemProperties;
     }
+    
+    
+    public  EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type)
+    {
+        return newItem(type, _blockProperties);
+    }
 
-    public EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type)
+    public static EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type,EJPluginReportBlockProperties            _blockProperties)
     {
         EJPluginReportScreenItemProperties itemProperties;
         switch (type)

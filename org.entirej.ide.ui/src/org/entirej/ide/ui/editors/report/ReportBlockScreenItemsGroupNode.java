@@ -192,7 +192,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
         return new Action[] { createNewScreenItemAction(source, -1) };
     }
 
-    class ScreenItemNode extends AbstractNode<EJPluginReportScreenItemProperties> implements Neighbor, Movable, NodeOverview
+    public class ScreenItemNode extends AbstractNode<EJPluginReportScreenItemProperties> implements Neighbor, Movable, NodeOverview
     {
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
                                                       {
