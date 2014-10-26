@@ -810,7 +810,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     public List<EJReportScreenItemType> getBlockItemTypes()
                     {
 
-                        return Arrays.asList(EJReportScreenItemType.TEXT, EJReportScreenItemType.DATE, EJReportScreenItemType.DATE,
+                        return Arrays.asList(EJReportScreenItemType.TEXT, EJReportScreenItemType.DATE,
                                 EJReportScreenItemType.NUMBER, EJReportScreenItemType.IMAGE, EJReportScreenItemType.LABEL);
                     }
 
