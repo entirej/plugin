@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.report.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -47,6 +48,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.D
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Number.NumberFormats;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
+import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
@@ -55,7 +57,10 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
+import org.entirej.ide.ui.editors.form.FormNodeTag;
+import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.ReportBlockItemsGroupNode;
+import org.entirej.ide.ui.editors.report.ReportBlockScreenItemsGroupNode.ScreenItemNode;
 
 public class BlockColumnSelectionPage extends WizardPage
 {
@@ -63,6 +68,7 @@ public class BlockColumnSelectionPage extends WizardPage
     private final BlockColumnWizardContext     wizardContext;
     private String                             blockColumnName;
     private String                             blockColumnLabel = "";
+    private int                                width            = 90;
     private EJPluginReportScreenItemProperties itemProperties;
     Composite                                  body;
 
@@ -232,8 +238,8 @@ public class BlockColumnSelectionPage extends WizardPage
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
                                 List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
-                                
-                                if(itemProperties!=null)
+
+                                if (itemProperties != null)
                                 {
                                     addTypeBaseDescriptors(descriptors, itemProperties);
                                 }
@@ -268,6 +274,11 @@ public class BlockColumnSelectionPage extends WizardPage
         return itemProperties;
     }
 
+    public int getWidth()
+    {
+        return width;
+    }
+    
     protected void doUpdateStatus()
     {
         setPageComplete(validatePage());
@@ -277,7 +288,59 @@ public class BlockColumnSelectionPage extends WizardPage
     {
 
         
-       
+        
+        final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
+        {
+          
+
+            @Override
+            public String getTooltip()
+            {
+
+                return "The width <b>(in pixels)</b> of the column.";
+            }
+
+           
+
+            @Override
+            public void setValue(String value)
+            {
+                try
+                {
+                    width = (Integer.parseInt(value));
+                }
+                catch (NumberFormatException e)
+                {
+                   width = 0;
+                    if (text != null)
+                    {
+                        text.setText(getValue());
+                        text.selectAll();
+                    }
+                }
+            }
+
+            @Override
+            public String getValue()
+            {
+                return String.valueOf(width);
+            }
+
+            Text text;
+
+            @Override
+            public void addEditorAssist(Control control)
+            {
+
+                text = (Text) control;
+                text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                super.addEditorAssist(control);
+            }
+        };
+        
+        descriptors.add(widthDescriptor);
+        
         final AbstractTextDescriptor headerDescriptor = new AbstractTextDescriptor("Column Header")
         {
 
@@ -291,7 +354,7 @@ public class BlockColumnSelectionPage extends WizardPage
             @Override
             public void setValue(String value)
             {
-                blockColumnLabel  = value;
+                blockColumnLabel = value;
             }
 
             @Override
@@ -302,7 +365,7 @@ public class BlockColumnSelectionPage extends WizardPage
 
         };
         descriptors.add(headerDescriptor);
-        
+
         if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
         {
             final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;

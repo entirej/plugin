@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -887,11 +888,11 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     {
                                         Collection<EJPluginReportItemProperties> allItemProperties = formProp.getBlockProperties((String) inputElement)
                                                 .getAllItemProperties();
-                                        List<String> blockItemNames = new ArrayList<String>();
+                                        List<EJPluginReportItemProperties> blockItemNames = new ArrayList<EJPluginReportItemProperties>();
                                         for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
                                         {
 
-                                            blockItemNames.add(ejItemProperties.getName());
+                                            blockItemNames.add(ejItemProperties);
                                         }
                                         return blockItemNames.toArray();
 
@@ -946,13 +947,27 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                             String lov = (String) ((IStructuredSelection) blockViewer.getSelection()).getFirstElement();
                                             if (itemViewer.getSelection() instanceof IStructuredSelection)
                                             {
-                                                String item = (String) ((IStructuredSelection) itemViewer.getSelection()).getFirstElement();
-                                                setValue(String.format("%s.%s", lov, item));
+                                                EJPluginReportItemProperties item = (EJPluginReportItemProperties) ((IStructuredSelection) itemViewer.getSelection()).getFirstElement();
+                                                setValue(String.format("%s.%s", lov, item.getName()));
                                             }
 
                                         }
 
                                     }
+                                });
+                                
+                                itemViewer.setLabelProvider(new ColumnLabelProvider(){
+                                    
+                                    public String getText(Object element) {
+                                        if(element instanceof EJPluginReportItemProperties)
+                                        {
+                                            EJPluginReportItemProperties itemProperties = ((EJPluginReportItemProperties)element);
+                                            return String.format("%s - %s", itemProperties.getName(),itemProperties.getDataTypeClassName());
+                                        }
+                                        
+                                        return super.getText(element);
+                                    };
+                                    
                                 });
 
                                 updateUIState();

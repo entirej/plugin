@@ -28,7 +28,7 @@ import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 public interface BlockColumnWizardContext
 {
 
-    void addBlockColumn(String name, String label, EJPluginReportScreenItemProperties itemProperties);
+    void addBlockColumn(String name, String label,int width,  EJPluginReportScreenItemProperties itemProperties);
 
     boolean hasBlockColumn(String name);
 
