@@ -21,7 +21,6 @@ package org.entirej.ide.ui.editors.report.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -57,10 +56,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
-import org.entirej.ide.ui.editors.form.FormNodeTag;
-import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.ReportBlockItemsGroupNode;
-import org.entirej.ide.ui.editors.report.ReportBlockScreenItemsGroupNode.ScreenItemNode;
 
 public class BlockColumnSelectionPage extends WizardPage
 {
@@ -76,8 +72,8 @@ public class BlockColumnSelectionPage extends WizardPage
     {
         super("ej.data.column.selection");
         this.wizardContext = wizardContext;
-        setTitle("Report Block Column");
-        setDescription("Properties for the new block column.");
+        setTitle("New Screen Column");
+        setDescription("Properties for the new screen column.");
     }
 
     public void createControl(Composite parent)
@@ -211,7 +207,7 @@ public class BlockColumnSelectionPage extends WizardPage
                     if (type != null)
                     {
                         itemProperties = wizardContext.newScreenItem(type);
-                        Composite body = new Group(composite, SWT.NONE);
+                         body = new Group(composite, SWT.NONE);
                         body.setLayout(new GridLayout());
 
                         GridData layoutData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);

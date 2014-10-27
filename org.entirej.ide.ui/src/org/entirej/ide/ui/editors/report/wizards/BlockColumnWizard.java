@@ -35,7 +35,7 @@ public class BlockColumnWizard extends NewWizard
     public BlockColumnWizard(BlockColumnWizardContext wizardContext)
     {
         // setDialogSettings(EJUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle("New Report Block Column");
+        setWindowTitle("New Screen Column");
         this.wizardContext = wizardContext;
     }
 
