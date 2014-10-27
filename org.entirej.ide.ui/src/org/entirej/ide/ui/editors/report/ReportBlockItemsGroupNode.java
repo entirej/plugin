@@ -933,7 +933,19 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     if (split.length == 2)
                                     {
                                         blockViewer.setSelection(new StructuredSelection(split[0]));
-                                        itemViewer.setSelection(new StructuredSelection(split[1]));
+                                        
+                                        Collection<EJPluginReportItemProperties> allItemProperties = formProp.getBlockProperties(split[0])
+                                                .getAllItemProperties();
+                                        for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
+                                        {
+                                            if(ejItemProperties.getName().equals(split[1]))
+                                            {
+                                                itemViewer.setSelection(new StructuredSelection(ejItemProperties));
+                                                break;
+                                            }
+                                        }
+                                        
+                                        
                                     }
                                 }
 
@@ -948,7 +960,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                             if (itemViewer.getSelection() instanceof IStructuredSelection)
                                             {
                                                 EJPluginReportItemProperties item = (EJPluginReportItemProperties) ((IStructuredSelection) itemViewer.getSelection()).getFirstElement();
-                                                setValue(String.format("%s.%s", lov, item.getName()));
+                                               if(item!=null)
+                                                   setValue(String.format("%s.%s", lov, item.getName()));
                                             }
 
                                         }
