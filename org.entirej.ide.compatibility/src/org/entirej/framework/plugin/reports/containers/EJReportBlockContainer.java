@@ -195,6 +195,9 @@ public class EJReportBlockContainer
     public BlockGroup getBlockGroupByBlock(EJPluginReportBlockProperties blockProperties)
     {
         
+        
+        
+       
         Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
@@ -204,9 +207,11 @@ public class EJReportBlockContainer
             if ((containerItem instanceof BlockGroup))
             {
                 BlockGroup blockGroup = (BlockGroup) containerItem;
-                if (blockGroup.getBlockProperties(blockProperties.getName()) != null)
+                
+                BlockGroup blockGroupByBlock = blockGroup.getBlockGroupByBlock( blockProperties);
+                if (blockGroupByBlock != null)
                 {
-                    return blockGroup;
+                    return blockGroupByBlock;
                 }
                 continue;
             }
@@ -215,6 +220,13 @@ public class EJReportBlockContainer
             if (props.equals(blockProperties))
             {
                 return null;
+            }
+            
+            
+            BlockGroup blockGroup  = props.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock( blockProperties);
+            if (blockGroup != null)
+            {
+                return blockGroup;
             }
         }
         return null;
@@ -271,6 +283,24 @@ public class EJReportBlockContainer
         {
         }
         
+        public BlockGroup getBlockGroupByBlock(EJPluginReportBlockProperties blockProperties)
+        {
+            for (EJPluginReportBlockProperties properties : _blockProperties)
+            {
+                if(blockProperties.equals(properties))
+                {
+                    return this;
+                }
+                
+                BlockGroup blockGroup = blockProperties.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock(blockProperties);
+                if(blockGroup!=null)
+                {
+                    return blockGroup;
+                }
+            }
+            return null;
+        }
+
         public BlockGroup(String name)
         {
             this.name = name;
