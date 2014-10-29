@@ -151,6 +151,28 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
     protected void addBlockList(EJReportBlockContainer blockContainer, StringBuffer buffer)
     {
         
+        
+        
+        BlockGroup headerSection = blockContainer.getHeaderSection();
+        BlockGroup footerSection = blockContainer.getFooterSection();
+        
+        if(headerSection.getAllBlockProperties().size()>0)
+        {
+            startOpenTAG(buffer, "ej.header.blocks");
+            {
+                closeOpenTAG(buffer);
+                List<EJPluginReportBlockProperties> blockProperties = headerSection.getAllBlockProperties();
+                
+                for (EJPluginReportBlockProperties blockProps : blockProperties)
+                {
+                    addBlockProperties(blockProps, buffer);
+                }
+            }
+            endTAG(buffer, "ej.header.blocks");
+            
+        }
+        
+        
         List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
         for (BlockContainerItem item : blockContainerItems)
         {
@@ -195,6 +217,23 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "blockGroup");
             }
+        }
+        
+        
+        if(footerSection.getAllBlockProperties().size()>0)
+        {
+            startOpenTAG(buffer, "ej.footer.blocks");
+            {
+                closeOpenTAG(buffer);
+                List<EJPluginReportBlockProperties> blockProperties = footerSection.getAllBlockProperties();
+                
+                for (EJPluginReportBlockProperties blockProps : blockProperties)
+                {
+                    addBlockProperties(blockProps, buffer);
+                }
+            }
+            endTAG(buffer, "ej.footer.blocks");
+            
         }
         
     }

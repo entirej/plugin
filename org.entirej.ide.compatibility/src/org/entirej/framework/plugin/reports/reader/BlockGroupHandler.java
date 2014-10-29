@@ -31,6 +31,8 @@ public class BlockGroupHandler extends EntireJTagHandler
 
     private static final String    ELEMENT_BLOCK                  = "block";
     private static final String    ELEMENT_BLOCK_GROUP            = "blockGroup";
+    private static final String      ELEMENT_BLOCK_HEADER          = "ej.header.blocks";
+    private static final String      ELEMENT_BLOCK_FOOTER          = "ej.footer.blocks";
     
     public BlockGroupHandler(EJPluginReportProperties formProperties)
     {
@@ -68,6 +70,14 @@ public class BlockGroupHandler extends EntireJTagHandler
     protected void endLocalElement(String name, String value, String untrimmedValue)
     {
         if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            quitAsDelegate();
+        }
+        if (name.equals(ELEMENT_BLOCK_HEADER))
+        {
+            quitAsDelegate();
+        }
+        if (name.equals(ELEMENT_BLOCK_FOOTER))
         {
             quitAsDelegate();
         }

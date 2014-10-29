@@ -49,6 +49,8 @@ public class ReportHandler extends EntireJTagHandler
     
     private static final String      ELEMENT_BLOCK                  = "block";
     private static final String      ELEMENT_BLOCK_GROUP            = "blockGroup";
+    private static final String      ELEMENT_BLOCK_HEADER          = "ej.header.blocks";
+    private static final String      ELEMENT_BLOCK_FOOTER          = "ej.footer.blocks";
     
     private boolean                  _gettingApplicationProperties  = false;
     private String                   _lastApplicationPropertyName   = "";
@@ -108,6 +110,14 @@ public class ReportHandler extends EntireJTagHandler
             setDelegate(getBlockHandler(_reportProperties));
         }
         else if (name.equals(ELEMENT_BLOCK_GROUP))
+        {
+            setDelegate(getBlockGroupHandler(_reportProperties));
+        }
+        else if (name.equals(ELEMENT_BLOCK_HEADER))
+        {
+            setDelegate(getBlockGroupHandler(_reportProperties));
+        }
+        else if (name.equals(ELEMENT_BLOCK_FOOTER))
         {
             setDelegate(getBlockGroupHandler(_reportProperties));
         }
@@ -245,6 +255,16 @@ public class ReportHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_BLOCK_GROUP))
         {
             _reportProperties.getBlockContainer().addBlockProperties(((BlockGroupHandler) currentDelegate).getBlockGroup());
+            return;
+        }
+        else if (name.equals(ELEMENT_BLOCK_HEADER))
+        {
+            _reportProperties.getBlockContainer().setHeaderSection(((BlockGroupHandler) currentDelegate).getBlockGroup());
+            return;
+        }
+        else if (name.equals(ELEMENT_BLOCK_FOOTER))
+        {
+            _reportProperties.getBlockContainer().setFooterSection(((BlockGroupHandler) currentDelegate).getBlockGroup());
             return;
         }
         

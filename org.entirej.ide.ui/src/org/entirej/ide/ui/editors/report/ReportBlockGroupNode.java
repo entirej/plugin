@@ -36,7 +36,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
 import org.entirej.framework.core.actionprocessor.interfaces.EJBlockActionProcessor;
-import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
@@ -166,7 +165,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     public AbstractNode<?>[] getChildren()
     {
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-
+        nodes.add(new BlockSectionGroupNode(this, source.getHeaderSection()));
         List<BlockContainerItem> blockContainerItems = source.getBlockContainerItems();
 
         for (BlockContainerItem item : blockContainerItems)
@@ -182,7 +181,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
             }
         }
-
+        nodes.add(new BlockSectionGroupNode(this, source.getFooterSection()));
         return nodes.toArray(new AbstractNode<?>[0]);
     }
 
@@ -245,6 +244,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         return new AbstractDescriptor<?>[] {};
     }
 
+    
+    
     class BlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
     {
         public BlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
@@ -362,6 +363,101 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
 
+            List<EJPluginReportBlockProperties> allBlockProperties = source.getAllBlockProperties();
+            for (EJPluginReportBlockProperties properties : allBlockProperties)
+            {
+                nodes.add(new BlockNode(this, properties));
+            }
+
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+
+        public boolean canMove(Neighbor relation, Object source)
+        {
+            return source instanceof EJPluginReportBlockProperties;
+        }
+
+        public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    source.addBlockProperties(index, (EJPluginReportBlockProperties) dSource);
+                }
+            }
+            else
+                source.addBlockProperties((EJPluginReportBlockProperties) dSource);
+
+        }
+
+    }
+    
+    
+    
+     class BlockSectionGroupNode extends AbstractNode<BlockGroup> implements NodeOverview, NodeMoveProvider
+    {
+        public BlockSectionGroupNode(AbstractNode<?> parent, BlockGroup source)
+        {
+            super(parent, source);
+
+        }
+
+        @Override
+        public <S> S getAdapter(Class<S> adapter)
+        {
+            return ReportBlockGroupNode.this.getAdapter(adapter);
+        }
+
+        @Override
+        public String getName()
+        {
+            return source.getName();
+        }
+
+        public void addOverview(StyledString styledString)
+        {
+            // todo:
+
+        }
+
+        public boolean canMove()
+        {
+            return true;
+        }
+
+        public Object getNeighborSource()
+        {
+            return source;
+        }
+
+        @Override
+        public Image getImage()
+        {
+            return GROUP;
+        }
+
+    
+
+        
+
+        @Override
+        public boolean isLeaf()
+        {
+            return source.isEmpty();
+        }
+
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+           
             List<EJPluginReportBlockProperties> allBlockProperties = source.getAllBlockProperties();
             for (EJPluginReportBlockProperties properties : allBlockProperties)
             {

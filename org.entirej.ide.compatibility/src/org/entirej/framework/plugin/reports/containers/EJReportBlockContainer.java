@@ -29,6 +29,9 @@ public class EJReportBlockContainer
     private List<BlockContainerItem> _blockProperties;
     private EJPluginReportProperties _reportProperties;
     
+    private  BlockGroup         headerSection = new BlockGroup("Header Section");
+    private  BlockGroup         footerSection = new BlockGroup("Footer Section");
+    
     public EJReportBlockContainer(EJPluginReportProperties reportProperties)
     {
         _reportProperties = reportProperties;
@@ -45,6 +48,31 @@ public class EJReportBlockContainer
         return _blockProperties.isEmpty();
         
     }
+    
+    
+    public void setHeaderSection(BlockGroup headerSection)
+    {
+        this.headerSection = headerSection;
+        headerSection.setName("Header Section");
+    }
+    
+    public BlockGroup getHeaderSection()
+    {
+        return headerSection;
+    }
+    
+    
+    public void setFooterSection(BlockGroup footerSection)
+    {
+        this.footerSection = footerSection;
+        footerSection.setName("Footer Section");
+    }
+    
+    public BlockGroup getFooterSection()
+    {
+        return footerSection;
+    }
+    
     
     public boolean contains(String blockName)
     {
@@ -74,6 +102,18 @@ public class EJReportBlockContainer
                 return true;
             }
         }
+        
+        EJPluginReportBlockProperties blockProperties = headerSection.getBlockProperties(blockName);
+        if (blockProperties != null)
+        {
+            return true;
+        }
+         blockProperties = footerSection.getBlockProperties(blockName);
+        if (blockProperties != null)
+        {
+            return true;
+        }
+        
         return false;
     }
     
@@ -195,9 +235,6 @@ public class EJReportBlockContainer
     public BlockGroup getBlockGroupByBlock(EJPluginReportBlockProperties blockProperties)
     {
         
-        
-        
-       
         Iterator<BlockContainerItem> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
@@ -208,7 +245,7 @@ public class EJReportBlockContainer
             {
                 BlockGroup blockGroup = (BlockGroup) containerItem;
                 
-                BlockGroup blockGroupByBlock = blockGroup.getBlockGroupByBlock( blockProperties);
+                BlockGroup blockGroupByBlock = blockGroup.getBlockGroupByBlock(blockProperties);
                 if (blockGroupByBlock != null)
                 {
                     return blockGroupByBlock;
@@ -222,12 +259,24 @@ public class EJReportBlockContainer
                 return null;
             }
             
-            
-            BlockGroup blockGroup  = props.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock( blockProperties);
+            BlockGroup blockGroup = props.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock(blockProperties);
             if (blockGroup != null)
             {
                 return blockGroup;
             }
+        }
+        
+        
+
+        BlockGroup blockGroupByBlock = headerSection.getBlockGroupByBlock(blockProperties);
+        if (blockGroupByBlock != null)
+        {
+            return blockGroupByBlock;
+        }
+        blockGroupByBlock = footerSection.getBlockGroupByBlock(blockProperties);
+        if (blockGroupByBlock != null)
+        {
+            return blockGroupByBlock;
         }
         return null;
     }
@@ -287,20 +336,20 @@ public class EJReportBlockContainer
         {
             for (EJPluginReportBlockProperties properties : _blockProperties)
             {
-                if(blockProperties.equals(properties))
+                if (blockProperties.equals(properties))
                 {
                     return this;
                 }
                 
                 BlockGroup blockGroup = blockProperties.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock(blockProperties);
-                if(blockGroup!=null)
+                if (blockGroup != null)
                 {
                     return blockGroup;
                 }
             }
             return null;
         }
-
+        
         public BlockGroup(String name)
         {
             this.name = name;
@@ -398,7 +447,7 @@ public class EJReportBlockContainer
                     return props;
                 }
                 EJPluginReportBlockProperties blockProperties = props.getLayoutScreenProperties().getSubBlocks().getBlockProperties(blockName);
-                if(blockProperties!=null)
+                if (blockProperties != null)
                 {
                     return blockProperties;
                 }

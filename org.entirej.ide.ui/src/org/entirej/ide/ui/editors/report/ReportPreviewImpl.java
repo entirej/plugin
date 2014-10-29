@@ -58,11 +58,16 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
     protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
     protected final Cursor MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+    
+    protected final Color                          COLOR_HEADER       = new Color(Display.getCurrent(), new RGB(180, 180, 180));
+    protected final Color                          COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
 
     public void dispose()
     {
         COLOR_BLOCK.dispose();
         RESIZE.dispose();
+        COLOR_HEADER.dispose();
+        COLOR_FOOTER.dispose();
         MOVE.dispose();
     }
 
@@ -119,49 +124,37 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         report.setBounds(25, 10, width, height);
         report.setLayout(null);
 
-        final Composite reportBody = new Composite(report, SWT.BORDER);
-        reportBody.setLayout(null);
-        setPreviewBackground(reportBody, COLOR_WHITE);
+       
 
+        
+        EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
+        
+        headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+        detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+        footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+
+    }
+
+    private void headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties, int width,
+            int height, Composite report, EJReportBlockContainer blockContainer)
+    {
+        final Composite reportBody = new Composite(report, SWT.NONE);
+        reportBody.setLayout(null);
+        setPreviewBackground(reportBody, COLOR_HEADER);
+        
         reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
-                (height - (formProperties.getMarginBottom() + formProperties.getMarginTop())));
+                formProperties.getHeaderSectionHeight());
 
-        reportBody.addPaintListener(new PaintListener()
-        {
+        
 
-            public void paintControl(PaintEvent e)
-            {
-                if (formProperties.getHeaderSectionHeight() > 0)
-                {
-                    e.gc.drawLine(0, formProperties.getHeaderSectionHeight(), reportBody.getBounds().width, formProperties.getHeaderSectionHeight());
-                    int x= reportBody.getBounds().width / 2;
-                    int y = formProperties.getHeaderSectionHeight()
-                            / 2;
-                    
-                    e.gc.drawString("HEADER SECTION", x>30?x-30:0, y, true);
-                }
-                if (formProperties.getFooterSectionHeight() > 0)
-                {
-
-                    int y1 = reportBody.getBounds().height - formProperties.getFooterSectionHeight();
-                    e.gc.drawLine(0, y1, reportBody.getBounds().width, y1);
-
-                    int y = y1+(formProperties.getFooterSectionHeight()/2);
-                    int x= reportBody.getBounds().width / 2;
-                    e.gc.drawString("FOOTER SECTION", x>30?x-30:0, formProperties.getFooterSectionHeight()-y>20?y:y1+2, true);
-                }
-
-            }
-        });
-
-        EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
-        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        
+        for (EJPluginReportBlockProperties properties : blockContainer.getHeaderSection().getAllBlockProperties())
         {
             createBlockPreview(editor, reportBody, properties);
         }
 
-        previewComposite.setMinSize(width + 20, height + 20);// add offset
+       
 
         final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
@@ -185,7 +178,94 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
         dropTarget.setTransfer(new Transfer[] { transfer });
         dropTarget.addDropListener(dragAdapter);
-
+    }
+    private void footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties, int width,
+            int height, Composite report, EJReportBlockContainer blockContainer)
+    {
+        final Composite reportBody = new Composite(report, SWT.NONE);
+        reportBody.setLayout(null);
+        setPreviewBackground(reportBody, COLOR_FOOTER);
+        
+        reportBody.setBounds(formProperties.getMarginLeft(), height-(formProperties.getMarginBottom()+formProperties.getFooterSectionHeight()),
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
+                formProperties.getFooterSectionHeight());
+        
+        
+        
+        
+        for (EJPluginReportBlockProperties properties : blockContainer.getFooterSection().getAllBlockProperties())
+        {
+            createBlockPreview(editor, reportBody, properties);
+        }
+        
+        
+        
+        final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
+        
+        final DropTargetAdapter dragAdapter = new DropTargetAdapter()
+        {
+            
+            @Override
+            public void dragOver(DropTargetEvent event)
+            {
+                
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+                
+                if (droppedObj != null)
+                {
+                    droppedObj.setBond(event.x, event.y);
+                }
+            }
+        };
+        
+        final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
+        dropTarget.setTransfer(new Transfer[] { transfer });
+        dropTarget.addDropListener(dragAdapter);
+    }
+    private void detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties, int width,
+            int height, Composite report, EJReportBlockContainer blockContainer)
+    {
+        final Composite reportBody = new Composite(report, SWT.NONE);
+        reportBody.setLayout(null);
+        setPreviewBackground(reportBody, COLOR_WHITE);
+        
+        reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop()+formProperties.getHeaderSectionHeight(),
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
+                (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()+formProperties.getHeaderSectionHeight()+formProperties.getFooterSectionHeight())));
+        
+        
+        
+        
+        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        {
+            createBlockPreview(editor, reportBody, properties);
+        }
+        
+        previewComposite.setMinSize(width + 20, height + 20);// add offset
+        
+        final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
+        
+        final DropTargetAdapter dragAdapter = new DropTargetAdapter()
+        {
+            
+            @Override
+            public void dragOver(DropTargetEvent event)
+            {
+                
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+                
+                if (droppedObj != null)
+                {
+                    droppedObj.setBond(event.x, event.y);
+                }
+            }
+        };
+        
+        final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
+        dropTarget.setTransfer(new Transfer[] { transfer });
+        dropTarget.addDropListener(dragAdapter);
     }
 
     protected void createBlockPreview(final AbstractEJReportEditor editor, final Composite reportBody, final EJPluginReportBlockProperties properties)
