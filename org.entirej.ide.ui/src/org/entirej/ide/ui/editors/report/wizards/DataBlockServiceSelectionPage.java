@@ -18,11 +18,23 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report.wizards;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -34,22 +46,34 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 import org.entirej.ide.ui.utils.TypeAssistProvider;
 
 public class DataBlockServiceSelectionPage extends WizardPage
 {
-  
+
     private final DataBlockWizardContext wizardContext;
     private String                       blockName;
 
-
     private String                       blockServiceClass;
+
+    private EJReportScreenType           type = EJReportScreenType.FORM_LATOUT;
+
+    private int                          x;
+    private int                          y;
+    private int                          width;
+    private int                          height;
 
     protected DataBlockServiceSelectionPage(DataBlockWizardContext wizardContext)
     {
@@ -57,6 +81,8 @@ public class DataBlockServiceSelectionPage extends WizardPage
         this.wizardContext = wizardContext;
         setTitle("Data Block");
         setDescription("Properties for the new data block.");
+        width = this.wizardContext.getDefaultWidth();
+        height = this.wizardContext.getDefaultHeight();
     }
 
     public void createControl(Composite parent)
@@ -75,8 +101,9 @@ public class DataBlockServiceSelectionPage extends WizardPage
         {
             createBlockServiceControls(composite, nColumns);
         }
-       
-
+        
+        createBlockScreenTypeControls(composite, nColumns);
+        setDefaults();
         setControl(composite);
 
         setPageComplete(false);
@@ -130,7 +157,6 @@ public class DataBlockServiceSelectionPage extends WizardPage
         createEmptySpace(composite, 1);
     }
 
-  
     private void createBlockServiceControls(Composite composite, int nColumns)
     {
         Label serviceGenLabel = new Label(composite, SWT.NULL);
@@ -192,10 +218,34 @@ public class DataBlockServiceSelectionPage extends WizardPage
         return blockName;
     }
 
-    
     public String getBlockServiceClass()
     {
         return blockServiceClass;
+    }
+    
+    public int getX()
+    {
+        return x;
+    }
+    
+    public int getY()
+    {
+        return y;
+    }
+    
+    public EJReportScreenType getType()
+    {
+        return type;
+    }
+    
+    public int getWidth()
+    {
+        return width;
+    }
+    
+    public int getHeight()
+    {
+        return height;
     }
 
     protected void doUpdateStatus()
@@ -203,6 +253,91 @@ public class DataBlockServiceSelectionPage extends WizardPage
         setPageComplete(validatePage());
     }
 
+    
+    
+    
+    private void createBlockScreenTypeControls(final Composite composite, int nColumns)
+    {
+        Label formTitleLabel = new Label(composite, SWT.NULL);
+        formTitleLabel.setText("Screen Layout:");
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan = 1;
+        formTitleLabel.setLayoutData(gd);
+        final ComboViewer blockRenderersViewer = new ComboViewer(composite);
+
+        gd = new GridData();
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = false;
+        gd.horizontalSpan = 2;
+        blockRenderersViewer.getCombo().setLayoutData(gd);
+        blockRenderersViewer.setLabelProvider(new ColumnLabelProvider()
+        {
+            @Override
+            public String getText(Object element)
+            {
+                
+                return super.getText(element);
+            }
+
+        });
+
+        blockRenderersViewer.setContentProvider(new IStructuredContentProvider()
+        {
+
+            public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+            {
+            }
+
+            public void dispose()
+            {
+            }
+
+            public Object[] getElements(Object inputElement)
+            {
+
+                return EJReportScreenType.values();
+            }
+        });
+
+        blockRenderersViewer.addSelectionChangedListener(new ISelectionChangedListener()
+        {
+
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+
+                if (blockRenderersViewer.getSelection() instanceof IStructuredSelection)
+                {
+                    type = (EJReportScreenType) ((IStructuredSelection) blockRenderersViewer.getSelection()).getFirstElement();
+
+                    setDefaults();
+                    
+                }
+                doUpdateStatus();
+            }
+        });
+        createEmptySpace(composite, 1);
+        blockRenderersViewer.setInput(new Object());
+        blockRenderersViewer.setSelection(new StructuredSelection(type));
+    }
+    
+    
+    
+   void setDefaults()
+   {
+       switch (type)
+    {
+        case FORM_LATOUT:
+            
+            break;
+        case TABLE_LAYOUT:
+            
+            break;
+
+        default:
+            break;
+    }
+   }
+    
     protected boolean validatePage()
     {
 
@@ -216,8 +351,6 @@ public class DataBlockServiceSelectionPage extends WizardPage
             setErrorMessage("A block with this name already exists.");
             return false;
         }
-
-       
 
         if (wizardContext.supportService() && blockServiceClass != null && blockServiceClass.trim().length() > 0)
         {

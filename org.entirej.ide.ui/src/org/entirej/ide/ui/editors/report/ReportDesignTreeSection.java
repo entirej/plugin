@@ -59,10 +59,12 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetC
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.framework.report.enumerations.EJReportExportType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -1282,11 +1284,33 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                 {
 
-                    public void addBlock(String blockName, String serviceClass)
+                    public int getDefaultWidth()
+                    {
+                        final EJPluginReportProperties formProperties = editor.getReportProperties();
+                        return formProperties.getReportWidth() - (formProperties.getMarginLeft() + formProperties.getMarginRight());
+                    }
+
+                    public int getDefaultHeight()
+                    {
+                        final EJPluginReportProperties formProperties = editor.getReportProperties();
+
+                        int dtlHeight = formProperties.getReportHeight()
+                                - (formProperties.getMarginTop() + formProperties.getMarginBottom() + formProperties.getHeaderSectionHeight() + formProperties
+                                        .getFooterSectionHeight());
+                        return dtlHeight > 40 ? 40 : dtlHeight;
+                    }
+
+                    public void addBlock(String blockName, String serviceClass, EJReportScreenType type, int x, int y, int width, int height)
                     {
                         final EJPluginReportProperties formProperties = editor.getReportProperties();
                         final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
 
+                        EJPluginReportScreenProperties screenProperties = blockProperties.getLayoutScreenProperties();
+                        screenProperties.setScreenType(type);
+                        screenProperties.setX(x);
+                        screenProperties.setY(y);
+                        screenProperties.setWidth(width);
+                        screenProperties.setHeight(height);
                         formProperties.getBlockContainer().addBlockProperties(blockProperties);
 
                         // create items if service is also selected

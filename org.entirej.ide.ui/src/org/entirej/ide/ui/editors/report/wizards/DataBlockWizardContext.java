@@ -18,24 +18,21 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report.wizards;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.IJavaProject;
-import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 
 public interface DataBlockWizardContext
 {
 
-    void addBlock(String blockName,String blockService);
-
- 
+    void addBlock(String blockName, String blockService, EJReportScreenType type, int x, int y, int width, int height);
 
     boolean hasBlock(String blockName);
-
 
     IJavaProject getProject();
 
     boolean supportService();
 
+    int getDefaultWidth();
+
+    int getDefaultHeight();
 }

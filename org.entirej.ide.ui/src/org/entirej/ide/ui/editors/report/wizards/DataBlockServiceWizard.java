@@ -60,7 +60,8 @@ public class DataBlockServiceWizard extends NewWizard
     {
 
       
-        wizardContext.addBlock(selectionPage.getBlockName(),  selectionPage.getBlockServiceClass());
+        wizardContext.addBlock(selectionPage.getBlockName(),  selectionPage.getBlockServiceClass(),
+                selectionPage.getType(),selectionPage.getX(),selectionPage.getY(),selectionPage.getWidth(),selectionPage.getHeight());
 
     }
 

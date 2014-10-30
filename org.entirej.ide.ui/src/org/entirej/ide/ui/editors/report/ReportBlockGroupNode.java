@@ -40,6 +40,7 @@ import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayPro
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
@@ -166,21 +167,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     {
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
         nodes.add(new BlockSectionGroupNode(this, source.getHeaderSection()));
-        List<BlockContainerItem> blockContainerItems = source.getBlockContainerItems();
-
-        for (BlockContainerItem item : blockContainerItems)
-        {
-            if (item instanceof EJPluginReportBlockProperties)
-            {
-
-                nodes.add(new BlockNode(this, (EJPluginReportBlockProperties) item));
-            }
-            else if (item instanceof BlockGroup)
-            {
-
-                nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
-            }
-        }
+        nodes.add(new BlockDetailSectionGroupNode(this));
         nodes.add(new BlockSectionGroupNode(this, source.getFooterSection()));
         return nodes.toArray(new AbstractNode<?>[0]);
     }
@@ -244,8 +231,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         return new AbstractDescriptor<?>[] {};
     }
 
-    
-    
     class BlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
     {
         public BlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
@@ -398,10 +383,109 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         }
 
     }
+
+    class BlockDetailSectionGroupNode extends AbstractNode<ReportBlockGroupNode> implements NodeOverview, NodeMoveProvider
+    {
+        public BlockDetailSectionGroupNode(AbstractNode<?> parent)
+        {
+            super(parent,ReportBlockGroupNode.this);
+
+        }
+
+        @Override
+        public <S> S getAdapter(Class<S> adapter)
+        {
+            return ReportBlockGroupNode.this.getAdapter(adapter);
+        }
+
+        @Override
+        public String getName()
+        {
+            return "Detail Section";
+        }
+
+        public void addOverview(StyledString styledString)
+        {
+            // todo:
+
+        }
+
+        
+        @Override
+        public Action[] getActions()
+        {
+            return source.getActions();
+        }
+      
+
+
+        @Override
+        public Image getImage()
+        {
+            return GROUP;
+        }
+
+        @Override
+        public boolean isLeaf()
+        {
+            return source.source.isEmpty();
+        }
+
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+
+            List<BlockContainerItem> blockContainerItems = source.source.getBlockContainerItems();
+
+            for (BlockContainerItem item : blockContainerItems)
+            {
+                if (item instanceof EJPluginReportBlockProperties)
+                {
+
+                    nodes.add(new BlockNode(this, (EJPluginReportBlockProperties) item));
+                }
+                else if (item instanceof BlockGroup)
+                {
+
+                    nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
+                }
+            }
+
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+
+        public boolean canMove(Neighbor relation, Object source)
+        {
+            return source instanceof EJPluginReportBlockProperties;
+        }
+
+        public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    source.source.addBlockProperties(index, (EJPluginReportBlockProperties) dSource);
+                }
+            }
+            else
+                source.source.addBlockProperties((EJPluginReportBlockProperties) dSource);
+
+        }
+
+    }
     
     
     
-     class BlockSectionGroupNode extends AbstractNode<BlockGroup> implements NodeOverview, NodeMoveProvider
+    
+    class BlockSectionGroupNode extends AbstractNode<BlockGroup> implements NodeOverview, NodeMoveProvider
     {
         public BlockSectionGroupNode(AbstractNode<?> parent, BlockGroup source)
         {
@@ -427,6 +511,107 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
         }
 
+        public Action[] getActions()
+        {
+
+            return new Action[] { createNewSubBlockAction(false), createNewSubBlockAction(true) };
+        }
+
+        public Action createNewSubBlockAction(final boolean controlBlock)
+        {
+
+            return new Action(controlBlock ? "New Report Control Block" : "New Report Service Block")
+            {
+
+                @Override
+                public void runWithEvent(Event event)
+                {
+                    DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
+                    {
+
+                        public int getDefaultWidth()
+                        {
+                            final EJPluginReportProperties formProperties = editor.getReportProperties();
+                            return formProperties.getReportWidth() - (formProperties.getMarginLeft() + formProperties.getMarginRight());
+                        }
+
+                        public int getDefaultHeight()
+                        {
+                            final EJPluginReportProperties formProperties = editor.getReportProperties();
+
+                            if (formProperties.getBlockContainer().getHeaderSection() == source)
+                            {
+                                return formProperties.getHeaderSectionHeight();
+                            }
+                            if (formProperties.getBlockContainer().getFooterSection() == source)
+                            {
+                                return formProperties.getFooterSectionHeight();
+                            }
+
+                            int dtlHeight = formProperties.getReportHeight()
+                                    - (formProperties.getMarginTop() + formProperties.getMarginBottom() + formProperties.getHeaderSectionHeight() + formProperties
+                                            .getFooterSectionHeight());
+                            return dtlHeight > 40 ? 40 : dtlHeight;
+                        }
+
+                        public void addBlock(String blockName, String serviceClass, EJReportScreenType type, int x, int y, int width, int height)
+                        {
+                            final EJPluginReportProperties formProperties = editor.getReportProperties();
+                            final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
+                            EJPluginReportScreenProperties screenProperties = blockProperties.getLayoutScreenProperties();
+                            screenProperties.setScreenType(type);
+                            screenProperties.setX(x);
+                            screenProperties.setY(y);
+                            screenProperties.setWidth(width);
+                            screenProperties.setHeight(height);
+                            source.addBlockProperties(blockProperties);
+
+                            // create items if service is also selected
+                            if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
+                            {
+                                blockProperties.setServiceClassName(serviceClass, true);
+                            }
+                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                            {
+
+                                public void run()
+                                {
+                                    treeSection.getEditor().setDirty(true);
+                                    treeSection.refresh(getParent());
+                                    // FIXME
+                                    // refresh(findNode(formProperties.getCanvasContainer()));
+                                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
+                                    treeSection.selectNodes(true, abstractNode);
+                                    treeSection.expand(abstractNode, 2);
+
+                                }
+                            });
+
+                        }
+
+                        public boolean hasBlock(String blockName)
+                        {
+                            return editor.getReportProperties().getBlockContainer().contains(blockName);
+                        }
+
+                        public IJavaProject getProject()
+                        {
+                            return editor.getJavaProject();
+                        }
+
+                        public boolean supportService()
+                        {
+                            return !controlBlock;
+                        }
+
+                    });
+                    wizard.open();
+                }
+
+            };
+        }
+
+        
         public boolean canMove()
         {
             return true;
@@ -443,10 +628,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             return GROUP;
         }
 
-    
-
-        
-
         @Override
         public boolean isLeaf()
         {
@@ -457,7 +638,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         public AbstractNode<?>[] getChildren()
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-           
+
             List<EJPluginReportBlockProperties> allBlockProperties = source.getAllBlockProperties();
             for (EJPluginReportBlockProperties properties : allBlockProperties)
             {
@@ -580,10 +761,10 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             }
             if (IReportPreviewProvider.class.isAssignableFrom(adapter))
             {
-                if(source.getLayoutScreenProperties().getScreenType()==EJReportScreenType.FORM_LATOUT)
-                    return adapter.cast(new  ReportScreenPreviewImpl(source.getLayoutScreenProperties()));
-                if(source.getLayoutScreenProperties().getScreenType()==EJReportScreenType.TABLE_LAYOUT)
-                    return adapter.cast(new  ReportScreenColumnPreviewImpl(source.getLayoutScreenProperties()));
+                if (source.getLayoutScreenProperties().getScreenType() == EJReportScreenType.FORM_LATOUT)
+                    return adapter.cast(new ReportScreenPreviewImpl(source.getLayoutScreenProperties()));
+                if (source.getLayoutScreenProperties().getScreenType() == EJReportScreenType.TABLE_LAYOUT)
+                    return adapter.cast(new ReportScreenColumnPreviewImpl(source.getLayoutScreenProperties()));
             }
 
             return null;
@@ -939,11 +1120,41 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                     {
 
-                        public void addBlock(String blockName, String serviceClass)
+                        public int getDefaultWidth()
+                        {
+                            final EJPluginReportProperties formProperties = editor.getReportProperties();
+                            return formProperties.getReportWidth() - (formProperties.getMarginLeft() + formProperties.getMarginRight());
+                        }
+
+                        public int getDefaultHeight()
+                        {
+                            final EJPluginReportProperties formProperties = editor.getReportProperties();
+
+                            if (formProperties.getBlockContainer().getHeaderSection() == source)
+                            {
+                                return formProperties.getHeaderSectionHeight();
+                            }
+                            if (formProperties.getBlockContainer().getFooterSection() == source)
+                            {
+                                return formProperties.getFooterSectionHeight();
+                            }
+
+                            int dtlHeight = formProperties.getReportHeight()
+                                    - (formProperties.getMarginTop() + formProperties.getMarginBottom() + formProperties.getHeaderSectionHeight() + formProperties
+                                            .getFooterSectionHeight());
+                            return dtlHeight > 40 ? 40 : dtlHeight;
+                        }
+
+                        public void addBlock(String blockName, String serviceClass, EJReportScreenType type, int x, int y, int width, int height)
                         {
                             final EJPluginReportProperties formProperties = editor.getReportProperties();
                             final EJPluginReportBlockProperties blockProperties = new EJPluginReportBlockProperties(formProperties, blockName, controlBlock);
-
+                            EJPluginReportScreenProperties screenProperties = blockProperties.getLayoutScreenProperties();
+                            screenProperties.setScreenType(type);
+                            screenProperties.setX(x);
+                            screenProperties.setY(y);
+                            screenProperties.setWidth(width);
+                            screenProperties.setHeight(height);
                             source.addBlockProperties(blockProperties);
 
                             // create items if service is also selected
