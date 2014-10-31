@@ -35,4 +35,6 @@ public interface DataBlockWizardContext
     int getDefaultWidth();
 
     int getDefaultHeight();
+    
+    boolean isBlockTablelayout();
 }

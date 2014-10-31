@@ -1284,6 +1284,11 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                 {
 
+                    
+                    public boolean isBlockTablelayout()
+                    {
+                        return false;
+                    }
                     public int getDefaultWidth()
                     {
                         final EJPluginReportProperties formProperties = editor.getReportProperties();

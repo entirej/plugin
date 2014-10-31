@@ -34,7 +34,9 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.core.actionprocessor.interfaces.EJBlockActionProcessor;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
@@ -44,6 +46,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
+import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
@@ -52,6 +55,7 @@ import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
@@ -159,7 +163,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     @Override
     public boolean isLeaf()
     {
-        return source.isEmpty();
+        return false;
     }
 
     @Override
@@ -388,7 +392,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     {
         public BlockDetailSectionGroupNode(AbstractNode<?> parent)
         {
-            super(parent,ReportBlockGroupNode.this);
+            super(parent, ReportBlockGroupNode.this);
 
         }
 
@@ -410,14 +414,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
         }
 
-        
         @Override
         public Action[] getActions()
         {
             return source.getActions();
         }
-      
-
 
         @Override
         public Image getImage()
@@ -481,10 +482,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         }
 
     }
-    
-    
-    
-    
+
     class BlockSectionGroupNode extends AbstractNode<BlockGroup> implements NodeOverview, NodeMoveProvider
     {
         public BlockSectionGroupNode(AbstractNode<?> parent, BlockGroup source)
@@ -514,7 +512,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         public Action[] getActions()
         {
 
-            return new Action[] { createNewSubBlockAction(false), createNewSubBlockAction(true) };
+            return new Action[] { createNewSubBlockAction(true) };
         }
 
         public Action createNewSubBlockAction(final boolean controlBlock)
@@ -529,6 +527,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                     {
 
+                        
+                        public boolean isBlockTablelayout()
+                        {
+                            return true;
+                        }
                         public int getDefaultWidth()
                         {
                             final EJPluginReportProperties formProperties = editor.getReportProperties();
@@ -611,7 +614,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             };
         }
 
-        
         public boolean canMove()
         {
             return true;
@@ -650,7 +652,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginReportBlockProperties;
+            return source instanceof EJPluginReportBlockProperties && ((EJPluginReportBlockProperties) source).isControlBlock()
+                    && ((EJPluginReportBlockProperties) source).getLayoutScreenProperties().getScreenType() != EJReportScreenType.TABLE_LAYOUT;
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -758,13 +761,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             if (NodeValidateProvider.class.isAssignableFrom(adapter))
             {
                 return adapter.cast(validator);
-            }
-            if (IReportPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                if (source.getLayoutScreenProperties().getScreenType() == EJReportScreenType.FORM_LATOUT)
-                    return adapter.cast(new ReportScreenPreviewImpl(source.getLayoutScreenProperties()));
-                if (source.getLayoutScreenProperties().getScreenType() == EJReportScreenType.TABLE_LAYOUT)
-                    return adapter.cast(new ReportScreenColumnPreviewImpl(source.getLayoutScreenProperties()));
             }
 
             return null;
@@ -891,6 +887,248 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
+
+            final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
+            {
+                Filter vfilter = new Filter()
+                               {
+
+                                   public boolean match(int tag, IMarker marker)
+                                   {
+
+                                       return (tag & FormNodeTag.WIDTH) != 0;
+                                   }
+                               };
+
+                @Override
+                public String getErrors()
+                {
+
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The width <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.getLayoutScreenProperties().setWidth(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.getLayoutScreenProperties().setWidth(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(BlockNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getLayoutScreenProperties().getWidth());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            final AbstractTextDescriptor heightDescriptor = new AbstractTextDescriptor("Height")
+            {
+                Filter vfilter = new Filter()
+                               {
+
+                                   public boolean match(int tag, IMarker marker)
+                                   {
+
+                                       return (tag & FormNodeTag.HEIGHT) != 0;
+                                   }
+                               };
+
+                @Override
+                public String getErrors()
+                {
+
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The height <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.getLayoutScreenProperties().setHeight(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.getLayoutScreenProperties().setHeight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(BlockNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getLayoutScreenProperties().getHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            final AbstractTextDescriptor xDescriptor = new AbstractTextDescriptor("X")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The X <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.getLayoutScreenProperties().setX(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.getLayoutScreenProperties().setX(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(BlockNode.this);
+
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getLayoutScreenProperties().getX());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            final AbstractTextDescriptor yDescriptor = new AbstractTextDescriptor("Y")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The Y <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.getLayoutScreenProperties().setY(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.getLayoutScreenProperties().setY(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(BlockNode.this);
+
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getLayoutScreenProperties().getY());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
 
             if (source.isControlBlock())
             {
@@ -1051,6 +1289,10 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                 descriptors.add(serivceDescriptor);
                 descriptors.add(actionDescriptor);
+                descriptors.add(xDescriptor);
+                descriptors.add(yDescriptor);
+                descriptors.add(widthDescriptor);
+                descriptors.add(heightDescriptor);
 
             }
 
@@ -1120,6 +1362,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                     {
 
+                        public boolean isBlockTablelayout()
+                        {
+                            return false;
+                        }
+                        
                         public int getDefaultWidth()
                         {
                             final EJPluginReportProperties formProperties = editor.getReportProperties();

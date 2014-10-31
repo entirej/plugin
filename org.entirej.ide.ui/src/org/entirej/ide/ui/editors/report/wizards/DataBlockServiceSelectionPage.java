@@ -295,6 +295,11 @@ public class DataBlockServiceSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
 
+                if(wizardContext.isBlockTablelayout())
+                {
+                    return new EJReportScreenType[]{EJReportScreenType.NONE,EJReportScreenType.FORM_LATOUT};
+                }
+                
                 return EJReportScreenType.values();
             }
         });

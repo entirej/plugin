@@ -341,7 +341,7 @@ public class EJReportBlockContainer
                     return this;
                 }
                 
-                BlockGroup blockGroup = blockProperties.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock(blockProperties);
+                BlockGroup blockGroup = properties.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock(blockProperties);
                 if (blockGroup != null)
                 {
                     return blockGroup;

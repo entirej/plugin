@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
@@ -409,8 +410,13 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             public String[] getOptions()
             {
                 List<String> options = new ArrayList<String>();
+                
+                EJReportBlockContainer blockContainer = source.getBlockProperties().getReportProperties().getBlockContainer();
+               boolean blockTableLayout =  blockContainer.getHeaderSection().contains(source.getBlockProperties().getName()) || blockContainer.getFooterSection().contains(source.getBlockProperties().getName());
+                
                 for (EJReportScreenType type : EJReportScreenType.values())
                 {
+                    if(blockTableLayout && type==EJReportScreenType.TABLE_LAYOUT)continue;
                     options.add(type.name());
                 }
                 return options.toArray(new String[0]);
