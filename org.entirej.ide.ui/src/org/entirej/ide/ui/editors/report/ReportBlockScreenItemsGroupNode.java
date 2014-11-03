@@ -19,36 +19,23 @@
 package org.entirej.ide.ui.editors.report;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
@@ -67,15 +54,15 @@ import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.FormNodeTag;
+import org.entirej.ide.ui.editors.report.wizards.ScreenItemWizard;
+import org.entirej.ide.ui.editors.report.wizards.ScreenItemWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
-import org.entirej.ide.ui.nodes.AbstractSubActions;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 import org.entirej.ide.ui.nodes.INodeRenameProvider;
 import org.entirej.ide.ui.nodes.NodeOverview;
@@ -91,8 +78,9 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
     private final ReportDesignTreeSection treeSection;
     private final AbstractEJReportEditor  editor;
-    boolean forColumn ;
-    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, ReportScreenNode node,boolean forColumn)
+    boolean                               forColumn;
+
+    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, ReportScreenNode node, boolean forColumn)
     {
         super(node, node.getSource().getScreenItemContainer());
         this.editor = treeSection.getEditor();
@@ -100,7 +88,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
         this.forColumn = forColumn;
     }
 
-    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, AbstractNode<?> node, EJReportScreenItemContainer container,boolean forColumn)
+    public ReportBlockScreenItemsGroupNode(ReportDesignTreeSection treeSection, AbstractNode<?> node, EJReportScreenItemContainer container, boolean forColumn)
     {
         super(node, container);
         this.editor = treeSection.getEditor();
@@ -683,7 +671,8 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
             {
                 final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-                ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(source.getBlockProperties().getReportProperties(),source.getBlockProperties(), "Value Provider")
+                ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(source.getBlockProperties()
+                        .getReportProperties(), source.getBlockProperties(), "Value Provider")
                 {
                     @Override
                     public String getValue()
@@ -1085,32 +1074,31 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                             text = (Text) control;
                             text.addVerifyListener(new EJPluginEntireJNumberVerifier()
                             {
-                                
-                                
+
                                 @Override
                                 protected boolean validate(String value)
                                 {
                                     try
                                     {
                                         Double intValue = Double.parseDouble(value);
-                                        
+
                                         if (intValue > -1)
                                         {
                                             return true;
                                         }
                                         else
                                         {
-                                           return false;
+                                            return false;
                                         }
                                     }
                                     catch (NumberFormatException exception)
                                     {
-                                       //ignore
+                                        // ignore
                                     }
-                                    
+
                                     return false;
                                 }
-                                
+
                             });
 
                             super.addEditorAssist(control);
@@ -1202,32 +1190,33 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
 
                             text = (Text) control;
-                            text.addVerifyListener(new EJPluginEntireJNumberVerifier(){
-                                
+                            text.addVerifyListener(new EJPluginEntireJNumberVerifier()
+                            {
+
                                 @Override
                                 protected boolean validate(String value)
                                 {
                                     try
                                     {
                                         Double intValue = Double.parseDouble(value);
-                                        
+
                                         if (intValue > -1)
                                         {
                                             return true;
                                         }
                                         else
                                         {
-                                           return false;
+                                            return false;
                                         }
                                     }
                                     catch (NumberFormatException exception)
                                     {
-                                       //ignore
+                                        // ignore
                                     }
-                                    
+
                                     return false;
                                 }
-                                
+
                             });
 
                             super.addEditorAssist(control);
@@ -1374,151 +1363,110 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
     public Action createNewScreenItemAction(final EJReportScreenItemContainer container, final int index)
     {
 
-        
-        
-        return new AbstractSubActions("New Screen Item")
+        return new Action("New Screen Item")
         {
-            
-            
-            
-            Action createAction(final EJReportScreenItemType type)
+
+            @Override
+            public void runWithEvent(Event event)
             {
-
-                String name = type.toString();
-
-                return new Action(name)
-                {
-                    @Override
-                    public void runWithEvent(Event event)
-                    {
-                        addScreenItem(type, getText());
-                    }
-                };
+                newScreenItem(0,0,container, index);
             }
 
-            void addScreenItem(final EJReportScreenItemType type, String name)
+           
+
+           
+        };
+    }
+    
+    
+     void newScreenItem(final int x,final int y,  final EJReportScreenItemContainer container, final int index)
+    {
+        ScreenItemWizardContext context = new ScreenItemWizardContext()
+        {
+            
+            public EJPluginReportScreenItemProperties newScreenItem(EJReportScreenItemType type)
             {
-                
-                final EJPluginReportScreenItemProperties itemProperties = container.newItem(type);
-                if(forColumn&& container.getItemCount()==0)
+                EJPluginReportScreenItemProperties itemProperties = container.newItem(type);
+
+                if (forColumn && container.getItemCount() == 0)
                 {
                     itemProperties.setX(5);
-                    itemProperties.setWidth(source.getScreenProperties().getWidth()-10);
-                    itemProperties.setHeight(source.getScreenProperties().getHeight()-5);
+                    itemProperties.setWidth(source.getScreenProperties().getWidth() - 10);
+                    itemProperties.setHeight(source.getScreenProperties().getHeight() - 5);
                 }
                 else
                 {
                     itemProperties.setWidth(80);
                     itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 20);
                 }
-                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("New Screen Item : [%s]", name), "Item Name", null,
-                        new IInputValidator()
-                        {
-
-                            public String isValid(String newText)
-                            {
-                                if (newText == null || newText.trim().length() == 0)
-                                    return "Item name can't be empty.";
-                                if (container.contains(newText.trim()))
-                                    return "Item with this name already exists.";
-
-                                return null;
-                            }
-                        })
                 
-                {
-                
-                    
-                    
-                    @Override
-                    protected Control createDialogArea(Composite parent)
-                    {
-                        Composite createDialogArea = (Composite) super.createDialogArea(parent);
-                        
-                       
-                            
-                        
-                        Composite body = new Group(createDialogArea, SWT.NONE);
-                        body.setLayout(new GridLayout());
-                       
-                        
-                        GridData layoutData = new GridData(GridData.FILL_BOTH
-                                | GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL);
-                        layoutData.heightHint =500;
-                        body.setLayoutData(layoutData);
-                        
-                        
-                        
-                       new Label(parent, SWT.NULL);
-                        final  ScreenItemNode node = new ScreenItemNode(null, itemProperties);
-                       AbstractDescriptorPart part = new AbstractDescriptorPart(editor.getToolkit(),body,true)
-                    {
-                        
-                        @Override
-                        public String getSectionTitle()
-                        {
-                            return "Screen Item Settings";
-                        }
-                        
-                        @Override
-                        public String getSectionDescription()
-                        {
-                            return "";
-                        }
-                        
-                        @Override
-                        public AbstractDescriptor<?>[] getDescriptors()
-                        {
-                            // TODO Auto-generated method stub
-                            return node.getNodeDescriptors();
-                        }
-                    }; 
-                    createDialogArea.setBackground(parent.getBackground());   
-                    part.buildUI();
-                        return createDialogArea;
-                        
-                    }
-                };
-                if (dlg.open() == Window.OK)
-                {
-                   
-                    if (itemProperties != null)
-                    {
-                        // set default width/height
-
-                        itemProperties.setName(dlg.getValue());
-                        container.addItemProperties(index, itemProperties);
-                       
-                        
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                treeSection.refresh(ReportBlockScreenItemsGroupNode.this);
-                                treeSection.selectNodes(true, treeSection.findNode(itemProperties, true));
-
-                            }
-                        });
-                    }
-                }
+                if(x>0)
+                    itemProperties.setX(x);
+                if(y>0)
+                    itemProperties.setY(y);
+                return itemProperties;
             }
-
-            @Override
-            public Action[] getActions()
+            
+            public boolean hasScreenItem(String name)
             {
-
-                List<Action> actions = new ArrayList<Action>();
-
-                for (EJReportScreenItemType type : EJReportScreenItemType.values())
-                {
-                    actions.add(createAction(type));
-                }
-                return actions.toArray(new Action[0]);
+                return container.contains(name);
             }
+            
+            public FormToolkit getToolkit()
+            {
+                return editor.getToolkit();
+            }
+            
+            public IJavaProject getProject()
+            {
+                return editor.getJavaProject();
+            }
+            
+            public AbstractDescriptor<?>[] getDescriptors(EJPluginReportScreenItemProperties itemProperties)
+            {
+                if(itemProperties!=null)
+                {
+                    final ScreenItemNode node = new ScreenItemNode(null, itemProperties);
+                    return node.getNodeDescriptors();
+                }
+                return new AbstractDescriptor<?>[0] ;
+            }
+            
+            public String getDefaultBlockValue()
+            {
+              
+                return container.getBlockProperties().getName();
+            }
+            
+            public List<EJReportScreenItemType> getBlockItemTypes()
+            {
+                return Arrays.asList(EJReportScreenItemType.values());
+            }
+            
+            public void addScreenItem(String name, final EJPluginReportScreenItemProperties itemProperties)
+            {
+                
+                
+                itemProperties.setName(name);
+                container.addItemProperties(index, itemProperties);
 
-        };
+                EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                {
+
+                    public void run()
+                    {
+                        editor.setDirty(true);
+                        treeSection.refresh(ReportBlockScreenItemsGroupNode.this);
+                        treeSection.selectNodes(true, treeSection.findNode(itemProperties, true));
+
+                    }
+                });
+                
+            }
+        }; 
+        
+        ScreenItemWizard wizard = new ScreenItemWizard(context);
+        wizard.open();
     }
 
 }

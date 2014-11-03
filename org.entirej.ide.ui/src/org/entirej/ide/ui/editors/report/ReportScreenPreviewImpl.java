@@ -62,6 +62,7 @@ import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.nodes.AbstractNode;
 
 public class ReportScreenPreviewImpl implements IReportPreviewProvider
 {
@@ -187,56 +188,24 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         final Menu menu = new Menu(editor.getEditorSite().getShell(), SWT.POP_UP);
         final EJReportScreenItemContainer container = layoutScreenProperties.getScreenItemContainer();
 
-        for (final EJReportScreenItemType type : EJReportScreenItemType.values())
+        
+        MenuItem item = new MenuItem(menu, SWT.PUSH);
+        item.setText(String.format("New Screen Item "));
+        item.addSelectionListener(new SelectionAdapter()
         {
-            MenuItem item = new MenuItem(menu, SWT.PUSH);
-            item.setText(String.format("New Screen Item : [%s]", type.toString()));
-            item.addSelectionListener(new SelectionAdapter()
+            @Override
+            public void widgetSelected(SelectionEvent e)
             {
-                @Override
-                public void widgetSelected(SelectionEvent e)
+                AbstractNode<?> findNode = editor.findNode(container);
+                if(findNode instanceof ReportBlockScreenItemsGroupNode)
                 {
-                    InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("New Screen Item : [%s]", type.toString()),
-                            "Item Name", null, new IInputValidator()
-                            {
-
-                                public String isValid(String newText)
-                                {
-                                    if (newText == null || newText.trim().length() == 0)
-                                        return "Item name can't be empty.";
-                                    if (container.contains(newText.trim()))
-                                        return "Item with this name already exists.";
-
-                                    return null;
-                                }
-                            });
-                    if (dlg.open() == Window.OK)
-                    {
-                        final EJPluginReportScreenItemProperties itemProperties = container.createItem(type, dlg.getValue(), -1);
-                        if (itemProperties != null)
-                        {
-                            // set default width/height
-
-                            itemProperties.setX(x);
-                            itemProperties.setY(y);
-                            itemProperties.setWidth(80);
-                            itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 22);
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                            {
-
-                                public void run()
-                                {
-                                    editor.setDirty(true);
-                                    editor.refresh(container);
-                                    editor.select(itemProperties);
-                                    updateSize(editor, layoutScreenProperties, reportBody);
-                                }
-                            });
-                        }
-                    }
+                    ReportBlockScreenItemsGroupNode node = (ReportBlockScreenItemsGroupNode) findNode;
+                    
+                    node.newScreenItem(x, y, container, -1);
                 }
-            });
-        }
+            }
+        });
+        
         reportBody.setMenu(menu);
         reportBody.addMouseListener(new MouseAdapter()
         {
