@@ -229,6 +229,18 @@ public class EJReportBlockContainer
                 return blockProperties;
             }
         }
+        
+        EJPluginReportBlockProperties blockProperties = headerSection.getBlockProperties(blockName);
+        if (blockProperties != null)
+        {
+            return blockProperties;
+        }
+         blockProperties = footerSection.getBlockProperties(blockName);
+        if (blockProperties != null)
+        {
+            return blockProperties;
+        }
+        
         return null;
     }
     

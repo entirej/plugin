@@ -886,7 +886,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
                                     public Object[] getElements(Object inputElement)
                                     {
-                                        Collection<EJPluginReportItemProperties> allItemProperties = formProp.getBlockProperties((String) inputElement)
+                                        EJReportBlockItemContainer blockItemContainer = formProp.getBlockProperties((String) inputElement);
+                                        if(blockItemContainer==null)return new Object[0]; 
+                                        Collection<EJPluginReportItemProperties> allItemProperties = blockItemContainer
                                                 .getAllItemProperties();
                                         List<EJPluginReportItemProperties> blockItemNames = new ArrayList<EJPluginReportItemProperties>();
                                         for (EJPluginReportItemProperties ejItemProperties : allItemProperties)

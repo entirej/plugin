@@ -452,7 +452,8 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     
     public EJReportBlockItemContainer getBlockProperties(String blockName)
     {
-        return blockContainer.getBlockProperties(blockName).getItemContainer();
+        EJPluginReportBlockProperties blockProperties = blockContainer.getBlockProperties(blockName);
+        return blockProperties!=null ? blockProperties.getItemContainer():null;
     }
     
     @Override

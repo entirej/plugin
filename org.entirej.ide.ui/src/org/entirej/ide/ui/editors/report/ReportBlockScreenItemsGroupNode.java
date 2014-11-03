@@ -63,6 +63,7 @@ import org.entirej.ide.ui.editors.form.FormNodeTag;
 import org.entirej.ide.ui.editors.report.wizards.ScreenItemWizard;
 import org.entirej.ide.ui.editors.report.wizards.ScreenItemWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
+import org.entirej.ide.ui.nodes.AbstractSubActions;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 import org.entirej.ide.ui.nodes.INodeRenameProvider;
 import org.entirej.ide.ui.nodes.NodeOverview;
@@ -254,7 +255,8 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
         {
 
             int indexOf = ReportBlockScreenItemsGroupNode.this.source.getAllItemProperties().indexOf(source);
-            return new Action[] { createNewScreenItemAction(ReportBlockScreenItemsGroupNode.this.source, ++indexOf), };
+            return new Action[] { createNewScreenItemAction(ReportBlockScreenItemsGroupNode.this.source, ++indexOf), null,
+                    createConvertScreenItemAction(ReportBlockScreenItemsGroupNode.this.source, source) };
         }
 
         public boolean canMove()
@@ -1369,21 +1371,60 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             @Override
             public void runWithEvent(Event event)
             {
-                newScreenItem(0,0,container, index);
+                newScreenItem(0, 0, container, index);
+            }
+
+        };
+    }
+
+    public Action createConvertScreenItemAction(final EJReportScreenItemContainer container, final EJPluginReportScreenItemProperties source)
+    {
+
+        return new AbstractSubActions("Change Screen Item Type")
+        {
+
+            Action createAction(final EJReportScreenItemType type)
+            {
+
+                String name = type.toString();
+
+                return new Action(name)
+                {
+                    @Override
+                    public void runWithEvent(Event event)
+                    {
+                        EJPluginReportScreenItemProperties target = container.convertItemType(type, source);
+                        editor.refresh(container);
+                        editor.select(target);
+                    }
+                };
             }
 
            
 
-           
+            @Override
+            public Action[] getActions()
+            {
+
+                List<Action> actions = new ArrayList<Action>();
+
+                for (EJReportScreenItemType type : EJReportScreenItemType.values())
+                {
+                    if (type == source.getType())
+                        continue;
+                    actions.add(createAction(type));
+                }
+                return actions.toArray(new Action[0]);
+            }
+
         };
     }
-    
-    
-     void newScreenItem(final int x,final int y,  final EJReportScreenItemContainer container, final int index)
+
+    void newScreenItem(final int x, final int y, final EJReportScreenItemContainer container, final int index)
     {
         ScreenItemWizardContext context = new ScreenItemWizardContext()
         {
-            
+
             public EJPluginReportScreenItemProperties newScreenItem(EJReportScreenItemType type)
             {
                 EJPluginReportScreenItemProperties itemProperties = container.newItem(type);
@@ -1399,54 +1440,53 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     itemProperties.setWidth(80);
                     itemProperties.setHeight(itemProperties.getType() == EJReportScreenItemType.LINE ? 1 : 20);
                 }
-                
-                if(x>0)
+
+                if (x > 0)
                     itemProperties.setX(x);
-                if(y>0)
+                if (y > 0)
                     itemProperties.setY(y);
                 return itemProperties;
             }
-            
+
             public boolean hasScreenItem(String name)
             {
                 return container.contains(name);
             }
-            
+
             public FormToolkit getToolkit()
             {
                 return editor.getToolkit();
             }
-            
+
             public IJavaProject getProject()
             {
                 return editor.getJavaProject();
             }
-            
+
             public AbstractDescriptor<?>[] getDescriptors(EJPluginReportScreenItemProperties itemProperties)
             {
-                if(itemProperties!=null)
+                if (itemProperties != null)
                 {
                     final ScreenItemNode node = new ScreenItemNode(null, itemProperties);
                     return node.getNodeDescriptors();
                 }
-                return new AbstractDescriptor<?>[0] ;
+                return new AbstractDescriptor<?>[0];
             }
-            
+
             public String getDefaultBlockValue()
             {
-              
+
                 return container.getBlockProperties().getName();
             }
-            
+
             public List<EJReportScreenItemType> getBlockItemTypes()
             {
                 return Arrays.asList(EJReportScreenItemType.values());
             }
-            
+
             public void addScreenItem(String name, final EJPluginReportScreenItemProperties itemProperties)
             {
-                
-                
+
                 itemProperties.setName(name);
                 container.addItemProperties(index, itemProperties);
 
@@ -1461,10 +1501,10 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                     }
                 });
-                
+
             }
-        }; 
-        
+        };
+
         ScreenItemWizard wizard = new ScreenItemWizard(context);
         wizard.open();
     }

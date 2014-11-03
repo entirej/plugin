@@ -23,6 +23,9 @@ import java.util.List;
 
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 
@@ -62,15 +65,14 @@ public class EJReportScreenItemContainer
     {
         if (itemProperties != null)
         {
-            if(index==-1)
+            if (index == -1)
             {
-                _itemProperties.add( itemProperties);
+                _itemProperties.add(itemProperties);
             }
             else
             {
                 _itemProperties.add(index, itemProperties);
             }
-            
             
         }
     }
@@ -149,7 +151,7 @@ public class EJReportScreenItemContainer
         EJPluginReportScreenItemProperties itemProperties = null;
         itemProperties = newItem(type);
         
-        if(itemProperties==null)return null;
+        if (itemProperties == null) return null;
         
         itemProperties.setName(name);
         
@@ -165,13 +167,12 @@ public class EJReportScreenItemContainer
         return itemProperties;
     }
     
-    
-    public  EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type)
+    public EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type)
     {
         return newItem(type, _blockProperties);
     }
-
-    public static EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type,EJPluginReportBlockProperties            _blockProperties)
+    
+    public static EJPluginReportScreenItemProperties newItem(EJReportScreenItemType type, EJPluginReportBlockProperties _blockProperties)
     {
         EJPluginReportScreenItemProperties itemProperties;
         switch (type)
@@ -205,4 +206,55 @@ public class EJReportScreenItemContainer
         return itemProperties;
     }
     
+    public EJPluginReportScreenItemProperties convertItemType(EJReportScreenItemType type, EJPluginReportScreenItemProperties source)
+    {
+        
+        int indexOf = _itemProperties.indexOf(source);
+        if (indexOf != -1)
+        {
+            EJPluginReportScreenItemProperties target = newItem(type);
+            
+            target.setHeight(source.getHeight());
+            target.setName(source.getName());
+            target.setVisible(source.isVisible());
+            target.setVisualAttributeName(source.getVisualAttributeName());
+            target.setWidth(source.getWidth());
+            target.setX(source.getX());
+            target.setY(source.getY());
+            
+            if (target instanceof ValueBaseItem && source instanceof ValueBaseItem)
+            {
+                
+                ValueBaseItem tBaseItem = (ValueBaseItem) target;
+                ValueBaseItem sBaseItem = (ValueBaseItem) source;
+                
+                tBaseItem.setValue(sBaseItem.getValue());
+                
+            }
+            if (target instanceof AlignmentBaseItem && source instanceof AlignmentBaseItem)
+            {
+                
+                AlignmentBaseItem tBaseItem = (AlignmentBaseItem) target;
+                AlignmentBaseItem sBaseItem = (AlignmentBaseItem) source;
+                
+                tBaseItem.setHAlignment(sBaseItem.getHAlignment());
+                tBaseItem.setVAlignment(sBaseItem.getVAlignment());
+                
+            }
+            if (target instanceof RotatableItem && source instanceof RotatableItem)
+            {
+                
+                RotatableItem tBaseItem = (RotatableItem) target;
+                RotatableItem sBaseItem = (RotatableItem) source;
+                
+                tBaseItem.setRotation(sBaseItem.getRotation());
+                
+            }
+            
+            _itemProperties.set(indexOf, target);
+            return target;
+        }
+        return null;
+        
+    }
 }
