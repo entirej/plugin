@@ -772,7 +772,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                 screenItem.setName(name);
                                 itemProperties.getDetailScreen().getScreenItemContainer().addItemProperties(screenItem);
                             }
-                            if (label != null)
+                            if (label != null && label.length()>0)
                             {
                                 itemProperties.setShowHeader(true);
                                 EJPluginReportScreenItemProperties.Label screenLabelItem = new EJPluginReportScreenItemProperties.Label(

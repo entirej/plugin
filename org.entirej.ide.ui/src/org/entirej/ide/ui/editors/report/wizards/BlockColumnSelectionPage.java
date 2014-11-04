@@ -280,10 +280,54 @@ public class BlockColumnSelectionPage extends WizardPage
         setPageComplete(validatePage());
     }
 
-    private void addTypeBaseDescriptors(List<AbstractDescriptor<?>> descriptors, EJPluginReportScreenItemProperties source)
+    private void addTypeBaseDescriptors(List<AbstractDescriptor<?>> descriptors,final EJPluginReportScreenItemProperties source)
     {
 
-        
+        AbstractTextDropDownDescriptor vaDescriptor = new AbstractTextDropDownDescriptor("Visual Attributes", "")
+        {
+            List<String> visualAttributeNames = new ArrayList<String>(source.getBlockProperties().getReportProperties().getEntireJProperties().getVisualAttributesContainer()
+                                                      .getVisualAttributeNames());
+
+            @Override
+            public void setValue(String value)
+            {
+                source.setVisualAttributeName(value);
+               
+            }
+
+            @Override
+            public String getValue()
+            {
+                return source.getVisualAttributeName();
+            }
+
+            public String[] getOptions()
+            {
+                List<String> list = new ArrayList<String>();
+
+                list.add("");
+
+                list.addAll(visualAttributeNames);
+
+                if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                {
+                    list.add(getValue());
+                }
+                return list.toArray(new String[0]);
+            }
+
+            public String getOptionText(String t)
+            {
+                if (t.length() > 0 && !visualAttributeNames.contains(t))
+                {
+                    return String.format("Undefined !< %s >", t);
+                }
+
+                return t;
+            }
+        };
+
+        descriptors.add(vaDescriptor);
         
         final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
         {

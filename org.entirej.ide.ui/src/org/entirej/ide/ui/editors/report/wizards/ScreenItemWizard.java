@@ -44,7 +44,7 @@ public class ScreenItemWizard extends NewWizard
         setDialogSettings(EJUIPlugin.getDefault().getDialogSettings());
         WizardDialog dialog = new WizardDialog(EJUIPlugin.getActiveWorkbenchShell(), this);
         dialog.create();
-        dialog.getShell().setSize(500, 600);
+        dialog.getShell().setSize(600, 800);
         dialog.open();
         return selection;
     }
