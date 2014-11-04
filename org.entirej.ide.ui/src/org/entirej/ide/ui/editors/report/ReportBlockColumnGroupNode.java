@@ -765,9 +765,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                             if (screenItem != null)
                             {
-                                screenItem.setX(5);
-                                screenItem.setWidth(width>15?width - 10:width);
-                                screenItem.setHeight(itemProperties.getDetailScreen().getHeight() - 5);
+                                screenItem.setX(0);
+                                screenItem.setWidth(width);
+                                screenItem.setHeight(itemProperties.getDetailScreen().getHeight());
 
                                 screenItem.setName(name);
                                 itemProperties.getDetailScreen().getScreenItemContainer().addItemProperties(screenItem);
@@ -777,9 +777,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                 itemProperties.setShowHeader(true);
                                 EJPluginReportScreenItemProperties.Label screenLabelItem = new EJPluginReportScreenItemProperties.Label(
                                         container.getBlockProperties());
-                                screenLabelItem.setX(5);
-                                screenLabelItem.setWidth(width>15?width - 10:width);
-                                screenLabelItem.setHeight(itemProperties.getHeaderScreen().getHeight() - 5);
+                                screenLabelItem.setX(0);
+                                screenLabelItem.setWidth(width);
+                                screenLabelItem.setHeight(itemProperties.getHeaderScreen().getHeight());
                                 screenLabelItem.setText(label);
                                 screenLabelItem.setName(name);
                                 
