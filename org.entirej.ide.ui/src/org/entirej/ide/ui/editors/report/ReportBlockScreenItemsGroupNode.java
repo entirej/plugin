@@ -698,6 +698,34 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                 };
                 descriptors.add(valueProvider);
+                
+                if(!(source instanceof EJPluginReportScreenItemProperties.Image))
+                {
+                    
+                    
+                    AbstractBooleanDescriptor expandToFit = new AbstractBooleanDescriptor("Expand To Fit")
+                    {
+                        
+                        @Override
+                        public void setValue(Boolean value)
+                        {
+                            item.setExpandToFit(value);
+                            editor.setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                            
+                        }
+                        
+                        @Override
+                        public Boolean getValue()
+                        {
+                            return item.isExpandToFit();
+                        }
+                    };
+                    
+                    descriptors.add(expandToFit);
+                    
+                }
+                
             }
 
             if (source instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)

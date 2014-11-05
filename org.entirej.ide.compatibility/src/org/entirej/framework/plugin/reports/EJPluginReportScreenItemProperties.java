@@ -348,6 +348,8 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     public static abstract class ValueBaseItem extends AlignmentBaseItem
     {
         
+        private boolean expandToFit;
+        
         private String value;
         
         public ValueBaseItem(EJPluginReportBlockProperties blockProperties)
@@ -363,6 +365,17 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         public void setValue(String value)
         {
             this.value = value;
+        }
+        
+        
+        public boolean isExpandToFit()
+        {
+            return expandToFit;
+        }
+        
+        public void setExpandToFit(boolean expandToFit)
+        {
+            this.expandToFit = expandToFit;
         }
         
     }
