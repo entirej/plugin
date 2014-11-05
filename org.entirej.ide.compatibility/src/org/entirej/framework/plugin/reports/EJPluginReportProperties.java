@@ -52,6 +52,8 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private List<EJPluginApplicationParameter> _reportParameters;
     private HashMap<String, String>            _applicationProperties;
     
+    private boolean                            _ignorePagination;
+    
     // Display Properties
     private int                                _reportWidth;
     private int                                _reportHeight;
@@ -59,8 +61,10 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private int                                _marginBottom;
     private int                                _marginLeft;
     private int                                _marginRight;
-    private int                                _headerSectionHeight      = 30;//plugin default
-    private int                                _footerSectionHeight      = 20;//plugin default
+    private int                                _headerSectionHeight      = 30;                    // plugin
+                                                                                                   // default
+    private int                                _footerSectionHeight      = 20;                    // plugin
+                                                                                                   // default
     private EJReportProperties.ORIENTATION     _orientation              = ORIENTATION.PORTRAIT;
     
     private EJReportExportType                 exportType                = EJReportExportType.PDF;
@@ -120,6 +124,17 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     public void changeName(String newName)
     {
         _name = newName;
+    }
+    
+    @Override
+    public boolean isIgnorePagination()
+    {
+        return _ignorePagination;
+    }
+    
+    public void setIgnorePagination(boolean ignorePagination)
+    {
+        this._ignorePagination = ignorePagination;
     }
     
     /**
@@ -453,7 +468,7 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     public EJReportBlockItemContainer getBlockProperties(String blockName)
     {
         EJPluginReportBlockProperties blockProperties = blockContainer.getBlockProperties(blockName);
-        return blockProperties!=null ? blockProperties.getItemContainer():null;
+        return blockProperties != null ? blockProperties.getItemContainer() : null;
     }
     
     @Override

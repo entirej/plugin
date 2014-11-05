@@ -36,21 +36,22 @@ public class ReportHandler extends EntireJTagHandler
     private static final String      ELEMENT_MARGIN_BOTTOM          = "marginBottom";
     private static final String      ELEMENT_MARGIN_LEFT            = "marginLeft";
     private static final String      ELEMENT_MARGIN_RIGHT           = "marginRight";
-
-    private static final String    ELEMENT_HEADER_SECTION_HEIGHT  = "headerHeight";
-    private static final String    ELEMENT_FOOTER_SECTION_HEIGHT  = "footerHeight";
+    
+    private static final String      ELEMENT_HEADER_SECTION_HEIGHT  = "headerHeight";
+    private static final String      ELEMENT_FOOTER_SECTION_HEIGHT  = "footerHeight";
     private static final String      ELEMENT_REPORT_ORIENTATION     = "orientation";
     private static final String      ELEMENT_REPORT_HEIGHT          = "height";
     private static final String      ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
     
+    private static final String      ELEMENT_IGNOREPAGINATION       = "ignorePagination";
     private static final String      ELEMENT_REPORT_PARAMETER       = "reportParameter";
     private static final String      ELEMENT_APPLICATION_PROPERTIES = "applicationProperties";
     private static final String      ELEMENT_PROPERTY               = "property";
     
     private static final String      ELEMENT_BLOCK                  = "block";
     private static final String      ELEMENT_BLOCK_GROUP            = "blockGroup";
-    private static final String      ELEMENT_BLOCK_HEADER          = "ej.header.blocks";
-    private static final String      ELEMENT_BLOCK_FOOTER          = "ej.footer.blocks";
+    private static final String      ELEMENT_BLOCK_HEADER           = "ej.header.blocks";
+    private static final String      ELEMENT_BLOCK_FOOTER           = "ej.footer.blocks";
     
     private boolean                  _gettingApplicationProperties  = false;
     private String                   _lastApplicationPropertyName   = "";
@@ -168,6 +169,15 @@ public class ReportHandler extends EntireJTagHandler
             {
                 _reportProperties.setReportWidth(0);
             }
+        }
+        
+        else if (name.equals(ELEMENT_IGNOREPAGINATION))
+        {
+            if (value.length() > 0)
+            {
+                _reportProperties.setIgnorePagination(Boolean.parseBoolean(value));
+            }
+
         }
         else if (name.equals(ELEMENT_MARGIN_TOP))
         {

@@ -68,6 +68,7 @@ import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
@@ -635,6 +636,30 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
+            
+            
+            final AbstractBooleanDescriptor ignorePages = new AbstractBooleanDescriptor("Ignore Page Break")
+            {
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    
+                    source.setIgnorePagination(value);
+                    editor.setDirty(true);
+                    refresh(ReportNode.this);
+                    
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    // TODO Auto-generated method stub
+                    return source.isIgnorePagination();
+                }
+            }; 
+            
+            
             final AbstractTextDescriptor headerSectionDescriptor = new AbstractTextDescriptor("Header Height")
             {
 
@@ -1241,7 +1266,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, exportTypeDescriptor, layoutGroupDescriptor, parametersDes,
+            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, exportTypeDescriptor,ignorePages, layoutGroupDescriptor, parametersDes,
                     metadataGroupDescriptor };
         }
 
