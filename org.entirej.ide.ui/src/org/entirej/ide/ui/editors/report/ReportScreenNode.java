@@ -34,6 +34,7 @@ import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
@@ -460,6 +461,164 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
         if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
         {
+            
+            final AbstractTextDescriptor hHeightDescriptor = new AbstractTextDescriptor("Header")
+            {
+                
+
+               
+
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setHeaderColumnHeight(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setHeaderColumnHeight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(ReportScreenNode.this);
+                    if (blockGroupNode != null)
+                        treeSection.refresh(blockGroupNode);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getHeaderColumnHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            
+            final AbstractTextDescriptor dHeightDescriptor = new AbstractTextDescriptor("Detail")
+            {
+                
+
+               
+
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setDetailColumnHeight(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setDetailColumnHeight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(ReportScreenNode.this);
+                    if (blockGroupNode != null)
+                        treeSection.refresh(blockGroupNode);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getDetailColumnHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            
+            
+            final AbstractTextDescriptor fHeightDescriptor = new AbstractTextDescriptor("Footer")
+            {
+                
+
+               
+
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setFooterColumnHeight(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setFooterColumnHeight(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(ReportScreenNode.this);
+                    if (blockGroupNode != null)
+                        treeSection.refresh(blockGroupNode);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getFooterColumnHeight());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            
+            AbstractGroupDescriptor sectionheights = new AbstractGroupDescriptor("Default Column Heights")
+            {
+                
+                public AbstractDescriptor<?>[] getDescriptors()
+                {
+                    // TODO Auto-generated method stub
+                    return new AbstractDescriptor<?>[]{hHeightDescriptor,dHeightDescriptor,fHeightDescriptor};
+                }
+            };
             AbstractTextDropDownDescriptor vaOddDescriptor = new AbstractTextDropDownDescriptor("Odd Record VA", "")
             {
                 List<String> visualAttributeNames = new ArrayList<String>(treeSection.getEditor().getReportProperties().getEntireJProperties()
@@ -547,6 +706,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
             };
 
+            descriptors.add(sectionheights);
             descriptors.add(vaOddDescriptor);
             descriptors.add(vaEvenDescriptor);
         }

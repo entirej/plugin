@@ -51,6 +51,11 @@ public class BlockHandler extends EntireJTagHandler
     private static final String           ELEMENT_SCREEN_ITEM        = "screenitem";
     private static final String           ELEMENT_SCREEN_COLUMN      = "columnitem";
     
+
+    private static final String         ELEMENT_SCREEN_H_COL_HEIGHT = "headerColHeight";
+    private static final String         ELEMENT_SCREEN_D_COL_HEIGHT = "detailColHeight";
+    private static final String         ELEMENT_SCREEN_F_COL_HEIGHT = "footerColHeight";
+    
     public BlockHandler(EJPluginReportProperties formProperties)
     {
         _formProperties = formProperties;
@@ -168,6 +173,18 @@ public class BlockHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_SCREEN_Y))
         {
             _blockProperties.getLayoutScreenProperties().setY(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_H_COL_HEIGHT))
+        {
+            _blockProperties.getLayoutScreenProperties().setHeaderColumnHeight(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_D_COL_HEIGHT))
+        {
+            _blockProperties.getLayoutScreenProperties().setDetailColumnHeight(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_F_COL_HEIGHT))
+        {
+            _blockProperties.getLayoutScreenProperties().setFooterColumnHeight(Integer.parseInt(value));
         }
         else if (name.equals(ELEMENT_SCREEN_WIDTH))
         {

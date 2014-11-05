@@ -1459,9 +1459,10 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                 if (forColumn && container.getItemCount() == 0)
                 {
-                    itemProperties.setX(5);
-                    itemProperties.setWidth(source.getScreenProperties().getWidth() - 10);
-                    itemProperties.setHeight(source.getScreenProperties().getHeight() - 5);
+                    itemProperties.setX(0);
+                    itemProperties.setWidth(source.getScreenProperties().getWidth());
+                    
+                    itemProperties.setHeight(10);
                 }
                 else
                 {

@@ -264,7 +264,9 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "y", layoutScreenProperties.getY() + "");
             writeStringTAG(buffer, "width", layoutScreenProperties.getWidth() + "");
             writeStringTAG(buffer, "height", layoutScreenProperties.getHeight() + "");
-            
+            writeStringTAG(buffer, "headerColHeight", layoutScreenProperties.getHeaderColumnHeight()+ "");
+            writeStringTAG(buffer, "detailColHeight", layoutScreenProperties.getHeaderColumnHeight()+ "");
+            writeStringTAG(buffer, "footerColHeight", layoutScreenProperties.getHeaderColumnHeight()+ "");
             // Now add the block items
             startTAG(buffer, "itemList");
             {
@@ -306,6 +308,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             }
             else if (layoutScreenProperties.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
             {
+                
+                
                 startTAG(buffer, "screenColumnList");
                 
                 EJReportColumnContainer columnContainer = layoutScreenProperties.getColumnContainer();

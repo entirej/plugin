@@ -100,11 +100,11 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
         List<EJPluginReportColumnProperties> columnProperties = layoutScreenProperties.getColumnContainer().getAllColumnProperties();
 
-        int headerH = 0;
+        int headerH = layoutScreenProperties.getHeaderColumnHeight();
         int headerW = 0;
-        int detailH = 0;
+        int detailH = layoutScreenProperties.getDetailColumnHeight();
         int detailW = 0;
-        int footerH = 0;
+        int footerH = layoutScreenProperties.getDetailColumnHeight();
         int footerW = 0;
 
         int totalW = 0;

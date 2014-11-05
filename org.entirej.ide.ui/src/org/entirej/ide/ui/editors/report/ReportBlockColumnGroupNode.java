@@ -757,17 +757,17 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                             itemProperties.setName(name);
 
                             itemProperties.getHeaderScreen().setWidth(width);
-                            itemProperties.getHeaderScreen().setHeight(20);
+                           // itemProperties.getHeaderScreen().setHeight(20);
                             itemProperties.getDetailScreen().setWidth(width);
-                            itemProperties.getDetailScreen().setHeight(20);
+                            //itemProperties.getDetailScreen().setHeight(20);
                             itemProperties.getFooterScreen().setWidth(width);
-                            itemProperties.getFooterScreen().setHeight(20);
+                            //itemProperties.getFooterScreen().setHeight(20);
 
                             if (screenItem != null)
                             {
                                 screenItem.setX(0);
                                 screenItem.setWidth(width);
-                                screenItem.setHeight(itemProperties.getDetailScreen().getHeight());
+                                screenItem.setHeight(container.getBlockProperties().getLayoutScreenProperties().getDetailColumnHeight());
 
                                 screenItem.setName(name);
                                 itemProperties.getDetailScreen().getScreenItemContainer().addItemProperties(screenItem);
@@ -779,7 +779,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                         container.getBlockProperties());
                                 screenLabelItem.setX(0);
                                 screenLabelItem.setWidth(width);
-                                screenLabelItem.setHeight(itemProperties.getHeaderScreen().getHeight());
+                                screenLabelItem.setHeight(container.getBlockProperties().getLayoutScreenProperties().getHeaderColumnHeight());
                                 screenLabelItem.setText(label);
                                 screenLabelItem.setName(name);
                                 

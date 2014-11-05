@@ -18,6 +18,10 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     private EJPluginReportBlockProperties blockProperties;
     
     private int                           x, y, width, height;
+    
+    private int                           headerColumnHeight = 20;
+    private int                           detailColumnHeight = 20;
+    private int                           footerColumnHeight = 20;
     private EJReportScreenType            screenType = EJReportScreenType.NONE;
     
     private final BlockGroup              subBlocks  = new BlockGroup("Sub Blocks");
@@ -130,26 +134,57 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
         return _columnContainer.getAllColumnProperties();
     }
     
-    
-    
     public String getOddRowVAName()
     {
         return oddRowVAName;
     }
-
+    
     public void setOddRowVAName(String oddRowVAName)
     {
         this.oddRowVAName = oddRowVAName;
     }
-
+    
     public String getEvenRowVAName()
     {
         return evenRowVAName;
     }
-
+    
     public void setEvenRowVAName(String evenRowVAName)
     {
         this.evenRowVAName = evenRowVAName;
+    }
+    
+    
+    
+    
+    public int getHeaderColumnHeight()
+    {
+        return headerColumnHeight;
+    }
+
+    public void setHeaderColumnHeight(int headerColumnHeight)
+    {
+        this.headerColumnHeight = headerColumnHeight;
+    }
+
+    public int getDetailColumnHeight()
+    {
+        return detailColumnHeight;
+    }
+
+    public void setDetailColumnHeight(int detailColumnHeight)
+    {
+        this.detailColumnHeight = detailColumnHeight;
+    }
+
+    public int getFooterColumnHeight()
+    {
+        return footerColumnHeight;
+    }
+
+    public void setFooterColumnHeight(int footerColumnHeight)
+    {
+        this.footerColumnHeight = footerColumnHeight;
     }
 
     @Override
