@@ -46,6 +46,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.R
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
+import org.entirej.framework.report.enumerations.EJReportMarkupType;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
@@ -723,6 +724,49 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     };
                     
                     descriptors.add(expandToFit);
+                    
+                }
+                if((source instanceof EJPluginReportScreenItemProperties.Text))
+                {
+                    
+                    
+                    AbstractTextDropDownDescriptor markup = new AbstractTextDropDownDescriptor("Markup")
+                    {
+                        
+                        @Override
+                        public void setValue(String value)
+                        {
+                            item.setMarkup(EJReportMarkupType.valueOf(value));
+                            editor.setDirty(true);
+                            treeSection.refresh(ScreenItemNode.this);
+                            
+                        }
+                        
+                        public String[] getOptions()
+                        {
+                            String  [] options = new String[EJReportMarkupType.values().length];
+                            int index =0 ;
+                            for (EJReportMarkupType markupType : EJReportMarkupType.values())
+                            {
+                                options[index] = markupType.name();
+                                index++;
+                            }
+                            return options;
+                        }
+                        
+                        public String getOptionText(String t)
+                        {
+                            return EJReportMarkupType.valueOf(t).toString();
+                        }
+                        
+                        @Override
+                        public String getValue()
+                        {
+                            return item.getMarkup().name();
+                        }
+                    };
+                    
+                    descriptors.add(markup);
                     
                 }
                 

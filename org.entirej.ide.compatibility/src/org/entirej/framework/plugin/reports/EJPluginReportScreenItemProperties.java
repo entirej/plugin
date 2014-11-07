@@ -1,6 +1,7 @@
 package org.entirej.framework.plugin.reports;
 
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Line.LineStyle;
+import org.entirej.framework.report.enumerations.EJReportMarkupType;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
@@ -352,6 +353,8 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         
         private String value;
         
+        private EJReportMarkupType markup = EJReportMarkupType.NONE;
+        
         public ValueBaseItem(EJPluginReportBlockProperties blockProperties)
         {
             super(blockProperties);
@@ -376,6 +379,17 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         public void setExpandToFit(boolean expandToFit)
         {
             this.expandToFit = expandToFit;
+        }
+        
+        
+        public void setMarkup(EJReportMarkupType markup)
+        {
+            this.markup = markup;
+        }
+        
+        public EJReportMarkupType getMarkup()
+        {
+            return markup;
         }
         
     }

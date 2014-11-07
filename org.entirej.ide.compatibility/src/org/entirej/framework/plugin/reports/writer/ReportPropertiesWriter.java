@@ -409,6 +409,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     }
                     
                     writeBooleanTAG(buffer, "expandToFit", item.isExpandToFit());
+                    writeStringTAG(buffer, "markup", item.getMarkup().name());
                 }
                 if (itemProps instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
                 {

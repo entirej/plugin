@@ -27,6 +27,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.N
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.RotatableItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.ValueBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.report.enumerations.EJReportMarkupType;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
@@ -48,6 +49,7 @@ public class ScreenItemHandler extends EntireJTagHandler
     private static final String                ELEMENT_SCREEN_VALUE_PROVIDER = "valueProvider";
     
     private static final String                ELEMENT_SCREEN_EXPAND_TO_FIT  = "expandToFit";
+    private static final String                ELEMENT_SCREEN_MARKUP         = "markup";
     private static final String                ELEMENT_SCREEN_HALIGNMENT     = "hAlignment";
     private static final String                ELEMENT_SCREEN_VALIGNMENT     = "vAlignment";
     private static final String                ELEMENT_SCREEN_ROTATION       = "rotation";
@@ -132,6 +134,16 @@ public class ScreenItemHandler extends EntireJTagHandler
             {
                 final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) _itemProperties;
                 item.setExpandToFit(Boolean.parseBoolean(value));
+                
+            }
+        }
+        
+        else if (name.equals(ELEMENT_SCREEN_MARKUP))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) _itemProperties;
+                item.setMarkup(EJReportMarkupType.valueOf(value));
                 
             }
         }
