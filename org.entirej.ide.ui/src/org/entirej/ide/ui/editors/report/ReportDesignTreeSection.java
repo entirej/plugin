@@ -1009,6 +1009,52 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
+            
+            
+
+            AbstractTextDropDownDescriptor vaDescriptor = new AbstractTextDropDownDescriptor("Default Visual Attributes", "")
+            {
+                List<String> visualAttributeNames = new ArrayList<String>(editor.getReportProperties().getEntireJProperties().getVisualAttributesContainer()
+                                                          .getVisualAttributeNames());
+
+                @Override
+                public void setValue(String value)
+                {
+                    source.setVisualAttributeName(value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getVisualAttributeName();
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> list = new ArrayList<String>();
+
+                    list.add("");
+
+                    list.addAll(visualAttributeNames);
+
+                    if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                    {
+                        list.add(getValue());
+                    }
+                    return list.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+                    if (t.length() > 0 && !visualAttributeNames.contains(t))
+                    {
+                        return String.format("Undefined !< %s >", t);
+                    }
+
+                    return t;
+                }
+            };
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
 
@@ -1266,7 +1312,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, exportTypeDescriptor,ignorePages, layoutGroupDescriptor, parametersDes,
+            return new AbstractDescriptor<?>[] { titleDescriptor, actionDescriptor, exportTypeDescriptor,vaDescriptor,ignorePages, layoutGroupDescriptor, parametersDes,
                     metadataGroupDescriptor };
         }
 

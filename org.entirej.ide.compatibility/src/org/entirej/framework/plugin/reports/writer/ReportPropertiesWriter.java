@@ -70,7 +70,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeIntTAG(buffer, "footerHeight", form.getFooterSectionHeight());
                 writeStringTAG(buffer, "orientation", form.getOrientation().name());
                 writeStringTAG(buffer, "actionProcessorClassName", form.getActionProcessorClassName());
-                
+                writeStringTAG(buffer, "va", form.getVisualAttributeName());
                 // Now add the forms parameters
                 Iterator<EJPluginApplicationParameter> paramNamesIti = form.getAllReportParameters().iterator();
                 startTAG(buffer, "reportParameterList");
@@ -396,6 +396,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "width", itemProps.getWidth() + "");
                 writeStringTAG(buffer, "height", itemProps.getHeight() + "");
                 writeStringTAG(buffer, "visible", String.valueOf(itemProps.isVisible()));
+               
                 if (itemProps.getVisualAttributeName() != null) writeStringTAG(buffer, "va", itemProps.getVisualAttributeName());
                 
                 // add type base properties

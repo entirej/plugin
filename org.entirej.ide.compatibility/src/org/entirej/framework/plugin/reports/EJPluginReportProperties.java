@@ -35,6 +35,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.Bl
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.report.enumerations.EJReportExportType;
 import org.entirej.framework.report.interfaces.EJReportProperties;
+import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EJPluginReportProperties implements EJReportProperties, Comparable<EJPluginReportProperties>
 {
@@ -48,6 +49,8 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private String                             _reportDisplayName        = "";
     
     private String                             _actionProcessorClassName = "";
+    
+    private String                             _visualAttributeName;
     
     private List<EJPluginApplicationParameter> _reportParameters;
     private HashMap<String, String>            _applicationProperties;
@@ -502,5 +505,20 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     public void setFooterSectionHeight(int footerSectionHeight)
     {
         this._footerSectionHeight = footerSectionHeight;
+    }
+    
+    @Override
+    public EJReportVisualAttributeProperties getVisualAttributeProperties()
+    {
+        return null;
+    }
+    public String getVisualAttributeName()
+    {
+        return _visualAttributeName;
+    }
+
+    public void setVisualAttributeName(String _visualAttributeName)
+    {
+        this._visualAttributeName = _visualAttributeName;
     }
 }
