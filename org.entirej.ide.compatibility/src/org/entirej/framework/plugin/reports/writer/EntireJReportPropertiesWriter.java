@@ -131,6 +131,11 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "weight", visAttr.getFontWeight().toString());
                 writeStringTAG(buffer, "foregroundColor", getColorString(visAttr.getForegroundColor()));
                 writeStringTAG(buffer, "backgroundColor", getColorString(visAttr.getBackgroundColor()));
+                writeStringTAG(buffer, "markup", visAttr.getMarkupType().name());
+                writeStringTAG(buffer, "hAlignment", visAttr.getHAlignment().name());
+                writeStringTAG(buffer, "vAlignment", visAttr.getVAlignment().name());
+                writeStringTAG(buffer, "localeFormat", visAttr.getLocalePattern().name());
+                writeStringTAG(buffer, "manualFormat", visAttr.getManualPattern());
             }
             endTAG(buffer, "visualAttribute");
         }

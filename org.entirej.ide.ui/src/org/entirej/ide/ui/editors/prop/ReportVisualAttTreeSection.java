@@ -62,6 +62,9 @@ import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.enumerations.EJReportFontStyle;
 import org.entirej.framework.report.enumerations.EJReportFontWeight;
+import org.entirej.framework.report.enumerations.EJReportMarkupType;
+import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
+import org.entirej.framework.report.enumerations.EJReportVAPattern;
 import org.entirej.framework.report.properties.EJReportVisualAttributeContainer;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 import org.entirej.ide.ui.EJUIImages;
@@ -408,7 +411,166 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                     AbstractGroupDescriptor fontGroupDescriptor = createFontDescriptorGroup(handler);
 
                     AbstractGroupDescriptor colorGroupDescriptor = createColorDescriptorGroup(handler);
-                    return new AbstractDescriptor<?>[] { fontGroupDescriptor, colorGroupDescriptor };
+
+                    AbstractTextDropDownDescriptor markup = new AbstractTextDropDownDescriptor("Markup")
+                    {
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setMarkupType(EJReportMarkupType.valueOf(value));
+                            editor.setDirty(true);
+                            refresh(VisualAttributeNode.this);
+
+                        }
+
+                        public String[] getOptions()
+                        {
+                            String[] options = new String[EJReportMarkupType.values().length];
+                            int index = 0;
+                            for (EJReportMarkupType markupType : EJReportMarkupType.values())
+                            {
+                                options[index] = markupType.name();
+                                index++;
+                            }
+                            return options;
+                        }
+
+                        public String getOptionText(String t)
+                        {
+                            return EJReportMarkupType.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getMarkupType().name();
+                        }
+                    };
+
+                    AbstractTextDropDownDescriptor hAlignment = new AbstractTextDropDownDescriptor("Horizontal Alignment")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getHAlignment().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            options.add(EJReportScreenAlignment.NONE.name());
+                            options.add(EJReportScreenAlignment.LEFT.name());
+                            options.add(EJReportScreenAlignment.CENTER.name());
+                            options.add(EJReportScreenAlignment.RIGHT.name());
+                            options.add(EJReportScreenAlignment.JUSTIFIED.name());
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return EJReportScreenAlignment.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setHAlignment(EJReportScreenAlignment.valueOf(value));
+                            editor.setDirty(true);
+                            refresh(VisualAttributeNode.this);
+                        }
+
+                    };
+                    AbstractTextDropDownDescriptor vAlignment = new AbstractTextDropDownDescriptor("Vertical Alignment")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getVAlignment().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            options.add(EJReportScreenAlignment.NONE.name());
+                            options.add(EJReportScreenAlignment.TOP.name());
+                            options.add(EJReportScreenAlignment.CENTER.name());
+                            options.add(EJReportScreenAlignment.BOTTOM.name());
+                            options.add(EJReportScreenAlignment.JUSTIFIED.name());
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return EJReportScreenAlignment.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setVAlignment(EJReportScreenAlignment.valueOf(value));
+                            editor.setDirty(true);
+                            refresh(VisualAttributeNode.this);
+                        }
+
+                    };
+
+                    final AbstractTextDescriptor mformatDescriptor = new AbstractTextDescriptor("Manual Pattern")
+                    {
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setManualPattern(value);
+                            editor.setDirty(true);
+                            refresh(VisualAttributeNode.this);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getManualPattern();
+                        }
+
+                    };
+
+                    AbstractTextDropDownDescriptor lformat = new AbstractTextDropDownDescriptor("Locale Pattern")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getLocalePattern().name();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            for (EJReportVAPattern formats : EJReportVAPattern.values())
+                            {
+                                options.add(formats.name());
+                            }
+                            return options.toArray(new String[0]);
+                        }
+
+                        public String getOptionText(String t)
+                        {
+
+                            return EJReportVAPattern.valueOf(t).toString();
+                        }
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setLocalePattern(EJReportVAPattern.valueOf(value));
+                            editor.setDirty(true);
+                            refresh(VisualAttributeNode.this);
+                        }
+
+                    };
+
+                    return new AbstractDescriptor<?>[] { fontGroupDescriptor, colorGroupDescriptor, markup, hAlignment, vAlignment, lformat, mformatDescriptor };
 
                 }
 
