@@ -265,6 +265,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
 
                     }
+                    tableColumn.setStruct(isStructForOraType(argument._datatype));
                     columns.add(tableColumn);
                 }
                 return columns;
@@ -308,6 +309,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                         
                     }
+                    tableColumn.setStruct(isStructForOraType(argument._datatype));
                     columns.add(tableColumn);
                 }
                 return columns;
@@ -341,6 +343,8 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         tableColumn.setDatatypeName(String.class.getName());
                     }
+                    
+                    tableColumn.setStruct(isStructForOraType(argument._datatype));
 
                     switch (argument.type)
                     {
@@ -392,6 +396,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         tableColumn.setDatatypeName(String.class.getName());
                     }
+                    tableColumn.setStruct(isStructForOraType(argument._datatype));
                     
                     switch (argument.type)
                     {
@@ -449,8 +454,16 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     return Clob.class;
                 if ("BLOB".equals(jdbcType))
                     return Blob.class;
+                if ("STRUCT".equals(jdbcType))
+                    return Struct.class;
 
                 return String.class;
+            }
+            public boolean isStructForOraType(String jdbcType)
+            {
+                
+                
+                return jdbcType.equals("STRUCT");
             }
 
             public void createRequiredResources(IProgressMonitor monitor)

@@ -49,6 +49,16 @@
 							<destFileName>entirej-core.jar</destFileName>
 						</artifactItem>
 						
+						
+						<artifactItem>
+							<groupId>org.entirej</groupId>
+							<artifactId>entirej-report</artifactId>
+							<version>${VERSION.REPORT}</version>
+							<type>jar</type>
+							 
+							<outputDirectory>../org.entirej.core.runtime/extlibs-report</outputDirectory>
+							<destFileName>entirej-report.jar</destFileName>
+						</artifactItem>
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-core</artifactId>
@@ -222,6 +232,7 @@
 		<VERSION.RWT>DEVELOPMENT</VERSION.RWT>
 		<VERSION.TMT>DEVELOPMENT</VERSION.TMT>
 		<VERSION.FX>DEVELOPMENT</VERSION.FX>
+		<VERSION.REPORT>DEVELOPMENT</VERSION.REPORT>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 	</properties>
 
