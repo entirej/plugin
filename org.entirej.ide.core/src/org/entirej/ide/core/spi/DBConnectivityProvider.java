@@ -29,6 +29,8 @@ public interface DBConnectivityProvider
 
     public void addEntireJNature(ClientFrameworkProvider frameworkProvider, IConfigurationElement configElement, IJavaProject javaProject,
             IProgressMonitor monitor);
+    public void addEntireJReportNature(IConfigurationElement configElement, IJavaProject javaProject,
+            IProgressMonitor monitor);
 
     public String getProviderName();
 

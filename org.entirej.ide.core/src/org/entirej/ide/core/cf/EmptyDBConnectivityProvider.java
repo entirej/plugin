@@ -36,6 +36,41 @@ public class EmptyDBConnectivityProvider implements DBConnectivityProvider
 {
     private static final String Empty_DBCONNECTION_FILE = "/templates/empty/Connection.properties";
 
+    
+    
+    public void addEntireJReportNature(IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
+    {
+        try
+        {
+            CFProjectHelper.verifySourceContainer(project, "src");
+
+            CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), Empty_DBCONNECTION_FILE, "src/Connection.properties");
+
+            CFProjectHelper.refreshProject(project, monitor);
+            final IFile file = project.getProject().getFile("src/Connection.properties");
+            Display.getDefault().asyncExec(new Runnable()
+            {
+                public void run()
+                {
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    try
+                    {
+                        IDE.openEditor(page, file, true);
+                    }
+                    catch (PartInitException e)
+                    {
+                        EJCoreLog.logException(e);
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            EJCoreLog.logException(e);
+        }
+        
+    }
+    
     public void addEntireJNature(ClientFrameworkProvider cf, IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
     {
         try

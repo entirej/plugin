@@ -36,16 +36,82 @@ import org.entirej.framework.plugin.framework.properties.reader.EntireJRendererR
 import org.entirej.framework.plugin.framework.properties.writer.EntireJPropertiesWriter;
 import org.entirej.framework.plugin.preferences.EJPropertyRetriever;
 import org.entirej.framework.plugin.preferences.FieldEditorOverlayPage;
+import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
+import org.entirej.framework.plugin.reports.EntirejReportPropertiesUtils;
+import org.entirej.framework.plugin.reports.writer.EntireJReportPropertiesWriter;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.cf.CFProjectHelper;
 import org.entirej.ide.core.project.EJProject;
+import org.entirej.ide.core.project.EJReportProject;
 import org.entirej.ide.core.spi.ClientFrameworkProvider;
 import org.entirej.ide.core.spi.DBConnectivityProvider;
 
 public class HSQLDBConnectivityProvider implements DBConnectivityProvider
 {
-    private static final String HSQL_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedConnectionFactory.java";
+    private static final String HSQL_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedReportConnectionFactory.java";
     private static final String HSQL_CONNECTION_DB   = "/templates/hsqlOptions/demo.h2.db";
+
+    public void addEntireJReportNature(IConfigurationElement configElement, final IJavaProject project, final IProgressMonitor monitor)
+    {
+        try
+        {
+            CFProjectHelper.verifySourceContainer(project, "src");
+
+            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_FILE,
+                    "src/org/entirej/db/connection/EmbeddedReportConnectionFactory.java");
+            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_DB, "src/db/demo.h2.db");
+
+            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(HSQLRuntimeClasspathContainer.ID, true));
+
+            CFProjectHelper.refreshProject(project, monitor);
+
+            // change connection file
+            Display.getDefault().asyncExec(new Runnable()
+            {
+                public void run()
+                {
+                    IProject iProject = project.getProject();
+                    try
+                    {
+
+                        // auto config project to db
+                        iProject.setPersistentProperty(EJPropertyRetriever.createQualifiedName(FieldEditorOverlayPage.USEPROJECTSETTINGS), "true");
+                        iProject.setPersistentProperty(EJPropertyRetriever.createQualifiedName(EntireJFrameworkPlugin.P_DBDRIVER), "org.h2.Driver");
+                        iProject.setPersistentProperty(EJPropertyRetriever.createQualifiedName(EntireJFrameworkPlugin.P_URL),
+                                String.format("jdbc:h2:%s/demo", iProject.getFile("src/db").getRawLocation().toFile().getAbsolutePath()));
+                        iProject.setPersistentProperty(EJPropertyRetriever.createQualifiedName(EntireJFrameworkPlugin.P_USERNAME), "SA");
+                        iProject.setPersistentProperty(EJPropertyRetriever.createQualifiedName(EntireJFrameworkPlugin.P_PASSWORD), "");
+                    }
+                    catch (CoreException e1)
+                    {
+                        // ignore
+                    }
+                    IFile pfile = EJReportProject.getPropertiesFile(project.getProject());
+                    if (pfile != null)
+                    {
+                        EJPluginEntireJReportProperties entirejProperties;
+                        try
+                        {
+                            entirejProperties = EntirejReportPropertiesUtils.retrieveEntirejProperties(project);
+                            entirejProperties.setConnectionFactoryClassName("org.entirej.db.connection.EmbeddedConnectionFactory");
+                            EntireJReportPropertiesWriter saver = new EntireJReportPropertiesWriter();
+                            saver.saveEntireJProperitesFile(entirejProperties, pfile, monitor);
+                        }
+                        catch (CoreException e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            EJCoreLog.logException(e);
+        }
+    }
 
     public void addEntireJNature(ClientFrameworkProvider cf, IConfigurationElement configElement, final IJavaProject project, IProgressMonitor monitor)
     {
@@ -91,7 +157,7 @@ public class HSQLDBConnectivityProvider implements DBConnectivityProvider
                         try
                         {
 
-                            EntireJPropertiesReader.readProperties(entireJProperties,project, pfile.getContents(),pfile,EJProject.getRendererFile(iProject));
+                            EntireJPropertiesReader.readProperties(entireJProperties, project, pfile.getContents(), pfile, EJProject.getRendererFile(iProject));
                         }
                         catch (Exception exception)
                         {

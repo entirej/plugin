@@ -76,7 +76,17 @@
                class="org.entirej.ide.core.project.EJProject">
          </run>
       </runtime>
-   </extension>  
+   </extension> 
+      <extension
+         id="org.entirej.ide.EJReportNature"
+         name="%natures.EJReportNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.entirej.ide.core.project.EJReportProject">
+         </run>
+      </runtime>
+   </extension> 
    <extension
          id="org.entirej.ide.EJPropertiesBuilder"
          name="%builders.EJPropertiesBuilder.name"

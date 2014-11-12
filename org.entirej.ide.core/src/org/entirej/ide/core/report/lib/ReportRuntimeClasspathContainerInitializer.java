@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.entirej.ide.core.EJConstants;
-import org.entirej.ide.core.project.EJProject;
+import org.entirej.ide.core.project.EJReportProject;
 
 public class ReportRuntimeClasspathContainerInitializer extends ClasspathContainerInitializer
 {
@@ -49,12 +49,12 @@ public class ReportRuntimeClasspathContainerInitializer extends ClasspathContain
 
         JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { container }, null);
 
-        if (EJProject.hasPluginNature(project.getProject()))
+        if (EJReportProject.hasPluginNature(project.getProject()))
         {
-            IProjectNature nature = project.getProject().getNature(EJConstants.EJ_NATURE);
-            if (nature instanceof EJProject)
+            IProjectNature nature = project.getProject().getNature(EJConstants.EJ_REPORT_NATURE);
+            if (nature instanceof EJReportProject)
             {
-                ((EJProject) nature).verifyBuilder();
+                ((EJReportProject) nature).verifyBuilder();
             }
         }
 

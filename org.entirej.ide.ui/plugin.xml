@@ -187,6 +187,18 @@
       </wizard>
       <wizard
             category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.project.NewEntireJReportProjectWizard"
+            finalPerspective="org.entirej.ide.ui.perspective"
+            icon="$nl$/icons/etools16/newejprj_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEntireJReportProjectWizard"
+            name="%new.entirejReportProject.name"
+            project="true">
+         <description>
+            %new.entirejProject.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.form.NewEntireJFormWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
             icon="icons/etools16/newejform_wiz.png"

@@ -73,6 +73,40 @@ public class MySQLDBConnectivityProvider implements DBConnectivityProvider
             EJCoreLog.logException(e);
         }
     }
+    public void addEntireJReportNature( IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
+    {
+        try
+        {
+            CFProjectHelper.verifySourceContainer(project, "src");
+            
+            CFProjectHelper.addFile(project, EJExtMySQLPlugin.getDefault().getBundle(), MYSQL_CONNECTION_FILE, "src/Connection.properties");
+            
+            CFProjectHelper.addToClasspath(project,
+                    JavaCore.newContainerEntry(MySQLRuntimeClasspathContainer.ID, true));
+            
+            CFProjectHelper.refreshProject(project, monitor);
+            final IFile file = project.getProject().getFile("src/Connection.properties");
+            Display.getDefault().asyncExec(new Runnable()
+            {
+                public void run()
+                {
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    try
+                    {
+                        IDE.openEditor(page, file, true);
+                    }
+                    catch (PartInitException e)
+                    {
+                        EJCoreLog.logException(e);
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            EJCoreLog.logException(e);
+        }
+    }
 
     public String getProviderName()
     {

@@ -39,10 +39,15 @@ public class EJUIMessages extends NLS
     public static String NewProjectCreationPage_invalidLocationPath;
 
     public static String NewProjectWizard_title;
+    public static String NewReportProjectWizard_title;
     public static String NewProjectWizard_MainPage_title;
+    public static String NewReportProjectWizard_MainPage_title;
     public static String NewProjectWizard_MainPage_desc;
+    public static String NewReportProjectWizard_MainPage_desc;
     public static String NewProjectWizard_ConfigPag_title;
+    public static String NewReportProjectWizard_ConfigPag_title;
     public static String NewProjectWizard_ConfigPag_desc;
+    public static String NewReportProjectWizard_ConfigPag_desc;
     public static String NewProjectWizard_ConfigPage_target_platfrom;
     public static String NewProjectWizard_ConfigPage_target_platfrom_desc;
     public static String NewProjectWizard_ConfigPage_database_connectivity;

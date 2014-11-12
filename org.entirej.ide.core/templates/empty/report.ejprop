@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entirejFramework>
+    <version><![CDATA[1.0]]></version>
+    <connectionFactoryClassName><![CDATA[org.entirej.framework.report.EJReportDefaultConnectionFactory]]></connectionFactoryClassName>
+    <translatorClassName></translatorClassName>
+    <applicationLevelParameterList>
+       
+    </applicationLevelParameterList>
+    <packages>
+        
+    </packages>
+    <visualAttributes>
+       
+    </visualAttributes>
+</entirejFramework>

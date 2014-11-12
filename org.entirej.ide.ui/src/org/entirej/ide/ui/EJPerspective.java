@@ -56,6 +56,7 @@ public class EJPerspective implements IPerspectiveFactory
 
         // Add "new wizards".
         layout.addNewWizardShortcut(EJUIConstants.EJ_PROJECT_WIZARD_ID);
+        layout.addNewWizardShortcut(EJUIConstants.EJ_REPORT_PROJECT_WIZARD_ID);
         layout.addNewWizardShortcut(EJUIConstants.EJ_FORM_WIZARD_ID);
         layout.addNewWizardShortcut(EJUIConstants.EJ_REPORT_WIZARD_ID);
         layout.addNewWizardShortcut(EJUIConstants.EJ_SERVICE_WIZARD_ID);
