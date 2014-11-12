@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.jasper.runtime.EJ_REPORT_JASPER_CONTAINER"
+          class="org.entirej.ext.jasper.lib.ReportRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.jasper.runtime.EJ_REPORT_JASPER_CONTAINER"
+          name="EntireJ Report Jasper 5.6.1 Runtime"
+          class="org.entirej.ext.jasper.lib.ReportRuntimeContainerPage"/>
+   </extension>
+</plugin>

@@ -17,6 +17,8 @@
 /org.entirej.ext.mysql/target
 /org.entirej.ext.hsql/bin
 /org.entirej.ext.hsql/target
+/org.entirej.ext.jasper/bin
+/org.entirej.ext.jasper/target
 /org.entirej.ext.mysql/bin
 /org.entirej.ide.cf.fx/target
 /org.entirej.ide.cf.fx/bin

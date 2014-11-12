@@ -92,6 +92,7 @@ public class CFProjectHelper
     public static void addEntireJReportLibraries(IJavaProject project) throws JavaModelException
     {
         addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, true));
+        addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jasper.runtime.EJ_REPORT_JASPER_CONTAINER"), true));
     }
     
     public static void addEntireJReportLibraries(IJavaProject project, IClasspathAttribute[] attributes) throws JavaModelException

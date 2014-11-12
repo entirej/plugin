@@ -23,6 +23,7 @@
 		<module>../org.entirej.ide.cf.fx</module>
 		<module>../org.entirej.ext.mysql</module>
 		<module>../org.entirej.ext.hsql</module>
+		<module>../org.entirej.ext.jasper</module>
 
 		<module>../org.entirej.ext.oracle</module>
 
