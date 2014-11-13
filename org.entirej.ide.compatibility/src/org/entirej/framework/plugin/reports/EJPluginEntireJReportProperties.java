@@ -43,6 +43,7 @@ public class EJPluginEntireJReportProperties implements EJEntireJReportPropertie
     private ArrayList<String>                  _reportPackageNames;
     private String                             _connectionFactoryClassName;
     private String                             _translatorClassName;
+    private String                             _reportRunnerClassName;
     private EJReportVisualAttributeContainer   _visualAttributeContainer;
     
     private List<EJPluginApplicationParameter> _applicationLevelParameters;
@@ -99,6 +100,20 @@ public class EJPluginEntireJReportProperties implements EJEntireJReportPropertie
         if (className == null || className.trim().length() == 0)
         {
             _translatorClassName = null;
+        }
+    }
+    
+    public String getReportRunnerClassName()
+    {
+        return _reportRunnerClassName;
+    }
+    
+    public void setReportRunnerClassName(String reportRunnerClassName)
+    {
+        _reportRunnerClassName = reportRunnerClassName;
+        if (reportRunnerClassName == null || reportRunnerClassName.trim().length() == 0)
+        {
+            _reportRunnerClassName = null;
         }
     }
     

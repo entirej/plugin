@@ -8,7 +8,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import org.entirej.framework.report.EJReport;
 import org.entirej.framework.report.EJReportFrameworkInitialiser;
 import org.entirej.framework.report.EJReportFrameworkManager;
-import org.entirej.report.jasper.EJJasperReports;
+import org.entirej.framework.report.interfaces.EJReportRunner;
 
 public class ReportTester {
 
@@ -29,8 +29,14 @@ public class ReportTester {
 
 		EJReport report = reportManager.createReport(reportName);
 
-		JasperPrint print = EJJasperReports.fillReport(reportManager, report);
-		JasperViewer.viewReport(print);
+		 EJReportRunner reportRunner = reportManager.createReportRunner();
+                 String output = reportRunner.runReport(RT001);
+                 Desktop.getDesktop().open(new File(output));
+                 try {
+                      Thread.sleep(2000);//wait for System to open file
+                 } catch (InterruptedException e) {
+                              e.printStackTrace();
+                 }
 
 	}
 

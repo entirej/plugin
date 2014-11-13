@@ -54,6 +54,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "version", properties.getVersion() != null ? properties.getVersion() : "1.0");
             writeStringTAG(buffer, "connectionFactoryClassName", properties.getConnectionFactoryClassName());
             writeStringTAG(buffer, "translatorClassName", properties.getTranslatorClassName());
+            writeStringTAG(buffer, "reportRunnerClassName", properties.getReportRunnerClassName());
             
             // Now add the application level parameters
             startTAG(buffer, "applicationLevelParameterList");

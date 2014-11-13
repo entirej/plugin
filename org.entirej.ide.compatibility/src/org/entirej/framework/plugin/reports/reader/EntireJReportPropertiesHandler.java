@@ -25,37 +25,28 @@ import org.xml.sax.SAXException;
 
 public class EntireJReportPropertiesHandler extends EntireJTagHandler
 {
-    private EJPluginEntireJReportProperties      _properties;
+    private EJPluginEntireJReportProperties _properties;
     
-    private static final String            VERSION                           = "version";
-    private static final String            FRAMEWORK                         = "entirejFramework";
+    private static final String             VERSION                       = "version";
+    private static final String             FRAMEWORK                     = "entirejFramework";
     
+    private static final String             REPORTRUNNER_CLASS_NAME       = "reportRunnerClassName";
     
-    private static final String            CONNECTION_FACTORY_CLASS_NAME     = "connectionFactoryClassName";
-    private static final String            TRANSLATOR_CLASS_NAME             = "translatorClassName";
-    private static final String            APPLICATION_LEVEL_PARAMETER       = "appicationLevelParameter";
-    private static final String            FORMS_PACKAGE                     = "reportPackage";
+    private static final String             CONNECTION_FACTORY_CLASS_NAME = "connectionFactoryClassName";
+    private static final String             TRANSLATOR_CLASS_NAME         = "translatorClassName";
+    private static final String             APPLICATION_LEVEL_PARAMETER   = "appicationLevelParameter";
+    private static final String             FORMS_PACKAGE                 = "reportPackage";
     
-
-    
-    private static final String            VISUAL_ATTRIBUTE                  = "visualAttribute";
-    
-
-    
-    
+    private static final String             VISUAL_ATTRIBUTE              = "visualAttribute";
     
     public EntireJReportPropertiesHandler(EJPluginEntireJReportProperties properties)
     {
         
         _properties = properties;
         
-
         _properties.getAllApplicationLevelParameters().clear();
     }
     
- 
-    
-  
     public EJPluginEntireJReportProperties getProperties()
     {
         return _properties;
@@ -64,7 +55,6 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
     @Override
     public void startLocalElement(String name, Attributes attributes) throws SAXException
     {
-       
         
         if (name.equals(APPLICATION_LEVEL_PARAMETER))
         {
@@ -72,24 +62,23 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
             String dataTypeName = attributes.getValue("dataType");
             String defaultValue = attributes.getValue("defaultValue");
             
-            _properties.addApplicationLevelParameter(new EJPluginApplicationParameter(paramName, dataTypeName,defaultValue));
+            _properties.addApplicationLevelParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
         }
         else if (name.equals(FORMS_PACKAGE))
         {
             _properties.getReportPackageNames().add(attributes.getValue("name"));
         }
-
+        
         else if (name.equals(VISUAL_ATTRIBUTE))
         {
             setDelegate(new ReportVisualAttributeHandler());
         }
-
+        
     }
     
     @Override
     public void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
     {
-
         
         if (name.endsWith(FRAMEWORK))
         {
@@ -99,7 +88,7 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
         {
             _properties.setVersion(value);
         }
-
+        
         else if (name.equals(CONNECTION_FACTORY_CLASS_NAME))
         {
             _properties.setConnectionFactoryClassName(value);
@@ -108,7 +97,11 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
         {
             _properties.setTranslatorClassName(value);
         }
-      
+        else if (name.equals(REPORTRUNNER_CLASS_NAME))
+        {
+            _properties.setReportRunnerClassName(value);
+        }
+        
         else if (name.equals(FORMS_PACKAGE))
         {
             if (value != null && value.trim().length() > 0)
@@ -116,7 +109,7 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
                 _properties.getReportPackageNames().add(value);
             }
         }
-       
+        
     }
     
     @Override
@@ -126,9 +119,7 @@ public class EntireJReportPropertiesHandler extends EntireJTagHandler
         {
             _properties.getVisualAttributesContainer().addVisualAttribute(((ReportVisualAttributeHandler) currentDelegate).getProperties());
         }
-       
         
     }
     
-
 }

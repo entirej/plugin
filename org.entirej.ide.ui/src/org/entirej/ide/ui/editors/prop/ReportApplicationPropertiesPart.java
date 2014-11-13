@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.entirej.framework.report.interfaces.EJReportConnectionFactory;
+import org.entirej.framework.report.interfaces.EJReportRunner;
 import org.entirej.framework.report.interfaces.EJReportTranslator;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
@@ -36,6 +37,7 @@ public class ReportApplicationPropertiesPart extends AbstractDescriptorPart
 
     private final AbstractTypeDescriptor    connectionFactoryClass;
     private final AbstractTypeDescriptor    translatorFactoryClass;
+    private final AbstractTypeDescriptor    reportrunnerClass;
 
     public ReportApplicationPropertiesPart(final EJReportPropertiesEditor editor, FormPage page, Composite parent)
     {
@@ -77,6 +79,24 @@ public class ReportApplicationPropertiesPart extends AbstractDescriptorPart
             }
         };
         translatorFactoryClass.setBaseClass(EJReportTranslator.class.getName());
+        reportrunnerClass = new AbstractTypeDescriptor(editor, "Report Runner")
+        {
+            
+            @Override
+            public void setValue(String value)
+            {
+                editor.getEntireJProperties().setReportRunnerClassName(value);
+                editor.setDirty(true);
+            }
+            
+            @Override
+            public String getValue()
+            {
+                
+                return editor.getEntireJProperties().getReportRunnerClassName();
+            }
+        };
+        reportrunnerClass.setBaseClass(EJReportRunner.class.getName());
 
         
 
@@ -86,7 +106,7 @@ public class ReportApplicationPropertiesPart extends AbstractDescriptorPart
     @Override
     public AbstractDescriptor<?>[] getDescriptors()
     {
-        return new AbstractDescriptor<?>[] {  connectionFactoryClass, translatorFactoryClass,};
+        return new AbstractDescriptor<?>[] {  connectionFactoryClass,reportrunnerClass, translatorFactoryClass,};
     }
 
     @Override
