@@ -2,8 +2,6 @@ package org.entirej;
 
 import java.io.IOException;
 
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.view.JasperViewer;
 
 import org.entirej.framework.report.EJReport;
 import org.entirej.framework.report.EJReportFrameworkInitialiser;
