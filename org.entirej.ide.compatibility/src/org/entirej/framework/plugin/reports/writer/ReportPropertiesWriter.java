@@ -71,6 +71,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "orientation", form.getOrientation().name());
                 writeStringTAG(buffer, "actionProcessorClassName", form.getActionProcessorClassName());
                 writeStringTAG(buffer, "va", form.getVisualAttributeName());
+                writeStringTAG(buffer, "exportType", form.getExportType().name());
                 // Now add the forms parameters
                 Iterator<EJPluginApplicationParameter> paramNamesIti = form.getAllReportParameters().iterator();
                 startTAG(buffer, "reportParameterList");
