@@ -28,7 +28,7 @@ public class ReportTester {
 		EJReport report = reportManager.createReport(reportName);
 
 		 EJReportRunner reportRunner = reportManager.createReportRunner();
-                 String output = reportRunner.runReport(RT001);
+                 String output = reportRunner.runReport(report);
                  Desktop.getDesktop().open(new File(output));
                  try {
                       Thread.sleep(2000);//wait for System to open file

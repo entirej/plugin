@@ -19,12 +19,13 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     
     private int                           x, y, width, height;
     
+    private boolean                       startOnNewpage;
     private int                           headerColumnHeight = 20;
     private int                           detailColumnHeight = 20;
     private int                           footerColumnHeight = 20;
-    private EJReportScreenType            screenType = EJReportScreenType.NONE;
+    private EJReportScreenType            screenType         = EJReportScreenType.NONE;
     
-    private final BlockGroup              subBlocks  = new BlockGroup("Sub Blocks");
+    private final BlockGroup              subBlocks          = new BlockGroup("Sub Blocks");
     
     private EJReportScreenItemContainer   _screenItemContainer;
     private EJReportColumnContainer       _columnContainer;
@@ -54,6 +55,15 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
     public void setWidth(int width)
     {
         this.width = width;
+    }
+    public boolean isStartOnNewPage()
+    {
+        return startOnNewpage;
+    }
+    
+    public void setStartOnNewPage(boolean startOnNewpage)
+    {
+        this.startOnNewpage = startOnNewpage;
     }
     
     @Override
@@ -154,39 +164,36 @@ public class EJPluginReportScreenProperties implements EJReportScreenProperties
         this.evenRowVAName = evenRowVAName;
     }
     
-    
-    
-    
     public int getHeaderColumnHeight()
     {
         return headerColumnHeight;
     }
-
+    
     public void setHeaderColumnHeight(int headerColumnHeight)
     {
         this.headerColumnHeight = headerColumnHeight;
     }
-
+    
     public int getDetailColumnHeight()
     {
         return detailColumnHeight;
     }
-
+    
     public void setDetailColumnHeight(int detailColumnHeight)
     {
         this.detailColumnHeight = detailColumnHeight;
     }
-
+    
     public int getFooterColumnHeight()
     {
         return footerColumnHeight;
     }
-
+    
     public void setFooterColumnHeight(int footerColumnHeight)
     {
         this.footerColumnHeight = footerColumnHeight;
     }
-
+    
     @Override
     public EJReportVisualAttributeProperties getOddVAProperties()
     {

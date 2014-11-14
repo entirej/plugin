@@ -33,6 +33,7 @@ import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
+import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
@@ -134,6 +135,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
         final List<IMarker> fmarkers = validator.getMarkers();
+        
+        
 
         final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
         {
@@ -382,6 +385,29 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 super.addEditorAssist(control);
             }
         };
+        
+        
+        final AbstractBooleanDescriptor startOnnewPage = new AbstractBooleanDescriptor("Page Break Before Print")
+        {
+            
+            @Override
+            public void setValue(Boolean value)
+            {
+                
+                source.setStartOnNewPage(value);
+                treeSection.getEditor().setDirty(true);
+                treeSection.refresh(ReportScreenNode.this);
+                
+            }
+            
+            @Override
+            public Boolean getValue()
+            {
+                return source.isStartOnNewPage();
+            }
+        }; 
+        
+        
 
         AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Layout", "The renderer you have chosen for your block")
         {
@@ -448,10 +474,13 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             }
         };
 
+        
         if (!forColumnSection)
         {
             descriptors.add(rendererDescriptor);
+            
 
+            descriptors.add(startOnnewPage);
             descriptors.add(xDescriptor);
             descriptors.add(yDescriptor);
         }
@@ -609,6 +638,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
             };
             
+            
+          
             
             AbstractGroupDescriptor sectionheights = new AbstractGroupDescriptor("Default Column Heights")
             {
