@@ -23,6 +23,17 @@
          </run>
       </builder>
    </extension>
+    <extension
+         id="org.entirej.ide.EJReportConstBuilder"
+         name="EntireJ Report Constants Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.entirej.ide.ui.editors.report.builder.EJReportConstBuilder">
+         </run>
+      </builder>
+   </extension>
+   
 <extension point="org.eclipse.ui.decorators"> 
 <decorator
       adaptable="true"

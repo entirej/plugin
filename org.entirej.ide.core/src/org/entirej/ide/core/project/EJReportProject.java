@@ -140,13 +140,13 @@ public class EJReportProject extends PlatformObject implements IProjectNature
     {
         // addToBuildSpec(EJConstants.EJ_FORM_CONST_BUILDER_ID, true);
         addToBuildSpec(EJConstants.EJ_REPORT_PROPERTIES_BUILDER_ID, false);
-        // addToBuildSpec(EJConstants.EJ_FORM_BUILDER_ID, false);
+         addToBuildSpec(EJConstants.EJ_REPORT_CONST_BUILDER_ID, false);
     }
 
     public void deconfigure() throws CoreException
     {
         removeFromBuildSpec(EJConstants.EJ_REPORT_PROPERTIES_BUILDER_ID);
-        // removeFromBuildSpec(EJConstants.EJ_FORM_BUILDER_ID);
+         removeFromBuildSpec(EJConstants.EJ_REPORT_CONST_BUILDER_ID);
     }
 
     public static IFile getPropertiesFile(IProject project)
@@ -175,11 +175,11 @@ public class EJReportProject extends PlatformObject implements IProjectNature
         try
         {
             IProjectDescription description = getProject().getDescription();
-            // if (getBuilderCommand(description,
-            // EJConstants.EJ_FORM_CONST_BUILDER_ID) == null)
-            // {
-            // addToBuildSpec(EJConstants.EJ_FORM_CONST_BUILDER_ID, true);
-            // }
+             if (getBuilderCommand(description,
+             EJConstants.EJ_REPORT_CONST_BUILDER_ID) == null)
+             {
+             addToBuildSpec(EJConstants.EJ_REPORT_CONST_BUILDER_ID, true);
+             }
             if (getBuilderCommand(description, EJConstants.EJ_REPORT_PROPERTIES_BUILDER_ID) == null)
             {
                 addToBuildSpec(EJConstants.EJ_REPORT_PROPERTIES_BUILDER_ID, false);
