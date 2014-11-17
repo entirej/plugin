@@ -1135,7 +1135,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
         for (char c : item.toCharArray())
         {
-            if (Character.isJavaIdentifierPart(c))
+            if (!Character.isJavaIdentifierPart(c))
             {
                 nameBuild.append("_");
             }
@@ -1144,6 +1144,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 nameBuild.append(c);
             }
         }
+        item = nameBuild.toString();
 
         StringBuilder builder = new StringBuilder();
         char[] charArray = item.toCharArray();

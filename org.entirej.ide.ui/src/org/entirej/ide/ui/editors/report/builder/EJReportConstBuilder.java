@@ -719,7 +719,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         
         for (char c : item.toCharArray())
         {
-            if( Character.isJavaIdentifierPart(c))
+            if( !Character.isJavaIdentifierPart(c))
             {
                 nameBuild.append("_");
             }
