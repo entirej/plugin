@@ -105,10 +105,10 @@ import org.entirej.ide.ui.utils.FormsUtil;
 public class EJFormConstBuilder extends IncrementalProjectBuilder
 {
     private static final String OBJECTGROUP_PREFIX = "OG_";
-    private static final String REFBLOCK_PREFIX = "RB_";
-    private static final String LOV_PREFIX = "RL_";
-    private static final String FORM_PREFIX = "F_";
-    private static final String CONSTANTS_PATH = "/constants";
+    private static final String REFBLOCK_PREFIX    = "RB_";
+    private static final String LOV_PREFIX         = "RL_";
+    private static final String FORM_PREFIX        = "F_";
+    private static final String CONSTANTS_PATH     = "/constants";
 
     class DeltaVisitor implements IResourceDeltaVisitor
     {
@@ -164,7 +164,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                     }
                 }
-                else if(isEJProperties(candidate))
+                else if (isEJProperties(candidate))
                 {
                     if (delta.getKind() != IResourceDelta.REMOVED)
                     {
@@ -191,7 +191,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 IJavaProject project = JavaCore.create(p);
                 // make sure it is refresh before build again
                 EJPluginEntireJClassLoader.reload(project);
-                
+
                 genPropertiesConstantFile(EJProject.getPropertiesFile(p), monitor);
                 IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
 
@@ -240,80 +240,70 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         if (pkgPath.exists())
         {
             EJPluginEntireJProperties entireJProperties = EJPluginEntireJPropertiesLoader.getEntireJProperties(JavaCore.create(getProject()));
-            
+
             IResource[] pkgResources = pkgPath.members();
             for (IResource resource : pkgResources)
             {
                 if (resource instanceof IFile)
                 {
                     IFile file = (IFile) resource;
-                    if (file.exists() && (file.getName().startsWith(FORM_PREFIX) || file.getName().startsWith(OBJECTGROUP_PREFIX) || file.getName().startsWith(REFBLOCK_PREFIX) || file.getName().startsWith(LOV_PREFIX)) && file.getName().endsWith(".java"))
+                    if (file.exists()
+                            && (file.getName().startsWith(FORM_PREFIX) || file.getName().startsWith(OBJECTGROUP_PREFIX)
+                                    || file.getName().startsWith(REFBLOCK_PREFIX) || file.getName().startsWith(LOV_PREFIX)) && file.getName().endsWith(".java"))
                     {
                         String name = file.getName().substring(0, file.getName().length() - 5);
                         boolean ignore = false;
-                        
-                        if(name.startsWith(FORM_PREFIX))
+
+                        if (name.startsWith(FORM_PREFIX))
                         {
                             for (String formName : formNames)
                             {
-                                
-                                
-                                    if (getFormId(formName).equals((name)))
-                                    {
-                                        ignore = true;
-                                        break;
-                                    }
-                                
-                                
-                                
+
+                                if (getFormId(formName).equals((name)))
+                                {
+                                    ignore = true;
+                                    break;
+                                }
+
                             }
                         }
-                        else if(name.startsWith(OBJECTGROUP_PREFIX))
+                        else if (name.startsWith(OBJECTGROUP_PREFIX))
                         {
                             for (String formName : entireJProperties.getObjectGroupDefinitionNames())
                             {
-                                
-                                
-                                    if (getObjectGroupId(formName).equals((name)))
-                                    {
-                                        ignore = true;
-                                        break;
-                                    }
-                                
-                                
-                                
+
+                                if (getObjectGroupId(formName).equals((name)))
+                                {
+                                    ignore = true;
+                                    break;
+                                }
+
                             }
                         }
-                        else if(name.startsWith(REFBLOCK_PREFIX))
+                        else if (name.startsWith(REFBLOCK_PREFIX))
                         {
                             for (String formName : entireJProperties.getReusableBlockNames())
                             {
-                                
-                                
+
                                 if (getRefBlockId(formName).equals((name)))
                                 {
                                     ignore = true;
                                     break;
                                 }
-                                
-                                
-                                
+
                             }
                         }
-                        else if(name.startsWith(LOV_PREFIX))
+                        else if (name.startsWith(LOV_PREFIX))
                         {
                             for (String formName : entireJProperties.getReusableLovDefinitionNames())
                             {
-                                
-                                
+
                                 if (getLovId(formName).equals((name)))
                                 {
                                     ignore = true;
                                     break;
                                 }
-                                
-                                
-                                
+
                             }
                         }
                         if (ignore)
@@ -386,11 +376,10 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         monitor.subTask("Constants Updating ...");
         monitor.done();
     }
-    
-    
+
     private void genPropertiesConstantFile(IFile file, IProgressMonitor monitor)
     {
-        
+
         try
         {
             // try to ignore output path
@@ -408,20 +397,20 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         {
             return;
         }
-        
+
         String message = NLS.bind("Constants Generating {0} ...", file.getFullPath().toString());
         monitor.subTask(message);
-        
+
         SubProgressMonitor subProgressMonitor = new SubProgressMonitor(monitor, 1);
-        
+
         IProject _project = file.getProject();
-        
+
         IJavaProject project = JavaCore.create(_project);
         EJPluginEntireJProperties entireJProperties = EJPluginEntireJPropertiesLoader.getEntireJProperties(project);
-       
+
         if (entireJProperties != null)
             buildPropertiesConstant(project, entireJProperties, file, subProgressMonitor);
-        
+
         subProgressMonitor.done();
         monitor.subTask("Constants Updating ...");
         monitor.done();
@@ -449,10 +438,10 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     {
         return EJPluginConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
     }
-    
+
     private boolean isEJProperties(IFile file)
     {
-        return file.getName().equals("application") && "ejprop".equalsIgnoreCase(file.getFileExtension()) ;
+        return file.getName().equals("application") && "ejprop".equalsIgnoreCase(file.getFileExtension());
     }
 
     private boolean isRefFormFile(IFile file)
@@ -462,10 +451,8 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 || EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
                 || EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension);
     }
-    
 
-
-    static void buildPropertiesConstant(IJavaProject project,  EJPluginEntireJProperties entireJProperties, IFile file, IProgressMonitor monitor)
+    static void buildPropertiesConstant(IJavaProject project, EJPluginEntireJProperties entireJProperties, IFile file, IProgressMonitor monitor)
     {
         String propID = "EJ_PROPERTIES";
 
@@ -494,7 +481,6 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append("{");
             builder.append("\n");
 
-          
             Set<String> actions = new TreeSet<String>();
             // adding menu id's parameters
             for (EJPluginMenuProperties menuProperties : entireJProperties.getPluginMenuContainer().getAllMenuProperties())
@@ -513,7 +499,6 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 addActionsFromMenuProperties(menuProperties, actions);
             }
 
-            
             builder.append("\n");
             // adding form parameters
             Collection<EJPluginApplicationParameter> formParameters = entireJProperties.getAllApplicationLevelParameters();
@@ -532,9 +517,8 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 }
             }
             builder.append("\n");
-            
-            
-            // adding VA 
+
+            // adding VA
             Collection<String> visualAttributeNames = entireJProperties.getVisualAttributesContainer().getVisualAttributeNames();
             for (String va : visualAttributeNames)
             {
@@ -550,7 +534,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     builder.append("\n");
                 }
             }
-            
+
             builder.append("\n");
             // adding Actions
             for (String action : actions)
@@ -565,7 +549,6 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 builder.append("\n");
             }
 
-            
             builder.append("\n");
             builder.append("}");
             String classContent = builder.toString();
@@ -602,21 +585,21 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             EJCoreLog.logException(e);
         }
     }
-    
+
     static void buildFormConstant(IJavaProject project, EJPluginFormProperties formProperties, IFile file, IProgressMonitor monitor)
     {
         String formID = getFormId(formProperties);
-        
+
         try
         {
             IFile javaFile = getFormJavaSource(file, monitor, formID);
-            
+
             StringBuilder builder = new StringBuilder();
-            
+
             builder.append("package ");
             builder.append(javaFile.getParent().getProjectRelativePath().toString().replaceFirst("src/", "").replaceAll("/", "."));
             builder.append(";");
-            
+
             builder.append("\n");
             builder.append("\n");
             builder.append("/* AUTO-GENERATED FILE.  DO NOT MODIFY. \n");
@@ -631,7 +614,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append("\n");
             builder.append("{");
             builder.append("\n");
-            
+
             // add Form ID
             builder.append("    public static final String ID = ");
             builder.append("\"");
@@ -639,7 +622,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append("\"");
             builder.append(";");
             Set<String> actions = new TreeSet<String>();
-            
+
             // process Form renderer Properties
             String renderer = formProperties.getFormRendererName();
             if (renderer != null && renderer.trim().length() > 0)
@@ -652,14 +635,14 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     EJFrameworkExtensionProperties rendererProperties = formProperties.getFormRendererProperties();
                     if (rendererDefinition != null && rendererProperties != null)
                     {
-                        
+
                         addActionsFromRendererProperties(formProperties, null, rendererDefinition.getFormPropertyDefinitionGroup(), rendererProperties, actions);
-                        
+
                     }
                 }
             }
             // /
-            
+
             // build Block
             List<EJPluginBlockProperties> allBlockProperties = formProperties.getBlockContainer().getAllBlockProperties();
             for (EJPluginBlockProperties blockProp : allBlockProperties)
@@ -667,65 +650,65 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 if (blockProp.getName() != null && blockProp.getName().length() > 0)
                 {
                     createBlockCode(blockProp, builder);
-                    
+
                     EJDevBlockRendererDefinition rendererDefinition = blockProp.getBlockRendererDefinition();
                     EJFrameworkExtensionProperties rendererProperties = blockProp.getBlockRendererProperties();
                     if (rendererDefinition != null && rendererProperties != null)
                     {
-                        
+
                         addActionsFromRendererProperties(formProperties, blockProp, rendererDefinition.getBlockPropertyDefinitionGroup(), rendererProperties,
                                 actions);
                         List<EJPluginItemGroupProperties> itemGroups = blockProp.getMainScreenItemGroupDisplayContainer().getItemGroups();
-                        
+
                         EJPropertyDefinitionGroup propertyDefinitionGroup = rendererDefinition.getItemPropertiesDefinitionGroup();
-                        
+
                         for (EJPluginItemGroupProperties groupProperties : itemGroups)
                         {
-                            
+
                             addActionsFromItemGroupProperties(formProperties, rendererDefinition.getItemGroupPropertiesDefinitionGroup(),
                                     propertyDefinitionGroup, groupProperties, actions);
                         }
-                        
+
                     }
                     rendererDefinition = null;
-                    
+
                     if (blockProp.isInsertAllowed())
                     {
                         EJDevInsertScreenRendererDefinition insertRendererDefinition = blockProp.getInsertScreenRendererDefinition();
                         rendererProperties = blockProp.getInsertScreenRendererProperties();
                         if (insertRendererDefinition != null && rendererProperties != null)
                         {
-                            
+
                             addActionsFromRendererProperties(formProperties, blockProp, insertRendererDefinition.getInsertScreenPropertyDefinitionGroup(),
                                     rendererProperties, actions);
                             List<EJPluginItemGroupProperties> itemGroups = blockProp.getInsertScreenItemGroupDisplayContainer().getItemGroups();
-                            
+
                             EJPropertyDefinitionGroup propertyDefinitionGroup = insertRendererDefinition.getItemPropertyDefinitionGroup();
-                            
+
                             for (EJPluginItemGroupProperties groupProperties : itemGroups)
                             {
                                 addActionsFromItemGroupProperties(formProperties, insertRendererDefinition.getItemGroupPropertiesDefinitionGroup(),
                                         propertyDefinitionGroup, groupProperties, actions);
                             }
-                            
+
                         }
                         insertRendererDefinition = null;
-                        
+
                     }
-                    
+
                     if (blockProp.isUpdateAllowed())
                     {
                         EJDevUpdateScreenRendererDefinition updateRendererDefinition = blockProp.getUpdateScreenRendererDefinition();
                         rendererProperties = blockProp.getUpdateScreenRendererProperties();
                         if (updateRendererDefinition != null && rendererProperties != null)
                         {
-                            
+
                             addActionsFromRendererProperties(formProperties, blockProp, updateRendererDefinition.getUpdateScreenPropertyDefinitionGroup(),
                                     rendererProperties, actions);
                             List<EJPluginItemGroupProperties> itemGroups = blockProp.getUpdateScreenItemGroupDisplayContainer().getItemGroups();
-                            
+
                             EJPropertyDefinitionGroup propertyDefinitionGroup = updateRendererDefinition.getItemPropertyDefinitionGroup();
-                            
+
                             for (EJPluginItemGroupProperties groupProperties : itemGroups)
                             {
                                 addActionsFromItemGroupProperties(formProperties, updateRendererDefinition.getItemGroupPropertiesDefinitionGroup(),
@@ -734,20 +717,20 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                         updateRendererDefinition = null;
                     }
-                    
+
                     if (blockProp.isQueryAllowed())
                     {
                         EJDevQueryScreenRendererDefinition queryRendererDefinition = blockProp.getQueryScreenRendererDefinition();
                         rendererProperties = blockProp.getQueryScreenRendererProperties();
                         if (queryRendererDefinition != null && rendererProperties != null)
                         {
-                            
+
                             addActionsFromRendererProperties(formProperties, blockProp, queryRendererDefinition.getQueryScreenPropertyDefinitionGroup(),
                                     rendererProperties, actions);
                             List<EJPluginItemGroupProperties> itemGroups = blockProp.getQueryScreenItemGroupDisplayContainer().getItemGroups();
-                            
+
                             EJPropertyDefinitionGroup propertyDefinitionGroup = queryRendererDefinition.getItemPropertyDefinitionGroup();
-                            
+
                             for (EJPluginItemGroupProperties groupProperties : itemGroups)
                             {
                                 addActionsFromItemGroupProperties(formProperties, queryRendererDefinition.getItemGroupPropertiesDefinitionGroup(),
@@ -756,7 +739,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                         queryRendererDefinition = null;
                     }
-                    
+
                 }
                 List<EJPluginBlockItemProperties> allItemProperties = blockProp.getItemContainer().getAllItemProperties();
                 for (EJPluginBlockItemProperties itemProp : allItemProperties)
@@ -766,18 +749,18 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     {
                         continue;
                     }
-                    
+
                     EJRendererAssignment assignment = formProperties.getEntireJProperties().getApplicationAssignedItemRenderer(itemRenderer);
                     if (assignment == null)
                     {
                         continue;
                     }
-                    
+
                     EJDevItemRendererDefinition rendererDefinition = itemProp.getItemRendererDefinition();
                     EJFrameworkExtensionProperties rendererProperties = itemProp.getItemRendererProperties();
                     if (rendererDefinition != null && rendererProperties != null)
                     {
-                        
+
                         addActionsFromRendererProperties(formProperties, blockProp, rendererDefinition.getItemPropertyDefinitionGroup(), rendererProperties,
                                 actions);
                     }
@@ -793,9 +776,9 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                         }
                     }
                 }
-                
+
             }
-            
+
             // build LOV
             // build Block
             List<EJPluginLovDefinitionProperties> lovDefinitionProperties = formProperties.getLovDefinitionContainer().getAllLovDefinitionProperties();
@@ -806,7 +789,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     createLovCode(definitionProperties, builder);
                 }
             }
-            
+
             // read canvas
             Collection<EJCanvasProperties> allCanvasProperties = EJPluginCanvasRetriever.retriveAllCanvases(formProperties);
             for (EJCanvasProperties canvasProperties : allCanvasProperties)
@@ -821,12 +804,12 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     builder.append("\"");
                     builder.append(";");
                     builder.append("\n");
-                    
+
                     switch (canvasProperties.getType())
                     {
                         case TAB:
                             Collection<EJTabPageProperties> allTabPageProperties = canvasProperties.getTabPageContainer().getAllTabPageProperties();
-                            
+
                             builder.append("\n");
                             builder.append("public static class ");
                             builder.append("C_");
@@ -835,7 +818,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                             builder.append("\n");
                             builder.append("{");
                             builder.append("\n");
-                            
+
                             for (EJTabPageProperties page : allTabPageProperties)
                             {
                                 if (page.getName() != null && page.getName().length() > 0)
@@ -856,7 +839,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                             break;
                         case STACKED:
                             Collection<EJStackedPageProperties> allStackedPageProperties = canvasProperties.getStackedPageContainer()
-                            .getAllStackedPageProperties();
+                                    .getAllStackedPageProperties();
                             builder.append("\n");
                             builder.append("public static class ");
                             builder.append("C_");
@@ -901,7 +884,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 builder.append(";");
                 builder.append("\n");
             }
-            
+
             builder.append("\n");
             // adding form parameters
             Collection<EJPluginApplicationParameter> formParameters = formProperties.getAllFormParameters();
@@ -941,14 +924,14 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 {
                     // ignore
                 }
-                
+
                 javaFile.setContents(new ByteArrayInputStream(classContent.toString().getBytes("UTF-8")), IResource.FORCE, monitor);
             }
             else
             {
                 javaFile.create(new ByteArrayInputStream(classContent.toString().getBytes("UTF-8")), IResource.FORCE, monitor);
             }
-            
+
         }
         catch (Exception e)
         {
@@ -1001,6 +984,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         IFile javaFile = pkgPath.getFile(formID + ".java");
         return javaFile;
     }
+
     public static IFile getPropertiesJavaSource(IFile file, IProgressMonitor monitor, String fileID) throws CoreException
     {
         IFolder pkgPath = file.getParent().getFolder(new Path("org/entirej/constants"));
@@ -1016,18 +1000,22 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     {
         return getFormPrifix() + toVAR(name).toUpperCase().replaceAll(" ", "_");
     }
+
     public static String getObjectGroupId(String name)
     {
         return OBJECTGROUP_PREFIX + toVAR(name).toUpperCase().replaceAll(" ", "_");
     }
+
     public static String getRefBlockId(String name)
     {
         return REFBLOCK_PREFIX + toVAR(name).toUpperCase().replaceAll(" ", "_");
     }
+
     public static String getLovId(String name)
     {
         return LOV_PREFIX + toVAR(name).toUpperCase().replaceAll(" ", "_");
     }
+
     public static String getFormId(EJPluginFormProperties formProperties)
     {
         return getFormPrifix(formProperties) + toVAR(formProperties.getFormName()).toUpperCase().replaceAll(" ", "_");
@@ -1037,21 +1025,22 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     {
         return FORM_PREFIX;
     }
+
     private static String getFormPrifix(EJPluginFormProperties formProperties)
     {
-        if(formProperties.isObjectGroupForm())
+        if (formProperties.isObjectGroupForm())
         {
             return OBJECTGROUP_PREFIX;
         }
-        else if(formProperties.isReusableBlockForm())
+        else if (formProperties.isReusableBlockForm())
         {
             return REFBLOCK_PREFIX;
         }
-        else if(formProperties.isReusableLovForm())
+        else if (formProperties.isReusableLovForm())
         {
             return LOV_PREFIX;
         }
-        
+
         return FORM_PREFIX;
     }
 
@@ -1142,8 +1131,19 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
     static String toVAR(String item)
     {
-        // fix ignore ignore chars
-        item = item.replaceAll("-", "_");
+        StringBuilder nameBuild = new StringBuilder();
+
+        for (char c : item.toCharArray())
+        {
+            if (Character.isJavaIdentifierPart(c))
+            {
+                nameBuild.append("_");
+            }
+            else
+            {
+                nameBuild.append(c);
+            }
+        }
 
         StringBuilder builder = new StringBuilder();
         char[] charArray = item.toCharArray();
@@ -1191,21 +1191,21 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
             formProperties = reader.readForm(new FormHandler(project, fileName), project, inStream);
             formProperties.initialisationCompleted();
-            
+
             String fileExtension = file.getFileExtension();
-            if(fileExtension.equalsIgnoreCase(EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX))
+            if (fileExtension.equalsIgnoreCase(EJPluginConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX))
             {
                 formProperties.setIsObjectGroupForm(true);
             }
-            else if(fileExtension.equalsIgnoreCase(EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX))
+            else if (fileExtension.equalsIgnoreCase(EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX))
             {
                 formProperties.setIsReusableLovForm(true);
             }
-            else if(fileExtension.equalsIgnoreCase(EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX))
+            else if (fileExtension.equalsIgnoreCase(EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX))
             {
                 formProperties.setIsReusableBlockForm(true);
             }
-            
+
         }
         catch (Exception exception)
         {
@@ -1238,8 +1238,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             addActionsFromPropertyDefinitionGroup(formProperties, blockProperties, rendererProperties, definitionGroup, actions);
         }
     }
-    
-    
+
     // menu action process
     static void addActionsFromMenuProperties(EJPluginMenuProperties menuProperties, Set<String> actions)
     {
@@ -1248,7 +1247,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         {
             if (leafProperties instanceof EJPluginMenuLeafBranchProperties)
             {
-                addActionsFromMenuProperties((EJPluginMenuLeafBranchProperties)leafProperties, actions);
+                addActionsFromMenuProperties((EJPluginMenuLeafBranchProperties) leafProperties, actions);
             }
             else if (leafProperties instanceof EJPluginMenuLeafSpacerProperties)
             {
@@ -1256,7 +1255,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             }
             else if (leafProperties instanceof EJPluginMenuLeafActionProperties)
             {
-                actions.add(((EJPluginMenuLeafActionProperties)leafProperties).getMenuAction());
+                actions.add(((EJPluginMenuLeafActionProperties) leafProperties).getMenuAction());
             }
             else if (leafProperties instanceof EJPluginMenuLeafFormProperties)
             {
@@ -1264,6 +1263,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             }
         }
     }
+
     static void addActionsFromMenuProperties(EJPluginMenuLeafBranchProperties menuProperties, Set<String> actions)
     {
         List<EJPluginMenuLeafProperties> leaves = new ArrayList<EJPluginMenuLeafProperties>(menuProperties.getLeaves());
@@ -1271,7 +1271,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         {
             if (leafProperties instanceof EJPluginMenuLeafBranchProperties)
             {
-                addActionsFromMenuProperties((EJPluginMenuLeafBranchProperties)leafProperties, actions);
+                addActionsFromMenuProperties((EJPluginMenuLeafBranchProperties) leafProperties, actions);
             }
             else if (leafProperties instanceof EJPluginMenuLeafSpacerProperties)
             {
@@ -1279,7 +1279,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             }
             else if (leafProperties instanceof EJPluginMenuLeafActionProperties)
             {
-                actions.add(((EJPluginMenuLeafActionProperties)leafProperties).getMenuAction());
+                actions.add(((EJPluginMenuLeafActionProperties) leafProperties).getMenuAction());
             }
             else if (leafProperties instanceof EJPluginMenuLeafFormProperties)
             {

@@ -713,8 +713,23 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
 
     static String toVAR(String item)
     {
-        // fix ignore ignore chars
-        item = item.replaceAll("-", "_");
+        
+        
+        StringBuilder nameBuild = new StringBuilder();
+        
+        for (char c : item.toCharArray())
+        {
+            if( Character.isJavaIdentifierPart(c))
+            {
+                nameBuild.append("_");
+            }
+            else
+            {
+                nameBuild.append(c);
+            }
+        }
+        
+        item = nameBuild.toString();
 
         StringBuilder builder = new StringBuilder();
         char[] charArray = item.toCharArray();
