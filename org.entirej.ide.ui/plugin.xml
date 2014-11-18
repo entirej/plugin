@@ -236,7 +236,7 @@
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.service.NewEJPojoServiceWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
-            icon="icons/etools16/newejrbservice_wiz.png"
+            icon="icons/etools16/newejbservice_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEJPojoServiceWizard"
             name="%new.entirejbservice.name"
             project="false">
