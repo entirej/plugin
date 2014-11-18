@@ -125,7 +125,7 @@
             class="org.entirej.ide.ui.editors.prop.EJReportPropertiesEditor"
             contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
             default="true"
-            icon="icons/etools16/entirej.png"
+            icon="icons/etools16/ejreportprop.png"
             id="org.entirej.ide.ui.editors.ej.report.properties"
             name="%org.entirej.ide.ui.editors.ej.report.properties.name">
          <contentTypeBinding
@@ -200,7 +200,7 @@
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.project.NewEntireJReportProjectWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
-            icon="$nl$/icons/etools16/newejprj_wiz.png"
+            icon="$nl$/icons/etools16/newejrprj_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEntireJReportProjectWizard"
             name="%new.entirejReportProject.name"
             project="true">
@@ -236,7 +236,7 @@
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.service.NewEJPojoServiceWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
-            icon="icons/etools16/newejbservice_wiz.png"
+            icon="icons/etools16/newejrbservice_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEJPojoServiceWizard"
             name="%new.entirejbservice.name"
             project="false">
@@ -248,7 +248,7 @@
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.report.service.NewEJReportPojoServiceWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
-            icon="icons/etools16/newejbservice_wiz.png"
+            icon="icons/etools16/newejrbservice_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEJReportPojoServiceWizard"
             name="%new.entirejrbservice.name"
             project="false">
@@ -308,7 +308,7 @@
          </action>
          <action
                class="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
-               icon="icons/etools16/newejbservice_wiz.png"
+               icon="icons/etools16/newejrbservice_wiz.png"
                id="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
                label="%new.entirejrbservice.name"
                toolbarPath="entirejGroup"
