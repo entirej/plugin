@@ -265,7 +265,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
 
                     }
-                    tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    if(!tableColumn.isArray())
+                    {
+                        tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    }
                     columns.add(tableColumn);
                 }
                 return columns;
@@ -309,7 +312,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                         
                     }
-                    tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    if(!tableColumn.isArray())
+                    {
+                        tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    }
                     columns.add(tableColumn);
                 }
                 return columns;
@@ -344,7 +350,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         tableColumn.setDatatypeName(String.class.getName());
                     }
                     
-                    tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    if(!tableColumn.isArray())
+                    {
+                        tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    }
 
                     switch (argument.type)
                     {
@@ -396,7 +405,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         tableColumn.setDatatypeName(String.class.getName());
                     }
-                    tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    if(!tableColumn.isArray())
+                    {
+                        tableColumn.setStruct(isStructForOraType(argument._datatype));
+                    }
                     
                     switch (argument.type)
                     {
