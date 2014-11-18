@@ -463,7 +463,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 
                 
-                return jdbcType.equals("STRUCT");
+                return jdbcType.equals("STRUCT")||jdbcType.equals("OBJECT");
             }
 
             public void createRequiredResources(IProgressMonitor monitor)
