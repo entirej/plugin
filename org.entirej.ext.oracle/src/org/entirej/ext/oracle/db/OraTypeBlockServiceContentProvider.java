@@ -334,8 +334,16 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
                         if (objectArgument.tableName != null)
+                            tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
+                        if (objectArgument.objName != null)
+                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                        if (objectArgument.tableName != null)
                         {
                             tableColumn.setArray(true);
+                        }
+                        if (objectArgument.objName != null)
+                        {
+                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
                         }
                     }
 
@@ -490,6 +498,40 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 List<String> addedInner = new ArrayList<String>();
                 List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
                 Procedure procedure = columnSelectionPage.getProcedure();
+                for (Argument argument : procedure.getArguments())
+                {
+                    EJReportTableColumn tableColumn = new EJReportTableColumn();
+                    tableColumn.setName(argument._name);
+
+                    if (argument instanceof ObjectArgument)
+                    {
+                      
+                        if (argument instanceof ObjectArgument)
+                        {
+                            ObjectArgument objectArgument = (ObjectArgument) argument;
+
+                            String mappedClass = innerTypePage.getMappedClass(objectArgument);
+                            if (mappedClass != null)
+                            {
+                                innerClass.put(objectArgument.objName, mappedClass);
+                                continue;
+                            }
+
+                            if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
+                            {
+                                EJPojoGeneratorType inner = new EJPojoGeneratorType();
+                                if (objectArgument.tableName != null)
+                                    inner.setProperty("TABLE_NAME", objectArgument.tableName);
+                                if (objectArgument.objName != null)
+                                    inner.setProperty("OBJECT_NAME", objectArgument.objName);
+                                inner.setColumnNames(createPojoCloumns(objectArgument));
+                                inner.setClassName(objectArgument.objName);
+                                addedInner.add(objectArgument.objName);
+                                innerPojoGeneratorTypes.add(inner);
+                            }
+                        }
+                    }
+                }
                 ObjectArgument collectionType = procedure.getCollectionType();
 
                 if (collectionType != null)
@@ -551,8 +593,41 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 List<String> addedInner = new ArrayList<String>();
                 List<EJReportPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJReportPojoGeneratorType>();
                 Procedure procedure = columnSelectionPage.getProcedure();
-                ObjectArgument collectionType = procedure.getCollectionType();
+                
 
+                
+                
+                for (Argument argument : procedure.getArguments())
+                {
+                    EJReportTableColumn tableColumn = new EJReportTableColumn();
+                    tableColumn.setName(argument._name);
+
+                    if (argument instanceof ObjectArgument)
+                    {
+                        ObjectArgument objectArgument = (ObjectArgument) argument;
+
+                        String mappedClass = innerTypePage.getMappedClass(objectArgument);
+                        if (mappedClass != null)
+                        {
+                            innerClass.put(objectArgument.objName, mappedClass);
+                            continue;
+                        }
+
+                        if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
+                        {
+                            EJReportPojoGeneratorType inner = new EJReportPojoGeneratorType();
+                            if (objectArgument.tableName != null)
+                                inner.setProperty("TABLE_NAME", objectArgument.tableName);
+                            if (objectArgument.objName != null)
+                                inner.setProperty("OBJECT_NAME", objectArgument.objName);
+                            inner.setColumnNames(createReportPojoCloumns(objectArgument));
+                            inner.setClassName(objectArgument.objName);
+                            addedInner.add(objectArgument.objName);
+                            innerPojoGeneratorTypes.add(inner);
+                        }
+                    }
+                }
+                ObjectArgument collectionType = procedure.getCollectionType();
                 if (collectionType != null)
                 {
                     for (Argument argument : collectionType.getArguments())
