@@ -346,22 +346,33 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
                         if (objectArgument.tableName != null)
+                            tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
+                        if (objectArgument.objName != null)
+                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                        if (objectArgument.tableName != null)
                         {
                             tableColumn.setArray(true);
                         }
-                    }
-
-                    Class<?> type = getDataTypeForOraType(argument._datatype);
-                    if (type != null)
-                    {
-                        tableColumn.setDatatypeName(type.getName());
-                        type = null;
-                    }
-                    else
-                    {
-                        tableColumn.setDatatypeName(String.class.getName());
+                        if (objectArgument.objName != null)
+                        {
+                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
+                        }
                     }
                     
+                    if (tableColumn.getDatatypeName() == null)
+                    {
+                        Class<?> type = getDataTypeForOraType(argument._datatype);
+                        if (type != null)
+                        {
+                            tableColumn.setDatatypeName(type.getName());
+                            type = null;
+                        }
+                        else
+                        {
+                            tableColumn.setDatatypeName(String.class.getName());
+                        }
+                        
+                    }
                     if(!tableColumn.isArray())
                     {
                         tableColumn.setStruct(isStructForOraType(argument._datatype));
