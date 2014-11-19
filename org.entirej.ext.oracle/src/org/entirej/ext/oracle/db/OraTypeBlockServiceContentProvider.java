@@ -347,16 +347,20 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                     }
 
-                    Class<?> type = getDataTypeForOraType(argument._datatype);
-                    if (type != null)
+                    if(tableColumn.getDatatypeName()==null)
                     {
-                        tableColumn.setDatatypeName(type.getName());
-                        type = null;
+                        Class<?> type = getDataTypeForOraType(argument._datatype);
+                        if (type != null)
+                        {
+                            tableColumn.setDatatypeName(type.getName());
+                            type = null;
+                        }
+                        else
+                        {
+                            tableColumn.setDatatypeName(String.class.getName());
+                        }
                     }
-                    else
-                    {
-                        tableColumn.setDatatypeName(String.class.getName());
-                    }
+                   
                     
                     if(!tableColumn.isArray())
                     {
@@ -411,15 +415,18 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                     }
                     
-                    Class<?> type = getDataTypeForOraType(argument._datatype);
-                    if (type != null)
+                    if(tableColumn.getDatatypeName()==null)
                     {
-                        tableColumn.setDatatypeName(type.getName());
-                        type = null;
-                    }
-                    else
-                    {
-                        tableColumn.setDatatypeName(String.class.getName());
+                        Class<?> type = getDataTypeForOraType(argument._datatype);
+                        if (type != null)
+                        {
+                            tableColumn.setDatatypeName(type.getName());
+                            type = null;
+                        }
+                        else
+                        {
+                            tableColumn.setDatatypeName(String.class.getName());
+                        }
                     }
                     if(!tableColumn.isArray())
                     {
