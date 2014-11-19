@@ -398,8 +398,16 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
                         if (objectArgument.tableName != null)
+                            tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
+                        if (objectArgument.objName != null)
+                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                        if (objectArgument.tableName != null)
                         {
                             tableColumn.setArray(true);
+                        }
+                        if (objectArgument.objName != null)
+                        {
+                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
                         }
                     }
                     
