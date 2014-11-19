@@ -157,7 +157,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 {
                     serviceGeneratorType.setSelectProcedureName(procedure.getFullName());
 
-                    serviceGeneratorType.setSelectProcedureParameters(getParamters(procedure));
+                   
                     // get type details
                     ObjectArgument collectionType = procedure.getCollectionType();
 
@@ -174,8 +174,11 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             serviceGeneratorType.setProperty("OBJECT_NAME", collectionType.objName);
                         }
                         pojoGeneratorType.setColumnNames(createPojoCloumns(collectionType));
+                        serviceGeneratorType.setSelectProcedureParameters(getParamters(procedure));
                         serviceGeneratorType.setTableName(collectionType.getTableName());
                     }
+                        serviceGeneratorType.setSelectProcedureParameters(getParamters(procedure));
+                    
 
                     if (proceduresWizardPage.getInsertProcedure() != null)
                     {
@@ -337,7 +340,9 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 List<EJTableColumn> args = new ArrayList<EJTableColumn>();
 
-                for (Argument argument : procedure.getArguments())
+                List<Argument> arguments = procedure.getArguments();
+               
+                for (Argument argument : arguments)
                 {
                     EJTableColumn tableColumn = new EJTableColumn();
                     tableColumn.setName(argument._name);
@@ -413,20 +418,32 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
                         if (objectArgument.tableName != null)
+                            tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
+                        if (objectArgument.objName != null)
+                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                        if (objectArgument.tableName != null)
                         {
                             tableColumn.setArray(true);
                         }
+                        if (objectArgument.objName != null)
+                        {
+                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
+                        }
                     }
                     
-                    Class<?> type = getDataTypeForOraType(argument._datatype);
-                    if (type != null)
+                    if (tableColumn.getDatatypeName() == null)
                     {
-                        tableColumn.setDatatypeName(type.getName());
-                        type = null;
-                    }
-                    else
-                    {
-                        tableColumn.setDatatypeName(String.class.getName());
+                        Class<?> type = getDataTypeForOraType(argument._datatype);
+                        if (type != null)
+                        {
+                            tableColumn.setDatatypeName(type.getName());
+                            type = null;
+                        }
+                        else
+                        {
+                            tableColumn.setDatatypeName(String.class.getName());
+                        }
+                        
                     }
                     if(!tableColumn.isArray())
                     {
