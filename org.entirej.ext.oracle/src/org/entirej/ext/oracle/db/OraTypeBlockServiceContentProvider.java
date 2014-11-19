@@ -341,7 +341,8 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 List<EJTableColumn> args = new ArrayList<EJTableColumn>();
 
                 List<Argument> arguments = procedure.getArguments();
-               
+                if(procedure.getCollectionType()!=null)
+                    arguments= procedure.getCollectionType().getArguments();
                 for (Argument argument : arguments)
                 {
                     EJTableColumn tableColumn = new EJTableColumn();
@@ -409,7 +410,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 List<EJReportTableColumn> args = new ArrayList<EJReportTableColumn>();
                 
-                for (Argument argument : procedure.getArguments())
+                List<Argument> arguments = procedure.getArguments();
+                if(procedure.getCollectionType()!=null)
+                    arguments= procedure.getCollectionType().getArguments();
+                for (Argument argument : arguments)
                 {
                     EJReportTableColumn tableColumn = new EJReportTableColumn();
                     tableColumn.setName(argument._name);
