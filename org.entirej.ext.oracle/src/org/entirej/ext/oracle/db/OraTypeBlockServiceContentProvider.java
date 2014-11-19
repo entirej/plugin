@@ -164,9 +164,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     if (collectionType != null)
                     {
                         if (collectionType.tableName != null)
+                        {
                             pojoGeneratorType.setProperty("TABLE_NAME", collectionType.tableName);
+                            serviceGeneratorType.setProperty("TABLE_NAME", collectionType.tableName);
+                        }
                         if (collectionType.objName != null)
+                        {
                             pojoGeneratorType.setProperty("OBJECT_NAME", collectionType.objName);
+                            serviceGeneratorType.setProperty("OBJECT_NAME", collectionType.objName);
+                        }
                         pojoGeneratorType.setColumnNames(createPojoCloumns(collectionType));
                         serviceGeneratorType.setTableName(collectionType.getTableName());
                     }
@@ -213,9 +219,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     if (collectionType != null)
                     {
                         if (collectionType.tableName != null)
+                        {
                             pojoGeneratorType.setProperty("TABLE_NAME", collectionType.tableName);
+                            serviceGeneratorType.setProperty("TABLE_NAME", collectionType.tableName);
+                        }
                         if (collectionType.objName != null)
+                        {
                             pojoGeneratorType.setProperty("OBJECT_NAME", collectionType.objName);
+                            serviceGeneratorType.setProperty("OBJECT_NAME", collectionType.objName);
+                        }
                         pojoGeneratorType.setColumnNames(createReportPojoCloumns(collectionType));
                         serviceGeneratorType.setTableName(collectionType.getTableName());
                     }
