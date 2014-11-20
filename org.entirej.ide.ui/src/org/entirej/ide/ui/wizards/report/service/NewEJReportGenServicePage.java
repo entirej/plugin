@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.report.service.DefaultServiceGenerator;
+import org.entirej.framework.report.service.EJReportServiceGenerator;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
@@ -161,7 +161,7 @@ public class NewEJReportGenServicePage extends NewTypeWizardPage implements IJav
     {
         if (getJavaProject() == null)
             return;
-        serviceGeneratorClass = DefaultServiceGenerator.class.getName();
+        serviceGeneratorClass = EJReportServiceGenerator.class.getName();
     }
 
     private void createServiceGeneratorControls(Composite composite, int nColumns)
@@ -191,7 +191,7 @@ public class NewEJReportGenServicePage extends NewTypeWizardPage implements IJav
             }
         });
 
-        serviceGenText.setText(serviceGeneratorClass = DefaultServiceGenerator.class.getName());
+        serviceGenText.setText(serviceGeneratorClass = EJReportServiceGenerator.class.getName());
         TypeAssistProvider.createTypeAssist(serviceGenText, this, IJavaElementSearchConstants.CONSIDER_CLASSES,
                 org.entirej.framework.report.service.EJReportServiceContentGenerator.class.getName());
         final Button browse = new Button(composite, SWT.PUSH);

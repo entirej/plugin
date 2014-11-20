@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.report.service.DefaultReportPojoGenerator;
+import org.entirej.framework.report.service.EJReportPojoGenerator;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
@@ -232,7 +232,7 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
                 doStatusUpdate();
             }
         });
-        pojoGenText.setText(pojoGeneratorClass = DefaultReportPojoGenerator.class.getName());
+        pojoGenText.setText(pojoGeneratorClass = EJReportPojoGenerator.class.getName());
         TypeAssistProvider.createTypeAssist(pojoGenText, this, IJavaElementSearchConstants.CONSIDER_CLASSES,
                 org.entirej.framework.report.service.EJReportPojoContentGenerator.class.getName());
         final Button browse = new Button(composite, SWT.PUSH);
