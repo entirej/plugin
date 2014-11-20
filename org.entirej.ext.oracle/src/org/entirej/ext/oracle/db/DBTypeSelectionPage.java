@@ -570,7 +570,14 @@ public class DBTypeSelectionPage extends WizardPage
                             {
                                 returnArg = new Argument(argName, dataType);
                             }
-                            returnArg.type = Type.OUT;
+                            if(argName==null)
+                            {
+                                returnArg.type = Type.RETURN;
+                            }else {
+                                returnArg.type = Type.OUT;
+                            }
+                           
+                            
                             proc = new Function(objectName, returnArg);
                             proc.setPackageName(pkgName);
                             functions.add((Function) proc);
@@ -601,7 +608,7 @@ public class DBTypeSelectionPage extends WizardPage
                     if ("IN/OUT".equals(inOut))
                         argument.type = Type.IN_OUT;
                     else if ("OUT".equals(inOut))
-                        argument.type = Type.OUT;
+                        argument.type = argName==null?Type.RETURN :Type.OUT;
                     else
                         argument.type = Type.IN;
 
