@@ -27,6 +27,8 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
@@ -36,7 +38,11 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation;
+import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.Document;
@@ -501,6 +507,28 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
         }
     }
 
+    
+    @SuppressWarnings("restriction")
+    private void organizeImports(ICompilationUnit cu)
+            throws OperationCanceledException, CoreException {
+
+        cu.becomeWorkingCopy(null);
+        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
+        NullProgressMonitor pm = new NullProgressMonitor();
+
+        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
+                true, true, true, null);
+
+        TextEdit edit = op.createTextEdit(pm);
+        if (edit == null) {
+            return;
+        }
+
+        JavaModelUtil.applyEdit(cu, edit, true, pm);
+        cu.commitWorkingCopy(true, pm);
+        cu.save(pm, true);
+    }
+    
     public String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
 
@@ -560,7 +588,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-
+            organizeImports(connectedCU);
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -642,6 +670,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoClassName);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            organizeImports(connectedCU);
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
