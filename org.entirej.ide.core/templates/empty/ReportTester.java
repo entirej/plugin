@@ -7,6 +7,8 @@ import org.entirej.framework.report.EJReport;
 import org.entirej.framework.report.EJReportFrameworkInitialiser;
 import org.entirej.framework.report.EJReportFrameworkManager;
 import org.entirej.framework.report.interfaces.EJReportRunner;
+import java.awt.Desktop;
+import java.io.File;
 
 public class ReportTester {
 

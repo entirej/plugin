@@ -39,10 +39,15 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
 {
     private static final String ORACLE_CONNECTION_FILE        = "/templates/oracleOptions/Connection.properties";
     private static final String ORACLE_STMT_EXECUTOR          = "/templates/oracleOptions/OracleStatementExecutor.java";
+    private static final String ORACLE_REPORT_STMT_EXECUTOR          = "/templates/oracleOptions/OracleReportStatementExecutor.java";
     private static final String ORACLE_TYPE_SERVICE_GENERATOR = "/templates/oracleOptions/OracleCollectionTypeServiceGenerator.java";
+    private static final String ORACLE_TYPE_REPORT_SERVICE_GENERATOR = "/templates/oracleOptions/OracleReportServiceGenerator.java";
     private static final String ORACLE_TYPE_POJO_GENERATOR    = "/templates/oracleOptions/OraclePojoGenerator.java";
+    private static final String ORACLE_TYPE_REPORT_POJO_GENERATOR    = "/templates/oracleOptions/OracleReportPojoGenerator.java";
     private static final String ORACLE_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJStatementParameterArray.java";
     private static final String ORACLE_STMT_PARAMETER_STRUCT   = "/templates/oracleOptions/EJStatementParameterStruct.java";
+    private static final String ORACLE_REPORT_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJReportStatementParameterArray.java";
+    private static final String ORACLE_REPORT_STMT_PARAMETER_STRUCT   = "/templates/oracleOptions/EJReportStatementParameterStruct.java";
     private static final String ORACLE_SQL_INPUT              = "/templates/oracleOptions/EJSQLInput.java";
 
     public void addEntireJNature(ClientFrameworkProvider cf, IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
@@ -98,18 +103,18 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
             CFProjectHelper.verifySourceContainer(project, "src");
             
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_CONNECTION_FILE, "src/Connection.properties");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_EXECUTOR, "src/org/entirej/OracleStatementExecutor.java");
+            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_REPORT_STMT_EXECUTOR, "src/org/entirej/OracleReportStatementExecutor.java");
             
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_PARAMETER_ARRAY,
-                    "src/org/entirej/EJStatementParameterArray.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_PARAMETER_STRUCT,
-                    "src/org/entirej/EJStatementParameterStruct.java");
+            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_REPORT_STMT_PARAMETER_ARRAY,
+                    "src/org/entirej/EJReportStatementParameterArray.java");
+            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_REPORT_STMT_PARAMETER_STRUCT,
+                    "src/org/entirej/EJReportStatementParameterStruct.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_SQL_INPUT, "src/org/entirej/EJSQLInput.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_POJO_GENERATOR,
-                    "src/org/entirej/generators/OraclePojoGenerator.java");
+            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_REPORT_POJO_GENERATOR,
+                    "src/org/entirej/generators/OracleReportPojoGenerator.java");
             
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_SERVICE_GENERATOR,
-                    "src/org/entirej/generators/OracleCollectionTypeServiceGenerator.java");
+            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_REPORT_SERVICE_GENERATOR,
+                    "src/org/entirej/generators/OracleReportServiceGenerator.java");
             
             CFProjectHelper.addToClasspath(project,
                     JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID,true));
