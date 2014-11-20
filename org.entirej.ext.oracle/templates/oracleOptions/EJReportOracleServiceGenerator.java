@@ -3,14 +3,14 @@ package org.entirej.generators;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.entirej.framework.report.EJReportPojoHelper;
+import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportServiceContentGenerator;
 import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 import org.entirej.framework.report.service.EJReportTableColumn;
 
-public class OracleReportServiceGenerator implements EJReportServiceContentGenerator
+public class EJReportOracleServiceGenerator implements EJReportServiceContentGenerator
 {
     @Override
     public String generateContent(EJReportServiceGeneratorType type)
@@ -73,11 +73,34 @@ public class OracleReportServiceGenerator implements EJReportServiceContentGener
         fileBuilder.append("    {\n");
         fileBuilder.append("        StringBuilder stmt = new StringBuilder();\n");
         fileBuilder.append("        stmt.append(\" BEGIN\");\n");
-        fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+
+        boolean returnAdded = false;
+        for (EJReportTableColumn column : type.getSelectProcedureParameters())
+        {
+            if (column.getParameterType().equals(EJReportParameterType.RETURN))
+            {
+                returnAdded = true;
+                fileBuilder.append("        stmt.append(\"   ? := ");
+            }
+        }
+
+        if (returnAdded)
+        {
+            fileBuilder.append(type.getSelectProcedureName()).append(" (\");\n");
+        }
+        else
+        {
+            fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+        }
 
         int col = 0;
         for (EJReportTableColumn column : type.getSelectProcedureParameters())
         {
+            if (column.getParameterType().equals(EJReportParameterType.RETURN))
+            {
+                continue;
+            }
+
             fileBuilder.append("        stmt.append(\"         ");
             if (col != 0)
             {
@@ -104,50 +127,80 @@ public class OracleReportServiceGenerator implements EJReportServiceContentGener
     {
         String arrayTypeName = null;
 
-        for (EJReportTableColumn column : columns)
+        for (int i = 0; i < 2; i++)
         {
-            String typeName = column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf(".") + 1);
+            for (EJReportTableColumn column : columns)
+            {
+                if (column.getParameterType().equals(EJReportParameterType.RETURN))
+                {
+                    if (i!=0)
+                    {
+                        continue;   
+                    }
+                    column.setName("return");
+                }
+                else
+                {
+                    if (i==0)
+                    {
+                        continue;   
+                    }
+                }
 
-            if (column.isArray())
-            {
-                arrayTypeName = column.getName() + "Type";
-                fileBuilder.append("        EJStatementParameterArray<").append(pojoName).append("> ");
-                fileBuilder.append(column.getName()).append("Type");
-                fileBuilder.append(" = new EJStatementParameterArray<").append(pojoName).append("> (");
-                fileBuilder.append(pojoName).append(".class, ");
-                fileBuilder.append("EJReportParameterType.");
-                fileBuilder.append(column.getParameterType());
-                fileBuilder.append(", \"").append(type.getTableName()).append("\"");
+                String typeName = column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf(".") + 1);
 
-                fileBuilder.append(");\n");
-            }
-            else if (column.isStruct())
-            {
-                fileBuilder.append("        EJStatementParameterStruct<").append(typeName).append("> ");
-                fileBuilder.append(column.getName()).append("Type");
-                fileBuilder.append(" = new EJStatementParameterStruct<").append(typeName).append("> (");
-                fileBuilder.append(typeName).append(".class, ");
-                fileBuilder.append("EJReportParameterType.");
-                fileBuilder.append(column.getParameterType());
-                fileBuilder.append(", \"").append(column.getProperty("OBJECT_NAME")).append("\");");
-            }
-            else
-            {
-                fileBuilder.append("        EJStoredProcedureStatementParameter ");
-                fileBuilder.append(column.getName()).append("Parameter = new EJStoredProcedureStatementParameter(");
-                fileBuilder.append(column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf('.') + 1) + ".class, EJReportParameterType.");
-                fileBuilder.append(column.getParameterType());
-                fileBuilder.append(");\n");
+                if (column.isArray())
+                {
+                    arrayTypeName = column.getName() + "Type";
+                    fileBuilder.append("        EJStatementParameterArray<").append(pojoName).append("> ");
+                    fileBuilder.append(column.getName()).append("Type");
+                    fileBuilder.append(" = new EJStatementParameterArray<").append(pojoName).append("> (");
+                    fileBuilder.append(pojoName).append(".class, ");
+                    fileBuilder.append("EJReportParameterType.");
+                    fileBuilder.append(column.getParameterType());
+                    fileBuilder.append(", \"").append(type.getTableName()).append("\"");
+
+                    fileBuilder.append(");\n");
+                }
+                else if (column.isStruct())
+                {
+                    fileBuilder.append("        EJStatementParameterStruct<").append(typeName).append("> ");
+                    fileBuilder.append(column.getName()).append("Type");
+                    fileBuilder.append(" = new EJStatementParameterStruct<").append(typeName).append("> (");
+                    fileBuilder.append(typeName).append(".class, ");
+                    fileBuilder.append("EJReportParameterType.");
+                    fileBuilder.append(column.getParameterType());
+                    fileBuilder.append(", \"").append(column.getProperty("OBJECT_NAME")).append("\");");
+                }
+                else
+                {
+                    fileBuilder.append("        EJStoredProcedureStatementParameter ");
+                    fileBuilder.append(column.getName()).append("Parameter = new EJStoredProcedureStatementParameter(");
+                    fileBuilder.append(column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf('.') + 1) + ".class, EJReportParameterType.");
+                    fileBuilder.append(column.getParameterType());
+                    fileBuilder.append(");\n");
+                }
             }
         }
 
         fileBuilder.append("\n        _statementExecutor.executePLSQLStoredProcedure(report, stmt.toString()");
         for (EJReportTableColumn column : columns)
         {
-            fileBuilder.append(", ");
-            fileBuilder.append(column.getName());
-            fileBuilder.append("Type");
-
+            if (column.getParameterType().equals(EJReportParameterType.RETURN))
+            {
+                fileBuilder.append(", ");
+                fileBuilder.append(column.getName());
+                fileBuilder.append("Type");
+            }
+        }
+        for (EJReportTableColumn column : columns)
+        {
+            if (!column.getParameterType().equals(EJReportParameterType.RETURN))
+            {
+                fileBuilder.append(", ");
+                fileBuilder.append(column.getName());
+                fileBuilder.append("Type");
+            }
         }
 
         return arrayTypeName;

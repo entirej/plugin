@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.entirej.framework.core.EJPojoHelper;
+import org.entirej.framework.core.service.EJParameterType;
 import org.entirej.framework.core.service.EJServiceContentGenerator;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
 import org.entirej.framework.core.service.EJTableColumn;
 
-public class OracleCollectionTypeServiceGenerator implements EJServiceContentGenerator
+public class EJFormOracleServiceGenerator implements EJServiceContentGenerator
 {
     @Override
     public String generateContent(EJServiceGeneratorType type)
@@ -78,11 +79,34 @@ public class OracleCollectionTypeServiceGenerator implements EJServiceContentGen
         fileBuilder.append("    {\n");
         fileBuilder.append("        StringBuilder stmt = new StringBuilder();\n");
         fileBuilder.append("        stmt.append(\" BEGIN\");\n");
-        fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+
+        boolean returnAdded = false;
+        for (EJTableColumn column : type.getSelectProcedureParameters())
+        {
+            if (column.getParameterType().equals(EJParameterType.RETURN))
+            {
+                returnAdded = true;
+                fileBuilder.append("        stmt.append(\"   ? := ");
+            }
+        }
+
+        if (returnAdded)
+        {
+            fileBuilder.append(type.getSelectProcedureName()).append(" (\");\n");
+        }
+        else
+        {
+            fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+        }
 
         int col = 0;
         for (EJTableColumn column : type.getSelectProcedureParameters())
         {
+            if (column.getParameterType().equals(EJParameterType.RETURN))
+            {
+                continue;
+            }
+
             fileBuilder.append("        stmt.append(\"         ");
             if (col != 0)
             {
@@ -98,10 +122,10 @@ public class OracleCollectionTypeServiceGenerator implements EJServiceContentGen
         fileBuilder.append("        stmt.append(\" END;\");\n\n");
 
         // Add the statement parameters
-        addParameters(fileBuilder, type, pojoName, type.getSelectProcedureParameters(), false);
+        String arrayTypeName = addParameters(fileBuilder, type, pojoName, type.getSelectProcedureParameters(), false);
 
         fileBuilder.append(");\n");
-        fileBuilder.append("        return (List<").append(pojoName).append(">) arrayType.getValue();\n");
+        fileBuilder.append("        return (List<").append(pojoName).append(">) "+arrayTypeName+".getValue();\n");
         fileBuilder.append("    }\n\n");
     }
 
@@ -115,11 +139,34 @@ public class OracleCollectionTypeServiceGenerator implements EJServiceContentGen
         {
             fileBuilder.append("        StringBuilder stmt = new StringBuilder();\n");
             fileBuilder.append("        stmt.append(\" BEGIN\");\n");
-            fileBuilder.append("        stmt.append(\"   ").append(type.getInsertProcedureName()).append(" (\");\n");
+
+            boolean returnAdded = false;
+            for (EJTableColumn column : type.getSelectProcedureParameters())
+            {
+                if (column.getParameterType().equals(EJParameterType.RETURN))
+                {
+                    returnAdded = true;
+                    fileBuilder.append("        stmt.append(\"   ? := ");
+                }
+            }
+
+            if (returnAdded)
+            {
+                fileBuilder.append(type.getSelectProcedureName()).append(" (\");\n");
+            }
+            else
+            {
+                fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+            }
 
             int col = 0;
             for (EJTableColumn column : type.getInsertProcedureParameters())
             {
+                if (column.getParameterType().equals(EJParameterType.RETURN))
+                {
+                    continue;
+                }
+
                 fileBuilder.append("        stmt.append(\"         ");
                 if (col != 0)
                 {
@@ -152,11 +199,34 @@ public class OracleCollectionTypeServiceGenerator implements EJServiceContentGen
         {
             fileBuilder.append("        StringBuilder stmt = new StringBuilder();\n");
             fileBuilder.append("        stmt.append(\" BEGIN\");\n");
-            fileBuilder.append("        stmt.append(\"   ").append(type.getUpdateProcedureName()).append(" (\");\n");
+
+            boolean returnAdded = false;
+            for (EJTableColumn column : type.getSelectProcedureParameters())
+            {
+                if (column.getParameterType().equals(EJParameterType.RETURN))
+                {
+                    returnAdded = true;
+                    fileBuilder.append("        stmt.append(\"   ? := ");
+                }
+            }
+
+            if (returnAdded)
+            {
+                fileBuilder.append(type.getSelectProcedureName()).append(" (\");\n");
+            }
+            else
+            {
+                fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+            }
 
             int col = 0;
             for (EJTableColumn column : type.getUpdateProcedureParameters())
             {
+                if (column.getParameterType().equals(EJParameterType.RETURN))
+                {
+                    continue;
+                }
+
                 fileBuilder.append("        stmt.append(\"         ");
                 if (col != 0)
                 {
@@ -189,11 +259,34 @@ public class OracleCollectionTypeServiceGenerator implements EJServiceContentGen
         {
             fileBuilder.append("        StringBuilder stmt = new StringBuilder();\n");
             fileBuilder.append("        stmt.append(\" BEGIN\");\n");
-            fileBuilder.append("        stmt.append(\"   ").append(type.getDeleteProcedureName()).append(" (\");\n");
+
+            boolean returnAdded = false;
+            for (EJTableColumn column : type.getSelectProcedureParameters())
+            {
+                if (column.getParameterType().equals(EJParameterType.RETURN))
+                {
+                    returnAdded = true;
+                    fileBuilder.append("        stmt.append(\"   ? := ");
+                }
+            }
+
+            if (returnAdded)
+            {
+                fileBuilder.append(type.getSelectProcedureName()).append(" (\");\n");
+            }
+            else
+            {
+                fileBuilder.append("        stmt.append(\"   ").append(type.getSelectProcedureName()).append(" (\");\n");
+            }
 
             int col = 0;
             for (EJTableColumn column : type.getDeleteProcedureParameters())
             {
+                if (column.getParameterType().equals(EJParameterType.RETURN))
+                {
+                    continue;
+                }
+
                 fileBuilder.append("        stmt.append(\"         ");
                 if (col != 0)
                 {
@@ -216,50 +309,90 @@ public class OracleCollectionTypeServiceGenerator implements EJServiceContentGen
         fileBuilder.append("    }\n\n");
     }
 
-    private void addParameters(StringBuilder fileBuilder, EJServiceGeneratorType type, String pojoName, List<EJTableColumn> columns, boolean addValuesParam)
+    private String addParameters(StringBuilder fileBuilder, EJServiceGeneratorType type, String pojoName, List<EJTableColumn> columns, boolean addValuesParam)
     {
-
-        for (EJTableColumn column : columns)
+        String arrayTypeName = null;
+        for (int i = 0; i < 2; i++)
         {
-            if (column.getDatatypeName().equals("java.sql.Struct"))
+            for (EJTableColumn column : columns)
             {
-                fileBuilder.append("        EJStatementParameterArray<").append(pojoName).append("> ");
-                fileBuilder.append("arrayType");
-                fileBuilder.append(" = new EJStatementParameterArray<").append(pojoName).append("> (");
-                fileBuilder.append(pojoName).append(".class, ");
-                fileBuilder.append("EJParameterType.");
-                fileBuilder.append(column.getParameterType());
-                if (addValuesParam)
+                if (column.getParameterType().equals(EJParameterType.RETURN))
                 {
-                    fileBuilder.append(", values");
+                    if (i!=0)
+                    {
+                        continue;   
+                    }
+                    column.setName("return");
                 }
-                fileBuilder.append(");\n");
-            }
-            else
-            {
-                fileBuilder.append("        EJStoredProcedureStatementParameter ");
-                fileBuilder.append(column.getName()).append("Parameter = new EJStoredProcedureStatementParameter(");
-                fileBuilder.append(column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf('.') + 1) + ".class, EJParameterType.");
-                fileBuilder.append(column.getParameterType());
-                fileBuilder.append(");\n");
+                else
+                {
+                    if (i==0)
+                    {
+                        continue;   
+                    }
+                }
+                
+                String typeName = column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf(".") + 1);
+                
+                if (column.isArray())
+                {
+                    arrayTypeName = column.getName() + "Type";
+                    fileBuilder.append("        EJStatementParameterArray<").append(pojoName).append("> ");
+                    fileBuilder.append(arrayTypeName);
+                    fileBuilder.append(" = new EJStatementParameterArray<").append(pojoName).append("> (");
+                    fileBuilder.append(pojoName).append(".class, ");
+                    fileBuilder.append("EJParameterType.");
+                    fileBuilder.append(column.getParameterType());
+                    if (addValuesParam)
+                    {
+                        fileBuilder.append(", values");
+                    }
+                    fileBuilder.append(", \"").append(type.getTableName());
+                    fileBuilder.append("\");\n");
+                }
+                else if (column.isStruct())
+                {
+                    fileBuilder.append("        EJStatementParameterStruct<").append(typeName).append("> ");
+                    fileBuilder.append(column.getName()).append("Type");
+                    fileBuilder.append(" = new EJStatementParameterStruct<").append(typeName).append("> (");
+                    fileBuilder.append(typeName).append(".class, ");
+                    fileBuilder.append("EJParameterType.");
+                    fileBuilder.append(column.getParameterType());
+                    fileBuilder.append(", \"").append(column.getProperty("OBJECT_NAME")).append("\");");
+                }
+                else
+                {
+                    fileBuilder.append("        EJStoredProcedureStatementParameter ");
+                    fileBuilder.append(column.getName()).append("Parameter = new EJStoredProcedureStatementParameter(");
+                    fileBuilder.append(column.getDatatypeName().substring(column.getDatatypeName().lastIndexOf('.') + 1) + ".class, EJParameterType.");
+                    fileBuilder.append(column.getParameterType());
+                    fileBuilder.append(");\n");
+                }
             }
         }
 
         fileBuilder.append("\n        _statementExecutor.executePLSQLStoredProcedure(form, stmt.toString()");
-        fileBuilder.append(", \"").append(type.getTableName()).append("\"");
         for (EJTableColumn column : columns)
         {
-            if (column.getDatatypeName().equals("java.sql.Struct"))
-            {
-                fileBuilder.append(", arrayType");
-            }
-            else
+            if (column.getParameterType().equals(EJParameterType.RETURN))
             {
                 fileBuilder.append(", ");
                 fileBuilder.append(column.getName());
-                fileBuilder.append("Parameter");
+                fileBuilder.append("Type");
             }
         }
+        for (EJTableColumn column : columns)
+        {
+            if (!column.getParameterType().equals(EJParameterType.RETURN))
+            {
+                fileBuilder.append(", ");
+                fileBuilder.append(column.getName());
+                fileBuilder.append("Type");
+            }
+        }
+        
+        return arrayTypeName;
+
     }
 
 }

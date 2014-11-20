@@ -40,10 +40,10 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
     private static final String ORACLE_CONNECTION_FILE        = "/templates/oracleOptions/Connection.properties";
     private static final String ORACLE_STMT_EXECUTOR          = "/templates/oracleOptions/OracleStatementExecutor.java";
     private static final String ORACLE_REPORT_STMT_EXECUTOR          = "/templates/oracleOptions/OracleReportStatementExecutor.java";
-    private static final String ORACLE_TYPE_SERVICE_GENERATOR = "/templates/oracleOptions/OracleCollectionTypeServiceGenerator.java";
-    private static final String ORACLE_TYPE_REPORT_SERVICE_GENERATOR = "/templates/oracleOptions/OracleReportServiceGenerator.java";
-    private static final String ORACLE_TYPE_POJO_GENERATOR    = "/templates/oracleOptions/OraclePojoGenerator.java";
-    private static final String ORACLE_TYPE_REPORT_POJO_GENERATOR    = "/templates/oracleOptions/OracleReportPojoGenerator.java";
+    private static final String ORACLE_TYPE_SERVICE_GENERATOR = "/templates/oracleOptions/EJReportOracleServiceGenerator.java";
+    private static final String ORACLE_TYPE_REPORT_SERVICE_GENERATOR = "/templates/oracleOptions/EJReportOracleServiceGenerator.java";
+    private static final String ORACLE_TYPE_POJO_GENERATOR    = "/templates/oracleOptions/EJFormOraclePojoGenerator.java";
+    private static final String ORACLE_TYPE_REPORT_POJO_GENERATOR    = "/templates/oracleOptions/EJReportOraclePojoGenerator.java";
     private static final String ORACLE_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJStatementParameterArray.java";
     private static final String ORACLE_STMT_PARAMETER_STRUCT   = "/templates/oracleOptions/EJStatementParameterStruct.java";
     private static final String ORACLE_REPORT_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJReportStatementParameterArray.java";
@@ -65,10 +65,10 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
                     "src/org/entirej/EJStatementParameterStruct.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_SQL_INPUT, "src/org/entirej/EJSQLInput.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_POJO_GENERATOR,
-                    "src/org/entirej/generators/OraclePojoGenerator.java");
+                    "src/org/entirej/generators/EJFormOraclePojoGenerator.java");
 
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_SERVICE_GENERATOR,
-                    "src/org/entirej/generators/OracleCollectionTypeServiceGenerator.java");
+                    "src/org/entirej/generators/EJReportOracleServiceGenerator.java");
 
             CFProjectHelper.addToClasspath(project,
                     JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID, new IAccessRule[0], cf.getClasspathAttributes(), true));
@@ -111,10 +111,10 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
                     "src/org/entirej/EJReportStatementParameterStruct.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_SQL_INPUT, "src/org/entirej/EJSQLInput.java");
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_REPORT_POJO_GENERATOR,
-                    "src/org/entirej/generators/OracleReportPojoGenerator.java");
+                    "src/org/entirej/generators/EJReportOraclePojoGenerator.java");
             
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_REPORT_SERVICE_GENERATOR,
-                    "src/org/entirej/generators/OracleReportServiceGenerator.java");
+                    "src/org/entirej/generators/EJReportOracleServiceGenerator.java");
             
             CFProjectHelper.addToClasspath(project,
                     JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID,true));
