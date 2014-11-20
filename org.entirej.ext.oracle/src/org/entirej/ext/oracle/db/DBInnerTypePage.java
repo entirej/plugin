@@ -44,8 +44,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.entirej.framework.core.service.EJTableColumn;
-import org.entirej.ide.core.spi.BlockServiceContentProvider.GeneratorContext;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 
@@ -77,29 +75,58 @@ public abstract class DBInnerTypePage extends WizardPage
         return labelProvider;
     }
 
-    protected void init(ObjectArgument collectionType)
+    
+    void collectTypes(ObjectArgument objectArgument ,List<String> addedInner)
     {
+        if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
+        {
+            addedInner.add(objectArgument.objName);
+            typeMappers.add(new TypeMapper(objectArgument));
+        }
+        List<Argument> arguments = objectArgument.getArguments();
+        for (Argument argument : arguments)
+        {
+            if (argument instanceof ObjectArgument)
+            {
+             
+
+                collectTypes((ObjectArgument) argument,addedInner);
+            }
+        }
+    }
+    
+    protected void init(Procedure procedure)
+    {
+        List<String> addedInner = new ArrayList<String>();
         typeMappers.clear();
+        ObjectArgument collectionType = procedure.getCollectionType();
         if (collectionType != null)
         {
-            List<String> addedInner = new ArrayList<String>();
+           
             for (Argument argument : collectionType.getArguments())
             {
-                EJTableColumn tableColumn = new EJTableColumn();
-                tableColumn.setName(argument._name);
+              
 
                 if (argument instanceof ObjectArgument)
                 {
                     ObjectArgument objectArgument = (ObjectArgument) argument;
 
-                    if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
-                    {
-                        addedInner.add(objectArgument.objName);
-                        typeMappers.add(new TypeMapper(objectArgument));
-                    }
+                    collectTypes(objectArgument,addedInner);
                 }
             }
 
+        }
+        List<Argument> arguments = procedure.getArguments();
+        for (Argument argument : arguments)
+        {
+          
+
+            if (argument instanceof ObjectArgument)
+            {
+                ObjectArgument objectArgument = (ObjectArgument) argument;
+
+                collectTypes(objectArgument,addedInner);
+            }
         }
 
     }

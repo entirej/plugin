@@ -25,6 +25,7 @@ import java.sql.Struct;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -117,7 +118,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 if (page == innerTypePage)
                 {
-                    innerTypePage.init(columnSelectionPage.getProcedure() != null ? columnSelectionPage.getProcedure().getCollectionType() : null);
+                    innerTypePage.init(columnSelectionPage.getProcedure() );
                     return innerTypePage.skipPage();
                 }
                 return false;
@@ -527,25 +528,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         {
                             ObjectArgument objectArgument = (ObjectArgument) argument;
 
-                            String mappedClass = innerTypePage.getMappedClass(objectArgument);
-                            if (mappedClass != null)
-                            {
-                                innerClass.put(objectArgument.objName, mappedClass);
-                                continue;
-                            }
-
-                            if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
-                            {
-                                EJPojoGeneratorType inner = new EJPojoGeneratorType();
-                                if (objectArgument.tableName != null)
-                                    inner.setProperty("TABLE_NAME", objectArgument.tableName);
-                                if (objectArgument.objName != null)
-                                    inner.setProperty("OBJECT_NAME", objectArgument.objName);
-                                inner.setColumnNames(createPojoCloumns(objectArgument));
-                                inner.setClassName(objectArgument.objName);
-                                addedInner.add(objectArgument.objName);
-                                innerPojoGeneratorTypes.add(inner);
-                            }
+                            collectTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                         }
                     }
 
@@ -560,6 +543,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     inner.setClassName(objName);
                     try
                     {
+                        reValidateDataTypes(inner);
                         String clazz = context.createPojoClass(inner, monitor);
                         innerClass.put(objName, clazz);
                     }
@@ -583,25 +567,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         {
                             ObjectArgument objectArgument = (ObjectArgument) argument;
 
-                            String mappedClass = innerTypePage.getMappedClass(objectArgument);
-                            if (mappedClass != null)
-                            {
-                                innerClass.put(objectArgument.objName, mappedClass);
-                                continue;
-                            }
-
-                            if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
-                            {
-                                EJPojoGeneratorType inner = new EJPojoGeneratorType();
-                                if (objectArgument.tableName != null)
-                                    inner.setProperty("TABLE_NAME", objectArgument.tableName);
-                                if (objectArgument.objName != null)
-                                    inner.setProperty("OBJECT_NAME", objectArgument.objName);
-                                inner.setColumnNames(createPojoCloumns(objectArgument));
-                                inner.setClassName(objectArgument.objName);
-                                addedInner.add(objectArgument.objName);
-                                innerPojoGeneratorTypes.add(inner);
-                            }
+                            collectTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                         }
                     }
                 }
@@ -613,6 +579,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     inner.setClassName(objName);
                     try
                     {
+                        reValidateDataTypes(inner);
                         String clazz = context.createPojoClass(inner, monitor);
                         innerClass.put(objName, clazz);
                     }
@@ -624,6 +591,115 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 }
             }
 
+            
+            
+            void reValidateDataTypes( EJPojoGeneratorType inner)
+            {
+                Collection<EJTableColumn> columns = inner.getColumns();
+                for (EJTableColumn ejReportTableColumn : columns)
+                {
+                    if(ejReportTableColumn.getProperty("OBJECT_NAME")!=null)
+                    {
+                        
+                        String type = innerClass.get(ejReportTableColumn.getProperty("OBJECT_NAME"));
+                        if(type!=null)
+                        {
+                            ejReportTableColumn.setDatatypeName(type);
+                        }
+                    }
+                } 
+            }
+            
+            void reValidateReportDataTypes( EJReportPojoGeneratorType inner)
+            {
+                Collection<EJReportTableColumn> columns = inner.getColumns();
+                for (EJReportTableColumn ejReportTableColumn : columns)
+                {
+                    if(ejReportTableColumn.getProperty("OBJECT_NAME")!=null)
+                    {
+                        
+                        String type = innerClass.get(ejReportTableColumn.getProperty("OBJECT_NAME"));
+                        if(type!=null)
+                        {
+                            ejReportTableColumn.setDatatypeName(type);
+                        }
+                    }
+                } 
+            }
+            
+            private void collectReportTypes(ObjectArgument objectArgument,  List<String> addedInner,List<EJReportPojoGeneratorType> innerPojoGeneratorTypes )
+            {
+                
+                
+                
+               
+
+                String mappedClass = innerTypePage.getMappedClass(objectArgument);
+                if (mappedClass != null)
+                {
+                    innerClass.put(objectArgument.objName, mappedClass);
+                   return;
+                }
+
+                if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
+                {
+                    EJReportPojoGeneratorType inner = new EJReportPojoGeneratorType();
+                    if (objectArgument.tableName != null)
+                        inner.setProperty("TABLE_NAME", objectArgument.tableName);
+                    if (objectArgument.objName != null)
+                        inner.setProperty("OBJECT_NAME", objectArgument.objName);
+                    inner.setColumnNames(createReportPojoCloumns(objectArgument));
+                    inner.setClassName(objectArgument.objName);
+                    addedInner.add(objectArgument.objName);
+                    innerPojoGeneratorTypes.add(inner);
+                }
+                
+                
+                List<Argument> arguments = objectArgument.getArguments();
+                for (Argument inner : arguments)
+                {
+                    if (inner instanceof ObjectArgument)
+                    {
+                        collectReportTypes((ObjectArgument)inner, addedInner, innerPojoGeneratorTypes);
+                    }
+                }
+            }
+            private void collectTypes(ObjectArgument objectArgument,  List<String> addedInner,List<EJPojoGeneratorType> innerPojoGeneratorTypes )
+            {
+                
+                
+                
+                
+                
+                String mappedClass = innerTypePage.getMappedClass(objectArgument);
+                if (mappedClass != null)
+                {
+                    innerClass.put(objectArgument.objName, mappedClass);
+                    return;
+                }
+                
+                if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
+                {
+                    EJPojoGeneratorType inner = new EJPojoGeneratorType();
+                    if (objectArgument.tableName != null)
+                        inner.setProperty("TABLE_NAME", objectArgument.tableName);
+                    if (objectArgument.objName != null)
+                        inner.setProperty("OBJECT_NAME", objectArgument.objName);
+                    inner.setColumnNames(createPojoCloumns(objectArgument));
+                    inner.setClassName(objectArgument.objName);
+                    addedInner.add(objectArgument.objName);
+                    innerPojoGeneratorTypes.add(inner);
+                }
+                
+                List<Argument> arguments = objectArgument.getArguments();
+                for (Argument inner : arguments)
+                {
+                    if (inner instanceof ObjectArgument)
+                    {
+                        collectTypes((ObjectArgument)inner, addedInner, innerPojoGeneratorTypes);
+                    }
+                }
+            }
             
             private void createReportResources(IProgressMonitor monitor)
             {
@@ -640,32 +716,13 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 {
                     for (Argument argument : collectionType.getArguments())
                     {
-                        EJReportTableColumn tableColumn = new EJReportTableColumn();
-                        tableColumn.setName(argument._name);
+                        
 
                         if (argument instanceof ObjectArgument)
                         {
                             ObjectArgument objectArgument = (ObjectArgument) argument;
 
-                            String mappedClass = innerTypePage.getMappedClass(objectArgument);
-                            if (mappedClass != null)
-                            {
-                                innerClass.put(objectArgument.objName, mappedClass);
-                                continue;
-                            }
-
-                            if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
-                            {
-                                EJReportPojoGeneratorType inner = new EJReportPojoGeneratorType();
-                                if (objectArgument.tableName != null)
-                                    inner.setProperty("TABLE_NAME", objectArgument.tableName);
-                                if (objectArgument.objName != null)
-                                    inner.setProperty("OBJECT_NAME", objectArgument.objName);
-                                inner.setColumnNames(createReportPojoCloumns(objectArgument));
-                                inner.setClassName(objectArgument.objName);
-                                addedInner.add(objectArgument.objName);
-                                innerPojoGeneratorTypes.add(inner);
-                            }
+                            collectReportTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                         }
                     }
 
@@ -678,6 +735,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     inner.setClassName(objName);
                     try
                     {
+                        reValidateReportDataTypes(inner);
                         String clazz = rcontext.createPojoClass(inner, monitor);
                         innerClass.put(objName, clazz);
                     }
@@ -690,32 +748,12 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 innerPojoGeneratorTypes.clear();
                 for (Argument argument : procedure.getArguments())
                 {
-                    EJReportTableColumn tableColumn = new EJReportTableColumn();
-                    tableColumn.setName(argument._name);
-
+                   
                     if (argument instanceof ObjectArgument)
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
 
-                        String mappedClass = innerTypePage.getMappedClass(objectArgument);
-                        if (mappedClass != null)
-                        {
-                            innerClass.put(objectArgument.objName, mappedClass);
-                            continue;
-                        }
-
-                        if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
-                        {
-                            EJReportPojoGeneratorType inner = new EJReportPojoGeneratorType();
-                            if (objectArgument.tableName != null)
-                                inner.setProperty("TABLE_NAME", objectArgument.tableName);
-                            if (objectArgument.objName != null)
-                                inner.setProperty("OBJECT_NAME", objectArgument.objName);
-                            inner.setColumnNames(createReportPojoCloumns(objectArgument));
-                            inner.setClassName(objectArgument.objName);
-                            addedInner.add(objectArgument.objName);
-                            innerPojoGeneratorTypes.add(inner);
-                        }
+                        collectReportTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                     }
                 }
                 Collections.reverse(innerPojoGeneratorTypes);
@@ -726,6 +764,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     inner.setClassName(objName);
                     try
                     {
+                        reValidateReportDataTypes(inner);
                         String clazz = rcontext.createPojoClass(inner, monitor);
                         innerClass.put(objName, clazz);
                     }
