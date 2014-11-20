@@ -511,22 +511,12 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
     @SuppressWarnings("restriction")
     private void organizeImports(ICompilationUnit cu)
             throws OperationCanceledException, CoreException {
-
-        cu.becomeWorkingCopy(null);
+        
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
-        NullProgressMonitor pm = new NullProgressMonitor();
-
+      
         OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
                 true, true, true, null);
-
-        TextEdit edit = op.createTextEdit(pm);
-        if (edit == null) {
-            return;
-        }
-
-        JavaModelUtil.applyEdit(cu, edit, true, pm);
-        cu.commitWorkingCopy(true, pm);
-        cu.save(pm, true);
+        op.run(new NullProgressMonitor());
     }
     
     public String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
@@ -587,8 +577,9 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             organizeImports(connectedCU);
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -668,9 +659,10 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             }
 
             buffer.setContents(fileContents);
-            final IType createdType = parentCU.getType(pojoClassName);
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            final IType createdType = parentCU.getType(pojoClassName); 
             organizeImports(connectedCU);
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+           
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
