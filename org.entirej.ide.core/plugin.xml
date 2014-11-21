@@ -7,6 +7,7 @@
 <extension-point id="org.entirej.ide.core.spi.ejpropertiesvalidate.provider" name="EJ Properties Validate Provider" schema="schema/org.entirej.ide.core.spi.ejpropertiesvalidate.Provider.exsd"/>
 <extension-point id="org.entirej.ide.core.spi.ejformvalidate.provider" name="EJ Form Validate Provider" schema="schema/org.entirej.ide.core.spi.ejformvalidate.Provider.exsd"/>
 <extension-point id="org.entirej.ide.core.spi.ejreportpropertiesvalidate.provider" name="EJ Report Properties Validate Provider" schema="schema/org.entirej.ide.core.spi.ejreportpropertiesvalidate.Provider.exsd"/>
+<extension-point id="org.entirej.ide.core.spi.ejreportvalidate.provider" name="EJ Form Validate Provider" schema="schema/org.entirej.ide.core.spi.ejreportvalidate.Provider.exsd"/>
 <extension
       point="org.entirej.ide.core.spi.databaseconnectivity.exportProvider">
    <provider
@@ -116,6 +117,16 @@
       <builder>
          <run
                class="org.entirej.ide.core.project.EJFormConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+     <extension
+         id="org.entirej.ide.EJReportBuilder"
+         name="%builders.EJReportBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.entirej.ide.core.project.EJReportConsistencyChecker">
          </run>
       </builder>
    </extension>

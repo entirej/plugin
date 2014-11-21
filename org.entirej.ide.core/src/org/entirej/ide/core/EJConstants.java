@@ -23,6 +23,7 @@ public class EJConstants
     public static final String EJ_PROPERTIES_BUILDER_ID        = "org.entirej.ide.EJPropertiesBuilder";      //$NON-NLS-2$
     public static final String EJ_REPORT_PROPERTIES_BUILDER_ID = "org.entirej.ide.EJReportPropertiesBuilder"; //$NON-NLS-2$
     public static final String EJ_FORM_BUILDER_ID              = "org.entirej.ide.EJFormBuilder";            //$NON-NLS-2$
+    public static final String EJ_REPORT_BUILDER_ID              = "org.entirej.ide.EJReportBuilder";            //$NON-NLS-2$
     public static final String EJ_FORM_CONST_BUILDER_ID        = "org.entirej.ide.EJFormConstBuilder";       //$NON-NLS-2$
     public static final String EJ_REPORT_CONST_BUILDER_ID        = "org.entirej.ide.EJReportConstBuilder";       //$NON-NLS-2$
     public static final String EJ_NATURE                       = "org.entirej.ide.EJNature";                 //$NON-NLS-1$ 
