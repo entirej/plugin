@@ -44,7 +44,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.entirej.ide.core.EJCoreLog;
-import org.entirej.ide.core.spi.EJFormValidateProvider;
 import org.entirej.ide.core.spi.EJReportValidateProvider;
 
 public class EJReportConsistencyChecker extends IncrementalProjectBuilder
