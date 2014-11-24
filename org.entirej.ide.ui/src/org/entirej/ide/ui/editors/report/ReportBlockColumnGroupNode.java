@@ -53,7 +53,6 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
-import org.entirej.ide.ui.editors.form.FormNodeTag;
 import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizard;
 import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -126,8 +125,8 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
                     for (IMarker marker : markers)
                     {
-                        int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                        if ((tag & FormNodeTag.GROUP) != 0 && ((tag & FormNodeTag.BLOCK) != 0 || (tag & FormNodeTag.LOV) != 0) && (tag & FormNodeTag.ITEM) != 0)
+                        int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0) && (tag & ReportNodeTag.ITEM) != 0)
                         {
                             fmarkers.add(marker);
                         }
@@ -189,13 +188,13 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                                               IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
                                                               for (IMarker marker : markers)
                                                               {
-                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                  if ((tag & FormNodeTag.BLOCK) != 0
+                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                                                                  if ((tag & ReportNodeTag.BLOCK) != 0
                                                                           && source.getBlockProperties().getName() != null
                                                                           && source.getBlockProperties().getName()
-                                                                                  .equals(marker.getAttribute(FormNodeTag.BLOCK_ID, null))
+                                                                                  .equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null))
                                                                           && source.getName() != null
-                                                                          && source.getName().equals(marker.getAttribute(FormNodeTag.ITEM_ID, null)))
+                                                                          && source.getName().equals(marker.getAttribute(ReportNodeTag.ITEM_ID, null)))
                                                                   {
 
                                                                       fmarkers.add(marker);

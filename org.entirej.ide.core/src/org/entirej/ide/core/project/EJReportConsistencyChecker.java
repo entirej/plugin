@@ -107,7 +107,7 @@ public class EJReportConsistencyChecker extends IncrementalProjectBuilder
             try
             {
                 impl = element.createExecutableExtension("class");
-                if (impl instanceof EJFormValidateProvider)
+                if (impl instanceof EJReportValidateProvider)
                 {
 
                     providers.add(((EJReportValidateProvider) impl));

@@ -20,11 +20,8 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
@@ -61,7 +58,6 @@ import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContain
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.nodes.AbstractNode;
 
 public class ReportScreenPreviewImpl implements IReportPreviewProvider

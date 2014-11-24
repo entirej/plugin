@@ -559,4 +559,10 @@
          </enablement>        
    </deleteParticipant>
 </extension>
+<extension
+      point="org.entirej.ide.core.spi.ejreportvalidate.provider">
+   <provider
+         class="org.entirej.ide.ui.editors.report.EJReportValidateImpl">
+   </provider>
+</extension>
 </plugin>

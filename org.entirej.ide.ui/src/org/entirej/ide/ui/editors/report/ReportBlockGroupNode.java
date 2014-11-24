@@ -59,7 +59,6 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
-import org.entirej.ide.ui.editors.form.FormNodeTag;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -134,8 +133,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
                     for (IMarker marker : markers)
                     {
-                        int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                        if ((tag & FormNodeTag.GROUP) != 0 && (tag & FormNodeTag.BLOCK) != 0)
+                        int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                        if ((tag & ReportNodeTag.GROUP) != 0 && (tag & ReportNodeTag.BLOCK) != 0)
                         {
                             fmarkers.add(marker);
                         }
@@ -697,9 +696,9 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                                               IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
                                                               for (IMarker marker : markers)
                                                               {
-                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                  if ((tag & FormNodeTag.BLOCK) != 0 && source.getName() != null
-                                                                          && source.getName().equals(marker.getAttribute(FormNodeTag.BLOCK_ID, null)))
+                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                                                                  if ((tag & ReportNodeTag.BLOCK) != 0 && source.getName() != null
+                                                                          && source.getName().equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null)))
                                                                   {
 
                                                                       fmarkers.add(marker);
@@ -896,7 +895,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.WIDTH) != 0;
+                                       return (tag & ReportNodeTag.WIDTH) != 0;
                                    }
                                };
 
@@ -967,7 +966,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.HEIGHT) != 0;
+                                       return (tag & ReportNodeTag.HEIGHT) != 0;
                                    }
                                };
 
@@ -1143,7 +1142,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                        public boolean match(int tag, IMarker marker)
                                        {
 
-                                           return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
+                                           return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
                                        }
                                    };
 
@@ -1191,7 +1190,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                        public boolean match(int tag, IMarker marker)
                                        {
 
-                                           return (tag & FormNodeTag.SERVICE) != 0;
+                                           return (tag & ReportNodeTag.SERVICE) != 0;
                                        }
                                    };
 
@@ -1253,7 +1252,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                        public boolean match(int tag, IMarker marker)
                                        {
 
-                                           return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
+                                           return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
                                        }
                                    };
 

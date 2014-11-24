@@ -76,7 +76,6 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
-import org.entirej.ide.ui.editors.form.FormNodeTag;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -266,7 +265,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                                               IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
                                                               for (IMarker marker : markers)
                                                               {
-                                                                  if ((marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE) & FormNodeTag.FORM) != 0)
+                                                                  if ((marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE) & ReportNodeTag.REPORT) != 0)
                                                                   {
                                                                       fmarkers.add(marker);
                                                                   }
@@ -405,7 +404,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.TITLE) != 0;
+                                       return (tag & ReportNodeTag.TITLE) != 0;
                                    }
                                };
 
@@ -453,7 +452,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
+                                       return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
                                    }
                                };
 
@@ -502,7 +501,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.WIDTH) != 0;
+                                       return (tag & ReportNodeTag.WIDTH) != 0;
                                    }
                                };
 
@@ -573,7 +572,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.HEIGHT) != 0;
+                                       return (tag & ReportNodeTag.HEIGHT) != 0;
                                    }
                                };
 
@@ -960,7 +959,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                    public boolean match(int tag, IMarker marker)
                                    {
 
-                                       return (tag & FormNodeTag.RENDERER) != 0;
+                                       return (tag & ReportNodeTag.RENDERER) != 0;
                                    }
                                };
 
