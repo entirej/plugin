@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -59,6 +60,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockGroupAddOperation;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -205,9 +208,9 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 {
                     BlockGroup blockGroup = new BlockGroup();
                     blockGroup.setName(dlg.getValue());
-                    source.addBlockProperties(blockGroup);
-                    treeSection.refresh(ReportBlockGroupNode.this);
-                    treeSection.selectNodes(false, treeSection.findNode(blockGroup, true));
+
+                    ReportBlockGroupAddOperation addOperation = new ReportBlockGroupAddOperation(treeSection, source, blockGroup);
+                    treeSection.getEditor().execute(addOperation, new NullProgressMonitor());
                 }
             }
         };
@@ -526,11 +529,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     DataBlockServiceWizard wizard = new DataBlockServiceWizard(new DataBlockWizardContext()
                     {
 
-                        
                         public boolean isBlockTablelayout()
                         {
                             return true;
                         }
+
                         public int getDefaultWidth()
                         {
                             final EJPluginReportProperties formProperties = editor.getReportProperties();
@@ -566,28 +569,15 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                             screenProperties.setY(y);
                             screenProperties.setWidth(width);
                             screenProperties.setHeight(height);
-                            source.addBlockProperties(blockProperties);
 
                             // create items if service is also selected
                             if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
                             {
                                 blockProperties.setServiceClassName(serviceClass, true);
                             }
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                            {
+                            ReportBlockAddOperation addOperation = new ReportBlockAddOperation(treeSection, source, blockProperties);
 
-                                public void run()
-                                {
-                                    treeSection.getEditor().setDirty(true);
-                                    treeSection.refresh(getParent());
-                                    // FIXME
-                                    // refresh(findNode(formProperties.getCanvasContainer()));
-                                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
-                                    treeSection.selectNodes(true, abstractNode);
-                                    treeSection.expand(abstractNode, 2);
-
-                                }
-                            });
+                            editor.execute(addOperation, new NullProgressMonitor());
 
                         }
 
@@ -1365,7 +1355,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                         {
                             return false;
                         }
-                        
+
                         public int getDefaultWidth()
                         {
                             final EJPluginReportProperties formProperties = editor.getReportProperties();
@@ -1401,28 +1391,15 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                             screenProperties.setY(y);
                             screenProperties.setWidth(width);
                             screenProperties.setHeight(height);
-                            source.addBlockProperties(blockProperties);
 
                             // create items if service is also selected
                             if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
                             {
                                 blockProperties.setServiceClassName(serviceClass, true);
                             }
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                            {
+                            ReportBlockAddOperation addOperation = new ReportBlockAddOperation(treeSection, source, blockProperties);
 
-                                public void run()
-                                {
-                                    treeSection.getEditor().setDirty(true);
-                                    treeSection.refresh(getParent());
-                                    // FIXME
-                                    // refresh(findNode(formProperties.getCanvasContainer()));
-                                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
-                                    treeSection.selectNodes(true, abstractNode);
-                                    treeSection.expand(abstractNode, 2);
-
-                                }
-                            });
+                            editor.execute(addOperation, new NullProgressMonitor());
 
                         }
 

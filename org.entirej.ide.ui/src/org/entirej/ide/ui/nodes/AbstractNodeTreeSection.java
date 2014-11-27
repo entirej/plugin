@@ -86,6 +86,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
 {
     protected int                   expand_level = 2;
     private AbstractEditor          editor;
+   private FormPage page;
     protected FilteredTree          filteredTree;
     protected INodeDescriptorViewer descriptorViewer;
 
@@ -100,6 +101,11 @@ public abstract class AbstractNodeTreeSection extends SectionPart
 
     }
 
+    public AbstractEditor getEditor()
+    {
+        return editor;
+    }
+    
     public void setNodeDescriptorViewer(INodeDescriptorViewer descriptorViewer)
     {
         this.descriptorViewer = descriptorViewer;
@@ -198,6 +204,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             treeview.refresh(node);
             if (expand)
                 expand(node);
+            
         }
     }
 

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -76,6 +77,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockAddOperation;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -1386,29 +1388,17 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                         screenProperties.setY(y);
                         screenProperties.setWidth(width);
                         screenProperties.setHeight(height);
-                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
-
+                        
                         // create items if service is also selected
                         if (supportService() && serviceClass != null && serviceClass.trim().length() > 0)
                         {
                             blockProperties.setServiceClassName(serviceClass, true);
                         }
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
+                        
+                        
+                        ReportBlockAddOperation addOperation = new ReportBlockAddOperation(ReportDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties); 
 
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                // FIXME
-                                // refresh(findNode(formProperties.getCanvasContainer()));
-                                AbstractNode<?> abstractNode = findNode(blockProperties, true);
-                                selectNodes(true, abstractNode);
-                                expand(abstractNode, 2);
-
-                            }
-                        });
-
+                        getEditor().execute(addOperation, new NullProgressMonitor());
                     }
 
                     public boolean hasBlock(String blockName)

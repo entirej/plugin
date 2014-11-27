@@ -181,7 +181,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         body.setLayout(new GridLayout());
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         section.setTabList(new Control[] { body });
-
+        body.forceFocus();
         if (descriptors != null && descriptors.length > 0)
         {
             Composite pContent;

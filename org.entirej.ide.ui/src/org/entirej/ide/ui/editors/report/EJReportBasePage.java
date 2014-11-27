@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.layout.GridData;
@@ -27,6 +28,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
@@ -41,8 +43,8 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
 {
     protected AbstractEJReportEditor  editor;
     protected ReportDesignTreeSection treeSection;
-    protected NodeDescriptorPart    descriptorPart;
-    public static final String      PAGE_ID = "ej.report.base"; //$NON-NLS-1$
+    protected NodeDescriptorPart      descriptorPart;
+    public static final String        PAGE_ID = "ej.report.base"; //$NON-NLS-1$
 
     public EJReportBasePage(AbstractEJReportEditor editor)
     {
@@ -118,20 +120,68 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
         {
             return new NodeElementDeleteHandler(treeSection.getISelectionProvider());
         }
-        // if (ActionFactory.REDO.getCommandId().endsWith(commandId))
-        // {
-        //
-        // }
-        // if (ActionFactory.UNDO.getCommandId().endsWith(commandId))
-        // {
-        //
-        // }
+        if (ActionFactory.REDO.getCommandId().endsWith(commandId))
+        {
+            return new PageActionHandler()
+            {
+
+                public boolean isEnable()
+                {
+                    return editor.getOperationHistory().canRedo(editor.getUndoContext());
+                }
+
+                public void excecute()
+                {
+                    try
+                    {
+                        editor.getOperationHistory().redo(editor.getUndoContext(), null, null);
+                    }
+                    catch (ExecutionException e)
+                    {
+                        EJCoreLog.log(e);
+                    }
+
+                }
+            };
+        }
+        if (ActionFactory.UNDO.getCommandId().endsWith(commandId))
+        {
+            return new PageActionHandler()
+            {
+
+                public boolean isEnable()
+                {
+                    return editor.getOperationHistory().canUndo(editor.getUndoContext());
+                }
+
+                public void excecute()
+                {
+                    try
+                    {
+                        editor.getOperationHistory().undo(editor.getUndoContext(), null, null);
+                    }
+                    catch (ExecutionException e)
+                    {
+                        EJCoreLog.log(e);
+                    }
+
+                }
+            };
+        }
         return null;
     }
 
     public boolean isHandlerActive(String commandId)
     {
         if (ActionFactory.DELETE.getCommandId().endsWith(commandId))
+        {
+            return true;
+        }
+        if (ActionFactory.UNDO.getCommandId().endsWith(commandId))
+        {
+            return true;
+        }
+        if (ActionFactory.REDO.getCommandId().endsWith(commandId))
         {
             return true;
         }
@@ -226,40 +276,40 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
 
     public void select(Object object)
     {
-        if(treeSection!=null)
+        if (treeSection != null)
         {
             treeSection.selectNodes(false, treeSection.findNode(object, true));
         }
-        
+
     }
 
     public void expand(Object objects)
     {
-        if(treeSection!=null)
+        if (treeSection != null)
         {
-            treeSection.expand(treeSection.findNode(objects, true) );
+            treeSection.expand(treeSection.findNode(objects, true));
         }
-        
+
     }
 
     public void refreshProperties()
     {
-        if(descriptorPart!=null)
+        if (descriptorPart != null)
         {
             descriptorPart.buildUI();
         }
-        
+
     }
 
     public void refresh(Object objects)
     {
-        if(treeSection!=null)
+        if (treeSection != null)
         {
             AbstractNode<?> findNode = treeSection.findNode(objects, false);
-            if(findNode!=null)
+            if (findNode != null)
                 treeSection.refresh(findNode);
         }
-        
+
     }
 
 }

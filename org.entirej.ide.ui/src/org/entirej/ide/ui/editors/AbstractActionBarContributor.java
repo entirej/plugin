@@ -152,11 +152,15 @@ public class AbstractActionBarContributor extends MultiPageEditorActionBarContri
         // actions.put(ActionFactory.COPY.getId(), new CopyAction());
         // actions.put(ActionFactory.PASTE.getId(), new PasteAction());
         actions.put(ActionFactory.DELETE.getId(), new DeleteAction());
-        // actions.put(ActionFactory.REDO.getId(), new RedoAction());
-        // actions.put(ActionFactory.UNDO.getId(), new UndoAction());
+         actions.put(ActionFactory.REDO.getId(), new RedoAction());
+         actions.put(ActionFactory.UNDO.getId(), new UndoAction());
         // actions.put(ActionFactory.PRINT.getId(), new PrintAction());
     }
 
+    
+    
+    
+    
     class HandlerAction extends Action implements IUpdate
     {
 

@@ -20,6 +20,14 @@ package org.entirej.ide.ui.editors;
 
 import java.io.IOException;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -45,53 +53,89 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
+import org.entirej.ide.ui.nodes.AbstractNode;
 
 public abstract class AbstractEditor extends FormEditor implements IJavaProjectProvider
 {
 
     private boolean                       dirty;
     private FileMonitor                   fileMonitor;
-    private final IResourceChangeListener buildMonitor = new IResourceChangeListener()
-                                                       {
-                                                           final IResourceDeltaVisitor deltaVisitor = new IResourceDeltaVisitor()
-                                                                                                    {
-
-                                                                                                        public boolean visit(IResourceDelta delta)
-                                                                                                                throws CoreException
+    private final IOperationHistory       operationHistory = new DefaultOperationHistory();
+    private final IUndoContext            undoContext;
+    private final IResourceChangeListener buildMonitor     = new IResourceChangeListener()
+                                                           {
+                                                               final IResourceDeltaVisitor deltaVisitor = new IResourceDeltaVisitor()
                                                                                                         {
-                                                                                                            if (delta.getFlags() == IResourceDelta.MARKERS)
-                                                                                                            {
-                                                                                                                IResource resource = delta.getResource();
-                                                                                                                if (resource instanceof IFile)
-                                                                                                                {
-                                                                                                                    IFile file = (IFile) resource;
-                                                                                                                    IFile eFile = getFile();
-                                                                                                                    if (eFile != null && file.equals(eFile))
-                                                                                                                    {
-                                                                                                                        refreshAfterBuid();
 
-                                                                                                                        return false;
+                                                                                                            public boolean visit(IResourceDelta delta)
+                                                                                                                    throws CoreException
+                                                                                                            {
+                                                                                                                if (delta.getFlags() == IResourceDelta.MARKERS)
+                                                                                                                {
+                                                                                                                    IResource resource = delta.getResource();
+                                                                                                                    if (resource instanceof IFile)
+                                                                                                                    {
+                                                                                                                        IFile file = (IFile) resource;
+                                                                                                                        IFile eFile = getFile();
+                                                                                                                        if (eFile != null && file.equals(eFile))
+                                                                                                                        {
+                                                                                                                            refreshAfterBuid();
+
+                                                                                                                            return false;
+                                                                                                                        }
                                                                                                                     }
                                                                                                                 }
+                                                                                                                return true;
                                                                                                             }
-                                                                                                            return true;
-                                                                                                        }
-                                                                                                    };
+                                                                                                        };
 
-                                                           public void resourceChanged(IResourceChangeEvent event)
-                                                           {
-                                                               try
+                                                               public void resourceChanged(IResourceChangeEvent event)
                                                                {
-                                                                   event.getDelta().accept(deltaVisitor);
-                                                               }
-                                                               catch (CoreException e)
-                                                               {
-                                                                   EJCoreLog.log(e);
-                                                               }
+                                                                   try
+                                                                   {
+                                                                       event.getDelta().accept(deltaVisitor);
+                                                                   }
+                                                                   catch (CoreException e)
+                                                                   {
+                                                                       EJCoreLog.log(e);
+                                                                   }
 
-                                                           }
-                                                       };
+                                                               }
+                                                           };
 
+    public AbstractEditor()
+    {
+        operationHistory.addOperationHistoryListener(new IOperationHistoryListener()
+        {
+
+            public void historyNotification(OperationHistoryEvent event)
+            {
+                EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                {
+                    
+                    public void run()
+                    {
+
+                        AbstractEditor.this.getContributor().refreah();
+                        
+                    }
+                });
+            }
+        });
+        undoContext = new ObjectUndoContext(this);
+    }
+
+    
+    public IUndoContext getUndoContext()
+    {
+        return undoContext;
+    }
+    
+    public IOperationHistory getOperationHistory()
+    {
+        return operationHistory;
+    }
+    
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException
     {
@@ -438,6 +482,19 @@ public abstract class AbstractEditor extends FormEditor implements IJavaProjectP
                 }
             }
             return true;
+        }
+    }
+
+    public void execute(IUndoableOperation operation, IProgressMonitor monitor)
+    {
+        operation.addContext(undoContext);
+        try
+        {
+            operationHistory.execute(operation, monitor, null);
+        }
+        catch (ExecutionException e)
+        {
+            EJCoreLog.log(e);
         }
     }
 
