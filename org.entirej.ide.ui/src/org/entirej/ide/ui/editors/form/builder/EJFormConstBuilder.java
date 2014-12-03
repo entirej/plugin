@@ -57,7 +57,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEdit;
 import org.entirej.framework.core.enumerations.EJScreenType;
-import org.entirej.framework.core.properties.EJCoreMenuProperties;
 import org.entirej.framework.core.properties.definitions.EJPropertyDefinitionType;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;

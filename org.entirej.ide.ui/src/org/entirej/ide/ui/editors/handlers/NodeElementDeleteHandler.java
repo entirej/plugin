@@ -20,10 +20,13 @@ package org.entirej.ide.ui.editors.handlers;
 
 import java.util.Iterator;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.nodes.AbstractNode;
+import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 
 public class NodeElementDeleteHandler implements PageActionHandler
 {
@@ -59,7 +62,7 @@ public class NodeElementDeleteHandler implements PageActionHandler
         return false;
     }
 
-    public void excecute()
+    public void excecute(AbstractEditor editor)
     {
         ISelection selection = selectionProvider.getSelection();
 
@@ -74,9 +77,19 @@ public class NodeElementDeleteHandler implements PageActionHandler
                 if (element instanceof AbstractNode<?>)
                 {
                     AbstractNode<?> node = (AbstractNode<?>) element;
-                    if (node != null && node.getDeleteProvider() != null)
+                    if (node != null )
                     {
-                        node.getDeleteProvider().delete(true);
+                        INodeDeleteProvider deleteProvider = node.getDeleteProvider();
+                        AbstractOperation deleteOperation = deleteProvider.deleteOperation(true);
+                        if (deleteOperation == null)
+                        {
+                            System.err.println("INodeDeleteProvider.deleteOperation : not implements" + node.getClass());
+                            node.getDeleteProvider().delete(true);
+                        }
+                        else
+                        {
+                            editor.execute(deleteOperation);
+                        }
                     }
                 }
             }

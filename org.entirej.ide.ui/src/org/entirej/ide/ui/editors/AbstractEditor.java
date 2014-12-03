@@ -53,7 +53,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
-import org.entirej.ide.ui.nodes.AbstractNode;
 
 public abstract class AbstractEditor extends FormEditor implements IJavaProjectProvider
 {
@@ -496,6 +495,10 @@ public abstract class AbstractEditor extends FormEditor implements IJavaProjectP
         {
             EJCoreLog.log(e);
         }
+    }
+    public void execute(IUndoableOperation operation)
+    {
+        execute(operation, new NullProgressMonitor());
     }
 
 }

@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaProject;
@@ -346,6 +347,11 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         editor.setDirty(true);
                         treeSection.refresh(BlockGroupNode.this);
 
+                    }
+                    public AbstractOperation deleteOperation(boolean cleanup)
+                    {
+                        // TODO Auto-generated method stub
+                        return null;
                     }
                 };
         }
@@ -1032,6 +1038,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         editor.setDirty(true);
                         treeSection.refresh(BlockGroupNode.this);
 
+                    }
+                    
+                    public AbstractOperation deleteOperation(boolean cleanup)
+                    {
+                        // TODO Auto-generated method stub
+                        return null;
                     }
                 };
             return super.getDeleteProvider();

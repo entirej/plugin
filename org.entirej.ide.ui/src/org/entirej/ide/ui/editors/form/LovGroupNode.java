@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
@@ -59,12 +60,12 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevLovRenderer
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
-import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
@@ -571,6 +572,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                     editor.setDirty(true);
                     treeSection.refresh(LovGroupNode.this);
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

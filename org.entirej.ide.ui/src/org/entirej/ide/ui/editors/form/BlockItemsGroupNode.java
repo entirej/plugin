@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
@@ -70,8 +71,8 @@ import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperti
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
-import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginItemChanger;
@@ -371,6 +372,12 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                         // update mirror items
                         updateMirrorItems();
                     }
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

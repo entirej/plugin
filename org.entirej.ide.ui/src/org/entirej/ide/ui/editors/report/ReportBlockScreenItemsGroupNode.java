@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
@@ -295,6 +296,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     editor.setDirty(true);
                     treeSection.refresh(ReportBlockScreenItemsGroupNode.this.getParent());
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

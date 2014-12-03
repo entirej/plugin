@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -390,6 +391,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(AbstractCanvas.this.getParent());
 
                 }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
             };
         }
 
@@ -729,6 +736,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(BlockCanvasNode.this.getParent());
 
                 }
+                
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
             };
         }
     }
@@ -1017,6 +1031,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     editor.setDirty(true);
                     treeSection.refresh(FormCanvasNode.this.getParent());
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }
@@ -3113,6 +3133,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(CanvasGroupNode.this.getParent());
 
                 }
+                
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
             };
         }
 
@@ -3579,6 +3606,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     editor.setDirty(true);
                     treeSection.refresh(CanvasGroupNode.this.getParent());
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.report;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -62,6 +63,8 @@ import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockAddOperation;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockGroupAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockRemoveOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportGroupRemoveOperation;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.report.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -294,6 +297,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     editor.setDirty(true);
                     treeSection.refresh(ReportBlockGroupNode.this);
 
+                }
+
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                  
+                    return new ReportGroupRemoveOperation(treeSection, ReportBlockGroupNode.this.source, source);
                 }
             };
         }
@@ -809,6 +818,13 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                         editor.setDirty(true);
                         treeSection.refresh(ReportBlockGroupNode.this);
 
+                    }
+
+                    public AbstractOperation deleteOperation(boolean cleanup)
+                    {
+                        BlockGroup groupByBlock = ReportBlockGroupNode.this.source.getBlockGroupByBlock(source);
+                        return groupByBlock == null ? new ReportBlockRemoveOperation(treeSection, ReportBlockGroupNode.this.source, source)
+                                : new ReportBlockRemoveOperation(treeSection, groupByBlock, source);
                     }
                 };
             return super.getDeleteProvider();

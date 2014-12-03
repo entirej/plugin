@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -70,7 +69,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIPlugin;
-import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
 import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
 

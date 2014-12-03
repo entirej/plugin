@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -1440,6 +1441,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                         refreshPreview();
                     }
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

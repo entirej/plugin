@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
@@ -794,6 +795,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                         editor.setDirty(true);
                         treeSection.refresh();
 
+                    }
+                    
+                    public AbstractOperation deleteOperation(boolean cleanup)
+                    {
+                        // TODO Auto-generated method stub
+                        return null;
                     }
                 };
             return super.getDeleteProvider();

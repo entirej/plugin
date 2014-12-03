@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.nodes;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
@@ -86,7 +87,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
 {
     protected int                   expand_level = 2;
     private AbstractEditor          editor;
-   private FormPage page;
+    private FormPage                page;
     protected FilteredTree          filteredTree;
     protected INodeDescriptorViewer descriptorViewer;
 
@@ -105,7 +106,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
     {
         return editor;
     }
-    
+
     public void setNodeDescriptorViewer(INodeDescriptorViewer descriptorViewer)
     {
         this.descriptorViewer = descriptorViewer;
@@ -174,15 +175,15 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             treeview.expandToLevel(node, 1);
         }
     }
-    public void expand(AbstractNode<?> node,int level)
+
+    public void expand(AbstractNode<?> node, int level)
     {
         if (filteredTree != null && node != null)
         {
             TreeViewer treeview = filteredTree.getViewer();
-            
-                treeview.expandToLevel(node, level);
-            
-           
+
+            treeview.expandToLevel(node, level);
+
         }
     }
 
@@ -204,7 +205,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             treeview.refresh(node);
             if (expand)
                 expand(node);
-            
+
         }
     }
 
@@ -572,7 +573,19 @@ public abstract class AbstractNodeTreeSection extends SectionPart
                         AbstractNode<?> node = (AbstractNode<?>) element;
                         if (node != null && node.getDeleteProvider() != null)
                         {
-                            node.getDeleteProvider().delete(true);
+
+                            INodeDeleteProvider deleteProvider = node.getDeleteProvider();
+                            AbstractOperation deleteOperation = deleteProvider.deleteOperation(true);
+                            if (deleteOperation == null)
+                            {
+                                System.err.println("INodeDeleteProvider.deleteOperation : not implements" + node.getClass());
+                                node.getDeleteProvider().delete(true);
+                            }
+                            else
+                            {
+                                editor.execute(deleteOperation);
+                            }
+
                         }
                     }
                 }

@@ -18,7 +18,11 @@
  ******************************************************************************/
 package org.entirej.ide.ui.nodes;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
+
 public interface INodeDeleteProvider
 {
     void delete(boolean cleanup);
+    
+    AbstractOperation deleteOperation(boolean cleanup);
 }

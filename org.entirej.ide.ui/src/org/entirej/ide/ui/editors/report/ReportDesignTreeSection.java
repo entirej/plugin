@@ -68,7 +68,6 @@ import org.entirej.framework.report.enumerations.EJReportExportType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;

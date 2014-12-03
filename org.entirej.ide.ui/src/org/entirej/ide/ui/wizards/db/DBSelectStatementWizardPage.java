@@ -59,7 +59,6 @@ import org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage;
 import org.entirej.framework.plugin.ui.wizards.utils.InvalidStatementException;
 import org.entirej.framework.plugin.ui.wizards.utils.StatementValidator;
 import org.entirej.framework.plugin.ui.wizards.utils.SyntaxHighlightListener;
-import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportTableColumn;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;

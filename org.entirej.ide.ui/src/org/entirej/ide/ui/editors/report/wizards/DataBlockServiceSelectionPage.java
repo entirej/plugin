@@ -18,10 +18,6 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report.wizards;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -46,16 +42,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
-import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.ui.EJUIPlugin;
-import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
-import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 import org.entirej.ide.ui.utils.TypeAssistProvider;

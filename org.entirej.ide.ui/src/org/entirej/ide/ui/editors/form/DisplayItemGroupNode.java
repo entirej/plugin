@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -33,7 +34,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
 import org.entirej.framework.core.enumerations.EJScreenType;
-import org.entirej.framework.core.properties.EJCoreLayoutItem.GRAB;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
@@ -1282,6 +1282,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     treeSection.getEditor().setDirty(true);
                     treeSection.refresh(node.getParent());
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

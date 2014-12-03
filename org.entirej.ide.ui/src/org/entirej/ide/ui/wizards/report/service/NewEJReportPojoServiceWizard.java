@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.wizards.NewWizard;
 

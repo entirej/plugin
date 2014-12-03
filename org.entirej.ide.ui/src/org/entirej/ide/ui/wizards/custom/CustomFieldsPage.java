@@ -60,7 +60,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.entirej.framework.core.service.EJTableColumn;
-import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportTableColumn;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;

@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.dnd.Clipboard;
@@ -162,6 +163,13 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 group.properties.deleteItem(source);
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(getParent());
+            }
+            
+            
+            public AbstractOperation deleteOperation(boolean cleanup)
+            {
+                // TODO Auto-generated method stub
+                return null;
             }
         };
     }

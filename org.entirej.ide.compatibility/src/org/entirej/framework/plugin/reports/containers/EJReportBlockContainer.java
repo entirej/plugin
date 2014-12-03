@@ -125,12 +125,15 @@ public class EJReportBlockContainer
         }
     }
     
-    public void removeBlockContainerItem(BlockContainerItem blockProperties)
+    public int removeBlockContainerItem(BlockContainerItem blockProperties)
     {
+        int index = _blockProperties.indexOf(blockProperties);
         if (blockProperties != null)
         {
+            
             _blockProperties.remove(blockProperties);
         }
+        return index;
     }
     
     public void replaceBlockProperties(EJPluginReportBlockProperties oldProp, EJPluginReportBlockProperties newProp)
@@ -433,15 +436,17 @@ public class EJReportBlockContainer
             }
         }
         
-        public void removeBlockProperties(EJPluginReportBlockProperties props)
+        public int removeBlockProperties(EJPluginReportBlockProperties props)
         {
             
+            int index = _blockProperties.indexOf(props);
             if (_blockProperties.contains(props))
             {
                 
                 _blockProperties.remove(props);
                 
             }
+            return index;
             
         }
         

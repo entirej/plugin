@@ -31,6 +31,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
 import org.entirej.ide.ui.editors.handlers.NodeElementDeleteHandler;
@@ -130,7 +131,7 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
                     return editor.getOperationHistory().canRedo(editor.getUndoContext());
                 }
 
-                public void excecute()
+                public void excecute(AbstractEditor editor)
                 {
                     try
                     {
@@ -154,7 +155,7 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
                     return editor.getOperationHistory().canUndo(editor.getUndoContext());
                 }
 
-                public void excecute()
+                public void excecute(AbstractEditor editor)
                 {
                     try
                     {

@@ -18,10 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report.wizards;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.IJavaProject;
-import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 
 public interface BlockItemWizardContext
 {

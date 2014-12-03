@@ -18,10 +18,14 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.handlers;
 
+import org.entirej.ide.ui.editors.AbstractEditor;
+
 public interface PageActionHandler
 {
 
     boolean isEnable();
 
-    void excecute();
+    void excecute(AbstractEditor editor);
+    
+     
 }

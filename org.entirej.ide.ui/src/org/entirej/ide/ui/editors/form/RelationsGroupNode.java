@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -368,6 +369,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                         editor.setDirty(true);
                         treeSection.refresh(RelationNode.this);
                     }
+                    
+                    public AbstractOperation deleteOperation(boolean cleanup)
+                    {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
                 };
             }
         }
@@ -561,6 +568,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                     editor.setDirty(true);
                     treeSection.refresh(RelationsGroupNode.this);
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             };
         }

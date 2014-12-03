@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.prop;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -303,6 +304,12 @@ public class RendererTreeSection extends AbstractNodeTreeSection
                         refresh(parent);
                     }
 
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
 
             };

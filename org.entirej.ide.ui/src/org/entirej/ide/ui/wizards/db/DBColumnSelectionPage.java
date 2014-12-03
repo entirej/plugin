@@ -68,7 +68,6 @@ import org.eclipse.ui.PlatformUI;
 import org.entirej.framework.core.service.EJTableColumn;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage;
-import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportTableColumn;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;

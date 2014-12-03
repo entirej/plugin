@@ -177,7 +177,7 @@ public class AbstractActionBarContributor extends MultiPageEditorActionBarContri
                 PageActionHandler actionHandler = provider.getActionHandler(getActionDefinitionId());
                 if (actionHandler != null)
                 {
-                    actionHandler.excecute();
+                    actionHandler.excecute(editor);
                 }
                 // do actions refresh
                 AbstractActionBarContributor.this.refreah();
