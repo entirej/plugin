@@ -89,6 +89,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 import org.entirej.ide.ui.wizards.service.NewEJPojoServiceWizard;
 
 public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> implements NodeMoveProvider
@@ -1230,6 +1231,13 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
         else
             source.addLovDefinitionProperties((EJPluginLovDefinitionProperties) dSource);
 
+    }
+    
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     protected boolean supportLovDelete()

@@ -7,29 +7,32 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
-import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
 
-public class ReportBlockGroupAddOperation extends AbstractOperation
+public class ReportBlockContainerItemAddOperation extends AbstractOperation
 {
 
-    private EJReportBlockContainer  container;
-    private BlockGroup              group;
-    private AbstractNodeTreeSection treeSection;
-    private boolean dirty;
+    private EJReportBlockContainer        container;
+    private BlockContainerItem blockProperties;
+    private AbstractNodeTreeSection       treeSection;
+    private boolean                       dirty;
 
-    private int index = -1;
-    
-    public ReportBlockGroupAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, BlockGroup group, int index)
+    private int                           index = -1;
+
+    public ReportBlockContainerItemAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, BlockContainerItem blockProperties,
+            int index)
     {
-        super("Add Block Group");
+        super("Add Block");
         this.treeSection = treeSection;
         this.container = container;
-        this.group = group;
+        this.blockProperties = blockProperties;
         this.index = index;
     }
+
+   
 
     @Override
     public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
@@ -40,28 +43,25 @@ public class ReportBlockGroupAddOperation extends AbstractOperation
     @Override
     public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
     {
+        dirty = treeSection.isDirty();
 
         if (container != null)
         {
-            if(index==-1)
-            {
-                container.addBlockProperties(group);
-            }
+            if (index == -1)
+                container.addBlockProperties(blockProperties);
             else
             {
-                container.addBlockProperties(index,group);
+                container.addBlockProperties(index, blockProperties);
             }
-            
 
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {
 
                 public void run()
                 {
-                    dirty = treeSection.isDirty();
                     treeSection.getEditor().setDirty(true);
                     treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(group, true);
+                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
                     treeSection.expand(abstractNode, 2);
 
@@ -77,7 +77,7 @@ public class ReportBlockGroupAddOperation extends AbstractOperation
     {
         if (container != null)
         {
-            container.removeBlockContainerItem(group);
+            container.removeBlockContainerItem(blockProperties);
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {
 

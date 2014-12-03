@@ -266,6 +266,12 @@ public class RendererTreeSection extends AbstractNodeTreeSection
                 this.source.addRendererAssignment((EJPluginRenderer)source);
             
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     private class RendererNode extends AbstractNode<EJPluginRenderer> implements Neighbor, Movable

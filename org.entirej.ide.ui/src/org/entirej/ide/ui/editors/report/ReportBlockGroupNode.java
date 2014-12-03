@@ -62,6 +62,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockContainerItemAddOperation;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockGroupAddOperation;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockRemoveOperation;
 import org.entirej.ide.ui.editors.report.operations.ReportGroupRemoveOperation;
@@ -74,6 +75,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 import org.entirej.ide.ui.wizards.service.NewEJPojoServiceWizard;
 
 public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> implements NodeMoveProvider
@@ -212,7 +214,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     BlockGroup blockGroup = new BlockGroup();
                     blockGroup.setName(dlg.getValue());
 
-                    ReportBlockGroupAddOperation addOperation = new ReportBlockGroupAddOperation(treeSection, source, blockGroup);
+                    ReportBlockGroupAddOperation addOperation = new ReportBlockGroupAddOperation(treeSection, source, blockGroup, -1);
                     treeSection.getEditor().execute(addOperation, new NullProgressMonitor());
                 }
             }
@@ -301,7 +303,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                  
+
                     return new ReportGroupRemoveOperation(treeSection, ReportBlockGroupNode.this.source, source);
                 }
             };
@@ -395,6 +397,23 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             else
                 source.addBlockProperties((EJPluginReportBlockProperties) dSource);
 
+        }
+
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+                    return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, index);
+                }
+            }
+            return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, -1);
         }
 
     }
@@ -492,6 +511,25 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
         }
 
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+                    
+                    return new ReportBlockAddOperation(treeSection, source.source, (EJPluginReportBlockProperties) dSource, index);
+                    
+                }
+            }
+            return new ReportBlockAddOperation(treeSection, source.source, (EJPluginReportBlockProperties) dSource,-1);
+            
+        }
     }
 
     class BlockSectionGroupNode extends AbstractNode<BlockGroup> implements NodeOverview, NodeMoveProvider
@@ -584,7 +622,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                             {
                                 blockProperties.setServiceClassName(serviceClass, true);
                             }
-                            ReportBlockAddOperation addOperation = new ReportBlockAddOperation(treeSection, source, blockProperties);
+                            ReportBlockAddOperation addOperation = new ReportBlockAddOperation(treeSection, source, blockProperties, -1);
 
                             editor.execute(addOperation, new NullProgressMonitor());
 
@@ -672,6 +710,25 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             else
                 source.addBlockProperties((EJPluginReportBlockProperties) dSource);
 
+        }
+
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                   
+                    return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, index);
+                }
+            }
+            return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, -1);
         }
 
     }
@@ -1413,7 +1470,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                             {
                                 blockProperties.setServiceClassName(serviceClass, true);
                             }
-                            ReportBlockAddOperation addOperation = new ReportBlockAddOperation(treeSection, source, blockProperties);
+                            ReportBlockAddOperation addOperation = new ReportBlockAddOperation(treeSection, source, blockProperties, -1);
 
                             editor.execute(addOperation, new NullProgressMonitor());
 
@@ -1510,6 +1567,24 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
         }
 
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginReportBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, index);
+                }
+            }
+            return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, -1);
+        }
+
     }
 
     public boolean canMove(Neighbor relation, Object source)
@@ -1535,6 +1610,26 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         else
             source.addBlockProperties((BlockContainerItem) dSource);
 
+    }
+
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+    {
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<BlockContainerItem> items = source.getBlockContainerItems();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new ReportBlockContainerItemAddOperation(treeSection, source, (BlockContainerItem) dSource, index);
+            }
+
+        }
+
+        return new ReportBlockContainerItemAddOperation(treeSection, source, (BlockContainerItem) dSource, -1);
     }
 
     public AbstractNode<?> createScreenGroupNode(ReportScreenNode reportScreenNode, BlockGroup subBlocks)

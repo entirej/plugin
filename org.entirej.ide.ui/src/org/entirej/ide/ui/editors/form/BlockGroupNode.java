@@ -144,6 +144,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         this.treeSection = treeSection;
     }
 
+    
     public String getName()
     {
 
@@ -330,7 +331,11 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         {
             return BlockGroupNode.this.getImage();
         }
-        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
         
         @Override
         public INodeDeleteProvider getDeleteProvider()
@@ -2178,5 +2183,11 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         else
             source.addBlockProperties((BlockContainerItem) dSource);
 
+    }
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

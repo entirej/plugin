@@ -59,6 +59,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> implements NodeMoveProvider
 {
@@ -879,5 +880,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
         else
             source.addRelationProperties((EJPluginRelationProperties) dSource);
 
+    }
+    
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

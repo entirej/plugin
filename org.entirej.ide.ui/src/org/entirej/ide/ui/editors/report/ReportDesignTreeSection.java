@@ -1395,7 +1395,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                         }
                         
                         
-                        ReportBlockAddOperation addOperation = new ReportBlockAddOperation(ReportDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties); 
+                        ReportBlockAddOperation addOperation = new ReportBlockAddOperation(ReportDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties,-1); 
 
                         getEditor().execute(addOperation, new NullProgressMonitor());
                     }

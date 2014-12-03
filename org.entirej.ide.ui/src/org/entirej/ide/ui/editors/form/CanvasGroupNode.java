@@ -67,6 +67,7 @@ import org.entirej.ide.ui.nodes.INodeRenameProvider;
 import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> implements NodeMoveProvider
 {
@@ -322,6 +323,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         else
             source.addCanvasProperties((EJPluginCanvasProperties) dSource);
 
+    }
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private abstract class AbstractCanvas extends AbstractNode<EJPluginCanvasProperties> implements Neighbor, Movable, NodeOverview
@@ -1132,6 +1139,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getGroupCanvasContainer().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         public void addOverview(StyledString styledString)
         {
@@ -1561,6 +1574,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getSplitCanvasContainer().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         public void addOverview(StyledString styledString)
         {
@@ -1981,6 +2000,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getTabPageContainer().addTabPageProperties((EJPluginTabPageProperties) dSource);
 
         }
+        
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         public AbstractNode<?>[] getChildren()
         {
@@ -2352,6 +2378,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             else
                 source.getStackedPageContainer().addStackedPageProperties((EJPluginStackedPageProperties) dSource);
 
+        }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         public AbstractNode<?>[] getChildren()
@@ -2756,6 +2788,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             else
                 source.getPopupCanvasContainer().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
+        }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         public AbstractNode<?>[] getChildren()
@@ -3283,6 +3321,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getContainedCanvases().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
+        
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
@@ -3752,6 +3797,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
             if (source.getStackedCanvasProperties().isImportFromObjectGroup())

@@ -17,24 +17,30 @@ public class ReportBlockAddOperation extends AbstractOperation
 {
 
     private EJReportBlockContainer        container;
-    private BlockGroup        group;
+    private BlockGroup                    group;
     private EJPluginReportBlockProperties blockProperties;
     private AbstractNodeTreeSection       treeSection;
-    private boolean dirty;
+    private boolean                       dirty;
 
-    public ReportBlockAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, EJPluginReportBlockProperties blockProperties)
+    private int                           index = -1;
+
+    public ReportBlockAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, EJPluginReportBlockProperties blockProperties,
+            int index)
     {
         super("Add Block");
         this.treeSection = treeSection;
         this.container = container;
         this.blockProperties = blockProperties;
+        this.index = index;
     }
-    public ReportBlockAddOperation(final AbstractNodeTreeSection treeSection, BlockGroup group, EJPluginReportBlockProperties blockProperties)
+
+    public ReportBlockAddOperation(final AbstractNodeTreeSection treeSection, BlockGroup group, EJPluginReportBlockProperties blockProperties, int index)
     {
         super("Add Block");
         this.treeSection = treeSection;
         this.group = group;
         this.blockProperties = blockProperties;
+        this.index = index;
     }
 
     @Override
@@ -47,10 +53,15 @@ public class ReportBlockAddOperation extends AbstractOperation
     public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
     {
         dirty = treeSection.isDirty();
-        
-        if(container!=null)
+
+        if (container != null)
         {
-            container.addBlockProperties(blockProperties);
+            if (index == -1)
+                container.addBlockProperties(blockProperties);
+            else
+            {
+                container.addBlockProperties(index, blockProperties);
+            }
 
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {
@@ -66,13 +77,18 @@ public class ReportBlockAddOperation extends AbstractOperation
                 }
             });
         }
-        if(group!=null)
+        if (group != null)
         {
-            group.addBlockProperties(blockProperties);
-            
+            if (index == -1)
+                group.addBlockProperties(blockProperties);
+            else
+            {
+                group.addBlockProperties(index, blockProperties);
+            }
+
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {
-                
+
                 public void run()
                 {
                     treeSection.getEditor().setDirty(true);
@@ -80,18 +96,18 @@ public class ReportBlockAddOperation extends AbstractOperation
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
                     treeSection.expand(abstractNode, 2);
-                    
+
                 }
             });
         }
-       
+
         return Status.OK_STATUS;
     }
 
     @Override
     public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
     {
-        if(container!=null)
+        if (container != null)
         {
             container.removeBlockContainerItem(blockProperties);
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
@@ -99,29 +115,29 @@ public class ReportBlockAddOperation extends AbstractOperation
 
                 public void run()
                 {
-                   
+
                     treeSection.getEditor().setDirty(dirty);
                     treeSection.refresh(treeSection.findNode(container), true);
                 }
-            }); 
+            });
         }
-        if(group!=null)
+        if (group != null)
         {
             group.removeBlockProperties(blockProperties);
-            
+
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {
-                
+
                 public void run()
                 {
-                   
+
                     treeSection.getEditor().setDirty(dirty);
                     treeSection.refresh(treeSection.findNode(group), true);
-                    
+
                 }
-            }); 
+            });
         }
-       
+
         return Status.OK_STATUS;
     }
 

@@ -18,12 +18,16 @@
  ******************************************************************************/
 package org.entirej.ide.ui.nodes.dnd;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
+
 public interface NodeMoveProvider
 {
 
     boolean canMove(Neighbor relation, Object source);
 
     void move(NodeContext context, Neighbor neighbor, Object source, boolean before);
+    
+    AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before);
 
     public static interface Neighbor
     {

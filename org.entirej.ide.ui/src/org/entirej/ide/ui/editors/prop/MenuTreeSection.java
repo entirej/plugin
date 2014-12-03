@@ -323,6 +323,12 @@ public class MenuTreeSection extends AbstractNodeTreeSection
                 source.addLeaf((EJPluginMenuLeafProperties) item);
 
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         @Override
         public AbstractNode<?>[] getChildren()
@@ -538,6 +544,12 @@ public class MenuTreeSection extends AbstractNodeTreeSection
             else
                 source.addLeaf((EJPluginMenuLeafProperties) item);
 
+        }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         @Override

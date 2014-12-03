@@ -452,6 +452,11 @@ public abstract class AbstractNodeTreeSection extends SectionPart
                 AbstractNodeTreeSection.this.selectNodes(focusDeatils, nodes);
 
             }
+            
+            public AbstractEditor getEditor()
+            {
+                return editor;
+            }
 
             public void refresh(AbstractNode<?> node)
             {

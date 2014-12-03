@@ -63,6 +63,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnContainer> implements NodeMoveProvider
 {
@@ -715,6 +716,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
         else
             source.addColumnProperties((EJPluginReportColumnProperties) dSource);
 
+    }
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public Action createNewEmptyColumnAction(final EJReportColumnContainer container, final int index)

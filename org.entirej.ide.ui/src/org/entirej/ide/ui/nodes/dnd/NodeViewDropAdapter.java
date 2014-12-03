@@ -18,10 +18,15 @@
  ******************************************************************************/
 package org.entirej.ide.ui.nodes.dnd;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.TriggeredOperations;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.widgets.Display;
+import org.entirej.ide.ui.editors.report.operations.ReversibleOperation;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 
@@ -116,16 +121,55 @@ public class NodeViewDropAdapter extends ViewerDropAdapter
                                 source = sourceNode.getSource();
 
                             INodeDeleteProvider sourceDelProvider = sourceNode.getDeleteProvider();
+
+                            AbstractOperation deleteOperation = null;
                             if (sourceDelProvider != null)
                             {
-                                sourceDelProvider.delete(false);
+                                deleteOperation = sourceDelProvider.deleteOperation(false);
+                            }
+                            AbstractOperation moveOperation = moveProvider.moveOperation(context, neighbor, source, location == LOCATION_BEFORE);
+
+                            if (deleteOperation == null || moveOperation == null)
+                            {
+                                System.err.println("INodeDeleteProvider.deleteOperation or NodeMoveProvider.moveOperation not impl: " + deleteOperation + ", "
+                                        + moveProvider);
+                                if (sourceDelProvider != null)
+                                {
+                                    sourceDelProvider.delete(false);
+                                }
+                                moveProvider.move(context, neighbor, source, location == LOCATION_BEFORE);
+
+                                context.nodesUpdated();
+
+                                context.refresh(node != null ? node.getParent() : null);
+                                context.selectNodes(false, sourceNode);
+                            }
+                            else
+                            {
+                                ReversibleOperation operation = new ReversibleOperation("Move")
+                                {
+                                    @Override
+                                    protected void refresh()
+                                    {
+                                        Display.getCurrent().asyncExec(new Runnable()
+                                        {
+
+                                            public void run()
+                                            {
+                                                context.nodesUpdated();
+
+                                                context.refresh(node != null ? node.getParent() : null);
+                                                context.selectNodes(false, sourceNode);
+
+                                            }
+                                        });
+                                    }
+                                };
+                                operation.add(deleteOperation);
+                                operation.add(moveOperation);
+                                context.getEditor().execute(operation);
                             }
 
-                            moveProvider.move(context, neighbor, source, location == LOCATION_BEFORE);
-                            context.nodesUpdated();
-
-                            context.refresh(node != null ? node.getParent() : null);
-                            context.selectNodes(false, sourceNode);
                         }
 
                     }
@@ -150,17 +194,61 @@ public class NodeViewDropAdapter extends ViewerDropAdapter
                         {
 
                             INodeDeleteProvider sourceDelProvider = sourceNode.getDeleteProvider();
+                            
+                            
+                            AbstractOperation deleteOperation = null;
                             if (sourceDelProvider != null)
                             {
-                                sourceDelProvider.delete(false);
+                                deleteOperation = sourceDelProvider.deleteOperation(false);
                             }
-                            provider.move(context, null, source, false);
-                            context.nodesUpdated();
+                            AbstractOperation moveOperation = provider.moveOperation(context, null, source, false);;
 
-                            context.refresh(node);
-                            sourceNode.setParent(node);
-                            context.expand(node);
-                            context.selectNodes(false, sourceNode);
+                            if (deleteOperation == null || moveOperation == null)
+                            {
+                                
+                                System.err.println("INodeDeleteProvider.deleteOperation or NodeMoveProvider.moveOperation not impl: " + deleteOperation + ", "
+                                        + provider);
+                                if (sourceDelProvider != null)
+                                {
+                                    sourceDelProvider.delete(false);
+                                }
+                                provider.move(context, null, source, false);
+                                context.nodesUpdated();
+
+                                context.refresh(node);
+                                sourceNode.setParent(node);
+                                context.expand(node);
+                                context.selectNodes(false, sourceNode);
+                            }
+                            else
+                            {
+                                ReversibleOperation operation = new ReversibleOperation("Move")
+                                {
+                                    @Override
+                                    protected void refresh()
+                                    {
+                                        Display.getCurrent().asyncExec(new Runnable()
+                                        {
+
+                                            public void run()
+                                            {
+                                                context.nodesUpdated();
+
+                                                context.refresh(node);
+                                                sourceNode.setParent(node);
+                                                context.expand(node);
+                                                context.selectNodes(false, sourceNode);
+
+                                            }
+                                        });
+                                    }
+                                };
+                                operation.add(deleteOperation);
+                                operation.add(moveOperation);
+                                context.getEditor().execute(operation);
+                            }
+                            
+                            
 
                         }
                     }

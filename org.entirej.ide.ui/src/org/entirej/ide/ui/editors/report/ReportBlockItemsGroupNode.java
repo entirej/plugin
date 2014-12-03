@@ -76,6 +76,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemContainer> implements NodeMoveProvider
 {
@@ -543,6 +544,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
             else
                 source.addItemProperties((EJPluginReportItemProperties) dSource);
         
+    }
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public Action createNewBlockItemAction(final int index)

@@ -572,6 +572,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 container.addItem((EJCoreLayoutItem) source);
 
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
     }
 
@@ -871,6 +877,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 group.addItem((EJCoreLayoutItem) source);
 
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     private class SplitNode extends AbstractLayoutItem implements NodeMoveProvider
@@ -1069,6 +1081,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 group.addItem((EJCoreLayoutItem) source);
 
         }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     private class TabNode extends AbstractLayoutItem implements NodeMoveProvider
@@ -1266,6 +1284,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             else
                 group.addItem((EJCoreLayoutItem) source);
 
+        }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

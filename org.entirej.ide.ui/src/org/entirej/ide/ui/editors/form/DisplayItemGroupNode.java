@@ -251,6 +251,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         this.source.move(context, neighbor, source, before);
 
     }
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public Action[] getActions()

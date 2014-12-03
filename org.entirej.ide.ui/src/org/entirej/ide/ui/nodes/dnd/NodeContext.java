@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.nodes.dnd;
 
+import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.nodes.AbstractNode;
 
 public interface NodeContext
@@ -35,4 +36,5 @@ public interface NodeContext
 
     void selectNodes(boolean focusDeatils, AbstractNode<?>... nodes);
 
+    AbstractEditor getEditor();
 }

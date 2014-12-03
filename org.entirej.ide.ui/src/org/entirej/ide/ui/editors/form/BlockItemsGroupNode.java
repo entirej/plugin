@@ -98,6 +98,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
+import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 
 public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer> implements NodeMoveProvider
@@ -854,6 +855,12 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         {
             updateMirrorItems();
         }
+    }
+    
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public Action createNewBlockItemAction(final int index)
