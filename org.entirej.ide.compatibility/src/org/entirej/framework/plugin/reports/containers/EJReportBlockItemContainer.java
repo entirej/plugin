@@ -184,12 +184,15 @@ public class EJReportBlockItemContainer
         return _itemProperties.size();
     }
     
-    public void removeItem(EJPluginReportItemProperties item)
+    public int removeItem(EJPluginReportItemProperties item)
     {
+        int indexOf = _itemProperties.indexOf(item);
         // FIXME
         // EJPluginItemChanger.deleteItemOnForm(_blockProperties,
         // item.getName());
         _itemProperties.remove(item);
+        
+        return indexOf;
     }
     
 }

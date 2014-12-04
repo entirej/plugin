@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -67,6 +68,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.ReportBlockGroupNode.BlockNode;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockItemAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockItemRemoveOperation;
 import org.entirej.ide.ui.editors.report.wizards.BlockItemWizard;
 import org.entirej.ide.ui.editors.report.wizards.BlockItemWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -76,14 +79,13 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemContainer> implements NodeMoveProvider
 {
 
-    public static final Image           GROUP    = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-    public static final Image           BLOCK_ND = EJUIImages.getImage(EJUIImages.DESC_BLOCK_ITEM_ND);
-    public static final Image           BLOCK    = EJUIImages.getImage(EJUIImages.DESC_BLOCK_ITEM);
+    public static final Image             GROUP    = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+    public static final Image             BLOCK_ND = EJUIImages.getImage(EJUIImages.DESC_BLOCK_ITEM_ND);
+    public static final Image             BLOCK    = EJUIImages.getImage(EJUIImages.DESC_BLOCK_ITEM);
 
     private final ReportDesignTreeSection treeSection;
     private final AbstractEJReportEditor  editor;
@@ -142,7 +144,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     for (IMarker marker : markers)
                     {
                         int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
-                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0) && (tag & ReportNodeTag.ITEM) != 0)
+                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0)
+                                && (tag & ReportNodeTag.ITEM) != 0)
                         {
                             fmarkers.add(marker);
                         }
@@ -152,8 +155,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                 }
             });
         }
-        
-        
+
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
             return getParent().getAdapter(adapter);
@@ -179,12 +181,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         return nodes.toArray(new AbstractNode<?>[0]);
     }
 
-   
-
     @Override
     public Action[] getActions()
     {
-      
 
         return new Action[] { createNewBlockItemAction(-1) };
     }
@@ -218,7 +217,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
                                                                       fmarkers.add(marker);
                                                                   }
-                                                                  
+
                                                               }
 
                                                               return fmarkers;
@@ -262,10 +261,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         @Override
         public Action[] getActions()
         {
-         
 
             int indexOf = ReportBlockItemsGroupNode.this.source.getAllItemProperties().indexOf(source);
-            return new Action[] { createNewBlockItemAction(++indexOf), null,createCopyBINameAction()  };
+            return new Action[] { createNewBlockItemAction(++indexOf), null, createCopyBINameAction() };
         }
 
         public Action createCopyBINameAction()
@@ -302,7 +300,6 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
             // if it is a mirror child or Referenced should not be able to
             // delete from mirror
             // level
-            
 
             return new INodeDeleteProvider()
             {
@@ -320,13 +317,13 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     }
                     editor.setDirty(true);
                     treeSection.refresh(ReportBlockItemsGroupNode.this.getParent());
-                  
+
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+
+                    return new ReportBlockItemRemoveOperation(treeSection, ReportBlockItemsGroupNode.this.source, source);
                 }
             };
         }
@@ -337,7 +334,6 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
             // if it is a mirror child or Referenced should not be able to
             // rename from mirror
             // level
-            
 
             return new INodeRenameProvider()
             {
@@ -366,7 +362,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                         String oldName = source.getName();
                         String newName = dlg.getValue().trim();
                         source.setName(newName);
-                        //FIXME EJPluginItemChanger.renameItemOnForm(source.getBlockProperties(), oldName, newName);
+                        // FIXME
+                        // EJPluginItemChanger.renameItemOnForm(source.getBlockProperties(),
+                        // oldName, newName);
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
 
@@ -387,7 +385,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         {
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
-            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(source.getBlockProperties().getReportProperties(),source.getBlockProperties(), "Default Query Value")
+            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(source.getBlockProperties().getReportProperties(), source.getBlockProperties(),
+                    "Default Query Value")
             {
                 @Override
                 public String getValue()
@@ -410,12 +409,10 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                 }
 
             };
-         
 
-
-             if (this.source.getBlockProperties().isReferenceBlock())
+            if (this.source.getBlockProperties().isReferenceBlock())
             {
-                
+
                 return new AbstractDescriptor<?>[] { queryItemDefaultValue };
             }
             else
@@ -462,45 +459,41 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                 };
 
                 descriptors.add(dataTypeDescriptor);
-                
-                if(!source.getBlockProperties().isControlBlock())
+
+                if (!source.getBlockProperties().isControlBlock())
                 {
                     AbstractDescriptor<Boolean> blockServiceDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
                     {
-    
+
                         @Override
                         public Boolean getValue()
                         {
                             return source.isBlockServiceItem();
                         }
-    
+
                         @Override
                         public void setValue(Boolean value)
                         {
                             source.setBlockServiceItem(value.booleanValue());
                             editor.setDirty(true);
                             treeSection.refresh(ItemNode.this);
-    
+
                         }
-    
+
                         @Override
                         public String getTooltip()
                         {
                             return "Indicates if this item is controlled by the blocks service. All Block Service Items must exist within the block service pojo. If you create a Block Service Item that does not exist in the pojo, then an exception will be thrown as soon as the Block Service is called to query, insert, update or delete data.";
                         }
-    
+
                     };
                     blockServiceDescriptor.setText("Block Service Item");
-                    
-    
-                    
+
                     descriptors.add(blockServiceDescriptor);
                 }
             }
-       
-            descriptors.add(queryItemDefaultValue);
 
-          
+            descriptors.add(queryItemDefaultValue);
 
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
@@ -527,29 +520,42 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        
-            if (neighbor != null)
-            {
-                Object methodNeighbor = neighbor.getNeighborSource();
-                List<EJPluginReportItemProperties> items = source.getAllItemProperties();
-                if (items.contains(methodNeighbor))
-                {
-                    int index = items.indexOf(methodNeighbor);
-                    if (!before)
-                        index++;
 
-                    source.addItemProperties(index, (EJPluginReportItemProperties) dSource);
-                }
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginReportItemProperties> items = source.getAllItemProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                source.addItemProperties(index, (EJPluginReportItemProperties) dSource);
             }
-            else
-                source.addItemProperties((EJPluginReportItemProperties) dSource);
-        
+        }
+        else
+            source.addItemProperties((EJPluginReportItemProperties) dSource);
+
     }
-    
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginReportItemProperties> items = source.getAllItemProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new ReportBlockItemAddOperation(treeSection, source, (EJPluginReportItemProperties) dSource, index);
+            }
+        }
+
+        return new ReportBlockItemAddOperation(treeSection, source, (EJPluginReportItemProperties) dSource);
     }
 
     public Action createNewBlockItemAction(final int index)
@@ -573,41 +579,22 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     {
                         return editor.getJavaProject();
                     }
-                    
+
                     public boolean isContorl()
                     {
                         return source.getBlockProperties().isControlBlock();
                     }
-
-                 
 
                     public void addBlock(String blockItemName, String dataType, boolean serviceItem)
                     {
                         final EJPluginReportItemProperties itemProperties = new EJPluginReportItemProperties(source.getBlockProperties(), blockItemName);
                         itemProperties.setDataTypeClassName(dataType);
                         itemProperties.setBlockServiceItem(serviceItem);
-                        
 
-                        if (index == -1)
-                        {
-                            source.addItemProperties(itemProperties);
-                        }
-                        else
-                        {
-                            source.addItemProperties(index, itemProperties);
-                        }
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
+                        ReportBlockItemAddOperation addOperation = new ReportBlockItemAddOperation(treeSection, source, itemProperties, index);
 
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                treeSection.refresh(ReportBlockItemsGroupNode.this);
-                                treeSection.selectNodes(true, treeSection.findNode(itemProperties,true));
-                                
+                        editor.execute(addOperation, new NullProgressMonitor());
 
-                            }
-                        });
                     }
                 };
                 BlockItemWizard wizard = new BlockItemWizard(context);
@@ -620,8 +607,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
     public static class ItemDefaultValue extends AbstractGroupDescriptor
     {
 
-        final EJPluginReportProperties formProp;
-        final EJPluginReportBlockProperties blockProperties; 
+        final EJPluginReportProperties      formProp;
+        final EJPluginReportBlockProperties blockProperties;
+
         @Override
         public boolean isExpand()
         {
@@ -654,13 +642,13 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
 
         TYPE entry;
 
-        public ItemDefaultValue(EJPluginReportProperties formProp,EJPluginReportBlockProperties blockProperties, String lable)
+        public ItemDefaultValue(EJPluginReportProperties formProp, EJPluginReportBlockProperties blockProperties, String lable)
         {
             super(lable);
             this.formProp = formProp;
             this.blockProperties = blockProperties;
         }
-        
+
         public String getDefaultBlockValue()
         {
             return "";
@@ -880,9 +868,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     {
 
                                         List<String> blockNames = new ArrayList<String>(formProp.getBlockNamesWithParents(blockProperties));
-                                        
-                                        
-                                        
+
                                         return blockNames.toArray();
                                     }
                                 });
@@ -900,9 +886,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     public Object[] getElements(Object inputElement)
                                     {
                                         EJReportBlockItemContainer blockItemContainer = formProp.getBlockProperties((String) inputElement);
-                                        if(blockItemContainer==null)return new Object[0]; 
-                                        Collection<EJPluginReportItemProperties> allItemProperties = blockItemContainer
-                                                .getAllItemProperties();
+                                        if (blockItemContainer == null)
+                                            return new Object[0];
+                                        Collection<EJPluginReportItemProperties> allItemProperties = blockItemContainer.getAllItemProperties();
                                         List<EJPluginReportItemProperties> blockItemNames = new ArrayList<EJPluginReportItemProperties>();
                                         for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
                                         {
@@ -914,8 +900,6 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     }
                                 });
 
-                                
-                                
                                 blockViewer.addSelectionChangedListener(new ISelectionChangedListener()
                                 {
 
@@ -948,19 +932,18 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     if (split.length == 2)
                                     {
                                         blockViewer.setSelection(new StructuredSelection(split[0]));
-                                        
+
                                         Collection<EJPluginReportItemProperties> allItemProperties = formProp.getBlockProperties(split[0])
                                                 .getAllItemProperties();
                                         for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
                                         {
-                                            if(ejItemProperties.getName().equals(split[1]))
+                                            if (ejItemProperties.getName().equals(split[1]))
                                             {
                                                 itemViewer.setSelection(new StructuredSelection(ejItemProperties));
                                                 break;
                                             }
                                         }
-                                        
-                                        
+
                                     }
                                 }
 
@@ -974,28 +957,31 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                             String lov = (String) ((IStructuredSelection) blockViewer.getSelection()).getFirstElement();
                                             if (itemViewer.getSelection() instanceof IStructuredSelection)
                                             {
-                                                EJPluginReportItemProperties item = (EJPluginReportItemProperties) ((IStructuredSelection) itemViewer.getSelection()).getFirstElement();
-                                               if(item!=null)
-                                                   setValue(String.format("%s.%s", lov, item.getName()));
+                                                EJPluginReportItemProperties item = (EJPluginReportItemProperties) ((IStructuredSelection) itemViewer
+                                                        .getSelection()).getFirstElement();
+                                                if (item != null)
+                                                    setValue(String.format("%s.%s", lov, item.getName()));
                                             }
 
                                         }
 
                                     }
                                 });
-                                
-                                itemViewer.setLabelProvider(new ColumnLabelProvider(){
-                                    
-                                    public String getText(Object element) {
-                                        if(element instanceof EJPluginReportItemProperties)
+
+                                itemViewer.setLabelProvider(new ColumnLabelProvider()
+                                {
+
+                                    public String getText(Object element)
+                                    {
+                                        if (element instanceof EJPluginReportItemProperties)
                                         {
-                                            EJPluginReportItemProperties itemProperties = ((EJPluginReportItemProperties)element);
-                                            return String.format("%s - %s", itemProperties.getName(),itemProperties.getDataTypeClassName());
+                                            EJPluginReportItemProperties itemProperties = ((EJPluginReportItemProperties) element);
+                                            return String.format("%s - %s", itemProperties.getName(), itemProperties.getDataTypeClassName());
                                         }
-                                        
+
                                         return super.getText(element);
                                     };
-                                    
+
                                 });
 
                                 updateUIState();
@@ -1003,8 +989,6 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             }
 
                         } };
-
-                    
 
                 }
             return new AbstractDescriptor<?>[0];
