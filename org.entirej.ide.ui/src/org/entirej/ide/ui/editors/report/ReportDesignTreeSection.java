@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.report;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -373,7 +374,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     editor.setDirty(true);
                     refresh(ReportNode.this);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -390,7 +396,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 {
                     return "Contains properties that are only used within the plugin and are not used within the running application";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return new AbstractDescriptor<?>[] { formDisplayNameDescriptor };
@@ -421,7 +432,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 {
                     return validator.getWarningMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -456,7 +472,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                        return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
                                    }
                                };
-
+                               @Override
+                               public void runOperation(AbstractOperation operation)
+                               {
+                                   editor.execute(operation);
+                                   
+                               }
                 @Override
                 public String getErrors()
                 {
@@ -512,7 +533,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getTooltip()
                 {
@@ -583,7 +609,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getWarnings()
                 {
@@ -650,7 +681,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     refresh(ReportNode.this);
                     
                 }
-                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public Boolean getValue()
                 {
@@ -689,7 +725,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     editor.setDirty(true);
                     refresh(ReportNode.this);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -717,7 +758,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return "The Footer section height <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -766,7 +812,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return "The Top Margin <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -815,7 +866,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return "The Bottom Margin <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -864,7 +920,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return "The Left Margin <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -912,7 +973,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return "The Right Margin <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -970,7 +1036,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getWarnings()
                 {
@@ -1023,7 +1094,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     source.setVisualAttributeName(value);
                     editor.setDirty(true);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -1064,7 +1140,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                     return "Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Report\">here</a> For more information on laying out an EntireJ Report";
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor, headerSectionDescriptor, footerSectionDescriptor,
@@ -1084,7 +1165,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                 {
                     return "Report parameters are report global variables that can be accessed from the reports action processor or used as default Query  values on the block items. For more information, read the Form Properties section <a href=\"http://docs.entirej.com/display/EJ1/Report+Properties#FormProperties-ReportParameters\">here</a>";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public Action[] getToolbarActions()
                 {
 
@@ -1265,7 +1351,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                 tableViewer.refresh(entry);
                             }
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public String getValue()
                         {
@@ -1287,7 +1378,12 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                             }
 
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public String getValue()
                         {

@@ -702,9 +702,29 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
             text.addModifyListener(new ModifyListener()
             {
+                boolean enable = true;
                 public void modifyText(ModifyEvent e)
                 {
-                    descriptor.setValue(text.getText());
+                    if(enable)
+                    descriptor.runOperation(descriptor.createOperation(text.getText(),new IRefreshHandler()
+                    {
+                        
+                        public void refresh()
+                        {
+                                try
+                                {
+                                    enable = false;
+                                    if(!text.isDisposed())
+                                        text.setText(descriptor.getValue());
+                                    
+                                }finally
+                                {
+                                    enable = true;
+                                }
+                            
+                        }
+                    }));
+                    
                 }
             });
             descriptor.addEditorAssist(text);
@@ -770,9 +790,29 @@ public abstract class AbstractDescriptorPart extends SectionPart
             text.setLayoutData(gd);
             text.addModifyListener(new ModifyListener()
             {
+                boolean enable = true;
                 public void modifyText(ModifyEvent e)
                 {
-                    descriptor.setValue(text.getText());
+                    if(enable)
+                    descriptor.runOperation(descriptor.createOperation(text.getText(),new IRefreshHandler()
+                    {
+                        
+                        public void refresh()
+                        {
+                                try
+                                {
+                                    enable = false;
+                                    if(!text.isDisposed())
+                                        text.setText(descriptor.getValue());
+                                    
+                                }finally
+                                {
+                                    enable = true;
+                                }
+                            
+                        }
+                    }));
+                    
                 }
             });
             descriptor.addEditorAssist(text);
@@ -839,13 +879,31 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
                 public void widgetSelected(SelectionEvent e)
                 {
-                    descriptor.setValue(button.getSelection());
+                    descriptor.runOperation(descriptor.createOperation(button.getSelection(), new IRefreshHandler()
+                    {
+                        
+                        public void refresh()
+                        {
+                            if(!button.isDisposed())
+                                button.setSelection(descriptor.getValue());
+                            
+                        }
+                    }));
 
                 }
 
                 public void widgetDefaultSelected(SelectionEvent e)
                 {
-                    descriptor.setValue(button.getSelection());
+                    descriptor.runOperation(descriptor.createOperation(button.getSelection(), new IRefreshHandler()
+                    {
+                        
+                        public void refresh()
+                        {
+                            if(!button.isDisposed())
+                                button.setSelection(descriptor.getValue());
+                            
+                        }
+                    }));
 
                 }
             });
@@ -929,9 +987,29 @@ public abstract class AbstractDescriptorPart extends SectionPart
             text.setLayoutData(gd);
             text.addModifyListener(new ModifyListener()
             {
+                boolean enable = true;
                 public void modifyText(ModifyEvent e)
                 {
-                    descriptor.setValue(text.getText());
+                    if(enable)
+                    descriptor.runOperation(descriptor.createOperation(text.getText(),new IRefreshHandler()
+                    {
+                        
+                        public void refresh()
+                        {
+                                try
+                                {
+                                    enable = false;
+                                    if(!text.isDisposed())
+                                        text.setText(descriptor.getValue());
+                                    
+                                }finally
+                                {
+                                    enable = true;
+                                }
+                            
+                        }
+                    }));
+                    
                 }
             });
             addIssueDecoration(text);
@@ -972,12 +1050,35 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
                 combo.addSelectionListener(new SelectionAdapter()
                 {
+                   
+
+                    
+                    
+                    boolean enable = true;
                     public void widgetSelected(SelectionEvent event)
                     {
                         String key = combo.getText();
-                        descriptor.setValue(key != null ? combo.getData(key) : null);
+                        if(enable)
+                            descriptor.runOperation(descriptor.createOperation(key != null ? combo.getData(key) : null,new IRefreshHandler()
+                        {
+                            
+                            public void refresh()
+                            {
+                                    try
+                                    {
+                                        enable = false;
+                                        if(!combo.isDisposed())
+                                            combo.setText(provider.getOptionText(descriptor.getValue()));
+                                        
+                                    }finally
+                                    {
+                                        enable = true;
+                                    }
+                                
+                            }
+                        }));
+                        
                     }
-
                 });
             }
             addIssueDecoration(combo);

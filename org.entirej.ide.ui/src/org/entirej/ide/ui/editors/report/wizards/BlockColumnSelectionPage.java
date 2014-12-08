@@ -21,6 +21,8 @@ package org.entirej.ide.ui.editors.report.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -295,6 +297,9 @@ public class BlockColumnSelectionPage extends WizardPage
                
             }
 
+            
+            
+            
             @Override
             public String getValue()
             {
@@ -409,7 +414,7 @@ public class BlockColumnSelectionPage extends WizardPage
         if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
         {
             final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(source.getBlockProperties()
+            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(null,source.getBlockProperties()
                     .getReportProperties(), source.getBlockProperties(), "Value Provider")
             {
                 @Override
@@ -430,6 +435,8 @@ public class BlockColumnSelectionPage extends WizardPage
                 {
                     return wizardContext.getDefaultBlockValue();
                 }
+                
+                
 
             };
             descriptors.add(valueProvider);

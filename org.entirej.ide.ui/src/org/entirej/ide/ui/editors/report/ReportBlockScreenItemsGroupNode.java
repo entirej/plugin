@@ -393,7 +393,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 {
                     return validator.getWarningMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -464,7 +469,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                     return "The height <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -533,7 +543,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     treeSection.getEditor().setDirty(true);
                     treeSection.refresh(ScreenItemNode.this);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -582,7 +597,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     treeSection.getEditor().setDirty(true);
                     treeSection.refresh(ScreenItemNode.this);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -624,7 +644,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 {
                     return source.getVisualAttributeName();
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public String[] getOptions()
                 {
                     List<String> list = new ArrayList<String>();
@@ -665,7 +690,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     treeSection.refresh(ScreenItemNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public Boolean getValue()
                 {
@@ -685,7 +715,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
             {
                 final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-                ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(source.getBlockProperties()
+                ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(editor,source.getBlockProperties()
                         .getReportProperties(), source.getBlockProperties(), "Value Provider")
                 {
                     @Override
@@ -725,7 +755,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                             treeSection.refresh(ScreenItemNode.this);
 
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public Boolean getValue()
                         {
@@ -750,7 +785,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                             treeSection.refresh(ScreenItemNode.this);
 
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public String[] getOptions()
                         {
                             String[] options = new String[EJReportMarkupType.values().length];
@@ -801,7 +841,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         options.add(EJReportScreenAlignment.JUSTIFIED.name());
                         return options.toArray(new String[0]);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public String getOptionText(String t)
                     {
 
@@ -833,7 +878,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         options.add(EJReportScreenAlignment.JUSTIFIED.name());
                         return options.toArray(new String[0]);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public String getOptionText(String t)
                     {
 
@@ -864,6 +914,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         return item.getRotation().name();
                     }
 
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public String[] getOptions()
                     {
                         List<String> options = new ArrayList<String>();
@@ -899,7 +955,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     final EJPluginReportScreenItemProperties.Label label = (EJPluginReportScreenItemProperties.Label) source;
                     final AbstractTextDescDescriptor textDescriptor = new AbstractTextDescDescriptor("Text")
                     {
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public String getTooltip()
                         {
@@ -930,7 +991,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     final EJPluginReportScreenItemProperties.Number number = (EJPluginReportScreenItemProperties.Number) source;
                     final AbstractTextDescriptor mformatDescriptor = new AbstractTextDescriptor("Manual Format")
                     {
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public void setValue(String value)
                         {
@@ -954,7 +1020,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
                             return number.getLocaleFormat().name();
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public String[] getOptions()
                         {
                             List<String> options = new ArrayList<String>();
@@ -991,6 +1062,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     {
 
                         @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
+                        @Override
                         public void setValue(String value)
                         {
                             number.setManualFormat(value);
@@ -1023,7 +1100,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                             }
                             return options.toArray(new String[0]);
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public String getOptionText(String t)
                         {
 
@@ -1054,7 +1136,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
                             return number.getLineStyle().name();
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public String[] getOptions()
                         {
                             List<String> options = new ArrayList<String>();
@@ -1086,7 +1173,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
                             return number.getLineDirection().name();
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public String[] getOptions()
                         {
                             List<String> options = new ArrayList<String>();
@@ -1121,7 +1213,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                             return "The width <b>(in pixels)</b> of the Line.";
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public void setValue(String value)
                         {
@@ -1204,7 +1301,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                         {
                             return number.getLineStyle().name();
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public String[] getOptions()
                         {
                             List<String> options = new ArrayList<String>();
@@ -1239,7 +1341,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                             return "The width <b>(in pixels)</b> of the Line.";
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public void setValue(String value)
                         {
@@ -1314,7 +1421,12 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                             return "The radius <b>(in pixels)</b> of the rectangle.";
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         @Override
                         public void setValue(String value)
                         {

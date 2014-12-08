@@ -18,7 +18,14 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.descriptors;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Control;
+import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
 
 public abstract class AbstractDescriptor<T>
 {
@@ -96,6 +103,52 @@ public abstract class AbstractDescriptor<T>
     public abstract T getValue();
 
     public abstract void setValue(T value);
+    
+    public  void runOperation(AbstractOperation operation)
+    {
+        try
+        {
+            operation.redo(null, null);
+        }
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    
+    
+    public AbstractOperation createOperation(final T newValue,final IRefreshHandler handler)
+    {
+        final T oldValue = getValue();
+        return new AbstractOperation(String.format("Change : %s", getText()))
+        {
+
+            @Override
+            public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+            {
+                setValue(oldValue);
+                handler.refresh();
+                return Status.OK_STATUS;
+            }
+
+            @Override
+            public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+            {
+               
+                setValue(newValue);
+                handler.refresh();
+                return Status.OK_STATUS;
+            }
+
+            @Override
+            public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+            {
+                setValue(newValue);
+                return Status.OK_STATUS;
+            }
+        };
+    }
 
     public String getErrors()
     {

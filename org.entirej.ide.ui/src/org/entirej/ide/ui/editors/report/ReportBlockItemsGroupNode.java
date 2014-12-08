@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -385,7 +386,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         {
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
-            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(source.getBlockProperties().getReportProperties(), source.getBlockProperties(),
+            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(editor,source.getBlockProperties().getReportProperties(), source.getBlockProperties(),
                     "Default Query Value")
             {
                 @Override
@@ -441,7 +442,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
@@ -478,6 +484,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             editor.setDirty(true);
                             treeSection.refresh(ItemNode.this);
 
+                        } 
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
                         }
 
                         @Override
@@ -615,7 +627,25 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         {
             return true;
         }
-
+        @Override
+        public void runOperation(AbstractOperation operation)
+        {
+            if(editor!=null)
+                editor.execute(operation);
+            else
+            {
+                try
+                {
+                    operation.redo(null, null);
+                }
+                catch (ExecutionException e)
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            
+        }
         enum TYPE
         {
             EMPTY, BLOCK_ITEM, REPORT_PARAMETER, APP_PARAMETER, CLASS_FIELD;
@@ -641,11 +671,19 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         }
 
         TYPE entry;
-
+        final AbstractEJReportEditor  editor;
+        public ItemDefaultValue(AbstractEJReportEditor  editor,EJPluginReportProperties formProp, EJPluginReportBlockProperties blockProperties, String lable)
+        {
+            super(lable);
+            this.formProp = formProp;
+            this.editor = editor;
+            this.blockProperties = blockProperties;
+        }
         public ItemDefaultValue(EJPluginReportProperties formProp, EJPluginReportBlockProperties blockProperties, String lable)
         {
             super(lable);
             this.formProp = formProp;
+            this.editor = null;
             this.blockProperties = blockProperties;
         }
 
@@ -732,7 +770,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     case APP_PARAMETER:
                         return new AbstractDescriptor<?>[] { new AbstractTextDropDownDescriptor("Parameter")
                         {
-
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+                                
+                            }
                             public String[] getOptions()
                             {
                                 List<String> list = new ArrayList<String>();
@@ -802,7 +845,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 else
                                     ItemDefaultValue.this.setValue("");
                             }
-
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+                                
+                            }
                             @Override
                             public String getValue()
                             {

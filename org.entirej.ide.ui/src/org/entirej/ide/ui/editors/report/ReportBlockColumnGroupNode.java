@@ -292,7 +292,6 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
                     return new ReportBlockColumnRemoveOperation(treeSection, ReportBlockColumnGroupNode.this.source, source);
                 }
             };
@@ -395,6 +394,13 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     borderProperties.setLineStyle(EJReportBorderProperties.LineStyle.valueOf(value));
 
                 }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
 
             };
 
@@ -407,7 +413,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                     return "The width <b>(in pixels)</b> of the Line.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -491,7 +502,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 {
                     return borderProperties.getVisualAttributeName();
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public String[] getOptions()
                 {
                     List<String> list = new ArrayList<String>();
@@ -523,7 +539,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             descriptors.add(vaDescriptor);
             descriptors.add(new AbstractBooleanDescriptor("Border Top Line")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -541,6 +562,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             {
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                @Override
                 public void setValue(Boolean value)
                 {
                     borderProperties.setShowBottomLine(value);
@@ -555,7 +582,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             });
             descriptors.add(new AbstractBooleanDescriptor("Border Left Line")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -572,6 +604,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             descriptors.add(new AbstractBooleanDescriptor("Border Right Line")
             {
 
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -649,7 +687,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
             AbstractBooleanDescriptor showHeader = new AbstractBooleanDescriptor("Show Header")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -666,7 +709,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             };
             AbstractBooleanDescriptor showFooter = new AbstractBooleanDescriptor("Show Footer")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(Boolean value)
                 {

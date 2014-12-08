@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.report;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StyledString;
@@ -155,7 +156,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return validator.getErrorMarkerMsg(fmarkers, vfilter);
             }
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                treeSection.getEditor().execute(operation);
+                
+            }
             @Override
             public String getTooltip()
             {
@@ -228,7 +234,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return validator.getErrorMarkerMsg(fmarkers, vfilter);
             }
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                treeSection.getEditor().execute(operation);
+                
+            }
             @Override
             public String getWarnings()
             {
@@ -292,7 +303,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return "The X <b>(in pixels)</b> of the report within it's Page.";
             }
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                treeSection.getEditor().execute(operation);
+                
+            }
             @Override
             public void setValue(String value)
             {
@@ -343,7 +359,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return "The Y <b>(in pixels)</b> of the report within it's Page.";
             }
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                treeSection.getEditor().execute(operation);
+                
+            }
             @Override
             public void setValue(String value)
             {
@@ -398,7 +419,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 treeSection.refresh(ReportScreenNode.this);
                 
             }
-            
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                treeSection.getEditor().execute(operation);
+                
+            }
             @Override
             public Boolean getValue()
             {
@@ -426,7 +452,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return validator.getErrorMarkerMsg(fmarkers, vfilter);
             }
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                treeSection.getEditor().execute(operation);
+                
+            }
             @Override
             public String getWarnings()
             {
@@ -518,7 +549,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     if (blockGroupNode != null)
                         treeSection.refresh(blockGroupNode);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -544,7 +580,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 
 
                
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+                    
+                }
 
                 @Override
                 public void setValue(String value)
@@ -593,7 +634,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             {
                 
 
-               
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+                    
+                }
 
 
                 @Override
@@ -642,7 +688,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             
             AbstractGroupDescriptor sectionheights = new AbstractGroupDescriptor("Default Column Heights")
             {
-                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     // TODO Auto-generated method stub
@@ -660,7 +711,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     source.setOddRowVAName(value);
                     treeSection.getEditor().setDirty(true);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {
@@ -703,7 +759,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     source.setEvenRowVAName(value);
                     treeSection.getEditor().setDirty(true);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+                    
+                }
                 @Override
                 public String getValue()
                 {

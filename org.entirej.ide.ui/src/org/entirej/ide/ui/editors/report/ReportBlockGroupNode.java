@@ -981,7 +981,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 {
                     return validator.getWarningMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1052,7 +1057,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                     return "The height <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1101,7 +1111,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                     return "The X <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1151,7 +1166,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                     return "The Y <b>(in pixels)</b> of the report within it's Page.";
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1221,7 +1241,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
@@ -1269,7 +1294,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
@@ -1331,7 +1361,12 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
