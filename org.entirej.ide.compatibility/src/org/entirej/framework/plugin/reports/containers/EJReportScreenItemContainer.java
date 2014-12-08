@@ -140,10 +140,11 @@ public class EJReportScreenItemContainer
         return _itemProperties.size();
     }
     
-    public void removeItem(EJPluginReportScreenItemProperties item)
+    public int removeItem(EJPluginReportScreenItemProperties item)
     {
-        
+        int indexOf = _itemProperties.indexOf(item);
         _itemProperties.remove(item);
+        return indexOf;
     }
     
     public EJPluginReportScreenItemProperties createItem(EJReportScreenItemType type, String name, int index)

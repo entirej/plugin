@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
@@ -61,6 +63,9 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockItemAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockScreenItemAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockScreenItemRemoveOperation;
 import org.entirej.ide.ui.editors.report.wizards.ScreenItemWizard;
 import org.entirej.ide.ui.editors.report.wizards.ScreenItemWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -71,7 +76,6 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreenItemContainer> implements NodeMoveProvider
 {
@@ -139,7 +143,8 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     for (IMarker marker : markers)
                     {
                         int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
-                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0) && (tag & ReportNodeTag.ITEM) != 0)
+                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0)
+                                && (tag & ReportNodeTag.ITEM) != 0)
                         {
                             fmarkers.add(marker);
                         }
@@ -298,11 +303,10 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     treeSection.refresh(ReportBlockScreenItemsGroupNode.this.getParent());
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    return new ReportBlockScreenItemRemoveOperation(treeSection, ReportBlockScreenItemsGroupNode.this.source, source);
                 }
             };
         }
@@ -706,53 +710,51 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                 };
                 descriptors.add(valueProvider);
-                
-                if(!(source instanceof EJPluginReportScreenItemProperties.Image))
+
+                if (!(source instanceof EJPluginReportScreenItemProperties.Image))
                 {
-                    
-                    
+
                     AbstractBooleanDescriptor expandToFit = new AbstractBooleanDescriptor("Expand To Fit")
                     {
-                        
+
                         @Override
                         public void setValue(Boolean value)
                         {
                             item.setExpandToFit(value);
                             editor.setDirty(true);
                             treeSection.refresh(ScreenItemNode.this);
-                            
+
                         }
-                        
+
                         @Override
                         public Boolean getValue()
                         {
                             return item.isExpandToFit();
                         }
                     };
-                    
+
                     descriptors.add(expandToFit);
-                    
+
                 }
-                if((source instanceof EJPluginReportScreenItemProperties.Text))
+                if ((source instanceof EJPluginReportScreenItemProperties.Text))
                 {
-                    
-                    
+
                     AbstractTextDropDownDescriptor markup = new AbstractTextDropDownDescriptor("Markup")
                     {
-                        
+
                         @Override
                         public void setValue(String value)
                         {
                             item.setMarkup(EJReportMarkupType.valueOf(value));
                             editor.setDirty(true);
                             treeSection.refresh(ScreenItemNode.this);
-                            
+
                         }
-                        
+
                         public String[] getOptions()
                         {
-                            String  [] options = new String[EJReportMarkupType.values().length];
-                            int index =0 ;
+                            String[] options = new String[EJReportMarkupType.values().length];
+                            int index = 0;
                             for (EJReportMarkupType markupType : EJReportMarkupType.values())
                             {
                                 options[index] = markupType.name();
@@ -760,23 +762,23 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                             }
                             return options;
                         }
-                        
+
                         public String getOptionText(String t)
                         {
                             return EJReportMarkupType.valueOf(t).toString();
                         }
-                        
+
                         @Override
                         public String getValue()
                         {
                             return item.getMarkup().name();
                         }
                     };
-                    
+
                     descriptors.add(markup);
-                    
+
                 }
-                
+
             }
 
             if (source instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
@@ -1440,11 +1442,24 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             source.addItemProperties((EJPluginReportScreenItemProperties) dSource);
 
     }
-    
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginReportScreenItemProperties> items = source.getAllItemProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new ReportBlockScreenItemAddOperation(treeSection, source, (EJPluginReportScreenItemProperties) dSource, index);
+            }
+        }
+
+        return new ReportBlockScreenItemAddOperation(treeSection, source, (EJPluginReportScreenItemProperties) dSource);
     }
 
     public Action createNewScreenItemAction(final EJReportScreenItemContainer container, final int index)
@@ -1485,8 +1500,6 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 };
             }
 
-           
-
             @Override
             public Action[] getActions()
             {
@@ -1518,7 +1531,7 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 {
                     itemProperties.setX(0);
                     itemProperties.setWidth(source.getScreenProperties().getWidth());
-                    
+
                     itemProperties.setHeight(10);
                 }
                 else
@@ -1574,19 +1587,10 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             {
 
                 itemProperties.setName(name);
-                container.addItemProperties(index, itemProperties);
 
-                EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                {
+                ReportBlockScreenItemAddOperation addOperation = new ReportBlockScreenItemAddOperation(treeSection, container, itemProperties, index);
 
-                    public void run()
-                    {
-                        editor.setDirty(true);
-                        treeSection.refresh(ReportBlockScreenItemsGroupNode.this);
-                        treeSection.selectNodes(true, treeSection.findNode(itemProperties, true));
-
-                    }
-                });
+                editor.execute(addOperation, new NullProgressMonitor());
 
             }
         };
