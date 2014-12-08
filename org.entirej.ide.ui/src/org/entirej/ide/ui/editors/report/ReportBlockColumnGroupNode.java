@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -54,6 +55,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockColumnAddOperation;
+import org.entirej.ide.ui.editors.report.operations.ReportBlockColumnRemoveOperation;
 import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizard;
 import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -63,7 +66,6 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnContainer> implements NodeMoveProvider
 {
@@ -128,7 +130,8 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     for (IMarker marker : markers)
                     {
                         int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
-                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0) && (tag & ReportNodeTag.ITEM) != 0)
+                        if ((tag & ReportNodeTag.GROUP) != 0 && ((tag & ReportNodeTag.BLOCK) != 0 || (tag & ReportNodeTag.LOV) != 0)
+                                && (tag & ReportNodeTag.ITEM) != 0)
                         {
                             fmarkers.add(marker);
                         }
@@ -286,11 +289,11 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     treeSection.refresh(ReportBlockColumnGroupNode.this.getParent());
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
-                    return null;
+                    return new ReportBlockColumnRemoveOperation(treeSection, ReportBlockColumnGroupNode.this.source, source);
                 }
             };
         }
@@ -717,11 +720,26 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             source.addColumnProperties((EJPluginReportColumnProperties) dSource);
 
     }
-    
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginReportColumnProperties> items = source.getAllColumnProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new ReportBlockColumnAddOperation(treeSection, source, (EJPluginReportColumnProperties) dSource, index);
+
+            }
+        }
+        return new ReportBlockColumnAddOperation(treeSection, source, (EJPluginReportColumnProperties) dSource);
+
     }
 
     public Action createNewEmptyColumnAction(final EJReportColumnContainer container, final int index)
@@ -760,21 +778,21 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                         return editor.getJavaProject();
                     }
 
-                    public void addBlockColumn(String name, String label,int width, EJPluginReportScreenItemProperties screenItem)
+                    public void addBlockColumn(String name, String label, int width, EJPluginReportScreenItemProperties screenItem)
                     {
                         final EJPluginReportColumnProperties itemProperties = new EJPluginReportColumnProperties(container.getBlockProperties());
-                        container.addColumnProperties(itemProperties);
+
                         if (itemProperties != null)
                         {
                             // set default width/height
                             itemProperties.setName(name);
 
                             itemProperties.getHeaderScreen().setWidth(width);
-                           // itemProperties.getHeaderScreen().setHeight(20);
+                            // itemProperties.getHeaderScreen().setHeight(20);
                             itemProperties.getDetailScreen().setWidth(width);
-                            //itemProperties.getDetailScreen().setHeight(20);
+                            // itemProperties.getDetailScreen().setHeight(20);
                             itemProperties.getFooterScreen().setWidth(width);
-                            //itemProperties.getFooterScreen().setHeight(20);
+                            // itemProperties.getFooterScreen().setHeight(20);
 
                             if (screenItem != null)
                             {
@@ -785,7 +803,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                 screenItem.setName(name);
                                 itemProperties.getDetailScreen().getScreenItemContainer().addItemProperties(screenItem);
                             }
-                            if (label != null && label.length()>0)
+                            if (label != null && label.length() > 0)
                             {
                                 itemProperties.setShowHeader(true);
                                 EJPluginReportScreenItemProperties.Label screenLabelItem = new EJPluginReportScreenItemProperties.Label(
@@ -795,27 +813,20 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                 screenLabelItem.setHeight(container.getBlockProperties().getLayoutScreenProperties().getHeaderColumnHeight());
                                 screenLabelItem.setText(label);
                                 screenLabelItem.setName(name);
-                                
-                                if(screenItem instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+
+                                if (screenItem instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
                                 {
-                                    EJPluginReportScreenItemProperties.AlignmentBaseItem  al = (AlignmentBaseItem) screenItem;
+                                    EJPluginReportScreenItemProperties.AlignmentBaseItem al = (AlignmentBaseItem) screenItem;
                                     screenLabelItem.setHAlignment(al.getHAlignment());
                                     screenLabelItem.setVAlignment(al.getVAlignment());
                                 }
                                 itemProperties.getHeaderScreen().getScreenItemContainer().addItemProperties(screenLabelItem);
                             }
 
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                            {
+                            ReportBlockColumnAddOperation addOperation = new ReportBlockColumnAddOperation(treeSection, container, itemProperties, index);
 
-                                public void run()
-                                {
-                                    editor.setDirty(true);
-                                    treeSection.refresh(ReportBlockColumnGroupNode.this);
-                                    treeSection.selectNodes(true, treeSection.findNode(itemProperties, true));
+                            editor.execute(addOperation, new NullProgressMonitor());
 
-                                }
-                            });
                         }
 
                     }
@@ -823,8 +834,8 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     public List<EJReportScreenItemType> getBlockItemTypes()
                     {
 
-                        return Arrays.asList(EJReportScreenItemType.TEXT, EJReportScreenItemType.DATE,
-                                EJReportScreenItemType.NUMBER, EJReportScreenItemType.IMAGE, EJReportScreenItemType.LABEL);
+                        return Arrays.asList(EJReportScreenItemType.TEXT, EJReportScreenItemType.DATE, EJReportScreenItemType.NUMBER,
+                                EJReportScreenItemType.IMAGE, EJReportScreenItemType.LABEL);
                     }
 
                     public FormToolkit getToolkit()

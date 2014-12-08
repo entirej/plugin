@@ -102,10 +102,11 @@ public class EJReportColumnContainer
         return _columnProperties.size();
     }
     
-    public void removeColumn(EJPluginReportColumnProperties column)
+    public int removeColumn(EJPluginReportColumnProperties column)
     {
-        
+        int indexOf = _columnProperties.indexOf(column);
         _columnProperties.remove(column);
+        return indexOf;
     }
     
 }
