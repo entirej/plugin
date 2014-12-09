@@ -108,7 +108,7 @@ public abstract class AbstractDescriptor<T>
     {
         try
         {
-            operation.redo(null, null);
+            operation.execute(null, null);
         }
         catch (ExecutionException e)
         {
