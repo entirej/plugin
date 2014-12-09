@@ -1235,6 +1235,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         return true;
                     }
 
+                    
+                    
                     @Override
                     public String lableLinkActivator()
                     {
@@ -1269,6 +1271,15 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         text = (Text) control;
                         text.setEditable(false);
+                    }
+
+
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
                     }
                 }};
             }
@@ -1322,6 +1333,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                @Override
                 public void setValue(String value)
                 {
                     source.setBlockRendererName(value, true);
@@ -1365,7 +1382,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public String getWarnings()
                     {
@@ -1506,7 +1528,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         return getValue();
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
@@ -1557,7 +1584,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public boolean hasLableLink()
                     {
                         return true;
@@ -1646,7 +1678,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public String getWarnings()
                     {
@@ -1686,6 +1723,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         treeSection.refresh(BlockNode.this);
 
                     }
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
 
                 };
                 addControlBlockDefaultRecordDescriptor.setText("Add Default Record");
@@ -1722,7 +1765,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
@@ -1785,7 +1833,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public void setValue(String value)
                     {
@@ -1831,7 +1884,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         editor.setDirty(true);
                         treeSection.refresh(BlockNode.this);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public String getValue()
                     {
@@ -1880,7 +1938,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return String.valueOf(source.getPageSize());
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     Text text;
 
                     @Override
@@ -1910,6 +1973,13 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         editor.setDirty(true);
                         treeSection.refresh(BlockNode.this);
 
+                    }
+                    
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
                     }
 
                     @Override
@@ -1943,12 +2013,19 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getTooltip()
                 {
                     return "Indicates if the user can create records within this block";
                 }
+                
+                
 
             };
             insertAllowMenuDescriptor.setText("Insert Allowed");
@@ -1969,7 +2046,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getTooltip()
                 {
@@ -1995,7 +2077,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getTooltip()
                 {
@@ -2010,7 +2097,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
             AbstractGroupDescriptor dataGroupDescriptor = new AbstractGroupDescriptor("Data Settings")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return dataDescriptors.toArray(new AbstractDescriptor<?>[0]);
@@ -2034,7 +2126,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Renderer Settings")
                         {
-
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+                                
+                            }
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
                                 return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getEntireJProperties(), definitionGroup,

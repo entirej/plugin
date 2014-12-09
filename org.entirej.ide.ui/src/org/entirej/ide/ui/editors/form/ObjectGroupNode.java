@@ -375,7 +375,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                         {
                                             return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Block")
                                             {
-
+                                                @Override
+                                                public void runOperation(AbstractOperation operation)
+                                                {
+                                                    editor.execute(operation);
+                                                    
+                                                }
                                                 public boolean hasLableLink()
                                                 {
                                                     return true;
@@ -489,7 +494,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                                 {
                                                     return true;
                                                 }
-
+                                                @Override
+                                                public void runOperation(AbstractOperation operation)
+                                                {
+                                                    editor.execute(operation);
+                                                    
+                                                }
                                                 @Override
                                                 public String lableLinkActivator()
                                                 {
@@ -605,7 +615,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
 
                                                     return getValue();
                                                 }
-
+                                                @Override
+                                                public void runOperation(AbstractOperation operation)
+                                                {
+                                                    editor.execute(operation);
+                                                    
+                                                }
                                                 @Override
                                                 public void setValue(String value)
                                                 {
@@ -709,7 +724,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                                 {
                                                     return true;
                                                 }
-
+                                                @Override
+                                                public void runOperation(AbstractOperation operation)
+                                                {
+                                                    editor.execute(operation);
+                                                    
+                                                }
                                                 @Override
                                                 public String lableLinkActivator()
                                                 {
@@ -850,7 +870,12 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                 {
                     return true;
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String lableLinkActivator()
                 {

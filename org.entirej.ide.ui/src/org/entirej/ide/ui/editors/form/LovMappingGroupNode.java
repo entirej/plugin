@@ -496,6 +496,13 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                     }
 
                     @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
+
+                    @Override
                     public String getWarnings()
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
@@ -558,6 +565,13 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                     {
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
                     }
 
                     @Override
@@ -624,7 +638,7 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                         editor.setDirty(true);
                         treeSection.refresh(MappingNode.this);
                     }
-                    
+
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
                         // TODO Auto-generated method stub
@@ -662,7 +676,7 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                     treeSection.refresh(LovMappingGroupNode.this);
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -762,6 +776,12 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
         {
             final AbstractTextDescriptor dispalyNameDescriptor = new AbstractTextDescriptor("Display Name")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -782,6 +802,12 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
 
             final AbstractBooleanDescriptor executeAfterQueryDescriptor = new AbstractBooleanDescriptor("Execute After Query")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(Boolean value)
@@ -828,7 +854,7 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
             source.addLovMappingProperties((EJPluginLovMappingProperties) dSource);
 
     }
-    
+
     public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
     {
         // TODO Auto-generated method stub

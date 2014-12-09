@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.form;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.layout.GridData;
@@ -27,8 +28,10 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
 import org.entirej.ide.ui.editors.handlers.NodeElementDeleteHandler;
@@ -120,14 +123,54 @@ public class EJFormBasePage extends AbstractEditorPage implements PageActionHand
         {
             return new NodeElementDeleteHandler(treeSection.getISelectionProvider());
         }
-        // if (ActionFactory.REDO.getCommandId().endsWith(commandId))
-        // {
-        //
-        // }
-        // if (ActionFactory.UNDO.getCommandId().endsWith(commandId))
-        // {
-        //
-        // }
+        if (ActionFactory.REDO.getCommandId().endsWith(commandId))
+        {
+            return new PageActionHandler()
+            {
+
+                public boolean isEnable()
+                {
+                    return editor.getOperationHistory().canRedo(editor.getUndoContext());
+                }
+
+                public void excecute(AbstractEditor editor)
+                {
+                    try
+                    {
+                        editor.getOperationHistory().redo(editor.getUndoContext(), null, null);
+                    }
+                    catch (ExecutionException e)
+                    {
+                        EJCoreLog.log(e);
+                    }
+
+                }
+            };
+        }
+        if (ActionFactory.UNDO.getCommandId().endsWith(commandId))
+        {
+            return new PageActionHandler()
+            {
+
+                public boolean isEnable()
+                {
+                    return editor.getOperationHistory().canUndo(editor.getUndoContext());
+                }
+
+                public void excecute(AbstractEditor editor)
+                {
+                    try
+                    {
+                        editor.getOperationHistory().undo(editor.getUndoContext(), null, null);
+                    }
+                    catch (ExecutionException e)
+                    {
+                        EJCoreLog.log(e);
+                    }
+
+                }
+            };
+        }
         return null;
     }
 

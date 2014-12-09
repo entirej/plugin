@@ -664,7 +664,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                     {
                         return true;
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public String lableLinkActivator()
                     {
@@ -723,7 +728,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
                     }
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     @Override
                     public String getWarnings()
                     {
@@ -812,7 +822,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getWarnings()
                 {
@@ -876,7 +891,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getWarnings()
                 {
@@ -941,7 +961,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public String getWarnings()
                 {
@@ -969,7 +994,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
             final AbstractTextDescriptor maxResultsDescriptor = new AbstractTextDescriptor("Max Results")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1011,7 +1041,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
             };
             final AbstractTextDescriptor pageSizeDescriptor = new AbstractTextDescriptor("Page Size")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1056,7 +1091,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
             AbstractGroupDescriptor dataGroupDescriptor = new AbstractGroupDescriptor("Data Settings")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return dataDescriptors.toArray(new AbstractDescriptor<?>[0]);
@@ -1066,7 +1106,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
             final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1108,7 +1153,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
             final AbstractTextDescriptor heightDescriptor = new AbstractTextDescriptor("Height")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public void setValue(String value)
                 {
@@ -1150,7 +1200,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor };
@@ -1174,7 +1229,12 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                         AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Renderer Settings")
                         {
-
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+                                
+                            }
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
                                 return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getEntireJProperties(), definitionGroup,

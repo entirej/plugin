@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -175,11 +176,9 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                         public Action[] getActions()
                         {
 
-                            return new Action[] { 
-                                    BlockDesignTreeSection.this.createNewRefBlockAction(false) };
+                            return new Action[] { BlockDesignTreeSection.this.createNewRefBlockAction(false) };
                         }
-                    },
-                            new RelationsGroupNode(BlockDesignTreeSection.this), new LovGroupNode(BlockDesignTreeSection.this),
+                    }, new RelationsGroupNode(BlockDesignTreeSection.this), new LovGroupNode(BlockDesignTreeSection.this),
                             new CanvasGroupNode(BlockDesignTreeSection.this) };
                 }
             };
@@ -202,13 +201,10 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
         {
             return new Action[] { /* ignore */};
         }
-        
-        
-        
-        
-       private class ObjGroupNode extends AbstractNode<EJPluginFormProperties> implements NodeOverview
+
+        private class ObjGroupNode extends AbstractNode<EJPluginFormProperties> implements NodeOverview
         {
-            private final Image                 OBJGROUP      = EJUIImages.getImage(EJUIImages.DESC_OBJGROUP);
+            private final Image                 OBJGROUP  = EJUIImages.getImage(EJUIImages.DESC_OBJGROUP);
             private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
                                                           {
 
@@ -254,11 +250,11 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
             {
                 return source.getName();
             }
-            
+
             @Override
             public String getNodeDescriptorDetails()
             {
-                
+
                 return "Click <a href=\"http://docs.entirej.com/display/EJ1/ObjectGroup+Properties#ObjectGroupProperties\">here</a> for more information on ObjectGroup Properties. All mandatory properties are denoted by \"*\"";
             }
 
@@ -331,6 +327,12 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                         "Display Name",
                         "If you are using more cryptic names for your ObjectGroup i.e. OG001, OG002 etc, then you may want to have a different name displayed in your project tree so you can find your ObjectGroup easier")
                 {
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
 
                     @Override
                     public void setValue(String value)
@@ -350,6 +352,12 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
 
                 AbstractGroupDescriptor metadataGroupDescriptor = new AbstractGroupDescriptor("Metadata")
                 {
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
 
                     @Override
                     public String getTooltip()
@@ -362,11 +370,6 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                         return new AbstractDescriptor<?>[] { formDisplayNameDescriptor };
                     }
                 };
-
-                
-                
-
-                
 
                 final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
                 {
@@ -385,6 +388,13 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                     {
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
                     }
 
                     @Override
@@ -450,6 +460,13 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                                            return (tag & FormNodeTag.HEIGHT) != 0;
                                        }
                                    };
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
 
                     @Override
                     public String getErrors()
@@ -523,6 +540,13 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                                    };
 
                     @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
+
+                    @Override
                     public String getErrors()
                     {
 
@@ -582,6 +606,12 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
 
                 AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
                 {
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
 
                     @Override
                     public String getTooltip()
@@ -596,12 +626,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                     }
                 };
 
-                
-
-                
-
-                return new AbstractDescriptor<?>[] { layoutGroupDescriptor,
-                        metadataGroupDescriptor };
+                return new AbstractDescriptor<?>[] { layoutGroupDescriptor, metadataGroupDescriptor };
             }
 
             public void addOverview(StyledString styledString)
@@ -620,11 +645,8 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                 }
 
             }
-        }    
+        }
 
     }
-    
-    
-    
 
 }

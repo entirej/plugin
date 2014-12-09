@@ -251,7 +251,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         this.source.move(context, neighbor, source, before);
 
     }
-    
+
     public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
     {
         // TODO Auto-generated method stub
@@ -637,6 +637,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Frame Title",
                     "If the Display Frame property has been set, there will be a frame around the the entire contents of the main screen. The Frame Title will appear on the frame if one has been entered")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -655,6 +661,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns",
                     "Click <a href=\"http://docs.entirej.com/display/EJ1/EntireJ+Screens\">here</a> for more information on how to use columns to layout your EntireJ Forms")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -698,6 +710,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
             AbstractDescriptor<Boolean> borderDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -728,6 +746,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Horizontal Span",
                     "Inicates how many columns the main screen will span within your form. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-hspanvspan\">here</a> for more information regarding horizontal and vertical span. To change how the blocks are laid out on your form, change the columns <b>Form Property</b>.")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -773,6 +797,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Vertical Span",
                     "Inicates how many rows the main screen will span within your form. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-hspanvspan\">here</a> for more information regarding horizontal and vertical span. To change how the blocks are laid out on your form, change the columns <b>Form Property</b>.")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -816,6 +846,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
             final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -836,6 +872,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             hExpandDescriptor.setTooltip("Indicates if the screen should expand, when the form is resized, to fit the available horizontal space");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -859,6 +901,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Width",
                     "If the Expand Horizontally property is not set, then you need to indicate the size of your block. Set the width as a unit of <b>Pixels</b>. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-widthheight\">here</a> for more information")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -902,6 +950,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Height",
                     "If the Expand Vertically property is not set, then you need to indicate the size of your block. Set the height as a unit of <b>Pixels</b>. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-widthheight\">here</a> for more information")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -945,6 +999,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings",
                     "Click <a href=\"http://docs.entirej.com/display/EJ1/EntireJ+Screens\">here</a> for more information on laying out an EntireJ Form")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -1289,7 +1349,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     treeSection.refresh(node.getParent());
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -1487,6 +1547,13 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public String getValue()
                 {
                     return properties.getFrameTitle();
@@ -1495,6 +1562,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns",
                     "Click <a href=\"http://docs.entirej.com/display/EJ1/EntireJ+Screens\">here</a> for more information on how to use columns to layout your EntireJ Forms")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1538,6 +1611,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
             AbstractDescriptor<Boolean> borderDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -1561,6 +1640,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Horizontal Span",
                     "Inicates how many columns the item groups will span within your block Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-hspanvspan\">here</a> for more information regarding horizontal and vertical span. To change how the item groups are laid out on your bock change the columns <b>Main Screen Property</b>.")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1606,6 +1691,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Vertical Span",
                     "Inicates how many rows the item groups will span within your block Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-hspanvspan\">here</a> for more information regarding horizontal and vertical span. To change how the item groups are laid out on your bock change the columns <b>Main Screen Property</b>.")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1649,6 +1740,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
             final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -1669,6 +1766,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             hExpandDescriptor.setTooltip("Indicates if the item group should expand, when the form is resized, to fit the available horizontal space");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -1692,6 +1795,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Width",
                     "If the Expand Horizontally property is not set, then you need to indicate the size of your item group. Set the width as a unit of <b>Pixels</b>. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-widthheight\">here</a> for more information")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1735,6 +1844,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     "Height",
                     "If the Expand Vertically property is not set, then you need to indicate the size of your item group. Set the height as a unit of <b>Pixels</b>. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-widthheight\">here</a> for more information")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1774,70 +1889,88 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     super.addEditorAssist(control);
                 }
             };
-            
-            
-            
-            final AbstractDropDownDescriptor<EJItemGroupAlignment> hAlignmentDescriptor = new AbstractDropDownDescriptor<EJItemGroupAlignment>("Horizontal Alignment")
-                    {
 
-                        public EJItemGroupAlignment[] getOptions()
-                        {
+            final AbstractDropDownDescriptor<EJItemGroupAlignment> hAlignmentDescriptor = new AbstractDropDownDescriptor<EJItemGroupAlignment>(
+                    "Horizontal Alignment")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
 
-                            return EJItemGroupAlignment.values();
-                        }
+                }
 
-                        public String getOptionText(EJItemGroupAlignment t)
-                        {
-                            return t.name();
-                        }
+                public EJItemGroupAlignment[] getOptions()
+                {
 
-                        public void setValue(EJItemGroupAlignment value)
-                        {
-                            properties.setHorizontalAlignment(value);
-                            editor.setDirty(true);
-                            treeSection.refresh(node);
-                        }
+                    return EJItemGroupAlignment.values();
+                }
 
-                        public EJItemGroupAlignment getValue()
-                        {
-                            return properties.getHorizontalAlignment();
-                        }
-                    };
-           final AbstractDropDownDescriptor<EJItemGroupAlignment> vAlignmentDescriptor = new AbstractDropDownDescriptor<EJItemGroupAlignment>("Vertical Alignment")
-                            {
-                        
-                        public EJItemGroupAlignment[] getOptions()
-                        {
-                            
-                            return EJItemGroupAlignment.values();
-                        }
-                        
-                        public String getOptionText(EJItemGroupAlignment t)
-                        {
-                            return t.name();
-                        }
-                        
-                        public void setValue(EJItemGroupAlignment value)
-                        {
-                            properties.setVerticalAlignment(value);
-                            editor.setDirty(true);
-                            treeSection.refresh(node);
-                        }
-                        
-                        public EJItemGroupAlignment getValue()
-                        {
-                            return properties.getVerticalAlignment();
-                        }
-                     };
+                public String getOptionText(EJItemGroupAlignment t)
+                {
+                    return t.name();
+                }
+
+                public void setValue(EJItemGroupAlignment value)
+                {
+                    properties.setHorizontalAlignment(value);
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+                public EJItemGroupAlignment getValue()
+                {
+                    return properties.getHorizontalAlignment();
+                }
+            };
+            final AbstractDropDownDescriptor<EJItemGroupAlignment> vAlignmentDescriptor = new AbstractDropDownDescriptor<EJItemGroupAlignment>(
+                    "Vertical Alignment")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                public EJItemGroupAlignment[] getOptions()
+                {
+
+                    return EJItemGroupAlignment.values();
+                }
+
+                public String getOptionText(EJItemGroupAlignment t)
+                {
+                    return t.name();
+                }
+
+                public void setValue(EJItemGroupAlignment value)
+                {
+                    properties.setVerticalAlignment(value);
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+                public EJItemGroupAlignment getValue()
+                {
+                    return properties.getVerticalAlignment();
+                }
+            };
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings",
                     "Click <a href=\"http://docs.entirej.com/display/EJ1/EntireJ+Screens\">here</a> for more information on laying out an EntireJ Form")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor,hAlignmentDescriptor,vAlignmentDescriptor };
+                            heightHintDescriptor, hAlignmentDescriptor, vAlignmentDescriptor };
                 }
             };
 
@@ -1990,6 +2123,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
                     AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Renderer Settings")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         public AbstractDescriptor<?>[] getDescriptors()
                         {

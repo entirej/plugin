@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -141,28 +142,28 @@ import org.entirej.ide.ui.wizards.form.NewEntireJRefLovWizard;
 
 public class FormDesignTreeSection extends AbstractNodeTreeSection
 {
-    protected final AbstractEJFormEditor        editor;
+    protected final AbstractEJFormEditor          editor;
 
-    protected FormPreviewer                     formPreviewer;
+    protected FormPreviewer                       formPreviewer;
 
-    protected AbstractNode<?>                   baseNode;
+    protected AbstractNode<?>                     baseNode;
     protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
-                                                               {
+                                                                 {
 
-                                                                   public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                   {
-                                                                       if (arg0 != null)
-                                                                       {
+                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
+                                                                     {
+                                                                         if (arg0 != null)
+                                                                         {
 
-                                                                           AbstractNode<?> findNode = findNode(arg0, true);
-                                                                           if (findNode != null)
-                                                                           {
-                                                                               selectNodes(true, findNode);
-                                                                           }
-                                                                       }
+                                                                             AbstractNode<?> findNode = findNode(arg0, true);
+                                                                             if (findNode != null)
+                                                                             {
+                                                                                 selectNodes(true, findNode);
+                                                                             }
+                                                                         }
 
-                                                                   }
-                                                               };
+                                                                     }
+                                                                 };
 
     public FormDesignTreeSection(AbstractEJFormEditor editor, FormPage page, Composite parent)
     {
@@ -339,7 +340,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     {
 
         return new Action[] { createNewBlockAction(false), createNewBlockAction(true), createNewMirrorBlockAction(null), createNewRefBlockAction(true), null,
-                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction(),null,createObjectGroupAction() };
+                createNewRelationAction(), null, createNewRefLovAction(), createNewLovAction(), null, createObjectGroupAction() };
     }
 
     protected Action[] getNewBlockActions()
@@ -681,7 +682,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     {
                         return copyOption;
                     }
-                    
+
                     public void addBlock(String blockName, String refblock, boolean copyRefBlock, String canvas, boolean createCanvas)
                     {
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
@@ -882,62 +883,65 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
         };
     }
+
     public Action createObjectGroupAction()
     {
-        
+
         return new Action("Add ObjectGroup")
         {
-            
+
             @Override
             public void runWithEvent(Event event)
             {
                 RefObjectGroupWizard wizard = new RefObjectGroupWizard(new RefObjectGroupWizardContext()
                 {
-                    
+
                     public String elementValidation(String objName)
                     {
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
                         try
                         {
-                            EJPluginObjectGroupProperties objectGroupProperties = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(objName);
-                            
+                            EJPluginObjectGroupProperties objectGroupProperties = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(
+                                    objName);
+
                             List<EJPluginBlockProperties> allBlockProperties = objectGroupProperties.getBlockContainer().getAllBlockProperties();
                             for (EJPluginBlockProperties blockProperties : allBlockProperties)
                             {
-                                if(formProperties.getBlockContainer().contains(blockProperties.getName()))
+                                if (formProperties.getBlockContainer().contains(blockProperties.getName()))
                                 {
-                                    return String.format("Can't add ObjectGroup# %s, Duplicate Blocks between Form and ObjectGroup.",objName); 
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Blocks between Form and ObjectGroup.", objName);
                                 }
                             }
-                            
+
                             List<EJPluginRelationProperties> allRelationProperties = objectGroupProperties.getRelationContainer().getAllRelationProperties();
                             for (EJPluginRelationProperties relationProperties : allRelationProperties)
                             {
-                                if(formProperties.getRelationContainer().contains(relationProperties.getName()))
+                                if (formProperties.getRelationContainer().contains(relationProperties.getName()))
                                 {
-                                    return String.format("Can't add ObjectGroup# %s, Duplicate Relations between Form and ObjectGroup.",objName); 
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Relations between Form and ObjectGroup.", objName);
                                 }
                             }
-                            
+
                             Collection<EJCanvasProperties> retriveAllCanvases = EJPluginCanvasRetriever.retriveAllCanvases(objectGroupProperties);
                             for (EJCanvasProperties canvasProperties : retriveAllCanvases)
                             {
 
-                                if(EJPluginCanvasRetriever.canvasExists(formProperties, canvasProperties.getName()))
+                                if (EJPluginCanvasRetriever.canvasExists(formProperties, canvasProperties.getName()))
                                 {
-                                    return String.format("Can't add ObjectGroup# %s, Duplicate Canvases between Form and ObjectGroup.",objName); 
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate Canvases between Form and ObjectGroup.", objName);
                                 }
                             }
-                            
-                            List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = objectGroupProperties.getLovDefinitionContainer().getAllLovDefinitionProperties();
+
+                            List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = objectGroupProperties.getLovDefinitionContainer()
+                                    .getAllLovDefinitionProperties();
                             for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
                             {
-                                if(formProperties.getLovDefinitionContainer().contains(lovDefinitionProperties.getName()))
+                                if (formProperties.getLovDefinitionContainer().contains(lovDefinitionProperties.getName()))
                                 {
-                                    return String.format("Can't add ObjectGroup# %s, Duplicate LOV's between Form and ObjectGroup.",objName); 
+                                    return String.format("Can't add ObjectGroup# %s, Duplicate LOV's between Form and ObjectGroup.", objName);
                                 }
                             }
-                            
+
                         }
                         catch (EJDevFrameworkException e)
                         {
@@ -945,11 +949,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                         return null;
                     }
-                    
+
                     public void addObjectGroup(String refObjectGroup)
                     {
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
-                        
+
                         final EJPluginObjectGroupProperties objectGroupDef;
                         try
                         {
@@ -960,14 +964,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             EJCoreLog.logException(e);
                             return;
                         }
-                        
-                        
+
                         formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDef);
                         objectGroupDef.importObjectsToForm(formProperties);
-                        
+
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
-                            
+
                             public void run()
                             {
                                 editor.setDirty(true);
@@ -977,32 +980,32 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                 refresh(findNode(formProperties.getLovDefinitionContainer()), true);
                                 refresh(findNode(formProperties.getCanvasContainer()), true);
                                 selectNodes(true, findNode(objectGroupDef));
-                                
+
                             }
                         });
-                        
+
                     }
-                    
+
                     public List<String> getReferencedObjectGroupNames()
                     {
-                        
+
                         return editor.getFormProperties().getEntireJProperties().getObjectGroupDefinitionNames();
                     }
-                    
+
                     public boolean hasObjectGroup(String objGroupName)
                     {
                         return editor.getFormProperties().getObjectGroupContainer().contains(objGroupName);
                     }
-                    
+
                     public IJavaProject getProject()
                     {
                         return editor.getJavaProject();
                     }
-                    
+
                 });
                 wizard.open();
             }
-            
+
         };
     }
 
@@ -1088,9 +1091,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 // project build errors
                 if (editor.getFormProperties() == null)
                     return new Object[0];
-                return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new ObjectGroupNode(FormDesignTreeSection.this),new BlockGroupNode(FormDesignTreeSection.this),
-                        new RelationsGroupNode(FormDesignTreeSection.this), new LovGroupNode(FormDesignTreeSection.this),
-                        new CanvasGroupNode(FormDesignTreeSection.this) };
+                return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new ObjectGroupNode(FormDesignTreeSection.this),
+                        new BlockGroupNode(FormDesignTreeSection.this), new RelationsGroupNode(FormDesignTreeSection.this),
+                        new LovGroupNode(FormDesignTreeSection.this), new CanvasGroupNode(FormDesignTreeSection.this) };
             }
         };
     }
@@ -1143,11 +1146,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         {
             return source.getName();
         }
-        
+
         @Override
         public String getNodeDescriptorDetails()
         {
-            
+
             return "Click <a href=\"http://docs.entirej.com/display/EJ1/Form+Properties#FormProperties\">here</a> for more information on Form Properties. All mandatory properties are denoted by \"*\"";
         }
 
@@ -1220,6 +1223,12 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     "Display Name",
                     "If you are using more cryptic names for your forms i.e. FRM001, FRM002 etc, then you may want to have a different name displayed in your project tree so you can find your form easier")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1239,6 +1248,12 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
             AbstractGroupDescriptor metadataGroupDescriptor = new AbstractGroupDescriptor("Metadata")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public String getTooltip()
@@ -1263,6 +1278,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                        return (tag & FormNodeTag.TITLE) != 0;
                                    }
                                };
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public String getErrors()
@@ -1319,6 +1341,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 {
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
                 }
 
                 @Override
@@ -1386,6 +1415,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public String getWarnings()
                 {
                     return validator.getWarningMarkerMsg(fmarkers, vfilter);
@@ -1439,6 +1475,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 {
 
                     return "The width <b>(in pixels)</b> of the form within it's container. If the width of the form is wider than the available space then a horizontal scroll bar will be shown ";
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
                 }
 
                 @Override
@@ -1519,6 +1562,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public void setValue(String value)
                 {
                     try
@@ -1583,6 +1633,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public String getTooltip()
                 {
                     return "The amount of columns the form will use to layout it's contained canvases";
@@ -1629,6 +1686,12 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public String getTooltip()
@@ -1663,6 +1726,12 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                         AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Renderer Settings")
                         {
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
+                            }
 
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
@@ -1704,6 +1773,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 public String getTooltip()
                 {
                     return "Form parameters are form global variables that can be accessed from the forms action processor or used as default Query / Insert values on the block items. For more information, read the Form Properties section <a href=\"http://docs.entirej.com/display/EJ1/Form+Properties#FormProperties-FormParameters\">here</a>";
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
                 }
 
                 public Action[] getToolbarActions()
@@ -1809,21 +1885,16 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                     });
                     /*
-                    factory.createColumn("Default Value", 120, new ColumnLabelProvider()
-                    {
-                        
-                        @Override
-                        public String getText(Object element)
-                        {
-                            
-                            if (element instanceof EJPluginApplicationParameter)
-                            {
-                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
-                                return entry.getDefaultValue();
-                            }
-                            return "";
-                        }
-                    });*/
+                     * factory.createColumn("Default Value", 120, new
+                     * ColumnLabelProvider() {
+                     * 
+                     * @Override public String getText(Object element) {
+                     * 
+                     * if (element instanceof EJPluginApplicationParameter) {
+                     * EJPluginApplicationParameter entry =
+                     * (EJPluginApplicationParameter) element; return
+                     * entry.getDefaultValue(); } return ""; } });
+                     */
                     tableViewer.setContentProvider(new IStructuredContentProvider()
                     {
 
@@ -1878,8 +1949,15 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     {
                         return new AbstractDescriptor<?>[0];
                     }
+
                     AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Name")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         @Override
                         public void setValue(String value)
@@ -1901,6 +1979,12 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     nameDescriptor.setRequired(true);
                     AbstractTypeDescriptor typeDescriptor = new AbstractTypeDescriptor(editor, "Data Type")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         @Override
                         public void setValue(String value)
@@ -1922,27 +2006,18 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     };
                     typeDescriptor.setBaseClass(Object.class.getName());
                     /*
-                    AbstractTextDescriptor defaultValueDescriptor = new AbstractTextDescriptor("Default Value")
-                    {
-                        
-                        @Override
-                        public void setValue(String value)
-                        {
-                            entry.setDefaultValue(value);
-                            editor.setDirty(true);
-                            if (tableViewer != null)
-                            {
-                                tableViewer.refresh(entry);
-                            }
-                        }
-                        
-                        @Override
-                        public String getValue()
-                        {
-                            return entry.getDefaultValue();
-                        }
-                    };
-                    return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor,defaultValueDescriptor };*/
+                     * AbstractTextDescriptor defaultValueDescriptor = new
+                     * AbstractTextDescriptor("Default Value") {
+                     * 
+                     * @Override public void setValue(String value) {
+                     * entry.setDefaultValue(value); editor.setDirty(true); if
+                     * (tableViewer != null) { tableViewer.refresh(entry); } }
+                     * 
+                     * @Override public String getValue() { return
+                     * entry.getDefaultValue(); } }; return new
+                     * AbstractDescriptor<?>[] { nameDescriptor,
+                     * typeDescriptor,defaultValueDescriptor };
+                     */
                     return new AbstractDescriptor<?>[] { nameDescriptor, typeDescriptor };
                 }
             };

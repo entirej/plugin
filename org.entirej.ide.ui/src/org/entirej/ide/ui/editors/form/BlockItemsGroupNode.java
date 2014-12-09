@@ -213,7 +213,8 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
     @Override
     public Action[] getActions()
     {
-        if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock() || source.getBlockProperties().isImportFromObjectGroup())
+        if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()
+                || source.getBlockProperties().isImportFromObjectGroup())
             return new Action[] {};
 
         return new Action[] { createNewBlockItemAction(-1) };
@@ -308,11 +309,12 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         @Override
         public Action[] getActions()
         {
-            if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()|| source.getBlockProperties().isImportFromObjectGroup())
+            if (source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()
+                    || source.getBlockProperties().isImportFromObjectGroup())
                 return new Action[] { createCopyBINameAction() };
 
             int indexOf = BlockItemsGroupNode.this.source.getAllItemProperties().indexOf(source);
-            return new Action[] { createNewBlockItemAction(++indexOf), null,createCopyBINameAction()  };
+            return new Action[] { createNewBlockItemAction(++indexOf), null, createCopyBINameAction() };
         }
 
         public Action createCopyBINameAction()
@@ -335,7 +337,8 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         {
             // if it is a mirror child should not be able to DnD from mirror
             // level
-            return !(this.source.getBlockProperties().isMirrorChild() || this.source.getBlockProperties().isReferenceBlock() || this.source.getBlockProperties().isImportFromObjectGroup());
+            return !(this.source.getBlockProperties().isMirrorChild() || this.source.getBlockProperties().isReferenceBlock() || this.source
+                    .getBlockProperties().isImportFromObjectGroup());
         }
 
         public Object getNeighborSource()
@@ -349,7 +352,8 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             // if it is a mirror child or Referenced should not be able to
             // delete from mirror
             // level
-            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()|| source.getBlockProperties().isImportFromObjectGroup())
+            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()
+                    || source.getBlockProperties().isImportFromObjectGroup())
                 return null;
 
             return new INodeDeleteProvider()
@@ -374,7 +378,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                         updateMirrorItems();
                     }
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -389,7 +393,8 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             // if it is a mirror child or Referenced should not be able to
             // rename from mirror
             // level
-            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()|| source.getBlockProperties().isImportFromObjectGroup())
+            if (this.source.getBlockProperties().isMirrorChild() || source.getBlockProperties().isReferenceBlock()
+                    || source.getBlockProperties().isImportFromObjectGroup())
                 return null;
 
             return new INodeRenameProvider()
@@ -440,7 +445,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         {
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
-            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(source.getFormProperties(), "Default Query Value")
+            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(editor, source.getFormProperties(), "Default Query Value")
             {
                 @Override
                 public String getValue()
@@ -463,7 +468,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                 }
 
             };
-            ItemDefaultValue insertItemDefaultValue = new ItemDefaultValue(source.getFormProperties(), "Default Insert Value")
+            ItemDefaultValue insertItemDefaultValue = new ItemDefaultValue(editor, source.getFormProperties(), "Default Insert Value")
             {
                 @Override
                 public String getValue()
@@ -493,6 +498,13 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     public boolean hasLableLink()
                     {
                         return true;
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
                     }
 
                     @Override
@@ -548,12 +560,19 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             else if (this.source.getBlockProperties().isImportFromObjectGroup())
             {
 
-                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("Referenced ObjectGroup")
                 {
 
                     public boolean hasLableLink()
                     {
                         return true;
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
                     }
 
                     @Override
@@ -591,11 +610,11 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                         text = (Text) control;
                         text.setEditable(false);
                     }
-                }};
+                } };
             }
             else if (this.source.getBlockProperties().isReferenceBlock())
             {
-                
+
                 return new AbstractDescriptor<?>[] { queryItemDefaultValue, insertItemDefaultValue };
             }
             else
@@ -617,6 +636,13 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     {
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
                     }
 
                     @Override
@@ -642,38 +668,43 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                 };
 
                 descriptors.add(dataTypeDescriptor);
-                
-                if(!source.getBlockProperties().isControlBlock())
+
+                if (!source.getBlockProperties().isControlBlock())
                 {
                     AbstractDescriptor<Boolean> blockServiceDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
                     {
-    
+
                         @Override
                         public Boolean getValue()
                         {
                             return source.isBlockServiceItem();
                         }
-    
+
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
+
                         @Override
                         public void setValue(Boolean value)
                         {
                             source.setBlockServiceItem(value.booleanValue());
                             editor.setDirty(true);
                             treeSection.refresh(ItemNode.this);
-    
+
                         }
-    
+
                         @Override
                         public String getTooltip()
                         {
                             return "Indicates if this item is controlled by the blocks service. All Block Service Items must exist within the block service pojo. If you create a Block Service Item that does not exist in the pojo, then an exception will be thrown as soon as the Block Service is called to query, insert, update or delete data.";
                         }
-    
+
                     };
                     blockServiceDescriptor.setText("Block Service Item");
-                    
-    
-                    
+
                     descriptors.add(blockServiceDescriptor);
                 }
             }
@@ -696,6 +727,13 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                 {
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
                 }
 
                 @Override
@@ -777,6 +815,12 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
 
                         AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Renderer Settings")
                         {
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
+                            }
 
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
@@ -856,7 +900,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             updateMirrorItems();
         }
     }
-    
+
     public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
     {
         // TODO Auto-generated method stub
@@ -884,7 +928,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     {
                         return editor.getJavaProject();
                     }
-                    
+
                     public boolean isContorl()
                     {
                         return source.getBlockProperties().isControlBlock();
@@ -974,12 +1018,21 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
             }
         }
 
-        TYPE entry;
+        TYPE                       entry;
+        final AbstractEJFormEditor editor;
 
-        public ItemDefaultValue(EJPluginFormProperties formProp, String lable)
+        public ItemDefaultValue(AbstractEJFormEditor editor, EJPluginFormProperties formProp, String lable)
         {
             super(lable);
+            this.editor = editor;
             this.formProp = formProp;
+        }
+
+        @Override
+        public void runOperation(AbstractOperation operation)
+        {
+            editor.execute(operation);
+
         }
 
         public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
@@ -1060,6 +1113,12 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     case APP_PARAMETER:
                         return new AbstractDescriptor<?>[] { new AbstractTextDropDownDescriptor("Parameter")
                         {
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
+                            }
 
                             public String[] getOptions()
                             {
@@ -1129,6 +1188,13 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                 }
                                 else
                                     ItemDefaultValue.this.setValue("");
+                            }
+
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
                             }
 
                             @Override
@@ -1298,6 +1364,13 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                 }
                                 else
                                     ItemDefaultValue.this.setValue("");
+                            }
+
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
                             }
 
                             @Override

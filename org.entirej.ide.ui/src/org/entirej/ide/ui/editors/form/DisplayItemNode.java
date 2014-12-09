@@ -362,7 +362,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 "Label",
                 "An items label is displayed either before or after the item. Always allow one extra column for the items lable when calculating the number of required columns in your item groupF")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(String value)
             {
@@ -381,7 +386,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
         AbstractTextDescDescriptor hintDescriptor = new AbstractTextDescDescriptor("Hint",
                 "The hint is displayed when the user hovers the mouse over this item")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(String value)
             {
@@ -405,7 +415,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
             public void setValue(String value)
             {
             }
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public String getValue()
             {
@@ -448,7 +463,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 "Visible",
                 "Indicates if the item is visible to the user. If you would like to show/hide items from the user at runtime, add them to the screen and set them to be non visible. You can then make the item visible via the forms Action Processor")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(Boolean value)
             {
@@ -468,7 +488,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
         final AbstractBooleanDescriptor editableDescriptor = new AbstractBooleanDescriptor("Editable",
                 "Indicates if the item can be modified by the user directly on the main screen. Note: This option is only available for <b>Control Blocks</b>")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(Boolean value)
             {
@@ -488,7 +513,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
         final AbstractBooleanDescriptor mandatoryDescriptor = new AbstractBooleanDescriptor("Mandatory",
                 "Indicates if the item is mandatory. Mandatory items will be marked during runtime according to the client framework you are using")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(Boolean value)
             {
@@ -508,7 +538,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 "Enable LOV",
                 "If you choose an LOV Mapping, then this property will automatically be set. However, if you would like to add non-standard lov code to be fired, then set this property and implement the lovActivated method within your forms Action Processor")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(Boolean value)
             {
@@ -533,7 +568,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 "LOV Mapping",
                 "If the item should receive it's value from an LOV, then you should choose the LOV here. If the Validate From LOV property has been set, then only values fro this LOV will be allowed for the item. Click <a href=\"http://docs.entirej.com/display/EJ1/Working+with+LOV%27s\">here</a> for more information on LOVs")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             public String[] getOptions()
             {
                 List<String> options = new ArrayList<String>();
@@ -597,7 +637,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 "Validate From LOV",
                 "If set, EntireJ will force the user to enter a value in the item that exists within the LOV. If not set, then the user can enter anything in the item or choose something from the LOV mapped to this item")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(Boolean value)
             {
@@ -620,7 +665,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 "Action Command",
                 "If enabled, you can add an action command to a creen item. The item renderer will indicate if an action command is possible. If it is, then the renderer will send the command your forms Action Processors <b>executeActionCommand</b> method when the change event fires or when the item renderer requires it")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             @Override
             public void setValue(String value)
             {
@@ -647,7 +697,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
 
         AbstractGroupDescriptor displayGroupDescriptor = new AbstractGroupDescriptor("Display Settings")
         {
-
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
             public AbstractDescriptor<?>[] getDescriptors()
             {
                 if (group.properties.getParentItemGroupContainer().getContainerType() == EJPluginItemGroupContainer.MAIN_SCREEN
@@ -673,7 +728,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
 
             AbstractGroupDescriptor rendererGroupDescriptor = new AbstractGroupDescriptor("Screen Renderer Settings")
             {
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return screenRendererDefDescriptors;
@@ -705,7 +765,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                         {
                             return false;
                         }
-
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
                         public AbstractDescriptor<?>[] getDescriptors()
                         {
                             return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getBlockProperties().getEntireJProperties(),

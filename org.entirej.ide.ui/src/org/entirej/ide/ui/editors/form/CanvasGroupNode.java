@@ -324,7 +324,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             source.addCanvasProperties((EJPluginCanvasProperties) dSource);
 
     }
-    
+
     public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
     {
         // TODO Auto-generated method stub
@@ -398,7 +398,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(AbstractCanvas.this.getParent());
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -525,6 +525,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     }
 
                     @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
+
+                    @Override
                     public void addEditorAssist(Control control)
                     {
                         if (control instanceof Text)
@@ -563,6 +570,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                         final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Weight")
                         {
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
+                            }
 
                             @Override
                             public void setValue(String value)
@@ -618,6 +631,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             {
                                 return new AbstractDescriptor<?>[] { widthHintDescriptor };
                             }
+
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+
+                            }
                         };
                         descriptors.add(layoutGroupDescriptor);
                         if (source.isObjectGroupRoot())
@@ -670,6 +690,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     {
 
                         return t;
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
                     }
 
                     @Override
@@ -743,8 +770,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(BlockCanvasNode.this.getParent());
 
                 }
-                
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -774,6 +800,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -817,6 +850,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -875,6 +914,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(node);
                 }
 
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
             };
             hExpandDescriptor.setText("Expand Horizontally");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
@@ -894,6 +939,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(node);
                 }
 
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
             };
             vExpandDescriptor.setText("Expand Vertically");
 
@@ -929,6 +980,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 Text text;
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public void addEditorAssist(Control control)
                 {
 
@@ -962,6 +1020,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public String getValue()
                 {
                     return String.valueOf(source.getHeight());
@@ -982,6 +1047,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -1039,7 +1110,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(FormCanvasNode.this.getParent());
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -1139,7 +1210,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getGroupCanvasContainer().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -1230,9 +1301,22 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 {
                     return source.getGroupFrameTitle();
                 }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
             };
             AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1284,6 +1368,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public void setValue(Boolean value)
                 {
                     source.setDisplayGroupFrame(value.booleanValue());
@@ -1296,6 +1387,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1339,6 +1436,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1382,6 +1485,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -1401,6 +1510,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             hExpandDescriptor.setText("Expand Horizontally");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -1421,6 +1536,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1462,6 +1583,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1504,6 +1631,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -1574,7 +1707,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getSplitCanvasContainer().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -1674,6 +1807,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 {
                     return source.getSplitOrientation();
                 }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
             };
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
@@ -1701,6 +1841,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
                 @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
                 public String getValue()
                 {
                     return String.valueOf(source.getHorizontalSpan());
@@ -1721,6 +1868,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1779,6 +1932,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(node);
                 }
 
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
             };
             hExpandDescriptor.setText("Expand Horizontally");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
@@ -1798,11 +1957,23 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(node);
                 }
 
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
             };
             vExpandDescriptor.setText("Expand Vertically");
 
             final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1844,6 +2015,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -1886,6 +2063,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -2000,8 +2183,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getTabPageContainer().addTabPageProperties((EJPluginTabPageProperties) dSource);
 
         }
-        
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -2030,6 +2212,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2073,6 +2261,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2116,6 +2310,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -2135,6 +2335,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             hExpandDescriptor.setText("Expand Horizontally");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -2155,6 +2361,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2196,6 +2408,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2238,6 +2456,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -2262,6 +2486,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 {
 
                     return EJCanvasTabPosition.values();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
                 }
 
                 public String getOptionText(EJCanvasTabPosition t)
@@ -2379,7 +2610,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getStackedPageContainer().addStackedPageProperties((EJPluginStackedPageProperties) dSource);
 
         }
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -2409,6 +2640,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2452,6 +2689,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2495,6 +2738,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -2514,6 +2763,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             hExpandDescriptor.setText("Expand Horizontally");
             final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -2534,6 +2789,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2575,6 +2836,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2617,6 +2884,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -2635,6 +2908,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractDropDownDescriptor<String> orientationDescriptor = new AbstractDropDownDescriptor<String>("Default Page")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public String[] getOptions()
                 {
@@ -2789,7 +3068,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getPopupCanvasContainer().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -2848,6 +3127,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 final EJCanvasSplitOrientation orientation = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation();
                 final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Weight")
                 {
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
 
                     @Override
                     public void setValue(String value)
@@ -2901,6 +3186,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Frame Title")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2918,6 +3209,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -2961,6 +3258,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3002,6 +3305,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3044,6 +3353,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -3052,6 +3367,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor button1Descriptor = new AbstractTextDescriptor("Button - 1")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3069,6 +3390,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor button2Descriptor = new AbstractTextDescriptor("Button - 2")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3086,6 +3413,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             final AbstractTextDescriptor button3Descriptor = new AbstractTextDescriptor("Button - 3")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3104,6 +3437,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor actionsGroupDescriptor = new AbstractGroupDescriptor("Actions")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
@@ -3171,8 +3510,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(CanvasGroupNode.this.getParent());
 
                 }
-                
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -3321,8 +3659,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 source.getContainedCanvases().addCanvasProperties((EJPluginCanvasProperties) dSource);
 
         }
-        
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -3339,6 +3676,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             final AbstractEJFormEditor editor = treeSection.getEditor();
             AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Page Title")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3356,6 +3699,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3398,6 +3747,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             AbstractDescriptor<Boolean> enableDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -3417,6 +3772,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             enableDescriptor.setText("Enable");
             AbstractDescriptor<Boolean> visibleDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public Boolean getValue()
@@ -3436,11 +3797,23 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             visibleDescriptor.setText("Visible");
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Navigation Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     AbstractTextDropDownDescriptor naviBlockDescriptor = new AbstractTextDropDownDescriptor("Navigation Block")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         @Override
                         public boolean hasLableLink()
@@ -3514,6 +3887,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     };
                     AbstractTextDropDownDescriptor naviItemDescriptor = new AbstractTextDropDownDescriptor("Navigation Item")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         @Override
                         public boolean hasLableLink()
@@ -3652,7 +4031,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     treeSection.refresh(CanvasGroupNode.this.getParent());
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub
@@ -3797,13 +4176,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
-        
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
             return null;
         }
-        
+
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
             if (source.getStackedCanvasProperties().isImportFromObjectGroup())
@@ -3815,6 +4193,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 @Override
                 public void setValue(String value)
@@ -3858,11 +4242,23 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Navigation Settings")
             {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     AbstractTextDropDownDescriptor naviBlockDescriptor = new AbstractTextDropDownDescriptor("Navigation Block")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         @Override
                         public boolean hasLableLink()
@@ -3936,6 +4332,12 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     };
                     AbstractTextDropDownDescriptor naviItemDescriptor = new AbstractTextDropDownDescriptor("Navigation Item")
                     {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
 
                         @Override
                         public boolean hasLableLink()
@@ -4027,6 +4429,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             public boolean hasLableLink()
             {
                 return true;
+            }
+
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
             }
 
             @Override

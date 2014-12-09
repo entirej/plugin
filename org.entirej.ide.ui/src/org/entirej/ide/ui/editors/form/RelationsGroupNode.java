@@ -252,7 +252,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                 
                 AbstractTextDropDownDescriptor masterDescriptor = new AbstractTextDropDownDescriptor("Master Item")
                 {
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public String[] getOptions()
                     {
 
@@ -298,7 +303,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
                 AbstractTextDropDownDescriptor dtlDescriptor = new AbstractTextDropDownDescriptor("Detail Item")
                 {
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public String[] getOptions()
                     {
 
@@ -636,7 +646,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
             {
                 return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
                 {
-
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
                     public boolean hasLableLink()
                     {
                         return true;
@@ -699,7 +714,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public String[] getOptions()
                 {
 
@@ -752,7 +772,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 public String[] getOptions()
                 {
 
@@ -801,7 +826,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                     treeSection.refresh(RelationNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public Boolean getValue()
                 {
@@ -823,7 +853,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                     treeSection.refresh(RelationNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public Boolean getValue()
                 {
@@ -843,7 +878,12 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                     treeSection.refresh(RelationNode.this);
 
                 }
-
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
                 @Override
                 public Boolean getValue()
                 {
