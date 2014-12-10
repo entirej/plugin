@@ -99,8 +99,10 @@ import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
 import org.entirej.ide.ui.editors.form.operations.BlockGroupAddOperation;
 import org.entirej.ide.ui.editors.form.operations.BlockGroupRemoveOperation;
 import org.entirej.ide.ui.editors.form.operations.BlockRemoveOperation;
+import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.wizards.ReplicateBlockWizard;
 import org.entirej.ide.ui.editors.form.wizards.ReplicateBlockWizardContext;
+import org.entirej.ide.ui.editors.operations.ReversibleOperation;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart.IExtensionValues;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -2226,29 +2228,26 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                             final EJPluginFormProperties formProperties = editor.getFormProperties();
                             final EJPluginBlockProperties blockProperties = source.makeCopy(blockName, false);
 
-                            if (createCanvas)
-                            {
-                                EJPluginCanvasContainer container = formProperties.getCanvasContainer();
-                                EJCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                                container.addCanvasProperties(canvasProp);
-                            }
-                            formProperties.getBlockContainer().addBlockProperties(blockProperties);
+                            
+                            
                             blockProperties.setCanvasName(canvas);
                             blockProperties.setBlockRendererName(source.getBlockRendererName(), true);
                             // create items if service is also selected
-
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                            if (createCanvas)
                             {
 
-                                public void run()
-                                {
-                                    editor.setDirty(true);
-                                    treeSection.refresh(getParent(), true);
-                                    treeSection.refresh(treeSection.findNode(formProperties.getCanvasContainer()));
-                                    treeSection.selectNodes(true, treeSection.findNode(blockProperties));
-
-                                }
-                            });
+                                EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
+                                ReversibleOperation operation = new ReversibleOperation("Add Block");
+                                operation.add(new BlockAddOperation(treeSection, formProperties.getBlockContainer(), blockProperties, -1));
+                                operation.add(new CanvasAddOperation(treeSection, formProperties.getCanvasContainer(), canvasProp, -1));
+                                editor.execute(operation);
+                            }
+                            else
+                            {
+                                BlockAddOperation addOperation = new BlockAddOperation(treeSection, formProperties.getBlockContainer(),
+                                        blockProperties, -1);
+                                editor.execute(addOperation);
+                            }
 
                         }
 

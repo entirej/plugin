@@ -130,9 +130,11 @@ public class EJPluginCanvasContainer implements IPluginCanvasContainer
         }
     }
     
-    public void removeCanvasProperties(EJCanvasProperties canvasProperties)
+    public int removeCanvasProperties(EJCanvasProperties canvasProperties)
     {
+        int indexOf = _canvasProperties.indexOf(canvasProperties);
         _canvasProperties.remove(canvasProperties);
+        return indexOf;
     }
     
     public boolean isEmpty()

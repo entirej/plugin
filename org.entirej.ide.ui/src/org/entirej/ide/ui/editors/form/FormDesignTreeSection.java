@@ -459,29 +459,27 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         parent.setIsMirroredBlock(true);
                         final EJPluginBlockProperties blockProperties = parent.makeCopy(blockName, true);
 
-                        if (createCanvas)
-                        {
-                            EJPluginCanvasContainer container = formProperties.getCanvasContainer();
-                            EJCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                            container.addCanvasProperties(canvasProp);
-                        }
+                        
 
-                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
                         blockProperties.setCanvasName(canvas);
                         blockProperties.setBlockRendererName(block.getAssignedName(), true);
 
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        if (createCanvas)
                         {
 
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                refresh(findNode(formProperties.getCanvasContainer()));
-                                selectNodes(true, findNode(blockProperties));
+                            EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
+                            ReversibleOperation operation = new ReversibleOperation("Add Block");
+                            operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
+                            operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
+                            editor.execute(operation);
+                        }
+                        else
+                        {
+                            BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
+                                    blockProperties, -1);
+                            editor.execute(addOperation);
+                        }
 
-                            }
-                        });
 
                     }
 
@@ -698,14 +696,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                         final EJPluginBlockProperties blockProperties = reusableEJPluginBlockProperties.getBlockProperties().makeCopy(blockName, false);
 
-                        if (createCanvas)
-                        {
-                            EJPluginCanvasContainer container = formProperties.getCanvasContainer();
-                            EJCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                            container.addCanvasProperties(canvasProp);
-                        }
+                       
 
-                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
                         blockProperties.setCanvasName(canvas);
                         if (!copyRefBlock)
                         {
@@ -714,18 +706,21 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                         blockProperties.setIsReferenced(!copyRefBlock);
 
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        if (createCanvas)
                         {
 
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                refresh(findNode(formProperties.getCanvasContainer()));
-                                selectNodes(true, findNode(blockProperties));
-
-                            }
-                        });
+                            EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
+                            ReversibleOperation operation = new ReversibleOperation("Add Block");
+                            operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
+                            operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
+                            editor.execute(operation);
+                        }
+                        else
+                        {
+                            BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
+                                    blockProperties, -1);
+                            editor.execute(addOperation);
+                        }
 
                     }
 

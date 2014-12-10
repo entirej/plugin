@@ -60,6 +60,10 @@ import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
+import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
+import org.entirej.ide.ui.editors.form.operations.CanvasBlockAssignmentOperation;
+import org.entirej.ide.ui.editors.form.operations.CanvasRemoveOperation;
+import org.entirej.ide.ui.editors.operations.ReversibleOperation;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractSubActions;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
@@ -221,20 +225,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 {
                     final EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(editor.getFormProperties(), dlg.getValue().trim());
                     canvasProp.setType(type);
-                    container.addCanvasProperties(canvasProp);
-                    EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                    {
+                    ;
 
-                        public void run()
-                        {
-                            editor.setDirty(true);
-                            treeSection.refresh(parentNode);
-                            treeSection.selectNodes(false, parentNode);
-                            treeSection.expand(parentNode);
-                            treeSection.selectNodes(true, treeSection.findNode(canvasProp));
+                    CanvasAddOperation addOperation = new CanvasAddOperation(treeSection, container, canvasProp, -1);
+                    editor.execute(addOperation);
 
-                        }
-                    });
                 }
             }
 
@@ -325,10 +320,22 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
     }
 
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginCanvasProperties> items = source.getCanvasProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new CanvasAddOperation(treeSection, source, (EJPluginCanvasProperties) dSource, index);
+            }
+        }
+        return new CanvasAddOperation(treeSection, source, (EJPluginCanvasProperties) dSource, -1);
     }
 
     private abstract class AbstractCanvas extends AbstractNode<EJPluginCanvasProperties> implements Neighbor, Movable, NodeOverview
@@ -401,8 +408,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    return new CanvasRemoveOperation(treeSection, source.getParentCanvasContainer(), source);
                 }
             };
         }
@@ -773,8 +779,14 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    if (cleanup)
+                    {
+                        ReversibleOperation operation = new ReversibleOperation("Remove Canvas");
+                        operation.add(new CanvasBlockAssignmentOperation(treeSection, source));
+                        operation.add(new CanvasRemoveOperation(treeSection, source.getParentCanvasContainer(), source));
+                        return operation;
+                    }
+                    return new CanvasRemoveOperation(treeSection, source.getParentCanvasContainer(), source);
                 }
             };
         }
@@ -1113,8 +1125,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    return new CanvasRemoveOperation(treeSection, source.getParentCanvasContainer(), source);
                 }
             };
         }
@@ -1211,10 +1222,25 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
-        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
-            // TODO Auto-generated method stub
-            return null;
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getGroupCanvasContainer().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new CanvasAddOperation(treeSection, source.getGroupCanvasContainer(), (EJPluginCanvasProperties) dSource, index);
+
+                }
+            }
+
+            return new CanvasAddOperation(treeSection, source.getGroupCanvasContainer(), (EJPluginCanvasProperties) dSource, -1);
+
         }
 
         public void addOverview(StyledString styledString)
@@ -1708,10 +1734,22 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
-        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
-            // TODO Auto-generated method stub
-            return null;
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getSplitCanvasContainer().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new CanvasAddOperation(treeSection, source.getSplitCanvasContainer(), (EJPluginCanvasProperties) dSource, index);
+                }
+            }
+            return new CanvasAddOperation(treeSection, source.getSplitCanvasContainer(), (EJPluginCanvasProperties) dSource, -1);
         }
 
         public void addOverview(StyledString styledString)
@@ -3069,10 +3107,22 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
-        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
-            // TODO Auto-generated method stub
-            return null;
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getPopupCanvasContainer().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new CanvasAddOperation(treeSection, source.getPopupCanvasContainer(), (EJPluginCanvasProperties) dSource, index);
+                }
+            }
+            return new CanvasAddOperation(treeSection, source.getPopupCanvasContainer(), (EJPluginCanvasProperties) dSource, -1);
         }
 
         public AbstractNode<?>[] getChildren()
@@ -3660,10 +3710,22 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
-        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
-            // TODO Auto-generated method stub
-            return null;
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getContainedCanvases().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new CanvasAddOperation(treeSection, source.getContainedCanvases(), (EJPluginCanvasProperties) dSource, index);
+                }
+            }
+            return new CanvasAddOperation(treeSection, source.getContainedCanvases(), (EJPluginCanvasProperties) dSource, -1);
         }
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
@@ -4176,10 +4238,22 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         }
 
-        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
-            // TODO Auto-generated method stub
-            return null;
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getContainedCanvases().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new CanvasAddOperation(treeSection, source.getContainedCanvases(), (EJPluginCanvasProperties) dSource, index);
+                }
+            }
+            return new CanvasAddOperation(treeSection, source.getContainedCanvases(), (EJPluginCanvasProperties) dSource, -1);
         }
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
