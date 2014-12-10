@@ -1060,7 +1060,11 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
-                        return new BlockRemoveOperation(treeSection, BlockGroupNode.this.source, source, cleanup);
+                        if(cleanup)
+                        {
+                            return BlockRemoveOperation.createCleanupOperation(treeSection, BlockGroupNode.this.source, source);
+                        }
+                        return new BlockRemoveOperation(treeSection, BlockGroupNode.this.source, source);
                     }
                 };
             return super.getDeleteProvider();

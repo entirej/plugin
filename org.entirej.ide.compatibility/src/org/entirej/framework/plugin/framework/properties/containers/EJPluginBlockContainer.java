@@ -128,7 +128,7 @@ public class EJPluginBlockContainer
     
     public void removeBlockProperties(EJPluginBlockProperties props,boolean cleanup)
     {
-        
+       
         if (cleanup &&contains(props.getName()))
         {
             
