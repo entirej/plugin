@@ -7,7 +7,7 @@
  * accordance with the terms of the license agreement you entered into with XClinical.
  */
 
-package org.entirej.ide.ui.editors.report.operations;
+package org.entirej.ide.ui.editors.operations;
 
 import java.util.ArrayList;
 import java.util.Collections;

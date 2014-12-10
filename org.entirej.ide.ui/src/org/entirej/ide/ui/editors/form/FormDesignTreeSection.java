@@ -116,6 +116,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
+import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
+import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.MirrorBlockWizard;
@@ -128,6 +130,7 @@ import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizard;
 import org.entirej.ide.ui.editors.form.wizards.RefObjectGroupWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.RelationWizard;
 import org.entirej.ide.ui.editors.form.wizards.RelationWizardContext;
+import org.entirej.ide.ui.editors.operations.ReversibleOperation;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart.IExtensionValues;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -365,14 +368,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
                         final EJPluginBlockProperties blockProperties = new EJPluginBlockProperties(formProperties, blockName, controlBlock);
 
-                        if (createCanvas)
-                        {
-                            EJPluginCanvasContainer container = formProperties.getCanvasContainer();
-                            EJCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                            container.addCanvasProperties(canvasProp);
-                        }
-
-                        formProperties.getBlockContainer().addBlockProperties(blockProperties);
                         blockProperties.setCanvasName(canvas);
                         blockProperties.setBlockRendererName(block.getAssignedName(), true);
                         // create items if service is also selected
@@ -380,18 +375,22 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         {
                             blockProperties.setServiceClassName(serviceClass, true);
                         }
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+
+                        if (createCanvas)
                         {
 
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                refresh(findNode(formProperties.getCanvasContainer()));
-                                selectNodes(true, findNode(blockProperties));
-
-                            }
-                        });
+                            EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
+                            ReversibleOperation operation = new ReversibleOperation("Add Block");
+                            operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
+                            operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
+                            editor.execute(operation);
+                        }
+                        else
+                        {
+                            BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
+                                    blockProperties, -1);
+                            editor.execute(addOperation);
+                        }
 
                     }
 

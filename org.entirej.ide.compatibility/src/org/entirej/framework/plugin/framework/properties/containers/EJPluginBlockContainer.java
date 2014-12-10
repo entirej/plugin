@@ -83,12 +83,14 @@ public class EJPluginBlockContainer
         }
     }
     
-    public void removeBlockContainerItem(BlockContainerItem blockProperties)
+    public int removeBlockContainerItem(BlockContainerItem blockProperties)
     {
+        int indexOf = _blockProperties.indexOf(_blockProperties);
         if (blockProperties != null)
         {
             _blockProperties.remove(blockProperties);
         }
+        return indexOf;
     }
     
     public void replaceBlockProperties(EJPluginBlockProperties oldProp, EJPluginBlockProperties newProp)
@@ -411,9 +413,9 @@ public class EJPluginBlockContainer
             }
         }
         
-        public void removeBlockProperties(EJPluginBlockProperties props)
+        public int removeBlockProperties(EJPluginBlockProperties props)
         {
-            
+            int indexOf = _blockProperties.indexOf(props);
             if (_blockProperties.contains(props))
             {
 
@@ -421,6 +423,7 @@ public class EJPluginBlockContainer
                 _blockProperties.remove(props);
                 
             }
+            return indexOf;
             
         }
         

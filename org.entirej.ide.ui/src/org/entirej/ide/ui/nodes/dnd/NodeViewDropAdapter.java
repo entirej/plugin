@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
-import org.entirej.ide.ui.editors.report.operations.ReversibleOperation;
+import org.entirej.ide.ui.editors.operations.ReversibleOperation;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 

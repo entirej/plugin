@@ -180,6 +180,14 @@ public class EJFormBasePage extends AbstractEditorPage implements PageActionHand
         {
             return true;
         }
+        if (ActionFactory.UNDO.getCommandId().endsWith(commandId))
+        {
+            return true;
+        }
+        if (ActionFactory.REDO.getCommandId().endsWith(commandId))
+        {
+            return true;
+        }
         return false;
     }
 

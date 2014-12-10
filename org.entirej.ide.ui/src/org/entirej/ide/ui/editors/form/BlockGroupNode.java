@@ -95,6 +95,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
+import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
+import org.entirej.ide.ui.editors.form.operations.BlockRemoveOperation;
 import org.entirej.ide.ui.editors.form.wizards.ReplicateBlockWizard;
 import org.entirej.ide.ui.editors.form.wizards.ReplicateBlockWizardContext;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
@@ -112,30 +114,30 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 {
     private final FormDesignTreeSection         treeSection;
     private final AbstractEJFormEditor          editor;
-    private final static Image                  GROUP          = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
-    private final static Image                  BLOCK          = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
-    private final static Image                  BLOCK_MIRROR   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
-    private final static Image                  BLOCK_MIRROR_REF   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
-    private final static Image                  BLOCK_NTB      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
-    private final static Image                  BLOCK_NTB_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
-    private final static Image                  BLOCK_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
-    private final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
-                                                               {
+    private final static Image                  GROUP            = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
+    private final static Image                  BLOCK            = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
+    private final static Image                  BLOCK_MIRROR     = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
+    private final static Image                  BLOCK_MIRROR_REF = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
+    private final static Image                  BLOCK_NTB        = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
+    private final static Image                  BLOCK_NTB_REF    = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
+    private final static Image                  BLOCK_REF        = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
+    private final EJDevItemWidgetChosenListener chosenListener   = new EJDevItemWidgetChosenListener()
+                                                                 {
 
-                                                                   public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                   {
-                                                                       if (arg0 != null && treeSection != null)
-                                                                       {
+                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
+                                                                     {
+                                                                         if (arg0 != null && treeSection != null)
+                                                                         {
 
-                                                                           AbstractNode<?> findNode = treeSection.findNode(arg0, true);
-                                                                           if (findNode != null)
-                                                                           {
-                                                                               treeSection.selectNodes(true, findNode);
-                                                                           }
-                                                                       }
+                                                                             AbstractNode<?> findNode = treeSection.findNode(arg0, true);
+                                                                             if (findNode != null)
+                                                                             {
+                                                                                 treeSection.selectNodes(true, findNode);
+                                                                             }
+                                                                         }
 
-                                                                   }
-                                                               };
+                                                                     }
+                                                                 };
 
     public BlockGroupNode(FormDesignTreeSection treeSection)
     {
@@ -144,7 +146,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         this.treeSection = treeSection;
     }
 
-    
     public String getName()
     {
 
@@ -233,30 +234,28 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
 
         return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewMirrorBlockAction(null),
-                treeSection.createNewRefBlockAction(true),null,createNewBlockGroupAction() };
+                treeSection.createNewRefBlockAction(true), null, createNewBlockGroupAction() };
     }
-    
-    
+
     public Action createNewBlockGroupAction()
     {
-        
+
         return new Action("New Block Group")
         {
-            
+
             @Override
             public void runWithEvent(Event event)
             {
-                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), "New Block Group", "Group Name", null,
-                        new IInputValidator()
-                        {
+                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), "New Block Group", "Group Name", null, new IInputValidator()
+                {
 
-                            public String isValid(String newText)
-                            {
-                                if (newText == null || newText.trim().length() == 0)
-                                    return "Group name can't be empty.";
-                                return null;
-                            }
-                        });
+                    public String isValid(String newText)
+                    {
+                        if (newText == null || newText.trim().length() == 0)
+                            return "Group name can't be empty.";
+                        return null;
+                    }
+                });
                 if (dlg.open() == Window.OK)
                 {
                     BlockGroup blockGroup = new BlockGroup();
@@ -288,8 +287,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
         return new AbstractDescriptor<?>[] {};
     }
-    
-    
+
     class BlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
     {
         public BlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
@@ -303,7 +301,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         {
             return BlockGroupNode.this.getAdapter(adapter);
         }
-        
+
         @Override
         public String getName()
         {
@@ -312,8 +310,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
         public void addOverview(StyledString styledString)
         {
-            //todo:
-            
+            // todo:
+
         }
 
         public boolean canMove()
@@ -325,43 +323,38 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         {
             return source;
         }
-        
+
         @Override
         public Image getImage()
         {
             return BlockGroupNode.this.getImage();
         }
-        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
+
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-            
-                return new INodeDeleteProvider()
+
+            return new INodeDeleteProvider()
+            {
+
+                public void delete(boolean cleanup)
                 {
 
-                    public void delete(boolean cleanup)
-                    {
+                    BlockGroupNode.this.source.removeBlockContainerItem(source);
 
-                        BlockGroupNode.this.source.removeBlockContainerItem(source);
-                        
-                        editor.setDirty(true);
-                        treeSection.refresh(BlockGroupNode.this);
+                    editor.setDirty(true);
+                    treeSection.refresh(BlockGroupNode.this);
 
-                    }
-                    public AbstractOperation deleteOperation(boolean cleanup)
-                    {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                };
+                }
+
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+            };
         }
-        
-        
+
         @Override
         public INodeRenameProvider getRenameProvider()
         {
@@ -389,7 +382,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         // String oldName = source.getName();
                         String newName = dlg.getValue().trim();
-                       
+
                         source.setName(newName);
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
@@ -406,14 +399,13 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 }
             };
         }
-        
+
         @Override
         public boolean isLeaf()
         {
             return source.isEmpty();
         }
-        
-        
+
         @Override
         public AbstractNode<?>[] getChildren()
         {
@@ -427,8 +419,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
             return nodes.toArray(new AbstractNode<?>[0]);
         }
-        
-        
+
         public boolean canMove(Neighbor relation, Object source)
         {
             return source instanceof EJPluginBlockProperties;
@@ -453,10 +444,28 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 source.addBlockProperties((EJPluginBlockProperties) dSource);
 
         }
-        
-        
+
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginBlockProperties> items = source.getAllBlockProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new BlockAddOperation(treeSection, source, (EJPluginBlockProperties) dSource, index);
+                }
+            }
+
+            return new BlockAddOperation(treeSection, source, (EJPluginBlockProperties) dSource, -1);
+
+        }
+
     }
-    
 
     class BlockNode extends AbstractNode<EJPluginBlockProperties> implements Neighbor, Movable, NodeOverview
     {
@@ -511,42 +520,42 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         @Override
         public Action[] getActions()
         {
-            if(source.isImportFromObjectGroup())
+            if (source.isImportFromObjectGroup())
             {
                 return new Action[0];
             }
-            
-            if(treeSection.getEditor().getFormProperties() instanceof EJPluginObjectGroupProperties)
-            {
-               
-                    return new Action[] {  treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true),null, createCopyNameAction() };
-                
 
-                
+            if (treeSection.getEditor().getFormProperties() instanceof EJPluginObjectGroupProperties)
+            {
+
+                return new Action[] { treeSection.createNewMirrorBlockAction(source.getName()), treeSection.createNewRefBlockAction(true), null,
+                        createCopyNameAction() };
+
             }
-            
+
             if (source.isReferenceBlock() || source.isMirrorChild())
             {
-                return new Action[] { createReplicateAction(),treeSection.createNewMirrorBlockAction(source.getName()),  null, treeSection.createNewBlockAction(false),
-                        treeSection.createNewBlockAction(true),  treeSection.createNewRefBlockAction(true),null,createCopyNameAction() };
+                return new Action[] { createReplicateAction(), treeSection.createNewMirrorBlockAction(source.getName()), null,
+                        treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), treeSection.createNewRefBlockAction(true), null,
+                        createCopyNameAction() };
             }
 
-            return new Action[] { createReplicateAction(),treeSection.createNewMirrorBlockAction(source.getName()),  treeSection.createGenerateRefBlockAction(source), null,
-                    treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), 
-                    treeSection.createNewRefBlockAction(true) ,null,createCopyNameAction()};
+            return new Action[] { createReplicateAction(), treeSection.createNewMirrorBlockAction(source.getName()),
+                    treeSection.createGenerateRefBlockAction(source), null, treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true),
+                    treeSection.createNewRefBlockAction(true), null, createCopyNameAction() };
 
         }
 
         public void addOverview(StyledString styledString)
         {
 
-            if(source.isImportFromObjectGroup())
+            if (source.isImportFromObjectGroup())
             {
                 styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
                 styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
             }
-            
+
             if (source.isReferenceBlock() && source.getReferencedBlockName() != null && source.getReferencedBlockName().length() != 0)
             {
                 styledString.append(" [ ", StyledString.QUALIFIER_STYLER);
@@ -628,12 +637,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         public Image getImage()
         {
             if (source.isMirrorChild())
-                return source.isImportFromObjectGroup()? BLOCK_MIRROR_REF:BLOCK_MIRROR;
+                return source.isImportFromObjectGroup() ? BLOCK_MIRROR_REF : BLOCK_MIRROR;
 
             if (source.isReferenceBlock())
                 return BLOCK_REF;
             if (source.isControlBlock())
-                return source.isImportFromObjectGroup()? BLOCK_NTB_REF:BLOCK_NTB;
+                return source.isImportFromObjectGroup() ? BLOCK_NTB_REF : BLOCK_NTB;
 
             return BLOCK;
         }
@@ -1038,17 +1047,16 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     public void delete(boolean cleanup)
                     {
 
-                        BlockGroupNode.this.source.removeBlockProperties(source,cleanup);
-                        
+                        BlockGroupNode.this.source.removeBlockProperties(source, cleanup);
+
                         editor.setDirty(true);
                         treeSection.refresh(BlockGroupNode.this);
 
                     }
-                    
+
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
-                        // TODO Auto-generated method stub
-                        return null;
+                        return new BlockRemoveOperation(treeSection, BlockGroupNode.this.source, source, cleanup);
                     }
                 };
             return super.getDeleteProvider();
@@ -1225,9 +1233,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
 
-            if(source.isImportFromObjectGroup())
+            if (source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("Referenced ObjectGroup")
                 {
 
                     public boolean hasLableLink()
@@ -1235,8 +1243,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         return true;
                     }
 
-                    
-                    
                     @Override
                     public String lableLinkActivator()
                     {
@@ -1273,17 +1279,15 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         text.setEditable(false);
                     }
 
-
-
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
-                }};
+                } };
             }
-            
+
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
             final List<AbstractDescriptor<?>> dataDescriptors = new ArrayList<AbstractDescriptor<?>>();
@@ -1336,8 +1340,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1382,12 +1387,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public String getWarnings()
                     {
@@ -1528,12 +1535,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         return getValue();
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -1584,12 +1593,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     public boolean hasLableLink()
                     {
                         return true;
@@ -1678,12 +1689,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public String getWarnings()
                     {
@@ -1723,11 +1736,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         treeSection.refresh(BlockNode.this);
 
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
 
                 };
@@ -1765,12 +1779,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -1833,12 +1849,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -1884,12 +1902,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         editor.setDirty(true);
                         treeSection.refresh(BlockNode.this);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public String getValue()
                     {
@@ -1938,12 +1958,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     {
                         return String.valueOf(source.getPageSize());
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     Text text;
 
                     @Override
@@ -1974,12 +1996,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         treeSection.refresh(BlockNode.this);
 
                     }
-                    
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
 
                     @Override
@@ -2013,19 +2035,19 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
 
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getTooltip()
                 {
                     return "Indicates if the user can create records within this block";
                 }
-                
-                
 
             };
             insertAllowMenuDescriptor.setText("Insert Allowed");
@@ -2046,12 +2068,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
 
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getTooltip()
                 {
@@ -2077,12 +2101,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
 
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getTooltip()
                 {
@@ -2101,8 +2127,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return dataDescriptors.toArray(new AbstractDescriptor<?>[0]);
@@ -2130,8 +2157,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                             public void runOperation(AbstractOperation operation)
                             {
                                 editor.execute(operation);
-                                
+
                             }
+
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
                                 return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getEntireJProperties(), definitionGroup,
@@ -2178,11 +2206,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 }
             };
         }
-       
 
-        
-        
-        
         public Action createReplicateAction()
         {
 
@@ -2281,7 +2305,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             source.addBlockProperties((BlockContainerItem) dSource);
 
     }
-    
+
     public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
     {
         // TODO Auto-generated method stub
