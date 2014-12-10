@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockContainerItem;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockGroup;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -18,13 +19,13 @@ public class BlockAddOperation extends AbstractOperation
 
     private EJPluginBlockContainer        container;
     private BlockGroup                    group;
-    private EJPluginBlockProperties blockProperties;
+    private BlockContainerItem blockProperties;
     private AbstractNodeTreeSection       treeSection;
     private boolean                       dirty;
 
     private int                           index = -1;
 
-    public BlockAddOperation(final AbstractNodeTreeSection treeSection, EJPluginBlockContainer container, EJPluginBlockProperties blockProperties,
+    public BlockAddOperation(final AbstractNodeTreeSection treeSection, EJPluginBlockContainer container, BlockContainerItem blockProperties,
             int index)
     {
         super("Add Block");
@@ -34,7 +35,7 @@ public class BlockAddOperation extends AbstractOperation
         this.index = index;
     }
 
-    public BlockAddOperation(final AbstractNodeTreeSection treeSection, BlockGroup group, EJPluginBlockProperties blockProperties, int index)
+    public BlockAddOperation(final AbstractNodeTreeSection treeSection, BlockGroup group, BlockContainerItem blockProperties, int index)
     {
         super("Add Block");
         this.treeSection = treeSection;
@@ -80,10 +81,10 @@ public class BlockAddOperation extends AbstractOperation
         if (group != null)
         {
             if (index == -1)
-                group.addBlockProperties(blockProperties);
+                group.addBlockProperties((EJPluginBlockProperties)blockProperties);
             else
             {
-                group.addBlockProperties(index, blockProperties);
+                group.addBlockProperties(index, (EJPluginBlockProperties)blockProperties);
             }
 
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
@@ -123,7 +124,7 @@ public class BlockAddOperation extends AbstractOperation
         }
         if (group != null)
         {
-            group.removeBlockProperties(blockProperties);
+            group.removeBlockProperties((EJPluginBlockProperties)blockProperties);
 
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {

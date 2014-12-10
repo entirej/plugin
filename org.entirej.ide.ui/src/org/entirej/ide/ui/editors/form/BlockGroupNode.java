@@ -96,6 +96,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
 import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
+import org.entirej.ide.ui.editors.form.operations.BlockGroupAddOperation;
+import org.entirej.ide.ui.editors.form.operations.BlockGroupRemoveOperation;
 import org.entirej.ide.ui.editors.form.operations.BlockRemoveOperation;
 import org.entirej.ide.ui.editors.form.wizards.ReplicateBlockWizard;
 import org.entirej.ide.ui.editors.form.wizards.ReplicateBlockWizardContext;
@@ -260,8 +262,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 {
                     BlockGroup blockGroup = new BlockGroup();
                     blockGroup.setName(dlg.getValue());
-                    source.addBlockProperties(blockGroup);
-                    treeSection.refresh(BlockGroupNode.this);
+                    
+                    BlockGroupAddOperation addOperation = new BlockGroupAddOperation(treeSection, source, blockGroup, -1); 
+                    editor.execute(addOperation);
                 }
             }
         };
@@ -349,8 +352,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    return new BlockGroupRemoveOperation(treeSection, BlockGroupNode.this.source, source);
                 }
             };
         }
@@ -2306,9 +2308,23 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
     }
 
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<BlockContainerItem> items = source.getBlockContainerItems();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new BlockAddOperation(treeSection, source, (BlockContainerItem) dSource, index);
+            }
+        }
+      
+        
+        return new BlockAddOperation(treeSection, source, (BlockContainerItem) dSource, -1);
     }
 }

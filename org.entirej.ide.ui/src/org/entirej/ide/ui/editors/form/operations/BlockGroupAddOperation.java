@@ -12,23 +12,24 @@ import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
 
-public class BlockGroupRemoveOperation extends AbstractOperation
+public class BlockGroupAddOperation extends AbstractOperation
 {
 
-    private EJPluginBlockContainer        container;
-    private BlockGroup                    group;
-    private AbstractNodeTreeSection       treeSection;
-    private boolean                       dirty;
-    private int                           index = -1;
+    private EJPluginBlockContainer  container;
+    private BlockGroup              blockProperties;
+    private AbstractNodeTreeSection treeSection;
+    private boolean                 dirty;
 
-    public BlockGroupRemoveOperation(final AbstractNodeTreeSection treeSection, EJPluginBlockContainer container, BlockGroup group)
+    private int                     index = -1;
+
+    public BlockGroupAddOperation(final AbstractNodeTreeSection treeSection, EJPluginBlockContainer container, BlockGroup blockProperties, int index)
     {
-        super("Remove Block Group");
+        super("Add Block Group");
         this.treeSection = treeSection;
         this.container = container;
-        this.group = group;
+        this.blockProperties = blockProperties;
+        this.index = index;
     }
-
 
     @Override
     public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
@@ -43,8 +44,37 @@ public class BlockGroupRemoveOperation extends AbstractOperation
 
         if (container != null)
         {
+            if (index == -1)
+                container.addBlockProperties(blockProperties);
+            else
+            {
+                container.addBlockProperties(index, blockProperties);
+            }
 
-            index = container.removeBlockContainerItem(group);
+            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+            {
+
+                public void run()
+                {
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(treeSection.findNode(container), true);
+                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
+                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.expand(abstractNode, 2);
+
+                }
+            });
+        }
+
+        return Status.OK_STATUS;
+    }
+
+    @Override
+    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        if (container != null)
+        {
+            container.removeBlockContainerItem(blockProperties);
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
             {
 
@@ -56,40 +86,6 @@ public class BlockGroupRemoveOperation extends AbstractOperation
                 }
             });
         }
-        
-
-        return Status.OK_STATUS;
-    }
-
-    @Override
-    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
-    {
-        if (container != null)
-        {
-            if (index == -1)
-            {
-                container.addBlockProperties(group);
-            }
-            else
-            {
-                container.addBlockProperties(index, group);
-            }
-
-            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-            {
-
-                public void run()
-                {
-                    treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(group, true);
-                    treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 2);
-
-                }
-            });
-        }
-       
 
         return Status.OK_STATUS;
     }
