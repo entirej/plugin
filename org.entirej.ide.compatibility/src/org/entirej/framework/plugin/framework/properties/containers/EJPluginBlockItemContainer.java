@@ -188,25 +188,7 @@ public class EJPluginBlockItemContainer implements EJDevBlockItemDisplayProperti
         }
         return null;
     }
-    
-    public void removeItem(String itemName)
-    {
-        Iterator<EJPluginBlockItemProperties> props = _itemProperties.iterator();
-        
-        while (props.hasNext())
-        {
-            EJPluginBlockItemProperties item = props.next();
-            
-            if (item.getName().equalsIgnoreCase(itemName))
-            {
-                _itemProperties.remove(item);
-                
-                EJPluginItemChanger.deleteItemOnForm(_blockProperties, itemName);
-                
-                break;
-            }
-        }
-    }
+   
     
     public void sync(List<EJPluginBlockItemProperties> newItems)
     {
@@ -234,7 +216,7 @@ public class EJPluginBlockItemContainer implements EJDevBlockItemDisplayProperti
         }
         for (EJPluginBlockItemProperties ejPluginBlockItemProperties : markedRemove)
         {
-            removeItem(ejPluginBlockItemProperties);
+            removeItem(ejPluginBlockItemProperties,true);
         }
         for (EJPluginBlockItemProperties ejPluginBlockItemProperties : newItems)
         {
@@ -249,18 +231,21 @@ public class EJPluginBlockItemContainer implements EJDevBlockItemDisplayProperti
         return _itemProperties.size();
     }
     
-    public void removeItem(EJPluginBlockItemProperties item)
+    public int  removeItem(EJPluginBlockItemProperties item,boolean cleanup)
     {
         if (_blockProperties.isMirrorBlock() && _blockProperties.getMirrorParent() == null)
         {
             // this is a mirror parent
             for (EJPluginBlockProperties childProperties : _blockProperties.getMirrorChildren())
             {
-                childProperties.getItemContainer().removeItem(item.getName());
+                childProperties.getItemContainer().removeItem(childProperties.getItemContainer().getItemProperties(item.getName()), cleanup);
             }
         }
-        EJPluginItemChanger.deleteItemOnForm(_blockProperties, item.getName());
+        if(cleanup)
+            EJPluginItemChanger.deleteItemOnForm(_blockProperties, item.getName());
+        int indexOf = _itemProperties.indexOf(item);
         _itemProperties.remove(item);
+        return indexOf;
     }
     
 }

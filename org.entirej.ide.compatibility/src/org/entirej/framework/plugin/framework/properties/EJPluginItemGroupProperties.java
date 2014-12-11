@@ -488,8 +488,9 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
      * @param itemName
      *            The name of the block item
      */
-    public void deleteItem(String itemName)
+    public int deleteItem(String itemName)
     {
+        int indexOf = -1;
         Iterator<EJPluginScreenItemProperties> props = _itemProperties.iterator();
         
         while (props.hasNext())
@@ -498,10 +499,12 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
             
             if (item.getReferencedItemName().equalsIgnoreCase(itemName))
             {
+                 indexOf = _itemProperties.indexOf(item);
                 _itemProperties.remove(item);
                 break;
             }
         }
+        return indexOf;
     }
     
     public int deleteItem(EJPluginScreenItemProperties item)

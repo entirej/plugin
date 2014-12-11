@@ -22,9 +22,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -76,6 +81,7 @@ import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFac
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginItemChanger;
+import org.entirej.framework.plugin.utils.EJPluginItemChanger.UndoProvider;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -87,8 +93,11 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.BlockGroupNode.BlockNode;
+import org.entirej.ide.ui.editors.form.operations.BlockItemAddOperation;
+import org.entirej.ide.ui.editors.form.operations.BlockItemRemoveOperation;
 import org.entirej.ide.ui.editors.form.wizards.BlockItemWizard;
 import org.entirej.ide.ui.editors.form.wizards.BlockItemWizardContext;
+import org.entirej.ide.ui.editors.operations.ReversibleOperation;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart.IExtensionValues;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -98,7 +107,6 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 
 public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer> implements NodeMoveProvider
@@ -364,7 +372,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
 
                     if (cleanup)
                     {
-                        BlockItemsGroupNode.this.source.removeItem(source);
+                        BlockItemsGroupNode.this.source.removeItem(source,cleanup);
                     }
                     else
                     {
@@ -381,8 +389,40 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    if(cleanup)
+                    {
+                       ReversibleOperation operation = new ReversibleOperation("Remove Item");
+                       operation.add(new BlockItemRemoveOperation(treeSection, BlockItemsGroupNode.this.source, source));
+                       operation.add(new AbstractOperation("clean")
+                       {
+                           List<UndoProvider> deleteItemOnForm =null;
+                           @Override
+                           public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                           {
+                                for (UndoProvider provider : deleteItemOnForm)
+                               {
+                                   provider.undo();
+                               }
+                               return Status.OK_STATUS;
+                           }
+                           
+                           @Override
+                           public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                           {
+                               
+                               return execute(monitor, info);
+                           }
+                           
+                           @Override
+                           public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                           {
+                              deleteItemOnForm = EJPluginItemChanger.deleteItemOnForm(source.getBlockProperties(), source.getName());
+                               return Status.OK_STATUS;
+                           }
+                       });
+                       return operation;
+                    }
+                    return new BlockItemRemoveOperation(treeSection, BlockItemsGroupNode.this.source, source);
                 }
             };
         }
@@ -762,6 +802,45 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     return t;
                 }
 
+                /* 
+                 
+                @Override
+                public AbstractOperation createOperation(String newValue, IRefreshHandler handler)
+                {
+                   ReversibleOperation operation = new ReversibleOperation(getName());
+                    operation.add( super.createOperation(newValue, handler));
+                    operation.add(new AbstractOperation("clean")
+                    {
+                        List<UndoProvider> deleteItemOnForm =null;
+                        @Override
+                        public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            for (UndoProvider provider : deleteItemOnForm)
+                            {
+                                provider.undo();
+                            }
+                            return Status.OK_STATUS;
+                        }
+                        
+                        @Override
+                        public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            
+                            return execute(monitor, info);
+                        }
+                        
+                        @Override
+                        public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                           deleteItemOnForm = EJPluginItemChanger.deleteItemOnForm(source.getBlockProperties(), source.getName());
+                            return Status.OK_STATUS;
+                        }
+                    });
+                    return operation;
+                }
+                 
+                 */
+                
                 @Override
                 public void setValue(String value)
                 {
@@ -901,10 +980,25 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         }
     }
 
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginBlockItemProperties> items = source.getAllItemProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new BlockItemAddOperation(treeSection, source, (EJPluginBlockItemProperties) dSource,index);
+                }
+            }
+           
+            return new BlockItemAddOperation(treeSection, source, (EJPluginBlockItemProperties) dSource);
+        
     }
 
     public Action createNewBlockItemAction(final int index)
@@ -950,30 +1044,15 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                         if (blockItem != null)
                             itemProperties.setItemRendererName(blockItem.getAssignedName(), true);
 
-                        if (index == -1)
-                        {
-                            source.addItemProperties(itemProperties);
-                        }
-                        else
-                        {
-                            source.addItemProperties(index, itemProperties);
-                        }
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                treeSection.refresh(BlockItemsGroupNode.this);
-                                treeSection.selectNodes(true, treeSection.findNode(itemProperties));
-                                if (BlockItemsGroupNode.this.source.getBlockProperties().isMirrorBlock())
-                                {
-                                    // update mirror items
-                                    updateMirrorItems();
-                                }
-
-                            }
-                        });
+                       
+                        
+                        ReversibleOperation operation = new ReversibleOperation("Add Item");
+                        
+                        
+                        operation.add(new BlockItemAddOperation(treeSection, source, itemProperties,index));
+                       
+                        editor.execute(operation);
+                        
                     }
                 };
                 BlockItemWizard wizard = new BlockItemWizard(context);
