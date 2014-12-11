@@ -96,6 +96,9 @@ public class EJReportValidateImpl implements EJReportValidateProvider
     private void validateBlocks(IFile file, EJPluginReportProperties reportProperties, IJavaProject project)
     {
         List<EJPluginReportBlockProperties> allBlockProperties = reportProperties.getBlockContainer().getAllBlockProperties();
+        
+        allBlockProperties.addAll(reportProperties.getBlockContainer().getHeaderSection().getAllBlockProperties());
+        allBlockProperties.addAll(reportProperties.getBlockContainer().getFooterSection().getAllBlockProperties());
         for (EJPluginReportBlockProperties blockProp : allBlockProperties)
         {
 

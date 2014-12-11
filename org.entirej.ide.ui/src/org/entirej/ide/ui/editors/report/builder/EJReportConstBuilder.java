@@ -514,6 +514,8 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
 
             // build Block
             List<EJPluginReportBlockProperties> allBlockProperties = formProperties.getBlockContainer().getAllBlockProperties();
+            allBlockProperties.addAll(formProperties.getBlockContainer().getHeaderSection().getAllBlockProperties());
+            allBlockProperties.addAll(formProperties.getBlockContainer().getFooterSection().getAllBlockProperties());
             for (EJPluginReportBlockProperties blockProp : allBlockProperties)
             {
                 if (blockProp.getName() != null && blockProp.getName().length() > 0)
