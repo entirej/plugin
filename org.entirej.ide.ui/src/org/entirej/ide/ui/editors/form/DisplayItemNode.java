@@ -56,6 +56,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.ItemGroup;
+import org.entirej.ide.ui.editors.form.operations.DisplayItemRemoveOperation;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart.IExtensionValues;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -168,8 +169,7 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
             
             public AbstractOperation deleteOperation(boolean cleanup)
             {
-                // TODO Auto-generated method stub
-                return null;
+                return new DisplayItemRemoveOperation(treeSection,  group.properties, source);
             }
         };
     }

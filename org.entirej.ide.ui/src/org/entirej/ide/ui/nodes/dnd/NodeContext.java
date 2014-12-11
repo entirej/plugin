@@ -20,6 +20,7 @@ package org.entirej.ide.ui.nodes.dnd;
 
 import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.nodes.AbstractNode;
+import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
 
 public interface NodeContext
 {
@@ -37,4 +38,6 @@ public interface NodeContext
     void selectNodes(boolean focusDeatils, AbstractNode<?>... nodes);
 
     AbstractEditor getEditor();
+    
+    public AbstractNodeTreeSection getTreeSection();
 }

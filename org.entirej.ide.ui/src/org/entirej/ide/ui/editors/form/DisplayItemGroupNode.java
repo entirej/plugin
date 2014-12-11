@@ -70,6 +70,9 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.DisplayItemGroup;
+import org.entirej.ide.ui.editors.form.operations.DisplayItemAddOperation;
+import org.entirej.ide.ui.editors.form.operations.DisplayItemGroupAddOperation;
+import org.entirej.ide.ui.editors.form.operations.DisplayItemGroupRemoveOperation;
 import org.entirej.ide.ui.editors.form.wizards.ItemGroupWizard;
 import org.entirej.ide.ui.editors.form.wizards.ItemGroupWizardContext;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
@@ -98,7 +101,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         this.treeSection = treeSection;
     }
 
-    public static class DisplayItemGroup
+    public static abstract class DisplayItemGroup
     {
 
         public AbstractDescriptor<?>[] getNodeDescriptors(FormDesignTreeSection treeSection, DisplayItemGroupNode node)
@@ -165,6 +168,8 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             // ignore
 
         }
+
+        public abstract AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before);
 
         public Action[] getActions(FormDesignTreeSection treeSection, AbstractNode<?> patentNode)
         {
@@ -254,8 +259,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
     public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this.source.moveOperation(context, neighbor, source, before);
     }
 
     @Override
@@ -391,6 +395,30 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             }
             else
                 container.addItemGroupProperties(((ItemGroup) dSource).properties);
+
+        }
+
+        @Override
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                if (methodNeighbor instanceof ItemGroup)
+                    methodNeighbor = ((ItemGroup) methodNeighbor).properties;
+                List<EJPluginItemGroupProperties> items = container.getItemGroups();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new DisplayItemGroupAddOperation(context.getTreeSection(), container, ((ItemGroup) dSource).properties, index);
+
+                }
+            }
+
+            return new DisplayItemGroupAddOperation(context.getTreeSection(), container, ((ItemGroup) dSource).properties, -1);
 
         }
 
@@ -595,6 +623,27 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             else
                 container.addItemGroupProperties(((ItemGroup) dSource).properties);
 
+        }
+
+        @Override
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                if (methodNeighbor instanceof ItemGroup)
+                    methodNeighbor = ((ItemGroup) methodNeighbor).properties;
+                List<EJPluginItemGroupProperties> items = container.getItemGroups();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new DisplayItemGroupAddOperation(context.getTreeSection(), container, ((ItemGroup) dSource).properties, index);
+                }
+            }
+            return new DisplayItemGroupAddOperation(context.getTreeSection(), container, ((ItemGroup) dSource).properties, -1);
         }
 
         @Override
@@ -1140,17 +1189,11 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     itemProperties.setMandatory(item.isMandatoryItem());
                     itemProperties.setLabel(toLable(itemProperties.getName()));
                     itemProperties.setVisible(true);
-                    if (index == -1)
-                    {
-                        properties.addItemProperties(itemProperties);
-                    }
-                    else
-                    {
-                        properties.addItemProperties(index, itemProperties);
-                    }
-                    treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(patentNode, true);
-                    treeSection.selectNodes(true, treeSection.findNode(itemProperties));
+
+                    DisplayItemAddOperation addOperation = new DisplayItemAddOperation(treeSection, properties, itemProperties, index);
+
+                    treeSection.getEditor().execute(addOperation);
+
                 }
 
                 String toLable(String item)
@@ -1299,20 +1342,11 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                                 itemProperties.setReferencedItemName("spacer" + properties.getNextAvailableSpacerItemName());
                                 itemProperties.setVisible(true);
                                 itemProperties.setEditAllowed(false);
-                                if (index == -1)
-                                {
-                                    properties.addItemProperties(itemProperties);
-                                }
-                                else
-                                {
-                                    properties.addItemProperties(index, itemProperties);
-                                }
 
-                                treeSection.getEditor().setDirty(true);
-                                treeSection.refresh(patentNode);
-                                treeSection.selectNodes(false, patentNode);
-                                treeSection.expand(patentNode);
-                                treeSection.selectNodes(true, treeSection.findNode(itemProperties));
+                                DisplayItemAddOperation addOperation = new DisplayItemAddOperation(treeSection, properties, itemProperties, index);
+
+                                treeSection.getEditor().execute(addOperation);
+
                             }
                         });
                     }
@@ -1352,8 +1386,8 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+
+                    return new DisplayItemGroupRemoveOperation(treeSection, properties.getParentItemGroupContainer(), properties);
                 }
             };
         }
@@ -1466,6 +1500,54 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             }
             else
                 container.addItemGroupProperties(((ItemGroup) dSource).properties);
+        }
+
+        @Override
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (dSource instanceof EJPluginScreenItemProperties)
+            {
+                if (neighbor != null)
+                {
+                    Object methodNeighbor = neighbor.getNeighborSource();
+
+                    List<EJPluginScreenItemProperties> items = properties.getItemProperties();
+                    if (items.contains(methodNeighbor))
+                    {
+                        int index = items.indexOf(methodNeighbor);
+                        if (!before)
+                            index++;
+
+                        return new DisplayItemAddOperation(context.getTreeSection(), properties, (EJPluginScreenItemProperties) dSource, index);
+                    }
+
+                }
+                return new DisplayItemAddOperation(context.getTreeSection(), properties, (EJPluginScreenItemProperties) dSource, -1);
+
+            }
+
+            EJPluginItemGroupContainer container = properties.getChildItemGroupContainer();
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                if (methodNeighbor instanceof ItemGroup)
+                    methodNeighbor = ((ItemGroup) methodNeighbor).properties;
+                List<EJPluginItemGroupProperties> items = container.getItemGroups();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+
+                    return new DisplayItemGroupAddOperation(context.getTreeSection(), container, ((ItemGroup) dSource).properties, index);
+
+                }
+                return null;
+
+            }
+
+            return new DisplayItemGroupAddOperation(context.getTreeSection(), container, ((ItemGroup) dSource).properties, -1);
+
         }
 
         @Override
@@ -2185,7 +2267,9 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                         itemProperties.setExpandVertically(true);
                         itemProperties.setXspan(1);
                         itemProperties.setYspan(1);
-                        itemGroupContainer.addItemGroupProperties(itemProperties);
+
+                        DisplayItemGroupAddOperation addOperation = new DisplayItemGroupAddOperation(treeSection, itemGroupContainer, itemProperties, -1);
+                        treeSection.getEditor().execute(addOperation);
                         EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                         {
 
@@ -2199,6 +2283,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
                             }
                         });
+
 
                     }
                 };

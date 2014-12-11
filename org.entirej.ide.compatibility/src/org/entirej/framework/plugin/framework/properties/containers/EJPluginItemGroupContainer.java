@@ -408,6 +408,13 @@ public class EJPluginItemGroupContainer implements EJItemGroupPropertiesContaine
             }
         }
     }
+    public int removeItemGroup(EJItemGroupProperties itemGroup)
+    {
+        int indexOf = _itemGroups.indexOf(itemGroup);
+        _itemGroups.remove(itemGroup);
+        
+        return indexOf;
+    }
     
     /**
      * Remove the item with the given name from this container or one of the

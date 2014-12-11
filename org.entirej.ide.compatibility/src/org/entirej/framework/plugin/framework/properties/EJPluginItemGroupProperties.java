@@ -504,9 +504,11 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
         }
     }
     
-    public void deleteItem(EJPluginScreenItemProperties item)
+    public int deleteItem(EJPluginScreenItemProperties item)
     {
+        int indexOf = _itemProperties.indexOf(item);
         _itemProperties.remove(item);
+        return indexOf;
     }
     
     /**

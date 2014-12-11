@@ -457,6 +457,12 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             {
                 return editor;
             }
+            
+            public AbstractNodeTreeSection getTreeSection()
+            {
+                return AbstractNodeTreeSection.this;
+            }
+            
 
             public void refresh(AbstractNode<?> node)
             {
