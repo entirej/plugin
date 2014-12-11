@@ -36,6 +36,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
@@ -62,6 +63,9 @@ import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
+import org.entirej.ide.ui.editors.form.operations.ObjectGroupAddOperation;
+import org.entirej.ide.ui.editors.form.operations.ObjectGroupRemoveOperation;
+import org.entirej.ide.ui.editors.operations.ReversibleOperation;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.INodeDeleteProvider;
 import org.entirej.ide.ui.nodes.INodeRenameProvider;
@@ -69,7 +73,6 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.NodeValidateProvider;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
 public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> implements NodeMoveProvider
 {
@@ -160,7 +163,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
     public Action[] getActions()
     {
 
-        return new Action[] {treeSection.createObjectGroupAction()};
+        return new Action[] { treeSection.createObjectGroupAction() };
     }
 
     protected boolean supportObjectGroupDelete()
@@ -279,7 +282,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                     {
                         return source;
                     }
-                    
+
                     @Override
                     public String getDescription()
                     {
@@ -339,458 +342,466 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
             final List<EJPluginBlockProperties> allBlockProperties = source.getBlockContainer().getAllBlockProperties();
-            if(allBlockProperties.size()>0)
+            if (allBlockProperties.size() > 0)
             {
-                AbstractNode<?> blocks =   new AbstractNode<EJPluginObjectGroupProperties>(this,source)
+                AbstractNode<?> blocks = new AbstractNode<EJPluginObjectGroupProperties>(this, source)
+                {
+                    public String getName()
+                    {
+
+                        return "Blocks";
+                    }
+
+                    public Image getImage()
+                    {
+
+                        return EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
+                    }
+
+                    @Override
+                    public boolean isLeaf()
+                    {
+                        return false;
+                    }
+
+                    @Override
+                    public AbstractNode<?>[] getChildren()
+                    {
+                        List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+                        final Image BLOCK = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
+                        final Image BLOCK_MIRROR = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
+                        final Image BLOCK_NTB = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
+                        final Image BLOCK_REF = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
+                        for (final EJPluginBlockProperties blockProperties : allBlockProperties)
                         {
-                            public String getName() 
+                            nodes.add(new GroupElementNode(this, new GroupElement()
                             {
-                                
-                                return "Blocks";
-                            }
-                            public Image getImage()
-                            {
-                                
-                                return EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
-                            }
-                            @Override
-                            public boolean isLeaf()
-                            {
-                                return false;
-                            }
-                            @Override
-                            public AbstractNode<?>[] getChildren()
-                            {
-                                List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-                                 final  Image                  BLOCK          = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
-                                 final  Image                  BLOCK_MIRROR   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
-                                 final  Image                  BLOCK_NTB      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
-                                 final  Image                  BLOCK_REF      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
-                                for (final EJPluginBlockProperties blockProperties : allBlockProperties)
+
+                                public AbstractDescriptor<?>[] getNodeDescriptors()
                                 {
-                                    nodes.add(new GroupElementNode(this, new GroupElement()
+                                    return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("Block")
                                     {
-                                        
-                                        public AbstractDescriptor<?>[] getNodeDescriptors()
+                                        @Override
+                                        public void runOperation(AbstractOperation operation)
                                         {
-                                            return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Block")
-                                            {
-                                                @Override
-                                                public void runOperation(AbstractOperation operation)
-                                                {
-                                                    editor.execute(operation);
-                                                    
-                                                }
-                                                public boolean hasLableLink()
-                                                {
-                                                    return true;
-                                                }
+                                            editor.execute(operation);
 
-                                                @Override
-                                                public String lableLinkActivator()
-                                                {
-
-                                                    
-                                                        treeSection.selectNodes(true, treeSection.findNode(blockProperties,true));
-                                                    
-
-                                                    return getValue();
-                                                }
-
-                                                @Override
-                                                public void setValue(String value)
-                                                {
-
-                                                }
-
-                                                @Override
-                                                public String getValue()
-                                                {
-                                                    return getName();
-                                                }
-
-                                                Text text;
-
-                                                @Override
-                                                public void addEditorAssist(Control control)
-                                                {
-
-                                                    text = (Text) control;
-                                                    text.setEditable(false);
-                                                }
-                                            }};
                                         }
-                                        
-                                        public String getName()
+
+                                        public boolean hasLableLink()
+                                        {
+                                            return true;
+                                        }
+
+                                        @Override
+                                        public String lableLinkActivator()
                                         {
 
-                                            return blockProperties.getName();
-                                        }
-                                        
-                                        public Image getImage()
-                                        {
-                                            if (blockProperties.isMirrorChild())
-                                                return BLOCK_MIRROR;
+                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
 
-                                            if (blockProperties.isReferenceBlock())
-                                                return BLOCK_REF;
-                                            if (blockProperties.isControlBlock())
-                                                return BLOCK_NTB;
+                                            return getValue();
+                                        }
 
-                                            return BLOCK;
-                                        }
-                                        
-                                        public void addOverview(StyledString styledString)
+                                        @Override
+                                        public void setValue(String value)
                                         {
-                                            
+
                                         }
-                                    }));
+
+                                        @Override
+                                        public String getValue()
+                                        {
+                                            return getName();
+                                        }
+
+                                        Text text;
+
+                                        @Override
+                                        public void addEditorAssist(Control control)
+                                        {
+
+                                            text = (Text) control;
+                                            text.setEditable(false);
+                                        }
+                                    } };
                                 }
-                                
-                                return nodes.toArray(new AbstractNode<?>[0]);
-                            }
-                            
-                        };
-                        nodes.add(blocks);
+
+                                public String getName()
+                                {
+
+                                    return blockProperties.getName();
+                                }
+
+                                public Image getImage()
+                                {
+                                    if (blockProperties.isMirrorChild())
+                                        return BLOCK_MIRROR;
+
+                                    if (blockProperties.isReferenceBlock())
+                                        return BLOCK_REF;
+                                    if (blockProperties.isControlBlock())
+                                        return BLOCK_NTB;
+
+                                    return BLOCK;
+                                }
+
+                                public void addOverview(StyledString styledString)
+                                {
+
+                                }
+                            }));
+                        }
+
+                        return nodes.toArray(new AbstractNode<?>[0]);
+                    }
+
+                };
+                nodes.add(blocks);
             }
-            
-            
+
             final List<EJPluginRelationProperties> allRelationProperties = source.getRelationContainer().getAllRelationProperties();
-            if(allRelationProperties.size()>0)
+            if (allRelationProperties.size() > 0)
             {
-                AbstractNode<?> relations =   new AbstractNode<EJPluginObjectGroupProperties>(this,source)
+                AbstractNode<?> relations = new AbstractNode<EJPluginObjectGroupProperties>(this, source)
+                {
+                    public String getName()
+                    {
+
+                        return "Relations";
+                    }
+
+                    public Image getImage()
+                    {
+
+                        return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+                    }
+
+                    @Override
+                    public boolean isLeaf()
+                    {
+                        return false;
+                    }
+
+                    @Override
+                    public AbstractNode<?>[] getChildren()
+                    {
+                        List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+
+                        for (final EJPluginRelationProperties blockProperties : allRelationProperties)
                         {
-                            public String getName() 
+                            nodes.add(new GroupElementNode(this, new GroupElement()
                             {
-                                
-                                return "Relations";
-                            }
-                            public Image getImage()
-                            {
-                                
-                                return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-                            }
-                            @Override
-                            public boolean isLeaf()
-                            {
-                                return false;
-                            }
-                            @Override
-                            public AbstractNode<?>[] getChildren()
-                            {
-                                List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-                                 
-                                for (final EJPluginRelationProperties blockProperties : allRelationProperties)
+
+                                public AbstractDescriptor<?>[] getNodeDescriptors()
                                 {
-                                    nodes.add(new GroupElementNode(this, new GroupElement()
+                                    return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("Relation")
                                     {
-                                        
-                                        public AbstractDescriptor<?>[] getNodeDescriptors()
+
+                                        public boolean hasLableLink()
                                         {
-                                            return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Relation")
-                                            {
-
-                                                public boolean hasLableLink()
-                                                {
-                                                    return true;
-                                                }
-                                                @Override
-                                                public void runOperation(AbstractOperation operation)
-                                                {
-                                                    editor.execute(operation);
-                                                    
-                                                }
-                                                @Override
-                                                public String lableLinkActivator()
-                                                {
-
-                                                    
-                                                        treeSection.selectNodes(true, treeSection.findNode(blockProperties,true));
-                                                    
-
-                                                    return getValue();
-                                                }
-
-                                                @Override
-                                                public void setValue(String value)
-                                                {
-
-                                                }
-
-                                                @Override
-                                                public String getValue()
-                                                {
-                                                    return getName();
-                                                }
-
-                                                Text text;
-
-                                                @Override
-                                                public void addEditorAssist(Control control)
-                                                {
-
-                                                    text = (Text) control;
-                                                    text.setEditable(false);
-                                                }
-                                            }};
+                                            return true;
                                         }
-                                        
-                                        public String getName()
+
+                                        @Override
+                                        public void runOperation(AbstractOperation operation)
+                                        {
+                                            editor.execute(operation);
+
+                                        }
+
+                                        @Override
+                                        public String lableLinkActivator()
                                         {
 
-                                            return blockProperties.getName();
+                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+
+                                            return getValue();
                                         }
-                                        
-                                        public Image getImage()
+
+                                        @Override
+                                        public void setValue(String value)
                                         {
-                                           return EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION);
+
                                         }
-                                        
-                                        public void addOverview(StyledString styledString)
+
+                                        @Override
+                                        public String getValue()
                                         {
-                                            
+                                            return getName();
                                         }
-                                    }));
+
+                                        Text text;
+
+                                        @Override
+                                        public void addEditorAssist(Control control)
+                                        {
+
+                                            text = (Text) control;
+                                            text.setEditable(false);
+                                        }
+                                    } };
                                 }
-                                
-                                return nodes.toArray(new AbstractNode<?>[0]);
-                            }
-                            
-                        };
-                        nodes.add(relations);
+
+                                public String getName()
+                                {
+
+                                    return blockProperties.getName();
+                                }
+
+                                public Image getImage()
+                                {
+                                    return EJUIImages.getImage(EJUIImages.DESC_BLOCK_RELATION);
+                                }
+
+                                public void addOverview(StyledString styledString)
+                                {
+
+                                }
+                            }));
+                        }
+
+                        return nodes.toArray(new AbstractNode<?>[0]);
+                    }
+
+                };
+                nodes.add(relations);
             }
-            
+
             final Collection<EJCanvasProperties> retriveAllCanvases = EJPluginCanvasRetriever.retriveAllCanvases(source);
-            if(retriveAllCanvases.size() >0)
+            if (retriveAllCanvases.size() > 0)
             {
-                 final  Image          BLOCK    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK);
-                 final  Image          GROUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP);
-                 final  Image          STACKED  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
-                 final  Image          POPUP    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
-                 final  Image          TAB      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
-                AbstractNode<?> canvases =   new AbstractNode<EJPluginObjectGroupProperties>(this,source)
+                final Image BLOCK = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK);
+                final Image GROUP = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP);
+                final Image STACKED = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
+                final Image POPUP = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
+                final Image TAB = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
+                AbstractNode<?> canvases = new AbstractNode<EJPluginObjectGroupProperties>(this, source)
+                {
+                    public String getName()
+                    {
+
+                        return "Canvases";
+                    }
+
+                    public Image getImage()
+                    {
+
+                        return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+                    }
+
+                    @Override
+                    public boolean isLeaf()
+                    {
+                        return false;
+                    }
+
+                    @Override
+                    public AbstractNode<?>[] getChildren()
+                    {
+                        List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+
+                        for (final EJCanvasProperties blockProperties : retriveAllCanvases)
                         {
-                            public String getName() 
+                            nodes.add(new GroupElementNode(this, new GroupElement()
                             {
-                                
-                                return "Canvases";
-                            }
-                            public Image getImage()
-                            {
-                                
-                                return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-                            }
-                            @Override
-                            public boolean isLeaf()
-                            {
-                                return false;
-                            }
-                            @Override
-                            public AbstractNode<?>[] getChildren()
-                            {
-                                List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-                                 
-                                for (final EJCanvasProperties blockProperties : retriveAllCanvases)
+
+                                public AbstractDescriptor<?>[] getNodeDescriptors()
                                 {
-                                    nodes.add(new GroupElementNode(this, new GroupElement()
+                                    return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("Canvas")
                                     {
-                                        
-                                        public AbstractDescriptor<?>[] getNodeDescriptors()
+
+                                        public boolean hasLableLink()
                                         {
-                                            return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Canvas")
-                                            {
-
-                                                public boolean hasLableLink()
-                                                {
-                                                    return true;
-                                                }
-
-                                                @Override
-                                                public String lableLinkActivator()
-                                                {
-
-                                                    
-                                                        treeSection.selectNodes(true, treeSection.findNode(blockProperties,true));
-                                                    
-
-                                                    return getValue();
-                                                }
-                                                @Override
-                                                public void runOperation(AbstractOperation operation)
-                                                {
-                                                    editor.execute(operation);
-                                                    
-                                                }
-                                                @Override
-                                                public void setValue(String value)
-                                                {
-
-                                                }
-
-                                                @Override
-                                                public String getValue()
-                                                {
-                                                    return getName();
-                                                }
-
-                                                Text text;
-
-                                                @Override
-                                                public void addEditorAssist(Control control)
-                                                {
-
-                                                    text = (Text) control;
-                                                    text.setEditable(false);
-                                                }
-                                            }};
+                                            return true;
                                         }
-                                        
-                                        public String getName()
+
+                                        @Override
+                                        public String lableLinkActivator()
                                         {
 
-                                            return blockProperties.getName();
+                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+
+                                            return getValue();
                                         }
-                                        
-                                        public Image getImage()
+
+                                        @Override
+                                        public void runOperation(AbstractOperation operation)
                                         {
-                                            switch (blockProperties.getType())
-                                            {
-                                                case GROUP:
-                                                case SPLIT:
-                                                    return  GROUP;
-                                                case POPUP:
-                                                    return POPUP;
-                                                case TAB:
-                                                    return TAB;
-                                                case STACKED:
-                                                    return STACKED;
-                                                default:
-                                                    return BLOCK;
-                                            }
+                                            editor.execute(operation);
+
                                         }
-                                        
-                                        public void addOverview(StyledString styledString)
+
+                                        @Override
+                                        public void setValue(String value)
                                         {
-                                            
+
                                         }
-                                    }));
+
+                                        @Override
+                                        public String getValue()
+                                        {
+                                            return getName();
+                                        }
+
+                                        Text text;
+
+                                        @Override
+                                        public void addEditorAssist(Control control)
+                                        {
+
+                                            text = (Text) control;
+                                            text.setEditable(false);
+                                        }
+                                    } };
                                 }
-                                
-                                return nodes.toArray(new AbstractNode<?>[0]);
-                            }
-                            
-                        };
-                        nodes.add(canvases);
+
+                                public String getName()
+                                {
+
+                                    return blockProperties.getName();
+                                }
+
+                                public Image getImage()
+                                {
+                                    switch (blockProperties.getType())
+                                    {
+                                        case GROUP:
+                                        case SPLIT:
+                                            return GROUP;
+                                        case POPUP:
+                                            return POPUP;
+                                        case TAB:
+                                            return TAB;
+                                        case STACKED:
+                                            return STACKED;
+                                        default:
+                                            return BLOCK;
+                                    }
+                                }
+
+                                public void addOverview(StyledString styledString)
+                                {
+
+                                }
+                            }));
+                        }
+
+                        return nodes.toArray(new AbstractNode<?>[0]);
+                    }
+
+                };
+                nodes.add(canvases);
             }
-            
-            
+
             final List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = source.getLovDefinitionContainer().getAllLovDefinitionProperties();
-            
-            if(allLovDefinitionProperties.size()>0)
+
+            if (allLovDefinitionProperties.size() > 0)
             {
-                AbstractNode<?> lovs =   new AbstractNode<EJPluginObjectGroupProperties>(this,source)
+                AbstractNode<?> lovs = new AbstractNode<EJPluginObjectGroupProperties>(this, source)
+                {
+                    public String getName()
+                    {
+
+                        return "LOV Definitions";
+                    }
+
+                    public Image getImage()
+                    {
+
+                        return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+                    }
+
+                    @Override
+                    public boolean isLeaf()
+                    {
+                        return false;
+                    }
+
+                    @Override
+                    public AbstractNode<?>[] getChildren()
+                    {
+                        List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+
+                        for (final EJPluginLovDefinitionProperties blockProperties : allLovDefinitionProperties)
                         {
-                            public String getName() 
+                            nodes.add(new GroupElementNode(this, new GroupElement()
                             {
-                                
-                                return "LOV Definitions";
-                            }
-                            public Image getImage()
-                            {
-                                
-                                return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-                            }
-                            @Override
-                            public boolean isLeaf()
-                            {
-                                return false;
-                            }
-                            @Override
-                            public AbstractNode<?>[] getChildren()
-                            {
-                                List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-                                 
-                                for (final EJPluginLovDefinitionProperties blockProperties : allLovDefinitionProperties)
+
+                                public AbstractDescriptor<?>[] getNodeDescriptors()
                                 {
-                                    nodes.add(new GroupElementNode(this, new GroupElement()
+                                    return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("LOV")
                                     {
-                                        
-                                        public AbstractDescriptor<?>[] getNodeDescriptors()
+
+                                        public boolean hasLableLink()
                                         {
-                                            return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("LOV")
-                                            {
-
-                                                public boolean hasLableLink()
-                                                {
-                                                    return true;
-                                                }
-                                                @Override
-                                                public void runOperation(AbstractOperation operation)
-                                                {
-                                                    editor.execute(operation);
-                                                    
-                                                }
-                                                @Override
-                                                public String lableLinkActivator()
-                                                {
-
-                                                    
-                                                        treeSection.selectNodes(true, treeSection.findNode(blockProperties,true));
-                                                    
-
-                                                    return getValue();
-                                                }
-
-                                                @Override
-                                                public void setValue(String value)
-                                                {
-
-                                                }
-
-                                                @Override
-                                                public String getValue()
-                                                {
-                                                    return getName();
-                                                }
-
-                                                Text text;
-
-                                                @Override
-                                                public void addEditorAssist(Control control)
-                                                {
-
-                                                    text = (Text) control;
-                                                    text.setEditable(false);
-                                                }
-                                            }};
+                                            return true;
                                         }
-                                        
-                                        public String getName()
+
+                                        @Override
+                                        public void runOperation(AbstractOperation operation)
+                                        {
+                                            editor.execute(operation);
+
+                                        }
+
+                                        @Override
+                                        public String lableLinkActivator()
                                         {
 
-                                            return blockProperties.getName();
+                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+
+                                            return getValue();
                                         }
-                                        
-                                        public Image getImage()
+
+                                        @Override
+                                        public void setValue(String value)
                                         {
-                                           return  EJUIImages.getImage(EJUIImages.DESC_LOV_DEF);
+
                                         }
-                                        
-                                        public void addOverview(StyledString styledString)
+
+                                        @Override
+                                        public String getValue()
                                         {
-                                            
+                                            return getName();
                                         }
-                                    }));
+
+                                        Text text;
+
+                                        @Override
+                                        public void addEditorAssist(Control control)
+                                        {
+
+                                            text = (Text) control;
+                                            text.setEditable(false);
+                                        }
+                                    } };
                                 }
-                                
-                                return nodes.toArray(new AbstractNode<?>[0]);
-                            }
-                            
-                        };
-                        nodes.add(lovs);
+
+                                public String getName()
+                                {
+
+                                    return blockProperties.getName();
+                                }
+
+                                public Image getImage()
+                                {
+                                    return EJUIImages.getImage(EJUIImages.DESC_LOV_DEF);
+                                }
+
+                                public void addOverview(StyledString styledString)
+                                {
+
+                                }
+                            }));
+                        }
+
+                        return nodes.toArray(new AbstractNode<?>[0]);
+                    }
+
+                };
+                nodes.add(lovs);
             }
-            
-            
+
             return nodes.toArray(new AbstractNode<?>[0]);
 
         }
@@ -807,7 +818,9 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
 
                         if (cleanup)
                         {
+                            source.removeObjects(ObjectGroupNode.this.source.getFormProperties());
                             ObjectGroupNode.this.source.removeObjectGroupProperties(source);
+                            
                         }
                         else
                         {
@@ -817,11 +830,33 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                         treeSection.refresh();
 
                     }
-                    
+
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
-                        // TODO Auto-generated method stub
-                        return null;
+                        if (cleanup)
+                        {
+                            ReversibleOperation operation = new ReversibleOperation("Remove Object Group")
+                            {
+
+                                @Override
+                                protected void refresh()
+                                {
+                                    Display.getDefault().asyncExec(new Runnable()
+                                    {
+                                        
+                                        public void run()
+                                        {
+                                            treeSection.refresh();
+                                            
+                                        }
+                                    });
+                                   
+                                }
+                            };
+                            ObjectGroupRemoveOperation.removeObjects(treeSection, source, (ObjectGroupNode.this.source.getFormProperties()), operation);
+                            return operation;
+                        }
+                        return new ObjectGroupRemoveOperation(treeSection, ObjectGroupNode.this.source, source);
                     }
                 };
             return super.getDeleteProvider();
@@ -870,12 +905,14 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                 {
                     return true;
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String lableLinkActivator()
                 {
@@ -947,22 +984,22 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                 }
             };
         }
-        
-        
-        
 
     }
 
-    
     private static interface GroupElement
     {
-        
+
         public String getName();
+
         public Image getImage();
+
         public AbstractDescriptor<?>[] getNodeDescriptors();
+
         public void addOverview(StyledString styledString);
     }
-    private static class GroupElementNode extends AbstractNode<GroupElement> implements  NodeOverview
+
+    private static class GroupElementNode extends AbstractNode<GroupElement> implements NodeOverview
     {
 
         public GroupElementNode(AbstractNode<?> parent, GroupElement source)
@@ -973,34 +1010,29 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
         public void addOverview(StyledString styledString)
         {
             source.addOverview(styledString);
-            
+
         }
-        
-        
-        
+
         @Override
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
             return source.getNodeDescriptors();
         }
-        
+
         @Override
         public Image getImage()
         {
             return source.getImage();
         }
-        
+
         @Override
         public String getName()
         {
             return source.getName();
         }
-        
+
     }
-    
-    
-    
-    
+
     public boolean canMove(Neighbor relation, Object source)
     {
         return source instanceof EJPluginObjectGroupProperties;
@@ -1025,14 +1057,23 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
             source.addObjectGroupProperties((EJPluginObjectGroupProperties) dSource);
 
     }
-    
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginObjectGroupProperties> items = source.getAllObjectGroupProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new ObjectGroupAddOperation(treeSection, source, (EJPluginObjectGroupProperties) dSource, index);
+            }
+        }
+        return new ObjectGroupAddOperation(treeSection, source, (EJPluginObjectGroupProperties) dSource, -1);
     }
-    
-    
-    
-    
+
 }

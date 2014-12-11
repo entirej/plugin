@@ -23,7 +23,7 @@ public class RelationRemoveOperation extends AbstractOperation
 
     public RelationRemoveOperation(final AbstractNodeTreeSection treeSection, EJPluginRelationContainer container, EJPluginRelationProperties blockProperties)
     {
-        super("Remove Relation");
+        super("Remove ObjectGroup");
         this.treeSection = treeSection;
 
         this.container = container;

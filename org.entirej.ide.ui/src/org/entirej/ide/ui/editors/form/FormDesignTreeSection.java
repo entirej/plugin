@@ -119,6 +119,7 @@ import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.operations.LovAddOperation;
+import org.entirej.ide.ui.editors.form.operations.ObjectGroupAddOperation;
 import org.entirej.ide.ui.editors.form.operations.RelationAddOperation;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockWizardContext;
@@ -936,24 +937,29 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             return;
                         }
 
-                        formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDef);
-                        objectGroupDef.importObjectsToForm(formProperties);
-
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
+                      
+                        
+                        ReversibleOperation operation = new ReversibleOperation("Import Object Group"){
+                            
+                            
+                            @Override
+                            protected void refresh()
                             {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getObjectGroupContainer()), true);
-                                refresh(findNode(formProperties.getBlockContainer()), true);
-                                refresh(findNode(formProperties.getRelationContainer()), true);
-                                refresh(findNode(formProperties.getLovDefinitionContainer()), true);
-                                refresh(findNode(formProperties.getCanvasContainer()), true);
-                                selectNodes(true, findNode(objectGroupDef));
-
+                               Display.getDefault().asyncExec(new Runnable()
+                            {
+                                
+                                public void run()
+                                {
+                                    FormDesignTreeSection.this.refresh();
+                                    
+                                }
+                            });
                             }
-                        });
+                        };
+                        AbstractOperation objectsToForm = ObjectGroupAddOperation.importObjectsToForm(FormDesignTreeSection.this, objectGroupDef, formProperties,operation);
+                        editor.execute(objectsToForm);
+
+                       
 
                     }
 

@@ -78,17 +78,19 @@ public class EJPluginObjectGroupContainer
         }
     }
     
-    public void removeObjectGroupProperties(EJPluginObjectGroupProperties props)
+    public int removeObjectGroupProperties(EJPluginObjectGroupProperties props)
     {
-        
+        int indexOf = _objGroupProperties.indexOf(props);
         if (_objGroupProperties.contains(props))
         {
             
-            props.removeObjects(_formProperties);
+         
             
             _objGroupProperties.remove(props);
             
         }
+        
+        return indexOf;
         
     }
     
