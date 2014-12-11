@@ -3,6 +3,7 @@ package org.entirej.generators;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.entirej.framework.report.EJReportPojoHelper;
 import org.entirej.framework.report.service.EJReportParameterType;
@@ -151,9 +152,9 @@ public class EJReportOracleServiceGenerator implements EJReportServiceContentGen
 
                 if (column.isArray())
                 {
-                    arrayTypeName = column.getName() + "Type";
+                    arrayTypeName = column.getName() + "Parameter";
                     fileBuilder.append("        EJStatementParameterArray<").append(pojoName).append("> ");
-                    fileBuilder.append(column.getName()).append("Type");
+                    fileBuilder.append(column.getName()).append("Parameter");
                     fileBuilder.append(" = new EJStatementParameterArray<").append(pojoName).append("> (");
                     fileBuilder.append(pojoName).append(".class, ");
                     fileBuilder.append("EJReportParameterType.");
@@ -165,7 +166,7 @@ public class EJReportOracleServiceGenerator implements EJReportServiceContentGen
                 else if (column.isStruct())
                 {
                     fileBuilder.append("        EJStatementParameterStruct<").append(typeName).append("> ");
-                    fileBuilder.append(column.getName()).append("Type");
+                    fileBuilder.append(column.getName()).append("Parameter");
                     fileBuilder.append(" = new EJStatementParameterStruct<").append(typeName).append("> (");
                     fileBuilder.append(typeName).append(".class, ");
                     fileBuilder.append("EJReportParameterType.");
@@ -190,7 +191,7 @@ public class EJReportOracleServiceGenerator implements EJReportServiceContentGen
             {
                 fileBuilder.append(", ");
                 fileBuilder.append(column.getName());
-                fileBuilder.append("Type");
+                fileBuilder.append("Parameter");
             }
         }
         for (EJReportTableColumn column : columns)
@@ -199,7 +200,7 @@ public class EJReportOracleServiceGenerator implements EJReportServiceContentGen
             {
                 fileBuilder.append(", ");
                 fileBuilder.append(column.getName());
-                fileBuilder.append("Type");
+                fileBuilder.append("Parameter");
             }
         }
 
