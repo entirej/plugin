@@ -80,6 +80,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
+import org.entirej.ide.ui.editors.form.operations.LovAddOperation;
+import org.entirej.ide.ui.editors.form.operations.LovRemoveOperation;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart;
 import org.entirej.ide.ui.editors.prop.PropertyDefinitionGroupPart.IExtensionValues;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -254,7 +256,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
         @Override
         public String getNodeDescriptorDetails()
         {
-            if(source.isReferenceBlock())
+            if (source.isReferenceBlock())
             {
                 return "LOV Definitions are edited in their own editor. Click the Referenced LOV label to open the LOV in the LOV Definition editor. Click <a href=\"http://docs.entirej.com/display/EJ1/Working+with+LOV%27s\">here</a> for more information on LOV's";
             }
@@ -270,8 +272,8 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
         public void addOverview(StyledString styledString)
         {
-            
-            if(source.isImportFromObjectGroup())
+
+            if (source.isImportFromObjectGroup())
             {
                 styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
                 styledString.append(source.getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
@@ -397,7 +399,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 @Override
                 public String getNodeDescriptorDetails()
                 {
-                    if(LovNode.this.source.isReferenceBlock())
+                    if (LovNode.this.source.isReferenceBlock())
                     {
                         return "Item properties are editable within the LOV Definition Editor however it is possible to add default query and insert values to the lov definition items. Any default query value entered here will be used in the LOV Definition query, making it a good place to restrict LOV values for your form";
                     }
@@ -560,8 +562,8 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
         @Override
         public INodeDeleteProvider getDeleteProvider()
         {
-            
-            if (!supportLovDelete()||source.isImportFromObjectGroup())
+
+            if (!supportLovDelete() || source.isImportFromObjectGroup())
                 return null;
             return new INodeDeleteProvider()
             {
@@ -574,11 +576,10 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                     treeSection.refresh(LovGroupNode.this);
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    return new LovRemoveOperation(treeSection, LovGroupNode.this.source, source);
                 }
             };
         }
@@ -586,7 +587,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
         @Override
         public INodeRenameProvider getRenameProvider()
         {
-            if (!supportLovRename()||source.isImportFromObjectGroup())
+            if (!supportLovRename() || source.isImportFromObjectGroup())
                 return null;
 
             return new INodeRenameProvider()
@@ -654,22 +655,24 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
-            
-            if(source.isImportFromObjectGroup())
+
+            if (source.isImportFromObjectGroup())
             {
-                return new AbstractDescriptor<?>[]{  new AbstractTextDescriptor("Referenced ObjectGroup")
+                return new AbstractDescriptor<?>[] { new AbstractTextDescriptor("Referenced ObjectGroup")
                 {
 
                     public boolean hasLableLink()
                     {
                         return true;
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public String lableLinkActivator()
                     {
@@ -705,7 +708,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                         text = (Text) control;
                         text.setEditable(false);
                     }
-                }};
+                } };
             }
             final List<IMarker> fmarkers = validator.getMarkers();
             if (source.isReferenceBlock())
@@ -728,12 +731,14 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                         return validator.getErrorMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public String getWarnings()
                     {
@@ -822,12 +827,14 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getWarnings()
                 {
@@ -891,12 +898,14 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getWarnings()
                 {
@@ -961,12 +970,14 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
                     return validator.getErrorMarkerMsg(fmarkers, vfilter);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getWarnings()
                 {
@@ -998,8 +1009,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1045,8 +1057,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1095,8 +1108,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return dataDescriptors.toArray(new AbstractDescriptor<?>[0]);
@@ -1110,8 +1124,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1157,8 +1172,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1204,8 +1220,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     return new AbstractDescriptor<?>[] { widthDescriptor, heightDescriptor };
@@ -1233,8 +1250,9 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                             public void runOperation(AbstractOperation operation)
                             {
                                 editor.execute(operation);
-                                
+
                             }
+
                             public AbstractDescriptor<?>[] getDescriptors()
                             {
                                 return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getEntireJProperties(), definitionGroup,
@@ -1270,7 +1288,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
 
     public boolean canMove(Neighbor relation, Object source)
     {
-        return source instanceof EJPluginLovDefinitionProperties &&!((EJPluginLovDefinitionProperties)source).isImportFromObjectGroup();
+        return source instanceof EJPluginLovDefinitionProperties && !((EJPluginLovDefinitionProperties) source).isImportFromObjectGroup();
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -1292,12 +1310,23 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
             source.addLovDefinitionProperties((EJPluginLovDefinitionProperties) dSource);
 
     }
-    
-    
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginLovDefinitionProperties> items = source.getAllLovDefinitionProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new LovAddOperation(treeSection, source, (EJPluginLovDefinitionProperties) dSource, index);
+            }
+        }
+        return new LovAddOperation(treeSection, source, (EJPluginLovDefinitionProperties) dSource, -1);
     }
 
     protected boolean supportLovDelete()

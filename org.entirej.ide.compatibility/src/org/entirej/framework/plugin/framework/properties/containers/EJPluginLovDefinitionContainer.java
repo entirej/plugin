@@ -76,9 +76,11 @@ public class EJPluginLovDefinitionContainer
         }
     }
     
-    public void removeLovDefinitionProperties(EJPluginLovDefinitionProperties defProperties)
+    public int removeLovDefinitionProperties(EJPluginLovDefinitionProperties defProperties)
     {
+        int indexOf = _lovDefProperties.indexOf(defProperties);
         _lovDefProperties.remove(defProperties);
+        return indexOf;
     }
     
     public void removeLovDefinitionProperties(String defName)

@@ -118,6 +118,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
+import org.entirej.ide.ui.editors.form.operations.LovAddOperation;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.MirrorBlockWizard;
@@ -782,19 +783,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             lovProperties.setReferencedLovDefinitionName(lovName);
                             lovProperties.setIsReferenced(true);
 
-                            formProperties.getLovDefinitionContainer().addLovDefinitionProperties(lovProperties);
-
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                            {
-
-                                public void run()
-                                {
-                                    editor.setDirty(true);
-                                    refresh(findNode(formProperties.getLovDefinitionContainer()), true);
-                                    selectNodes(true, findNode(lovProperties));
-
-                                }
-                            });
+                            
+                            
+                            LovAddOperation addOperation = new LovAddOperation(FormDesignTreeSection.this, formProperties.getLovDefinitionContainer(), lovProperties, -1); 
+                            editor.execute(addOperation);
                         }
 
                     }
@@ -839,19 +831,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         lovProperties.setReferencedLovDefinitionName(refLov);
                         lovProperties.setIsReferenced(true);
 
-                        formProperties.getLovDefinitionContainer().addLovDefinitionProperties(lovProperties);
-
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
-
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getLovDefinitionContainer()), true);
-                                selectNodes(true, findNode(lovProperties));
-
-                            }
-                        });
+                       
+                        
+                        LovAddOperation addOperation = new LovAddOperation(FormDesignTreeSection.this, formProperties.getLovDefinitionContainer(), lovProperties, -1); 
+                        editor.execute(addOperation);
 
                     }
 
