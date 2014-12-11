@@ -139,9 +139,11 @@ public class EJPluginRelationContainer
         }
     }
     
-    public void removeRelationProperties(EJPluginRelationProperties relation)
+    public int removeRelationProperties(EJPluginRelationProperties relation)
     {
+        int indexOf = _relationProperties.indexOf(relation);
         _relationProperties.remove(relation);
+        return indexOf;
     }
     
     public EJPluginRelationProperties getRelationProperties(String relationName)

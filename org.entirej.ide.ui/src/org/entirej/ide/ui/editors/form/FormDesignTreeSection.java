@@ -119,6 +119,7 @@ import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.operations.BlockAddOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.operations.LovAddOperation;
+import org.entirej.ide.ui.editors.form.operations.RelationAddOperation;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockServiceWizard;
 import org.entirej.ide.ui.editors.form.wizards.DataBlockWizardContext;
 import org.entirej.ide.ui.editors.form.wizards.MirrorBlockWizard;
@@ -460,8 +461,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         parent.setIsMirroredBlock(true);
                         final EJPluginBlockProperties blockProperties = parent.makeCopy(blockName, true);
 
-                        
-
                         blockProperties.setCanvasName(canvas);
                         blockProperties.setBlockRendererName(block.getAssignedName(), true);
 
@@ -480,7 +479,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                     blockProperties, -1);
                             editor.execute(addOperation);
                         }
-
 
                     }
 
@@ -697,8 +695,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                         final EJPluginBlockProperties blockProperties = reusableEJPluginBlockProperties.getBlockProperties().makeCopy(blockName, false);
 
-                       
-
                         blockProperties.setCanvasName(canvas);
                         if (!copyRefBlock)
                         {
@@ -783,9 +779,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             lovProperties.setReferencedLovDefinitionName(lovName);
                             lovProperties.setIsReferenced(true);
 
-                            
-                            
-                            LovAddOperation addOperation = new LovAddOperation(FormDesignTreeSection.this, formProperties.getLovDefinitionContainer(), lovProperties, -1); 
+                            LovAddOperation addOperation = new LovAddOperation(FormDesignTreeSection.this, formProperties.getLovDefinitionContainer(),
+                                    lovProperties, -1);
                             editor.execute(addOperation);
                         }
 
@@ -831,9 +826,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         lovProperties.setReferencedLovDefinitionName(refLov);
                         lovProperties.setIsReferenced(true);
 
-                       
-                        
-                        LovAddOperation addOperation = new LovAddOperation(FormDesignTreeSection.this, formProperties.getLovDefinitionContainer(), lovProperties, -1); 
+                        LovAddOperation addOperation = new LovAddOperation(FormDesignTreeSection.this, formProperties.getLovDefinitionContainer(),
+                                lovProperties, -1);
                         editor.execute(addOperation);
 
                     }
@@ -1020,18 +1014,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         final EJPluginRelationProperties relationProperties = new EJPluginRelationProperties(formProperties, relationName);
                         relationProperties.setMasterBlockName(master);
                         relationProperties.setDetailBlockName(detail);
-                        formProperties.getRelationContainer().addRelationProperties(relationProperties);
-                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                        {
 
-                            public void run()
-                            {
-                                editor.setDirty(true);
-                                refresh(findNode(formProperties.getRelationContainer()), true);
-                                selectNodes(true, findNode(relationProperties));
-
-                            }
-                        });
+                        RelationAddOperation addOperation = new RelationAddOperation(FormDesignTreeSection.this, formProperties.getRelationContainer(),
+                                relationProperties, -1);
+                        editor.execute(addOperation);
 
                     }
 

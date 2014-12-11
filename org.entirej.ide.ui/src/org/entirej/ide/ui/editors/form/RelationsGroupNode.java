@@ -50,6 +50,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
+import org.entirej.ide.ui.editors.form.operations.RelationAddOperation;
+import org.entirej.ide.ui.editors.form.operations.RelationRemoveOperation;
 import org.entirej.ide.ui.editors.form.wizards.RelationLinkWizard;
 import org.entirej.ide.ui.editors.form.wizards.RelationLinkWizardContext;
 import org.entirej.ide.ui.nodes.AbstractNode;
@@ -583,8 +585,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    // TODO Auto-generated method stub
-                    return null;
+                    return new RelationRemoveOperation(treeSection, RelationsGroupNode.this.source, source);
                 }
             };
         }
@@ -923,9 +924,21 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
     }
     
     
-    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+    public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (neighbor != null)
+        {
+            Object methodNeighbor = neighbor.getNeighborSource();
+            List<EJPluginRelationProperties> items = source.getAllRelationProperties();
+            if (items.contains(methodNeighbor))
+            {
+                int index = items.indexOf(methodNeighbor);
+                if (!before)
+                    index++;
+
+                return new RelationAddOperation(treeSection, source,  (EJPluginRelationProperties) dSource, -1);
+            }
+        }
+        return new RelationAddOperation(treeSection, source,  (EJPluginRelationProperties) dSource, -1);
     }
 }
