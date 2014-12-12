@@ -24,6 +24,7 @@ public class EJUIConstants
     public static final String EJ_PROJECT_WIZARD_ID        = "org.entirej.ide.ui.wizards.NewEntireJProjectWizard";      //$NON-NLS-1$
     public static final String EJ_REPORT_PROJECT_WIZARD_ID = "org.entirej.ide.ui.wizards.NewEntireJReportProjectWizard"; //$NON-NLS-1$
     public static final String EJ_ACTION_SET_ID            = "org.entirej.ide.ui.ActionSet";                            //$NON-NLS-1$
+    public static final String EJ_REPORT_ACTION_SET_ID            = "org.entirej.ide.ui.report.ActionSet";                            //$NON-NLS-1$
 
     public static final String EJ_FORM_EDITOR_ID           = "org.entirej.ide.ui.editors.ej.properties";                //$NON-NLS-1$
     public static final String EJ_FORM_REF_LOV_EDITOR_ID   = "org.entirej.ide.ui.editors.ej.lov";                       //$NON-NLS-1$

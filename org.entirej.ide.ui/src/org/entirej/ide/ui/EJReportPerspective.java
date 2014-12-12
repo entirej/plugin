@@ -25,7 +25,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 ;
 
-public class EJPerspective implements IPerspectiveFactory
+public class EJReportPerspective implements IPerspectiveFactory
 {
 
     public void createInitialLayout(IPageLayout layout)
@@ -55,12 +55,9 @@ public class EJPerspective implements IPerspectiveFactory
         layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 
         // Add "new wizards".
-        layout.addNewWizardShortcut(EJUIConstants.EJ_PROJECT_WIZARD_ID);
-        layout.addNewWizardShortcut(EJUIConstants.EJ_FORM_WIZARD_ID);
-        layout.addNewWizardShortcut(EJUIConstants.EJ_SERVICE_WIZARD_ID);
-        layout.addNewWizardShortcut(EJUIConstants.EJ_REUSABLEBLOCK_WIZARD_ID);
-        layout.addNewWizardShortcut(EJUIConstants.EJ_REUSABLELOVDEF_WIZARD_ID);
-        layout.addNewWizardShortcut(EJUIConstants.EJ_REUSABLEOBJECT_GROUP);
+        layout.addNewWizardShortcut(EJUIConstants.EJ_REPORT_PROJECT_WIZARD_ID);
+        layout.addNewWizardShortcut(EJUIConstants.EJ_REPORT_WIZARD_ID);
+        layout.addNewWizardShortcut(EJUIConstants.EJ_REPORT_SERVICE_WIZARD_ID);
 
         // Add JDT "new wizards".
         layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard");//$NON-NLS-1$
@@ -83,7 +80,7 @@ public class EJPerspective implements IPerspectiveFactory
         layout.addActionSet("org.eclipse.jdt.junit.JUnitActionSet"); // NON-NLS-1\
         layout.addActionSet(JavaUI.ID_ACTION_SET);
         layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
-        layout.addActionSet(EJUIConstants.EJ_ACTION_SET_ID);
+        layout.addActionSet(EJUIConstants.EJ_REPORT_ACTION_SET_ID);
        
         layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET); // NON-NLS-1
 

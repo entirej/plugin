@@ -12,6 +12,16 @@
             %perspective.description
          </description>
       </perspective>
+      
+      <perspective
+            class="org.entirej.ide.ui.EJReportPerspective"
+            icon="$nl$/icons/etools16/entirej.png"
+            id="org.entirej.ide.ui.report.perspective"
+            name="%perspective.report.name">
+         <description>
+            %perspective.report.description
+         </description>
+      </perspective>
    </extension>
       <extension
          id="org.entirej.ide.EJFormConstBuilder"
@@ -199,7 +209,7 @@
       <wizard
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.project.NewEntireJReportProjectWizard"
-            finalPerspective="org.entirej.ide.ui.perspective"
+            finalPerspective="org.entirej.ide.ui.report.perspective"
             icon="$nl$/icons/etools16/newejrprj_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEntireJReportProjectWizard"
             name="%new.entirejReportProject.name"
@@ -247,7 +257,7 @@
       <wizard
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.report.service.NewEJReportPojoServiceWizard"
-            finalPerspective="org.entirej.ide.ui.perspective"
+            finalPerspective="org.entirej.ide.ui.report.perspective"
             icon="icons/etools16/newejrbservice_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEJReportPojoServiceWizard"
             name="%new.entirejrbservice.name"
@@ -283,7 +293,7 @@
       <wizard
             category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.report.NewEntireJReportWizard"
-            finalPerspective="org.entirej.ide.ui.perspective"
+            finalPerspective="org.entirej.ide.ui.report.perspective"
             icon="icons/etools16/newejreport_wiz.png"
             id="org.entirej.ide.ui.wizards.NewEntireJReportWizard"
             name="%new.entirejReport.name"
@@ -297,23 +307,7 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             id="org.entirej.ide.ui.ActionSet"
-            label="EntireJ">
-         <action
-               class="org.entirej.ide.ui.wizards.report.NewReportAction"
-               icon="icons/etools16/newejreport_wiz.png"
-               id="org.entirej.ide.ui.wizards.report.NewReportAction"
-               label="%new.entirejReport.name"
-               toolbarPath="entirejGroup"
-               tooltip="%new.entirejReport.description">
-         </action>
-         <action
-               class="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
-               icon="icons/etools16/newejrbservice_wiz.png"
-               id="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
-               label="%new.entirejrbservice.name"
-               toolbarPath="entirejGroup"
-               tooltip="%new.entirejrbservice.description">
-         </action>
+            label="EntireJ Forms">
          <action
                class="org.entirej.ide.ui.wizards.form.NewRefLovAction"
                icon="icons/etools16/newejreflov_wiz.png"
@@ -353,6 +347,26 @@
                label="%new.entirejbservice.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejbservice.description">
+         </action>
+      </actionSet>
+      <actionSet
+            id="org.entirej.ide.ui.report.ActionSet"
+            label="EntireJ Reports">
+         <action
+               class="org.entirej.ide.ui.wizards.report.NewReportAction"
+               icon="icons/etools16/newejreport_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.NewReportAction"
+               label="%new.entirejReport.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejReport.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
+               icon="icons/etools16/newejrbservice_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
+               label="%new.entirejrbservice.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejrbservice.description">
          </action>
       </actionSet>
    </extension>
