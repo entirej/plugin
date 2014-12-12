@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -55,9 +56,11 @@ import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
+import org.entirej.ide.ui.editors.descriptors.AbstractProjectSrcFileDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
+import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.editors.report.ReportBlockItemsGroupNode;
 
 public class BlockColumnSelectionPage extends WizardPage
@@ -209,7 +212,7 @@ public class BlockColumnSelectionPage extends WizardPage
                     if (type != null)
                     {
                         itemProperties = wizardContext.newScreenItem(type);
-                         body = new Group(composite, SWT.NONE);
+                        body = new Group(composite, SWT.NONE);
                         body.setLayout(new GridLayout());
 
                         GridData layoutData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
@@ -276,30 +279,27 @@ public class BlockColumnSelectionPage extends WizardPage
     {
         return width;
     }
-    
+
     protected void doUpdateStatus()
     {
         setPageComplete(validatePage());
     }
 
-    private void addTypeBaseDescriptors(List<AbstractDescriptor<?>> descriptors,final EJPluginReportScreenItemProperties source)
+    private void addTypeBaseDescriptors(List<AbstractDescriptor<?>> descriptors, final EJPluginReportScreenItemProperties source)
     {
 
         AbstractTextDropDownDescriptor vaDescriptor = new AbstractTextDropDownDescriptor("Visual Attributes", "")
         {
-            List<String> visualAttributeNames = new ArrayList<String>(source.getBlockProperties().getReportProperties().getEntireJProperties().getVisualAttributesContainer()
-                                                      .getVisualAttributeNames());
+            List<String> visualAttributeNames = new ArrayList<String>(source.getBlockProperties().getReportProperties().getEntireJProperties()
+                                                      .getVisualAttributesContainer().getVisualAttributeNames());
 
             @Override
             public void setValue(String value)
             {
                 source.setVisualAttributeName(value);
-               
+
             }
 
-            
-            
-            
             @Override
             public String getValue()
             {
@@ -333,10 +333,9 @@ public class BlockColumnSelectionPage extends WizardPage
         };
 
         descriptors.add(vaDescriptor);
-        
+
         final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
         {
-          
 
             @Override
             public String getTooltip()
@@ -344,8 +343,6 @@ public class BlockColumnSelectionPage extends WizardPage
 
                 return "The width <b>(in pixels)</b> of the column.";
             }
-
-           
 
             @Override
             public void setValue(String value)
@@ -356,7 +353,7 @@ public class BlockColumnSelectionPage extends WizardPage
                 }
                 catch (NumberFormatException e)
                 {
-                   width = 0;
+                    width = 0;
                     if (text != null)
                     {
                         text.setText(getValue());
@@ -383,9 +380,9 @@ public class BlockColumnSelectionPage extends WizardPage
                 super.addEditorAssist(control);
             }
         };
-        
+
         descriptors.add(widthDescriptor);
-        
+
         final AbstractTextDescriptor headerDescriptor = new AbstractTextDescriptor("Column Header")
         {
 
@@ -414,7 +411,7 @@ public class BlockColumnSelectionPage extends WizardPage
         if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
         {
             final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(null,source.getBlockProperties()
+            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(null, source.getBlockProperties()
                     .getReportProperties(), source.getBlockProperties(), "Value Provider")
             {
                 @Override
@@ -435,8 +432,6 @@ public class BlockColumnSelectionPage extends WizardPage
                 {
                     return wizardContext.getDefaultBlockValue();
                 }
-                
-                
 
             };
             descriptors.add(valueProvider);
@@ -636,7 +631,37 @@ public class BlockColumnSelectionPage extends WizardPage
                 descriptors.add(mformatDescriptor);
             }
                 break;
+            case IMAGE:
+            {
 
+                final EJPluginReportScreenItemProperties.Image label = (EJPluginReportScreenItemProperties.Image) source;
+                final AbstractProjectSrcFileDescriptor textDescriptor = new AbstractProjectSrcFileDescriptor(new IJavaProjectProvider()
+                {
+
+                    public IJavaProject getJavaProject()
+                    {
+
+                        return wizardContext.getProject();
+                    }
+                }, "Default Image")
+                {
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        label.setDefaultImage(value);
+
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return label.getDefaultImage();
+                    }
+                };
+                descriptors.add(textDescriptor);
+            }
+                break;
             case DATE:
             {
                 final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) source;

@@ -58,6 +58,7 @@ import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractProjectSrcFileDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
@@ -986,6 +987,28 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                     descriptors.add(textDescriptor);
                 }
                     break;
+                case IMAGE:
+                {
+                    final EJPluginReportScreenItemProperties.Image label = (EJPluginReportScreenItemProperties.Image) source;
+                    final AbstractProjectSrcFileDescriptor textDescriptor = new AbstractProjectSrcFileDescriptor(editor, "Default Image")
+                    {
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                            label.setDefaultImage(value);
+                            editor.setDirty(true);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return label.getDefaultImage();
+                        }
+                    };
+                    descriptors.add(textDescriptor);
+                }
+                break;
                 case NUMBER:
                 {
                     final EJPluginReportScreenItemProperties.Number number = (EJPluginReportScreenItemProperties.Number) source;
@@ -1055,6 +1078,8 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 }
                     break;
 
+                    
+                    
                 case DATE:
                 {
                     final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) source;

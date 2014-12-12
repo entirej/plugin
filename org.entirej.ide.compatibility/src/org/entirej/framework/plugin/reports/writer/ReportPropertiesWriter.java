@@ -153,12 +153,10 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
     protected void addBlockList(EJReportBlockContainer blockContainer, StringBuffer buffer)
     {
         
-        
-        
         BlockGroup headerSection = blockContainer.getHeaderSection();
         BlockGroup footerSection = blockContainer.getFooterSection();
         
-        if(headerSection.getAllBlockProperties().size()>0)
+        if (headerSection.getAllBlockProperties().size() > 0)
         {
             startOpenTAG(buffer, "ej.header.blocks");
             {
@@ -173,7 +171,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             endTAG(buffer, "ej.header.blocks");
             
         }
-        
         
         List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
         for (BlockContainerItem item : blockContainerItems)
@@ -221,8 +218,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             }
         }
         
-        
-        if(footerSection.getAllBlockProperties().size()>0)
+        if (footerSection.getAllBlockProperties().size() > 0)
         {
             startOpenTAG(buffer, "ej.footer.blocks");
             {
@@ -251,24 +247,21 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             
             writeStringTAG(buffer, "description", blockProperties.getDescription());
             
-            
             if (!blockProperties.isControlBlock()) writeStringTAG(buffer, "serviceClassName", blockProperties.getServiceClassName());
             
             writeStringTAG(buffer, "actionProcessorClassName", blockProperties.getActionProcessorClassName());
             EJPluginReportScreenProperties layoutScreenProperties = blockProperties.getLayoutScreenProperties();
             writeStringTAG(buffer, "screenType", layoutScreenProperties.getScreenType().name());
-            writeStringTAG(buffer, "startOnNewpage", ""+layoutScreenProperties.isStartOnNewPage());
-            if(layoutScreenProperties.getOddRowVAName()!=null)
-                writeStringTAG(buffer, "oddVA", layoutScreenProperties.getOddRowVAName());
-            if(layoutScreenProperties.getEvenRowVAName()!=null)
-                writeStringTAG(buffer, "evenVA", layoutScreenProperties.getEvenRowVAName());
+            writeStringTAG(buffer, "startOnNewpage", "" + layoutScreenProperties.isStartOnNewPage());
+            if (layoutScreenProperties.getOddRowVAName() != null) writeStringTAG(buffer, "oddVA", layoutScreenProperties.getOddRowVAName());
+            if (layoutScreenProperties.getEvenRowVAName() != null) writeStringTAG(buffer, "evenVA", layoutScreenProperties.getEvenRowVAName());
             writeStringTAG(buffer, "x", layoutScreenProperties.getX() + "");
             writeStringTAG(buffer, "y", layoutScreenProperties.getY() + "");
             writeStringTAG(buffer, "width", layoutScreenProperties.getWidth() + "");
             writeStringTAG(buffer, "height", layoutScreenProperties.getHeight() + "");
-            writeStringTAG(buffer, "headerColHeight", layoutScreenProperties.getHeaderColumnHeight()+ "");
-            writeStringTAG(buffer, "detailColHeight", layoutScreenProperties.getHeaderColumnHeight()+ "");
-            writeStringTAG(buffer, "footerColHeight", layoutScreenProperties.getHeaderColumnHeight()+ "");
+            writeStringTAG(buffer, "headerColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
+            writeStringTAG(buffer, "detailColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
+            writeStringTAG(buffer, "footerColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
             // Now add the block items
             startTAG(buffer, "itemList");
             {
@@ -310,7 +303,6 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             }
             else if (layoutScreenProperties.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
             {
-                
                 
                 startTAG(buffer, "screenColumnList");
                 
@@ -398,7 +390,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "width", itemProps.getWidth() + "");
                 writeStringTAG(buffer, "height", itemProps.getHeight() + "");
                 writeStringTAG(buffer, "visible", String.valueOf(itemProps.isVisible()));
-               
+                
                 if (itemProps.getVisualAttributeName() != null) writeStringTAG(buffer, "va", itemProps.getVisualAttributeName());
                 
                 // add type base properties
@@ -465,6 +457,12 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                         final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) itemProps;
                         writeStringTAG(buffer, "manualFormat", number.getManualFormat());
                         writeStringTAG(buffer, "localeFormat", number.getLocaleFormat().name());
+                    }
+                        break;
+                    case IMAGE:
+                    {
+                        final EJPluginReportScreenItemProperties.Image number = (EJPluginReportScreenItemProperties.Image) itemProps;
+                        writeStringTAG(buffer, "defaultImage", number.getDefaultImage());
                     }
                         break;
                     

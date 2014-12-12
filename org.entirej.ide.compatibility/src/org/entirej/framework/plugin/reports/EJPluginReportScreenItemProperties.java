@@ -158,13 +158,11 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         }
     }
     
-    
     public static class Line extends EJPluginReportScreenItemProperties
     {
         
-      
-        private double lineWidth = 1.0;
-        private LineStyle lineStyle = LineStyle.SOLID;
+        private double        lineWidth     = 1.0;
+        private LineStyle     lineStyle     = LineStyle.SOLID;
         private LineDirection lineDirection = LineDirection.TO_DOWN;
         
         public enum LineStyle
@@ -189,17 +187,15 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             return EJReportScreenItemType.LINE;
         }
         
-        
         public double getLineWidth()
         {
             return lineWidth;
         }
-           
+        
         public void setLineWidth(double lineWidth)
         {
             this.lineWidth = lineWidth;
         }
-        
         
         public LineStyle getLineStyle()
         {
@@ -211,7 +207,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             this.lineStyle = lineStyle;
         }
         
-        
         public LineDirection getLineDirection()
         {
             return lineDirection;
@@ -221,17 +216,14 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.lineDirection = lineDirection;
         }
-     
+        
     }
     public static class Rectangle extends EJPluginReportScreenItemProperties
     {
         
-        
-        private double lineWidth = 1.0;
-        private int radius;
+        private double    lineWidth = 1.0;
+        private int       radius;
         private LineStyle lineStyle = LineStyle.SOLID;
-        
-       
         
         public Rectangle(EJPluginReportBlockProperties blockProperties)
         {
@@ -244,7 +236,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             return EJReportScreenItemType.RECTANGLE;
         }
         
-        
         public double getLineWidth()
         {
             return lineWidth;
@@ -254,7 +245,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.lineWidth = lineWidth;
         }
-        
         
         public LineStyle getLineStyle()
         {
@@ -266,7 +256,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             this.lineStyle = lineStyle;
         }
         
-        
         public void setRadius(int radius)
         {
             this.radius = radius;
@@ -276,8 +265,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             return radius;
         }
-        
-       
         
     }
     public static class Text extends ValueBaseItem implements RotatableItem
@@ -349,9 +336,9 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     public static abstract class ValueBaseItem extends AlignmentBaseItem
     {
         
-        private boolean expandToFit;
+        private boolean            expandToFit;
         
-        private String value;
+        private String             value;
         
         private EJReportMarkupType markup = EJReportMarkupType.NONE;
         
@@ -370,7 +357,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
             this.value = value;
         }
         
-        
         public boolean isExpandToFit()
         {
             return expandToFit;
@@ -380,7 +366,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.expandToFit = expandToFit;
         }
-        
         
         public void setMarkup(EJReportMarkupType markup)
         {
@@ -434,7 +419,6 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.manualFormat = manualFormat;
         }
-        
         
         public NumberFormats getLocaleFormat()
         {
@@ -509,6 +493,18 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     
     public static class Image extends ValueBaseItem
     {
+        
+        private String defaultImage;
+        
+        public String getDefaultImage()
+        {
+            return defaultImage;
+        }
+        
+        public void setDefaultImage(String defaultImage)
+        {
+            this.defaultImage = defaultImage;
+        }
         
         public Image(EJPluginReportBlockProperties blockProperties)
         {

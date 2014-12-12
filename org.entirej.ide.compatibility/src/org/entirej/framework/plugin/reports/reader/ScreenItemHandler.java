@@ -60,7 +60,8 @@ public class ScreenItemHandler extends EntireJTagHandler
     private static final String                ELEMENT_SCREEN_LINE_WIDTH     = "lineWidth";
     private static final String                ELEMENT_SCREEN_LINE_DIRECTION = "lineDirection";
     private static final String                ELEMENT_SCREEN_RECT_RADIUS    = "rectRadius";
-    
+
+    private static final String              ELEMENT_SCREEN_DEFAULT_IMAGE  = "defaultImage";
     public ScreenItemHandler(EJPluginReportScreenProperties blockProperties)
     {
         _blockProperties = blockProperties;
@@ -244,6 +245,16 @@ public class ScreenItemHandler extends EntireJTagHandler
             {
                 final EJPluginReportScreenItemProperties.Date item = (EJPluginReportScreenItemProperties.Date) _itemProperties;
                 item.setManualFormat(value);
+                
+            }
+        }
+        else if (name.equals(ELEMENT_SCREEN_DEFAULT_IMAGE))
+        {
+          
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.Image)
+            {
+                final EJPluginReportScreenItemProperties.Image item = (EJPluginReportScreenItemProperties.Image) _itemProperties;
+                item.setDefaultImage(value);
                 
             }
         }
