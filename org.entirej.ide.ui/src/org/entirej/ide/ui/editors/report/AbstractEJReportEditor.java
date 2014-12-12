@@ -138,4 +138,13 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
         
     }
 
+    public void refreshPreview()
+    {
+        if(formBasePage!=null )
+        {
+             formBasePage.treeSection.refreshPreview();
+        }
+        
+    }
+
 }

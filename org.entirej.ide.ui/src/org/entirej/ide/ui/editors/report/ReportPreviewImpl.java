@@ -18,6 +18,12 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -58,9 +64,9 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
     protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
     protected final Cursor MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-    
-    protected final Color                          COLOR_HEADER       = new Color(Display.getCurrent(), new RGB(180, 180, 180));
-    protected final Color                          COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
+
+    protected final Color  COLOR_HEADER       = new Color(Display.getCurrent(), new RGB(180, 180, 180));
+    protected final Color  COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
 
     public void dispose()
     {
@@ -92,8 +98,6 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 
-        
-        
         pContent.addPaintListener(new PaintListener()
         {
 
@@ -101,18 +105,17 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             {
                 if (formProperties.getHeaderSectionHeight() > 0)
                 {
-                    int y1 = formProperties.getHeaderSectionHeight()+10+formProperties.getMarginTop()+1;
-                    e.gc.drawLine(0, y1, pContent.getBounds().width,y1);
-                    e.gc.drawString("H", 5,y1>20?y1-20:2, true);
+                    int y1 = formProperties.getHeaderSectionHeight() + 10 + formProperties.getMarginTop() + 1;
+                    e.gc.drawLine(0, y1, pContent.getBounds().width, y1);
+                    e.gc.drawString("H", 5, y1 > 20 ? y1 - 20 : 2, true);
                 }
                 if (formProperties.getFooterSectionHeight() > 0)
                 {
 
-                    
-                    int y1 = pContent.getBounds().height - (formProperties.getFooterSectionHeight()+10+formProperties.getMarginBottom());
+                    int y1 = pContent.getBounds().height - (formProperties.getFooterSectionHeight() + 10 + formProperties.getMarginBottom());
                     e.gc.drawLine(0, y1, pContent.getBounds().width, y1);
-                    
-                    e.gc.drawString("F", 5,y1>20?y1-20:y1, true);
+
+                    e.gc.drawString("F", 5, y1 > 20 ? y1 - 20 : y1, true);
 
                 }
 
@@ -124,38 +127,29 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         report.setBounds(25, 10, width, height);
         report.setLayout(null);
 
-       
-
-        
         EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
-        
+
         headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
         detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
         footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
 
     }
 
-    private void headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties, int width,
-            int height, Composite report, EJReportBlockContainer blockContainer)
+    private void headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+            int width, int height, Composite report, EJReportBlockContainer blockContainer)
     {
         final Composite reportBody = new Composite(report, SWT.NONE);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_HEADER);
-        
+
         reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop(),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
-                formProperties.getHeaderSectionHeight());
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getHeaderSectionHeight());
 
-        
-
-        
         for (EJPluginReportBlockProperties properties : blockContainer.getHeaderSection().getAllBlockProperties())
         {
             createBlockPreview(editor, reportBody, properties);
         }
 
-       
-
         final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
 
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
@@ -170,6 +164,18 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
+                    droppedObj.indicate(event.x, event.y);
+                }
+            }
+
+            @Override
+            public void drop(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+
+                if (droppedObj != null)
+                {
                     droppedObj.setBond(event.x, event.y);
                 }
             }
@@ -179,90 +185,107 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         dropTarget.setTransfer(new Transfer[] { transfer });
         dropTarget.addDropListener(dragAdapter);
     }
-    private void footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties, int width,
-            int height, Composite report, EJReportBlockContainer blockContainer)
+
+    private void footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+            int width, int height, Composite report, EJReportBlockContainer blockContainer)
     {
         final Composite reportBody = new Composite(report, SWT.NONE);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_FOOTER);
-        
-        reportBody.setBounds(formProperties.getMarginLeft(), height-(formProperties.getMarginBottom()+formProperties.getFooterSectionHeight()),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
-                formProperties.getFooterSectionHeight());
-        
-        
-        
-        
+
+        reportBody.setBounds(formProperties.getMarginLeft(), height - (formProperties.getMarginBottom() + formProperties.getFooterSectionHeight()),
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getFooterSectionHeight());
+
         for (EJPluginReportBlockProperties properties : blockContainer.getFooterSection().getAllBlockProperties())
         {
             createBlockPreview(editor, reportBody, properties);
         }
-        
-        
-        
+
         final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
-        
+
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
-            
+
             @Override
             public void dragOver(DropTargetEvent event)
             {
-                
+
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
-                
+
+                if (droppedObj != null)
+                {
+                    droppedObj.indicate(event.x, event.y);
+                }
+            }
+
+            @Override
+            public void drop(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(event.x, event.y);
                 }
             }
         };
-        
+
         final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
         dropTarget.setTransfer(new Transfer[] { transfer });
         dropTarget.addDropListener(dragAdapter);
     }
-    private void detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties, int width,
-            int height, Composite report, EJReportBlockContainer blockContainer)
+
+    private void detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+            int width, int height, Composite report, EJReportBlockContainer blockContainer)
     {
         final Composite reportBody = new Composite(report, SWT.NONE);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
-        
-        reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop()+formProperties.getHeaderSectionHeight(),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())),
-                (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()+formProperties.getHeaderSectionHeight()+formProperties.getFooterSectionHeight())));
-        
-        
-        
-        
+
+        reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(), (width - (formProperties
+                .getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()
+                + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
         {
             createBlockPreview(editor, reportBody, properties);
         }
-        
+
         previewComposite.setMinSize(width + 20, height + 20);// add offset
-        
+
         final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
-        
+
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
-            
+
             @Override
             public void dragOver(DropTargetEvent event)
             {
-                
+
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
-                
+
+                if (droppedObj != null)
+                {
+                    droppedObj.indicate(event.x, event.y);
+                }
+            }
+
+            @Override
+            public void drop(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(event.x, event.y);
                 }
             }
         };
-        
+
         final DropTarget dropTarget = new DropTarget(reportBody, DND.DROP_MOVE | DND.DROP_COPY);
         dropTarget.setTransfer(new Transfer[] { transfer });
         dropTarget.addDropListener(dragAdapter);
@@ -341,17 +364,83 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                     if (display.x >= screenProperties.getX() && display.y >= screenProperties.getY())
                     {
 
-                        screenProperties.setWidth((display.x - screenProperties.getX()));
-                        screenProperties.setHeight(display.y - screenProperties.getY());
-                        block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+                        final int width = display.x - screenProperties.getX();
 
-                        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
-                                screenProperties.getWidth(), screenProperties.getHeight()));
-                        resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
-                        hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
-                        editor.setDirty(true);
-                        editor.refresh(properties);
-                        editor.refresh(screenProperties);
+                        final int height = display.y - screenProperties.getY();
+
+                        final int oldWidth = screenProperties.getWidth();
+                        final int oldHeight = screenProperties.getHeight();
+
+                        AbstractOperation operation = new AbstractOperation("Move")
+                        {
+
+                            @Override
+                            public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                            {
+                                screenProperties.setWidth(oldWidth);
+                                screenProperties.setHeight(oldHeight);
+                                editor.setDirty(true);
+                                editor.refresh(properties);
+                                editor.refresh(screenProperties);
+                                editor.refreshPreview();
+                                return Status.OK_STATUS;
+                            }
+
+                            @Override
+                            public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                            {
+                                screenProperties.setWidth(width);
+                                screenProperties.setHeight(height);
+                                editor.setDirty(true);
+                                editor.refresh(properties);
+                                editor.refresh(screenProperties);
+                                editor.refreshPreview();
+                                return Status.OK_STATUS;
+                            }
+
+                            @Override
+                            public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                            {
+
+                                screenProperties.setWidth(width);
+                                screenProperties.setHeight(height);
+                                block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+
+                                hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                                        screenProperties.getWidth(), screenProperties.getHeight()));
+                                resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
+                                hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
+                                editor.setDirty(true);
+                                editor.refresh(properties);
+                                editor.refresh(screenProperties);
+                                return Status.OK_STATUS;
+                            }
+                        };
+
+                        editor.execute(operation);
+
+                    }
+
+                }
+
+                public void indicate(int x, int y)
+                {
+                    Point display = reportBody.toControl(x, y);
+
+                    if (display.x >= screenProperties.getX() && display.y >= screenProperties.getY())
+                    {
+
+                        int width = display.x - screenProperties.getX();
+
+                        int height = display.y - screenProperties.getY();
+
+                        block.setBounds(screenProperties.getX(), screenProperties.getY(), width, height);
+
+                        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(), width,
+                                height));
+                        resize.setBounds(width - 12, height - 12, 10, 10);
+                        hint.setBounds(10, 0, width - 10, 25);
+
                     }
 
                 }
@@ -359,19 +448,73 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             final DragObject dragObjectMove = new DragObject()
             {
 
-                public void setBond(int x, int y)
+                public void indicate(int x, int y)
+                {
+                    Point display = reportBody.toControl(x, y);
+
+                    block.setBounds(display.x, display.y, screenProperties.getWidth(), screenProperties.getHeight());
+
+                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), display.x, display.y, screenProperties.getWidth(),
+                            screenProperties.getHeight()));
+
+                }
+
+                public void setBond(final int x, final int y)
                 {
 
-                    Point display = reportBody.toControl(x, y);
-                    screenProperties.setX(display.x);
-                    screenProperties.setY(display.y);
-                    block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+                    final int oldX = screenProperties.getX();
+                    final int oldY = screenProperties.getY();
 
-                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
-                            screenProperties.getWidth(), screenProperties.getHeight()));
-                    editor.setDirty(true);
-                    editor.refresh(properties);
-                    editor.refresh(screenProperties);
+                    Point display = reportBody.toControl(x, y);
+
+                    final int newX = display.x;
+                    final int newY = display.y;
+                    AbstractOperation operation = new AbstractOperation("Move")
+                    {
+
+                        @Override
+                        public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            screenProperties.setX(oldX);
+                            screenProperties.setY(oldY);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refresh(screenProperties);
+                            editor.refreshPreview();
+                            return Status.OK_STATUS;
+                        }
+
+                        @Override
+                        public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            screenProperties.setX(newX);
+                            screenProperties.setY(newY);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refresh(screenProperties);
+                            editor.refreshPreview();
+                            return Status.OK_STATUS;
+                        }
+
+                        @Override
+                        public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+
+                            screenProperties.setX(newX);
+                            screenProperties.setY(newY);
+                            block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+
+                            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                                    screenProperties.getWidth(), screenProperties.getHeight()));
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refresh(screenProperties);
+                            return Status.OK_STATUS;
+                        }
+                    };
+
+                    editor.execute(operation);
+
                 }
             };
 
@@ -453,6 +596,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     private static interface DragObject
     {
         void setBond(int x, int y);
+
+        void indicate(int x, int y);
     }
 
 }
