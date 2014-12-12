@@ -20,6 +20,12 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -91,7 +97,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
 
-    void updateSize(final AbstractEJReportEditor editor,EJPluginReportScreenProperties layoutScreenProperties, Composite parent)
+    void updateSize(final AbstractEJReportEditor editor, EJPluginReportScreenProperties layoutScreenProperties, Composite parent)
     {
 
         int width = layoutScreenProperties.getWidth();
@@ -101,19 +107,19 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         Control[] children = parent.getChildren();
         for (Control control : children)
         {
-            if (width < (control.getBounds().x+control.getBounds().width))
+            if (width < (control.getBounds().x + control.getBounds().width))
             {
-                width = (control.getBounds().x+control.getBounds().width);
+                width = (control.getBounds().x + control.getBounds().width);
                 updated = true;
             }
-            if (height < (control.getBounds().y+control.getBounds().height))
+            if (height < (control.getBounds().y + control.getBounds().height))
             {
-                height = (control.getBounds().y+control.getBounds().height);
+                height = (control.getBounds().y + control.getBounds().height);
                 updated = true;
             }
         }
-        
-        if(updated)
+
+        if (updated)
         {
             parent.setBounds(parent.getBounds().x, parent.getBounds().y, width, height);
         }
@@ -138,14 +144,14 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
-       final EJPluginReportScreenProperties layoutScreenProperties = properties;
+        final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
         reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), layoutScreenProperties.getHeight());
 
         List<EJPluginReportScreenItemProperties> allItemProperties = layoutScreenProperties.getScreenItemContainer().getAllItemProperties();
         for (EJPluginReportScreenItemProperties screenItemProperties : allItemProperties)
         {
-            createItemPreview(editor,layoutScreenProperties, reportBody, screenItemProperties);
+            createItemPreview(editor, layoutScreenProperties, reportBody, screenItemProperties);
         }
 
         for (EJPluginReportBlockProperties properties : layoutScreenProperties.getAllSubBlocks())
@@ -170,6 +176,18 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
+                    droppedObj.indicate(event.x, event.y);
+                }
+            }
+
+            @Override
+            public void drop(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+
+                if (droppedObj != null)
+                {
                     droppedObj.setBond(event.x, event.y);
                 }
             }
@@ -184,7 +202,6 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         final Menu menu = new Menu(editor.getEditorSite().getShell(), SWT.POP_UP);
         final EJReportScreenItemContainer container = layoutScreenProperties.getScreenItemContainer();
 
-        
         MenuItem item = new MenuItem(menu, SWT.PUSH);
         item.setText(String.format("New Screen Item "));
         item.addSelectionListener(new SelectionAdapter()
@@ -193,15 +210,15 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
             public void widgetSelected(SelectionEvent e)
             {
                 AbstractNode<?> findNode = editor.findNode(container);
-                if(findNode instanceof ReportBlockScreenItemsGroupNode)
+                if (findNode instanceof ReportBlockScreenItemsGroupNode)
                 {
                     ReportBlockScreenItemsGroupNode node = (ReportBlockScreenItemsGroupNode) findNode;
-                    
+
                     node.newScreenItem(x, y, container, -1);
                 }
             }
         });
-        
+
         reportBody.setMenu(menu);
         reportBody.addMouseListener(new MouseAdapter()
         {
@@ -216,7 +233,8 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         updateSize(editor, layoutScreenProperties, reportBody);
     }
 
-    protected void createItemPreview(final AbstractEJReportEditor editor,final EJPluginReportScreenProperties layoutScreenProperties, final Composite reportBody, final EJPluginReportScreenItemProperties properties)
+    protected void createItemPreview(final AbstractEJReportEditor editor, final EJPluginReportScreenProperties layoutScreenProperties,
+            final Composite reportBody, final EJPluginReportScreenItemProperties properties)
     {
 
         int style = SWT.NONE;
@@ -252,16 +270,77 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
             public void setBond(int x, int y)
             {
 
-                Point display = reportBody.toControl(x, y);
-                properties.setX(display.x);
-                properties.setY(display.y);
-                block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+             
+                
+                
+                
+                
+                
+                
+                final int oldX = properties.getX();
+                final int oldY = properties.getY();
 
-                hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
+                Point display = reportBody.toControl(x, y);
+                final int newX = display.x;
+                final int newY = display.y;
+
+                AbstractOperation operation = new AbstractOperation("Move")
+                {
+
+                    @Override
+                    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                    {
+                        properties.setX(oldX);
+                        properties.setY(oldY);
+                        editor.setDirty(true);
+                        editor.refresh(properties);
+                        editor.refreshPreview();
+                        return Status.OK_STATUS;
+                    }
+
+                    @Override
+                    public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                    {
+                        properties.setX(newX);
+                        properties.setY(newY);
+                        editor.setDirty(true);
+                        editor.refresh(properties);
+                        editor.refreshPreview();
+                        return Status.OK_STATUS;
+                    }
+
+                    @Override
+                    public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                    {
+                        properties.setX(newX);
+                        properties.setY(newY);
+
+                        block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+
+                        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(),
+                                properties.getWidth(), properties.getHeight()));
+                        editor.setDirty(true);
+                        editor.refresh(properties);
+                        return Status.OK_STATUS;
+                    }
+                };
+
+                editor.execute(operation);
+            }
+
+            public void indicate(int x, int y)
+            {
+                Point display = reportBody.toControl(x, y);
+
+                block.setBounds(display.x, display.y, properties.getWidth(), properties.getHeight());
+
+                hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), display.x, display.y, properties.getWidth(),
                         properties.getHeight()));
                 editor.setDirty(true);
                 editor.refresh(properties);
+
             }
+
         };
 
         hint.addMouseListener(new MouseAdapter()
@@ -340,15 +419,81 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                 if (display.x >= properties.getX() && display.y >= properties.getY())
                 {
 
-                    properties.setWidth((display.x - properties.getX()));
-                    properties.setHeight(display.y - properties.getY());
-                    block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+                    final int width = display.x - properties.getX();
 
-                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
-                            properties.getHeight()));
-                    resize.setBounds(properties.getWidth() > 12 ? properties.getWidth() - 12 : 0,
-                            properties.getHeight() > 12 ? properties.getHeight() - 12 : 0, 10, 10);
-                    hint.setBounds(10, 0, properties.getWidth() - 10, 25);
+                    final int height = display.y - properties.getY();
+                    final int oldWidth = properties.getWidth();
+
+                    final int oldHeight = properties.getHeight();
+
+                    
+                    
+                    AbstractOperation operation = new AbstractOperation("Move")
+                    {
+
+                        @Override
+                        public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            properties.setWidth(oldWidth);
+                            properties.setHeight(oldHeight);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refreshPreview();
+                            return Status.OK_STATUS;
+                        }
+
+                        @Override
+                        public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            properties.setWidth(width);
+                            properties.setHeight(height);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refreshPreview();
+                            return Status.OK_STATUS;
+                        }
+
+                        @Override
+                        public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            
+                            properties.setWidth(width);
+                            properties.setHeight(height);
+                            block.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+
+                            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), properties.getWidth(),
+                                    properties.getHeight()));
+                            resize.setBounds(properties.getWidth() > 12 ? properties.getWidth() - 12 : 0,
+                                    properties.getHeight() > 12 ? properties.getHeight() - 12 : 0, 10, 10);
+                            hint.setBounds(10, 0, properties.getWidth() - 10, 25);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            updateSize(editor, layoutScreenProperties, reportBody);
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    editor.execute(operation);
+                    
+                }
+
+            }
+
+            public void indicate(int x, int y)
+            {
+                Point display = reportBody.toControl(x, y);
+
+                if (display.x >= properties.getX() && display.y >= properties.getY())
+                {
+
+                    int width = display.x - properties.getX();
+
+                    int height = display.y - properties.getY();
+
+                    block.setBounds(properties.getX(), properties.getY(), width, height);
+
+                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), properties.getX(), properties.getY(), width, height));
+                    resize.setBounds(width > 12 ? width - 12 : 0, height > 12 ? height - 12 : 0, 10, 10);
+                    hint.setBounds(10, 0, width - 10, 25);
                     editor.setDirty(true);
                     editor.refresh(properties);
                     updateSize(editor, layoutScreenProperties, reportBody);
@@ -581,16 +726,79 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                     if (display.x >= screenProperties.getX() && display.y >= screenProperties.getY())
                     {
 
-                        screenProperties.setWidth((display.x - screenProperties.getX()));
-                        screenProperties.setHeight(display.y - screenProperties.getY());
-                        block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+                        final int width = display.x - screenProperties.getX();
+                        final int height = display.y - screenProperties.getY();
+                        final int oldWidth = screenProperties.getWidth();
+                        final int oldHeight = screenProperties.getHeight();
 
-                        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
-                                screenProperties.getWidth(), screenProperties.getHeight()));
-                        resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
-                        hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
-                        editor.setDirty(true);
-                        editor.refresh(properties);
+                        AbstractOperation operation = new AbstractOperation("Move")
+                        {
+
+                            @Override
+                            public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                            {
+                                screenProperties.setWidth(oldWidth);
+
+                                screenProperties.setHeight(oldHeight);
+                                editor.setDirty(true);
+                                editor.refresh(properties);
+                                editor.refreshPreview();
+                                return Status.OK_STATUS;
+                            }
+
+                            @Override
+                            public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                            {
+                                screenProperties.setWidth(width);
+
+                                screenProperties.setHeight(height);
+                                editor.setDirty(true);
+                                editor.refresh(properties);
+                                editor.refreshPreview();
+                                return Status.OK_STATUS;
+                            }
+
+                            @Override
+                            public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                            {
+                                screenProperties.setWidth(width);
+
+                                screenProperties.setHeight(height);
+                                block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+
+                                hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                                        screenProperties.getWidth(), screenProperties.getHeight()));
+                                resize.setBounds(screenProperties.getWidth() - 12, screenProperties.getHeight() - 12, 10, 10);
+                                hint.setBounds(10, 0, screenProperties.getWidth() - 10, 25);
+                                editor.setDirty(true);
+                                editor.refresh(properties);
+                                return Status.OK_STATUS;
+                            }
+                        };
+
+                        editor.execute(operation);
+                    }
+
+                }
+
+                public void indicate(int x, int y)
+                {
+                    Point display = reportBody.toControl(x, y);
+
+                    if (display.x >= screenProperties.getX() && display.y >= screenProperties.getY())
+                    {
+
+                        int width = display.x - screenProperties.getX();
+
+                        int height = display.y - screenProperties.getY();
+
+                        block.setBounds(screenProperties.getX(), screenProperties.getY(), width, height);
+
+                        hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(), width,
+                                height));
+                        resize.setBounds(width - 12, height - 12, 10, 10);
+                        hint.setBounds(10, 0, width - 10, 25);
+
                     }
 
                 }
@@ -601,15 +809,67 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                 public void setBond(int x, int y)
                 {
 
-                    Point display = reportBody.toControl(x, y);
-                    screenProperties.setX(display.x);
-                    screenProperties.setY(display.y);
-                    block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+                    final int oldX = screenProperties.getX();
+                    final int oldY = screenProperties.getY();
 
-                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
-                            screenProperties.getWidth(), screenProperties.getHeight()));
-                    editor.setDirty(true);
-                    editor.refresh(properties);
+                    Point display = reportBody.toControl(x, y);
+                    final int newX = display.x;
+                    final int newY = display.y;
+
+                    AbstractOperation operation = new AbstractOperation("Move")
+                    {
+
+                        @Override
+                        public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            screenProperties.setX(oldX);
+                            screenProperties.setY(oldY);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refreshPreview();
+                            return Status.OK_STATUS;
+                        }
+
+                        @Override
+                        public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            screenProperties.setX(newX);
+                            screenProperties.setY(newY);
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            editor.refreshPreview();
+                            return Status.OK_STATUS;
+                        }
+
+                        @Override
+                        public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                        {
+                            screenProperties.setX(newX);
+                            screenProperties.setY(newY);
+
+                            block.setBounds(screenProperties.getX(), screenProperties.getY(), screenProperties.getWidth(), screenProperties.getHeight());
+
+                            hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), screenProperties.getX(), screenProperties.getY(),
+                                    screenProperties.getWidth(), screenProperties.getHeight()));
+                            editor.setDirty(true);
+                            editor.refresh(properties);
+                            return Status.OK_STATUS;
+                        }
+                    };
+
+                    editor.execute(operation);
+
+                }
+
+                public void indicate(int x, int y)
+                {
+                    Point display = reportBody.toControl(x, y);
+
+                    block.setBounds(display.x, display.y, screenProperties.getWidth(), screenProperties.getHeight());
+
+                    hint.setText(String.format("%s [ %d, %d ] [ %d, %d ]", properties.getName(), display.x, display.y, screenProperties.getWidth(),
+                            screenProperties.getHeight()));
+
                 }
             };
 
@@ -689,5 +949,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
     private static interface DragObject
     {
         void setBond(int x, int y);
+
+        void indicate(int x, int y);
     }
 }
