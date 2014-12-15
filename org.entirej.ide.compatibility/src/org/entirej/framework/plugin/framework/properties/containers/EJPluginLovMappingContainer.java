@@ -134,10 +134,11 @@ public class EJPluginLovMappingContainer
         }
     }
     
-    public void removeLovMappingProperties(EJPluginLovMappingProperties props)
+    public int removeLovMappingProperties(EJPluginLovMappingProperties props)
     {
-        
+        int indexOf = _lovMappingProperties.indexOf(props);
         _lovMappingProperties.remove(props);
+        return indexOf;
         
     }
     
