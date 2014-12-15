@@ -55,6 +55,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
+import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockColumnAddOperation;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockColumnRemoveOperation;
 import org.entirej.ide.ui.editors.report.wizards.BlockColumnWizard;
@@ -301,7 +302,8 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
         public AbstractNode<?>[] getChildren()
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
-
+            source.getHeaderScreen().setWidth(source.getDetailScreen().getWidth());
+            source.getFooterScreen().setWidth(source.getDetailScreen().getWidth());
             if (source.isShowHeader())
                 nodes.add(new ReportScreenNode(treeSection, this, source.getHeaderScreen())
                 {
@@ -310,6 +312,13 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     public String getName()
                     {
                         return "Column Header";
+                    }
+
+                    @Override
+                    public boolean isWidthSuppoted()
+                    {
+
+                        return false;
                     }
 
                     @Override
@@ -330,6 +339,13 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 }
 
                 @Override
+                public boolean isWidthSuppoted()
+                {
+
+                    return false;
+                }
+
+                @Override
                 public AbstractDescriptor<?>[] getNodeDescriptors()
                 {
 
@@ -345,6 +361,13 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     public String getName()
                     {
                         return "Column Footer";
+                    }
+
+                    @Override
+                    public boolean isWidthSuppoted()
+                    {
+
+                        return false;
                     }
 
                     @Override
@@ -394,12 +417,12 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     borderProperties.setLineStyle(EJReportBorderProperties.LineStyle.valueOf(value));
 
                 }
-                
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
 
             };
@@ -413,12 +436,14 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                     return "The width <b>(in pixels)</b> of the Line.";
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -502,12 +527,14 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 {
                     return borderProperties.getVisualAttributeName();
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 public String[] getOptions()
                 {
                     List<String> list = new ArrayList<String>();
@@ -543,8 +570,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -565,8 +593,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -586,8 +615,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -608,8 +638,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -685,14 +716,100 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
+            final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
+            {
+                Filter vfilter = new Filter()
+                               {
+
+                                   public boolean match(int tag, IMarker marker)
+                                   {
+
+                                       return (tag & ReportNodeTag.WIDTH) != 0;
+                                   }
+                               };
+
+                @Override
+                public String getErrors()
+                {
+
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+
+                }
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The width <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.getDetailScreen().setWidth(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.getDetailScreen().setWidth(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+
+                    }
+                    finally
+                    {
+                        source.getHeaderScreen().setWidth(source.getDetailScreen().getWidth());
+                        source.getFooterScreen().setWidth(source.getDetailScreen().getWidth());
+                    }
+                    treeSection.getEditor().setDirty(true);
+                    treeSection.refresh(ScreenColumnNode.this);
+
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getDetailScreen().getWidth());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
             AbstractBooleanDescriptor showHeader = new AbstractBooleanDescriptor("Show Header")
             {
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -713,8 +830,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(Boolean value)
                 {
@@ -729,6 +847,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     return source.isShowFooter();
                 }
             };
+            descriptors.add(widthDescriptor);
             descriptors.add(showHeader);
             descriptors.add(showFooter);
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
@@ -835,12 +954,10 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                             // set default width/height
                             itemProperties.setName(name);
 
-                            itemProperties.getHeaderScreen().setWidth(width);
-                            // itemProperties.getHeaderScreen().setHeight(20);
                             itemProperties.getDetailScreen().setWidth(width);
-                            // itemProperties.getDetailScreen().setHeight(20);
+                            itemProperties.getHeaderScreen().setWidth(width);
                             itemProperties.getFooterScreen().setWidth(width);
-                            // itemProperties.getFooterScreen().setHeight(20);
+                            // itemProperties.getDetailScreen().setHeight(20);
 
                             if (screenItem != null)
                             {

@@ -97,6 +97,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         forColumnSection = true;
     }
 
+    
+    public boolean isWidthSuppoted()
+    {
+        return true;
+    }
+    
     @Override
     public String getName()
     {
@@ -129,6 +135,9 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         return GROUP;
     }
 
+    
+    
+    
     @Override
     public AbstractDescriptor<?>[] getNodeDescriptors()
     {
@@ -515,7 +524,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             descriptors.add(yDescriptor);
         }
 
-        descriptors.add(widthDescriptor);
+        if(isWidthSuppoted())
+            descriptors.add(widthDescriptor);
         descriptors.add(heightDescriptor);
 
         if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)

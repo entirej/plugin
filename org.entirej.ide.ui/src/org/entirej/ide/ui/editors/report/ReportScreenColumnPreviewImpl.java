@@ -101,11 +101,11 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         List<EJPluginReportColumnProperties> columnProperties = layoutScreenProperties.getColumnContainer().getAllColumnProperties();
 
         int headerH = layoutScreenProperties.getHeaderColumnHeight();
-        int headerW = 0;
+        
         int detailH = layoutScreenProperties.getDetailColumnHeight();
-        int detailW = 0;
+       
         int footerH = layoutScreenProperties.getDetailColumnHeight();
-        int footerW = 0;
+      
 
         int totalW = 0;
         // calculate sections
@@ -118,49 +118,24 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                 {
                     headerH = column.getHeaderScreen().getHeight();
                 }
-                if (headerW < column.getHeaderScreen().getWidth())
-                {
-                    headerW = column.getHeaderScreen().getWidth();
-                }
+               
             }
             if (detailH < column.getDetailScreen().getHeight())
             {
                 detailH = column.getDetailScreen().getHeight();
             }
-            if (detailW < column.getDetailScreen().getWidth())
-            {
-                detailW = column.getDetailScreen().getWidth();
-            }
+            
             if (column.isShowFooter())
             {
                 if (footerH < column.getFooterScreen().getHeight())
                 {
                     footerH = column.getFooterScreen().getHeight();
                 }
-                if (footerW < column.getFooterScreen().getWidth())
-                {
-                    footerW = column.getFooterScreen().getWidth();
-                }
+              
             }
             
             
-            if(column.isShowHeader() && column.isShowFooter())
-            {
-                totalW += column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
-                        .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth()) : (column
-                        .getFooterScreen().getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column
-                        .getDetailScreen().getWidth());
-            }
-            else if(!column.isShowFooter() && column.isShowHeader())
-            {
-                totalW += column.getHeaderScreen().getWidth() > column
-                        .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth() ;
-            }
-            else
-            {
-                totalW += column
-                        .getDetailScreen().getWidth();
-            }
+            totalW += column.getDetailScreen().getWidth();
            
         }
 
@@ -206,10 +181,8 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                     int x ;
                     if(column.isShowHeader() && column.isShowFooter())
                     {
-                        x = column.getHeaderScreen().getWidth() > column.getFooterScreen().getWidth() ? (column.getHeaderScreen().getWidth() > column
-                                .getDetailScreen().getWidth() ? column.getHeaderScreen().getWidth() : column.getDetailScreen().getWidth()) : (column
-                                .getFooterScreen().getWidth() > column.getDetailScreen().getWidth() ? column.getFooterScreen().getWidth() : column
-                                .getDetailScreen().getWidth());
+                        x = column
+                                .getDetailScreen().getWidth();
                     }
                     else if(!column.isShowFooter() && column.isShowHeader())
                     {
