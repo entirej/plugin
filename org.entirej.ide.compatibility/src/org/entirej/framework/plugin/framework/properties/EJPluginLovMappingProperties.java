@@ -236,7 +236,7 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
      * @param blockItemName
      *            The name of the block item
      */
-    public EJPluginLovItemMappingProperties addMappingItem(String lovDefinitionItemName, String blockItemName)
+    public EJPluginLovItemMappingProperties createMappingProperties(String lovDefinitionItemName, String blockItemName)
     {
         if (lovDefinitionItemName == null || lovDefinitionItemName.trim().length() == 0)
         {
@@ -245,8 +245,29 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
         
         EJPluginLovItemMappingProperties props = new EJPluginLovItemMappingProperties(_mappedBlock, lovDefinitionItemName, (blockItemName == null ? ""
                 : blockItemName));
+        
+        return props;
+    }
+    
+    public EJPluginLovItemMappingProperties addMappingItem(EJPluginLovItemMappingProperties props)
+    {
+        
         _lovItemMappings.add(props);
         return props;
+    }
+    
+    public EJPluginLovItemMappingProperties addMappingItem(int index, EJPluginLovItemMappingProperties props)
+    {
+        
+        _lovItemMappings.add(index, props);
+        return props;
+    }
+    
+    public int removeMappingItem(EJPluginLovItemMappingProperties props)
+    {
+        int indexOf = _lovItemMappings.indexOf(props);
+        _lovItemMappings.remove(props);
+        return indexOf;
     }
     
     public EJPluginLovMappingProperties makeCopy(EJPluginBlockProperties forBlock)
@@ -263,7 +284,7 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
         
         for (EJPluginLovItemMappingProperties mappintItem : getAllItemMappingProperties())
         {
-            newMapping.addMappingItem(mappintItem.getLovDefinitionItemName(), mappintItem.getBlockItemName());
+            newMapping.addMappingItem(newMapping.createMappingProperties(mappintItem.getLovDefinitionItemName(), mappintItem.getBlockItemName()));
         }
         
         return newMapping;

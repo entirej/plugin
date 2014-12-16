@@ -58,6 +58,8 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.BlockGroupNode.BlockNode;
 import org.entirej.ide.ui.editors.form.operations.LovMappingAddOperation;
+import org.entirej.ide.ui.editors.form.operations.LovMappingItemAddOperation;
+import org.entirej.ide.ui.editors.form.operations.LovMappingItemRemoveOperation;
 import org.entirej.ide.ui.editors.form.operations.LovMappingRemoveOperation;
 import org.entirej.ide.ui.editors.form.wizards.LovMappingLinkWizard;
 import org.entirej.ide.ui.editors.form.wizards.LovMappingLinkWizardContext;
@@ -191,9 +193,8 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                         lovMappingProperties.setLovDefinitionName(lovDefName);
                         lovMappingProperties.setExecuteAfterQuery(executeAfterQuery);
                         lovMappingProperties.setMappedBlock(source.getBlockProperties());
-                        
-                        
-                        LovMappingAddOperation addOperation = new LovMappingAddOperation(treeSection, source, lovMappingProperties, -1);  
+
+                        LovMappingAddOperation addOperation = new LovMappingAddOperation(treeSection, source, lovMappingProperties, -1);
                         editor.execute(addOperation);
                     }
 
@@ -310,19 +311,10 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
 
                         public void addLink(String defItem, String blockItem)
                         {
-                            final EJPluginLovItemMappingProperties addedMappingItem = MappingNode.this.source.addMappingItem(defItem, blockItem);
-                            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-                            {
+                            final EJPluginLovItemMappingProperties addedMappingItem = MappingNode.this.source.createMappingProperties(defItem, blockItem);
 
-                                public void run()
-                                {
-                                    editor.setDirty(true);
-                                    treeSection.refresh(MappingNode.this);
-                                    treeSection.expand(MappingNode.this);
-                                    treeSection.selectNodes(true, treeSection.findNode(addedMappingItem));
-
-                                }
-                            });
+                            LovMappingItemAddOperation addOperation = new LovMappingItemAddOperation(treeSection, source, addedMappingItem, -1);
+                            editor.execute(addOperation);
 
                         }
 
@@ -633,8 +625,7 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
 
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
-                        // TODO Auto-generated method stub
-                        return null;
+                        return new LovMappingItemRemoveOperation(treeSection, MappingNode.this.source, source);
                     }
                 };
             }
@@ -858,10 +849,10 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                 if (!before)
                     index++;
 
-                return new LovMappingAddOperation(treeSection,source,(EJPluginLovMappingProperties) dSource,index);
+                return new LovMappingAddOperation(treeSection, source, (EJPluginLovMappingProperties) dSource, index);
             }
         }
-        
-            return new LovMappingAddOperation(treeSection,source,(EJPluginLovMappingProperties) dSource,-1);
+
+        return new LovMappingAddOperation(treeSection, source, (EJPluginLovMappingProperties) dSource, -1);
     }
 }

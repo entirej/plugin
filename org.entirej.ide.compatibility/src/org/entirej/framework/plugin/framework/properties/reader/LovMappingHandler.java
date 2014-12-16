@@ -64,7 +64,7 @@ public class LovMappingHandler extends EntireJTagHandler
             String blockItemName = attributes.getValue("blockItemName");
             String lovDefItemName = attributes.getValue("lovDefinitionItem");
             
-            _lovMappingProperties.addMappingItem(lovDefItemName, blockItemName);
+            _lovMappingProperties.addMappingItem(_lovMappingProperties.createMappingProperties(lovDefItemName, blockItemName));
         }
         
     }
