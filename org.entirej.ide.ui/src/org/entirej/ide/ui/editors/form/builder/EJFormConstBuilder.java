@@ -440,7 +440,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
     private boolean isEJProperties(IFile file)
     {
-        return file.getName().equals("application") && "ejprop".equalsIgnoreCase(file.getFileExtension());
+        return file.getName().startsWith("application") && "ejprop".equalsIgnoreCase(file.getFileExtension());
     }
 
     private boolean isRefFormFile(IFile file)

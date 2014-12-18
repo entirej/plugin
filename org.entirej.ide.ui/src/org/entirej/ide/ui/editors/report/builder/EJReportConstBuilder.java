@@ -354,7 +354,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
 
     private boolean isEJProperties(IFile file)
     {
-        return file.getName().equals("report") && "ejprop".equalsIgnoreCase(file.getFileExtension());
+        return file.getName().startsWith("report") && "ejprop".equalsIgnoreCase(file.getFileExtension());
     }
 
     static void buildPropertiesConstant(IJavaProject project, EJPluginEntireJReportProperties entireJProperties, IFile file, IProgressMonitor monitor)
