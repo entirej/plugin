@@ -46,6 +46,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.framework.report.interfaces.EJReportBorderProperties;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
@@ -320,6 +321,30 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                         return false;
                     }
+                    
+                    
+                    public <S> S getAdapter(Class<S> adapter)
+                    {
+
+                        if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+                        {
+                            if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                                return adapter.cast(new ReportScreenPreviewImpl(source)
+                                {
+                                    
+                                    @Override
+                                    protected int getHeight()
+                                    {
+                                        if(source.getHeight()==0)
+                                            return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getHeaderColumnHeight();
+                                        return super.getHeight();
+                                    }
+                                });
+
+                           
+                        }
+                        return null;
+                    }
 
                     @Override
                     public AbstractDescriptor<?>[] getNodeDescriptors()
@@ -343,6 +368,29 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 {
 
                     return false;
+                }
+                
+                public <S> S getAdapter(Class<S> adapter)
+                {
+
+                    if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+                    {
+                        if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                            return adapter.cast(new ReportScreenPreviewImpl(source)
+                            {
+                                
+                                @Override
+                                protected int getHeight()
+                                {
+                                    if(source.getHeight()==0)
+                                        return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getDetailColumnHeight();
+                                    return super.getHeight();
+                                }
+                            });
+
+                       
+                    }
+                    return null;
                 }
 
                 @Override
@@ -370,6 +418,30 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                         return false;
                     }
 
+                    public <S> S getAdapter(Class<S> adapter)
+                    {
+
+                        if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+                        {
+                            if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                                return adapter.cast(new ReportScreenPreviewImpl(source)
+                                {
+                                    
+                                    @Override
+                                    protected int getHeight()
+                                    {
+                                        
+                                        if(source.getHeight()==0)
+                                            return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getFooterColumnHeight();
+                                        return super.getHeight();
+                                    }
+                                });
+
+                           
+                        }
+                        return null;
+                    }
+                    
                     @Override
                     public AbstractDescriptor<?>[] getNodeDescriptors()
                     {
@@ -962,9 +1034,10 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                             if (screenItem != null)
                             {
                                 screenItem.setX(0);
-                                screenItem.setWidth(width);
-                                screenItem.setHeight(container.getBlockProperties().getLayoutScreenProperties().getDetailColumnHeight());
-
+                                screenItem.setWidth(100);
+                                screenItem.setWidthAsPercentage(true);
+                                screenItem.setHeight(100);
+                                screenItem.setHeightAsPercentage(true);
                                 screenItem.setName(name);
                                 itemProperties.getDetailScreen().getScreenItemContainer().addItemProperties(screenItem);
                             }
@@ -974,8 +1047,10 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                 EJPluginReportScreenItemProperties.Label screenLabelItem = new EJPluginReportScreenItemProperties.Label(
                                         container.getBlockProperties());
                                 screenLabelItem.setX(0);
-                                screenLabelItem.setWidth(width);
-                                screenLabelItem.setHeight(container.getBlockProperties().getLayoutScreenProperties().getHeaderColumnHeight());
+                                screenLabelItem.setWidth(100);
+                                screenLabelItem.setWidthAsPercentage(true);
+                                screenLabelItem.setHeight(100);
+                                screenLabelItem.setHeightAsPercentage(true);
                                 screenLabelItem.setText(label);
                                 screenLabelItem.setName(name);
 

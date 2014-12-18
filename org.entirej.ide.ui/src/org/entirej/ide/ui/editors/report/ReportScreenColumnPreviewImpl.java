@@ -54,6 +54,9 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         this.properties = properties;
     }
 
+    
+   
+    
     public void dispose()
     {
         COLOR_HEADER.dispose();

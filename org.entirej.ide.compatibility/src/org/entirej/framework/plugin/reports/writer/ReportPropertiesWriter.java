@@ -389,6 +389,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "y", itemProps.getY() + "");
                 writeStringTAG(buffer, "width", itemProps.getWidth() + "");
                 writeStringTAG(buffer, "height", itemProps.getHeight() + "");
+                writeStringTAG(buffer, "widthAsPercentage", String.valueOf(itemProps.isWidthAsPercentage()));
+                writeStringTAG(buffer, "heightAsPercentage",String.valueOf( itemProps.isHeightAsPercentage()));
                 writeStringTAG(buffer, "visible", String.valueOf(itemProps.isVisible()));
                 
                 if (itemProps.getVisualAttributeName() != null) writeStringTAG(buffer, "va", itemProps.getVisualAttributeName());

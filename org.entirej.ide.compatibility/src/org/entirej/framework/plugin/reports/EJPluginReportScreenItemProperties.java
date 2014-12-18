@@ -19,6 +19,10 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     
     private int                           x, y, width, height;
     
+    
+
+    private boolean                     widthAsPercentage, heightAsPercentage;
+    
     private EJPluginReportBlockProperties blockProperties;
     
     public EJPluginReportScreenItemProperties(EJPluginReportBlockProperties blockProperties)
@@ -54,6 +58,27 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     {
         this.height = height;
     }
+    
+    public boolean isWidthAsPercentage()
+    {
+        return widthAsPercentage;
+    }
+
+    public void setWidthAsPercentage(boolean widthAsPercentage)
+    {
+        this.widthAsPercentage = widthAsPercentage;
+    }
+
+    public boolean isHeightAsPercentage()
+    {
+        return heightAsPercentage;
+    }
+
+    public void setHeightAsPercentage(boolean heightAsPercentage)
+    {
+        this.heightAsPercentage = heightAsPercentage;
+    }
+
     
     @Override
     public int getX()

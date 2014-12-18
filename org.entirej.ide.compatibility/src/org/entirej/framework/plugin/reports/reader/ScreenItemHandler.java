@@ -39,29 +39,33 @@ public class ScreenItemHandler extends EntireJTagHandler
     private EJPluginReportScreenItemProperties _itemProperties;
     private EJPluginReportScreenProperties     _blockProperties;
     
-    private static final String                ELEMENT_ITEM                  = "screenitem";
-    private static final String                ELEMENT_SCREEN_X              = "x";
-    private static final String                ELEMENT_SCREEN_Y              = "y";
-    private static final String                ELEMENT_SCREEN_WIDTH          = "width";
-    private static final String                ELEMENT_SCREEN_HEIGHT         = "height";
-    private static final String                ELEMENT_SCREEN_VISIBLE        = "visible";
-    private static final String                ELEMENT_SCREEN_VA             = "va";
-    private static final String                ELEMENT_SCREEN_VALUE_PROVIDER = "valueProvider";
+    private static final String                ELEMENT_ITEM                        = "screenitem";
+    private static final String                ELEMENT_SCREEN_X                    = "x";
+    private static final String                ELEMENT_SCREEN_Y                    = "y";
+    private static final String                ELEMENT_SCREEN_WIDTH                = "width";
+    private static final String                ELEMENT_SCREEN_HEIGHT               = "height";
     
-    private static final String                ELEMENT_SCREEN_EXPAND_TO_FIT  = "expandToFit";
-    private static final String                ELEMENT_SCREEN_MARKUP         = "markup";
-    private static final String                ELEMENT_SCREEN_HALIGNMENT     = "hAlignment";
-    private static final String                ELEMENT_SCREEN_VALIGNMENT     = "vAlignment";
-    private static final String                ELEMENT_SCREEN_ROTATION       = "rotation";
-    private static final String                ELEMENT_SCREEN_TEXT           = "text";
-    private static final String                ELEMENT_SCREEN_MANUAL_FORMAT  = "manualFormat";
-    private static final String                ELEMENT_SCREEN_LOCALE_FORMAT  = "localeFormat";
-    private static final String                ELEMENT_SCREEN_LINE_STYLE     = "lineStyle";
-    private static final String                ELEMENT_SCREEN_LINE_WIDTH     = "lineWidth";
-    private static final String                ELEMENT_SCREEN_LINE_DIRECTION = "lineDirection";
-    private static final String                ELEMENT_SCREEN_RECT_RADIUS    = "rectRadius";
-
-    private static final String              ELEMENT_SCREEN_DEFAULT_IMAGE  = "defaultImage";
+    private static final String                ELEMENT_SCREEN_WIDTH_AS_PERCENTAGE  = "widthAsPercentage";
+    private static final String                ELEMENT_SCREEN_HEIGHT_AS_PERCENTAGE = "heightAsPercentage";
+    private static final String                ELEMENT_SCREEN_VISIBLE              = "visible";
+    private static final String                ELEMENT_SCREEN_VA                   = "va";
+    private static final String                ELEMENT_SCREEN_VALUE_PROVIDER       = "valueProvider";
+    
+    private static final String                ELEMENT_SCREEN_EXPAND_TO_FIT        = "expandToFit";
+    private static final String                ELEMENT_SCREEN_MARKUP               = "markup";
+    private static final String                ELEMENT_SCREEN_HALIGNMENT           = "hAlignment";
+    private static final String                ELEMENT_SCREEN_VALIGNMENT           = "vAlignment";
+    private static final String                ELEMENT_SCREEN_ROTATION             = "rotation";
+    private static final String                ELEMENT_SCREEN_TEXT                 = "text";
+    private static final String                ELEMENT_SCREEN_MANUAL_FORMAT        = "manualFormat";
+    private static final String                ELEMENT_SCREEN_LOCALE_FORMAT        = "localeFormat";
+    private static final String                ELEMENT_SCREEN_LINE_STYLE           = "lineStyle";
+    private static final String                ELEMENT_SCREEN_LINE_WIDTH           = "lineWidth";
+    private static final String                ELEMENT_SCREEN_LINE_DIRECTION       = "lineDirection";
+    private static final String                ELEMENT_SCREEN_RECT_RADIUS          = "rectRadius";
+    
+    private static final String                ELEMENT_SCREEN_DEFAULT_IMAGE        = "defaultImage";
+    
     public ScreenItemHandler(EJPluginReportScreenProperties blockProperties)
     {
         _blockProperties = blockProperties;
@@ -111,6 +115,15 @@ public class ScreenItemHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_SCREEN_HEIGHT))
         {
             _itemProperties.setHeight(Integer.parseInt(value));
+        }
+        
+        else if (name.equals(ELEMENT_SCREEN_WIDTH_AS_PERCENTAGE))
+        {
+            _itemProperties.setWidthAsPercentage(Boolean.parseBoolean(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_HEIGHT_AS_PERCENTAGE))
+        {
+            _itemProperties.setHeightAsPercentage(Boolean.parseBoolean(value));
         }
         else if (name.equals(ELEMENT_SCREEN_VISIBLE))
         {
@@ -250,7 +263,7 @@ public class ScreenItemHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_SCREEN_DEFAULT_IMAGE))
         {
-          
+            
             if (_itemProperties instanceof EJPluginReportScreenItemProperties.Image)
             {
                 final EJPluginReportScreenItemProperties.Image item = (EJPluginReportScreenItemProperties.Image) _itemProperties;

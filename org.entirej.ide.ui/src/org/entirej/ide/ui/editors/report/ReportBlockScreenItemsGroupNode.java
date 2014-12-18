@@ -627,6 +627,61 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
             descriptors.add(yDescriptor);
             descriptors.add(widthDescriptor);
             descriptors.add(heightDescriptor);
+            
+            
+            
+            final AbstractBooleanDescriptor widthAsPercentage = new AbstractBooleanDescriptor("Width As Percentage",
+                    " ")
+            {
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setWidthAsPercentage(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(ScreenItemNode.this);
+
+                }
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                @Override
+                public Boolean getValue()
+                {
+                    return source.isWidthAsPercentage();
+                }
+            };
+            descriptors.add(widthAsPercentage);
+            
+            final AbstractBooleanDescriptor heightAsPercentage = new AbstractBooleanDescriptor("Height As Percentage",
+                    " ")
+            {
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setHeightAsPercentage(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(ScreenItemNode.this);
+
+                }
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                @Override
+                public Boolean getValue()
+                {
+                    return source.isHeightAsPercentage();
+                }
+            };
+            descriptors.add(heightAsPercentage);
+            
 
             AbstractTextDropDownDescriptor vaDescriptor = new AbstractTextDropDownDescriptor("Visual Attributes", "")
             {
@@ -679,6 +734,10 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
             descriptors.add(vaDescriptor);
 
+            
+            
+            
+            
             final AbstractBooleanDescriptor visiableDescriptor = new AbstractBooleanDescriptor("Visible",
                     "Indicates if the item is visible to the Report at runtime. ")
             {

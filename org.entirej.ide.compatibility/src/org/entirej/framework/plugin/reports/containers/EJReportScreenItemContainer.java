@@ -218,6 +218,8 @@ public class EJReportScreenItemContainer
             target.setHeight(source.getHeight());
             target.setName(source.getName());
             target.setVisible(source.isVisible());
+            target.setHeightAsPercentage(source.isHeightAsPercentage());
+            target.setWidthAsPercentage(source.isWidthAsPercentage());
             target.setVisualAttributeName(source.getVisualAttributeName());
             target.setWidth(source.getWidth());
             target.setX(source.getX());
