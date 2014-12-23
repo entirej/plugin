@@ -50,7 +50,7 @@ public class ReportBlockColumnRemoveOperation extends AbstractOperation
                 public void run()
                 {
 
-                    treeSection.getEditor().setDirty(dirty);
+                    treeSection.getEditor().setDirty(true);
                     treeSection.refresh(treeSection.findNode(container), true);
                 }
             });
@@ -78,7 +78,7 @@ public class ReportBlockColumnRemoveOperation extends AbstractOperation
 
                 public void run()
                 {
-                    treeSection.getEditor().setDirty(true);
+                    treeSection.getEditor().setDirty(dirty);
                     treeSection.refresh(treeSection.findNode(container), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(item, true);
                     treeSection.selectNodes(true, abstractNode);

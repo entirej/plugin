@@ -60,7 +60,7 @@ public class ReportBlockRemoveOperation extends AbstractOperation
                 public void run()
                 {
 
-                    treeSection.getEditor().setDirty(dirty);
+                    treeSection.getEditor().setDirty(true);
                     treeSection.refresh(treeSection.findNode(container), true);
                 }
             });
@@ -75,7 +75,7 @@ public class ReportBlockRemoveOperation extends AbstractOperation
                 public void run()
                 {
 
-                    treeSection.getEditor().setDirty(dirty);
+                    treeSection.getEditor().setDirty(true);
                     treeSection.refresh(treeSection.findNode(group), true);
 
                 }
@@ -104,7 +104,7 @@ public class ReportBlockRemoveOperation extends AbstractOperation
 
                 public void run()
                 {
-                    treeSection.getEditor().setDirty(true);
+                    treeSection.getEditor().setDirty(dirty);
                     treeSection.refresh(treeSection.findNode(container), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
@@ -130,7 +130,7 @@ public class ReportBlockRemoveOperation extends AbstractOperation
 
                 public void run()
                 {
-                    treeSection.getEditor().setDirty(true);
+                    treeSection.getEditor().setDirty(dirty);
                     treeSection.refresh(treeSection.findNode(group), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
