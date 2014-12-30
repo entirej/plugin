@@ -93,7 +93,7 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
                                                                    "org.entirej.ide.ui.report.perspective",
                                                                    EJUIPlugin.getDefault().getPreferenceStore(),
                                                                    "AbstractEJReportEditor.autoPerspectiveSwitch",
-                                                                   "This Editor is associated with the EntireJ Report Perspective.\n\nIt is highly recommended to switch to that perspective when editing an EntireJ Reports.\n\nDo you want to switch to the EntireJ Report Perspective now?");
+                                                                   "This Editor is associated with the EntireJ Report Perspective.\n\nIt is highly recommended to switch to that perspective when editing EntireJ Reports.\n\nDo you want to switch to the EntireJ Report Perspective now?");
                                                        }
                                                        else
                                                        {

@@ -88,7 +88,7 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
                                                                    "org.entirej.ide.ui.perspective",
                                                                    EJUIPlugin.getDefault().getPreferenceStore(),
                                                                    "AbstractEJFormEditor.autoPerspectiveSwitch",
-                                                                   "This Editor is associated with the EntireJ Form Perspective.\n\nIt is highly recommended to switch to that perspective when editing an EntireJ Forms.\n\nDo you want to switch to the EntireJ Forms Perspective now?");
+                                                                   "This Editor is associated with the EntireJ Form Perspective.\n\nIt is highly recommended to switch to that perspective when editing EntireJ Forms.\n\nDo you want to switch to the EntireJ Forms Perspective now?");
                                                        }
                                                        else
                                                        {
