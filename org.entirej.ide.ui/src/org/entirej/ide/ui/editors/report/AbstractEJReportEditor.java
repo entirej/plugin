@@ -19,15 +19,20 @@
 package org.entirej.ide.ui.editors.report;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.writer.ReportPropertiesWriter;
+import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.AbstractEditor;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
+import org.entirej.ide.ui.editors.form.AbstractEJFormEditor;
 import org.entirej.ide.ui.editors.form.EJFormBasePage;
 import org.entirej.ide.ui.nodes.AbstractNode;
 
@@ -39,6 +44,64 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
     protected volatile IJavaProject           project;
     protected EJReportBasePage                  formBasePage;
 
+    
+    
+    @Override
+    protected void addPages()
+    {
+        super.addPages();
+        getSite().getPage().addPartListener(partListener);
+    }
+
+    @Override
+    public void dispose()
+    {
+
+        super.dispose();
+        getSite().getPage().removePartListener(partListener);
+    }
+
+    protected final IPartListener partListener = new IPartListener()
+                                               {
+                                                   AtomicBoolean active = new AtomicBoolean(false);
+
+                                                   public void partOpened(IWorkbenchPart part)
+                                                   {
+                                                   }
+
+                                                   public void partDeactivated(IWorkbenchPart part)
+                                                   {
+                                                       active.set(false);
+                                                   }
+
+                                                   public void partClosed(IWorkbenchPart part)
+                                                   {
+                                                       active.set(false);
+                                                   }
+
+                                                   public void partBroughtToTop(IWorkbenchPart part)
+                                                   {
+                                                   }
+
+                                                   public void partActivated(IWorkbenchPart part)
+                                                   {
+                                                       if (!active.get() && part == AbstractEJReportEditor.this)
+                                                       {
+
+                                                           active.set(true);
+                                                           autoPerspectiveSwitch(
+                                                                   "org.entirej.ide.ui.report.perspective",
+                                                                   EJUIPlugin.getDefault().getPreferenceStore(),
+                                                                   "AbstractEJReportEditor.autoPerspectiveSwitch",
+                                                                   "This Editor is associated with the EntireJ Report Perspective.\n\nIt is highly recommended to switch to that perspective when editing an EntireJ Reports.\n\nDo you want to switch to the EntireJ Report Perspective now?");
+                                                       }
+                                                       else
+                                                       {
+                                                           active.set(true);
+                                                       }
+                                                   }
+                                               };
+    
     @Override
     public AbstractEditorPage[] getAbstractEditorPages()
     {

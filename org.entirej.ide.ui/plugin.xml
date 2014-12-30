@@ -579,4 +579,13 @@
          class="org.entirej.ide.ui.editors.report.EJReportValidateImpl">
    </provider>
 </extension>
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         category="org.entirej.ide.core.PreferencesPage"
+         class="org.entirej.ide.ui.editors.preferences.EditorPreferencePage"
+         id="org.entirej.ide.ui.editor"
+         name="Editor">
+   </page>
+</extension>
 </plugin>

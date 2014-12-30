@@ -19,6 +19,7 @@
 package org.entirej.ide.ui.editors;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
@@ -40,11 +41,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -111,12 +119,12 @@ public abstract class AbstractEditor extends FormEditor implements IJavaProjectP
             {
                 EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
                 {
-                    
+
                     public void run()
                     {
 
                         AbstractEditor.this.getContributor().refreah();
-                        
+
                     }
                 });
             }
@@ -124,17 +132,16 @@ public abstract class AbstractEditor extends FormEditor implements IJavaProjectP
         undoContext = new ObjectUndoContext(this);
     }
 
-    
     public IUndoContext getUndoContext()
     {
         return undoContext;
     }
-    
+
     public IOperationHistory getOperationHistory()
     {
         return operationHistory;
     }
-    
+
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException
     {
@@ -496,9 +503,72 @@ public abstract class AbstractEditor extends FormEditor implements IJavaProjectP
             EJCoreLog.log(e);
         }
     }
+
     public void execute(IUndoableOperation operation)
     {
         execute(operation, new NullProgressMonitor());
+    }
+
+    private static final AtomicBoolean AUTO_PERSPECTIVE_SWITCH_IS_RUNNING = new AtomicBoolean(false);
+
+    public static synchronized void autoPerspectiveSwitch(final String perspectiveId, IPreferenceStore preferenceStore, final String prefKey,
+            final String dialogMessage)
+    {
+        IWorkbench workbench = EJUIPlugin.getDefault().getWorkbench();
+        IPerspectiveDescriptor activePerspectiveDesc = workbench.getActiveWorkbenchWindow().getActivePage().getPerspective();
+        if (activePerspectiveDesc != null && perspectiveId.equals(activePerspectiveDesc.getId()))
+            return;
+        if (AUTO_PERSPECTIVE_SWITCH_IS_RUNNING.compareAndSet(false, true))
+        {
+          
+            IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+            if (activePage != null)
+            {
+
+                EJCoreLog.logInfoMessage("switch necessary");
+                String prefVal = preferenceStore.getString(prefKey);
+
+                if (MessageDialogWithToggle.ALWAYS.equals(prefVal))
+                {
+                    switchPerspective(perspectiveId);
+                }
+                else if (MessageDialogWithToggle.NEVER.equals(prefVal))
+                {
+
+                }
+                else
+                {
+
+                    MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(workbench.getActiveWorkbenchWindow().getShell(),
+                            "Perspective switch", dialogMessage, "Remember my decision", false, preferenceStore, prefKey);
+
+                    int returnCode = dialog.getReturnCode();
+                    if (IDialogConstants.YES_ID == returnCode || IDialogConstants.OK_ID == returnCode)
+                    {
+                        switchPerspective(perspectiveId);
+                    }
+                }
+            }
+        }
+        AUTO_PERSPECTIVE_SWITCH_IS_RUNNING.set(false);
+
+    }
+
+    public static void switchPerspective(String id)
+    {
+        IWorkbench workbench = EJUIPlugin.getDefault().getWorkbench();
+        try
+        {
+            IPerspectiveDescriptor activePerspectiveDesc = workbench.getActiveWorkbenchWindow().getActivePage().getPerspective();
+            if (activePerspectiveDesc != null && id.equals(activePerspectiveDesc.getId()))
+                return;
+
+            workbench.showPerspective(id, workbench.getActiveWorkbenchWindow());
+        }
+        catch (WorkbenchException e)
+        {
+            EJCoreLog.logErrorMessage("Error switching perspective");
+        }
     }
 
 }
