@@ -69,6 +69,7 @@ import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
 import org.entirej.framework.plugin.preferences.EJPropertyRetriever;
 import org.entirej.ide.core.EJCoreLog;
+import org.entirej.ide.core.project.EJProject;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 import org.entirej.ide.ui.wizards.NewWizard;
@@ -112,12 +113,25 @@ public class NewEntireJFormPage extends NewTypeWizardPage
 
     private void doStatusUpdate()
     {
+        IStatus projectType = projectTypeStatus();
+        
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, fFormRendererStatus,fFormTitleStatus };
+        IStatus[] status = new IStatus[] { projectType,fContainerStatus, fPackageStatus, fTypeNameStatus, fFormRendererStatus,fFormTitleStatus };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
         updateStatus(status);
+    }
+
+    private IStatus projectTypeStatus()
+    {
+        IStatus projectType = Status.OK_STATUS;
+        
+        if(getJavaProject()==null || !EJProject.hasPluginNature(getJavaProject().getProject()))
+        {
+            projectType = new Status(IStatus.ERROR, EJUIPlugin.getID(), "To create Forms Project should be an Entirej Forms Type");
+        }
+        return projectType;
     }
 
     protected void handleFieldChanged(String fieldName)

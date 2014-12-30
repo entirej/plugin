@@ -76,6 +76,7 @@ import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
 import org.entirej.framework.plugin.preferences.EJPropertyRetriever;
 import org.entirej.ide.core.EJCoreLog;
+import org.entirej.ide.core.project.EJProject;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
@@ -122,11 +123,23 @@ public class NewEntireJRefBlockPage extends NewTypeWizardPage implements IJavaPr
         refreshPackagePath();
         setSuperClass(EJDefaultFormActionProcessor.class.getName(), true);
     }
+    
+    private IStatus projectTypeStatus()
+    {
+        IStatus projectType = Status.OK_STATUS;
+        
+        if(getJavaProject()==null || !EJProject.hasPluginNature(getJavaProject().getProject()))
+        {
+            projectType = new Status(IStatus.ERROR, EJUIPlugin.getID(), "To create Forms Ref-Block should be an Entirej Forms Type");
+        }
+        return projectType;
+    }
 
     private void doStatusUpdate()
     {
+        IStatus projectTypeStatus = projectTypeStatus();
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, fBlockRendererStatus, blockServiceStatus };
+        IStatus[] status = new IStatus[] {projectTypeStatus, fContainerStatus, fPackageStatus, fTypeNameStatus, fBlockRendererStatus, blockServiceStatus };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.

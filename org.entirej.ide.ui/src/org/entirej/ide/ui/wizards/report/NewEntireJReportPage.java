@@ -64,6 +64,8 @@ import org.entirej.framework.plugin.reports.writer.ReportPropertiesWriter;
 import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
 import org.entirej.ide.core.EJCoreLog;
+import org.entirej.ide.core.project.EJProject;
+import org.entirej.ide.core.project.EJReportProject;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 import org.entirej.ide.ui.wizards.NewWizard;
@@ -106,14 +108,28 @@ public class NewEntireJReportPage extends NewTypeWizardPage
 
     private void doStatusUpdate()
     {
+        
+        IStatus projectTypeStatus = projectTypeStatus();
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, fReportRendererStatus, fReportFormatStatus, fReportTitleStatus };
+        IStatus[] status = new IStatus[] {projectTypeStatus, fContainerStatus, fPackageStatus, fTypeNameStatus, fReportRendererStatus, fReportFormatStatus, fReportTitleStatus };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
         updateStatus(status);
     }
 
+    private IStatus projectTypeStatus()
+    {
+        IStatus projectType = Status.OK_STATUS;
+        
+        if(getJavaProject()==null || !EJReportProject.hasPluginNature(getJavaProject().getProject()))
+        {
+            projectType = new Status(IStatus.ERROR, EJUIPlugin.getID(), "To create Report Project should be an Entirej Report Type");
+        }
+        return projectType;
+    }
+    
+    
     protected void handleFieldChanged(String fieldName)
     {
         super.handleFieldChanged(fieldName);
@@ -145,6 +161,8 @@ public class NewEntireJReportPage extends NewTypeWizardPage
         createSuperClassControls(composite, nColumns);
         setControl(composite);
         Dialog.applyDialogFont(composite);
+        
+      
     }
 
     public String getTitleText()
