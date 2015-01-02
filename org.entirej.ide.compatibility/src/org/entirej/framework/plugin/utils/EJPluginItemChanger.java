@@ -18,15 +18,22 @@
 package org.entirej.framework.plugin.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.entirej.framework.core.enumerations.EJScreenType;
 import org.entirej.framework.core.properties.containers.interfaces.EJItemGroupPropertiesContainer;
+import org.entirej.framework.core.properties.definitions.EJPropertyDefinitionType;
+import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
+import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
+import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovItemMappingProperties;
@@ -45,23 +52,23 @@ public class EJPluginItemChanger
     
     public static List<UndoProvider> renameItemOnForm(EJPluginBlockProperties blockProperties, String oldName, String newName)
     {
-        List<UndoProvider> undoProviders = new ArrayList<UndoProvider>(); 
-        changeItem(undoProviders,blockProperties, oldName, newName, false);
+        List<UndoProvider> undoProviders = new ArrayList<UndoProvider>();
+        changeItem(undoProviders, blockProperties, oldName, newName, false);
         
         return undoProviders;
     }
     
     public static List<UndoProvider> deleteItemOnForm(EJPluginBlockProperties blockProperties, String itemName)
     {
-        List<UndoProvider> undoProviders = new ArrayList<UndoProvider>(); 
-        changeItem(undoProviders,blockProperties, itemName, "", true);
+        List<UndoProvider> undoProviders = new ArrayList<UndoProvider>();
+        changeItem(undoProviders, blockProperties, itemName, "", true);
         
         return undoProviders;
     }
     
     public static List<UndoProvider> removeItemActionCommand(EJPluginBlockProperties blockProperties, String itemName)
     {
-        List<UndoProvider> undoProviders = new ArrayList<UndoProvider>(); 
+        List<UndoProvider> undoProviders = new ArrayList<UndoProvider>();
         removeActionCommandInContainer(blockProperties.getScreenItemGroupContainer(EJScreenType.MAIN), itemName);
         removeActionCommandInContainer(blockProperties.getScreenItemGroupContainer(EJScreenType.INSERT), itemName);
         removeActionCommandInContainer(blockProperties.getScreenItemGroupContainer(EJScreenType.UPDATE), itemName);
@@ -70,23 +77,24 @@ public class EJPluginItemChanger
         return undoProviders;
     }
     
-    private static void changeItem(List<UndoProvider> undoProviders,EJPluginBlockProperties blockProperties,final String oldName,final String newName, boolean deleteReference)
+    private static void changeItem(List<UndoProvider> undoProviders, EJPluginBlockProperties blockProperties, final String oldName, final String newName,
+            boolean deleteReference)
     {
         // Rename the main screen items
         
         if (deleteReference)
         {
-            removeItemFromContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.MAIN), oldName);
-            removeItemFromContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.INSERT), oldName);
-            removeItemFromContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.UPDATE), oldName);
-            removeItemFromContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.QUERY), oldName);
+            removeItemFromContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.MAIN), oldName);
+            removeItemFromContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.INSERT), oldName);
+            removeItemFromContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.UPDATE), oldName);
+            removeItemFromContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.QUERY), oldName);
         }
         else
         {
-            renameItemInContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.MAIN), oldName, newName);
-            renameItemInContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.INSERT), oldName, newName);
-            renameItemInContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.UPDATE), oldName, newName);
-            renameItemInContainer(undoProviders,blockProperties.getScreenItemGroupContainer(EJScreenType.QUERY), oldName, newName);
+            renameItemInContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.MAIN), oldName, newName);
+            renameItemInContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.INSERT), oldName, newName);
+            renameItemInContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.UPDATE), oldName, newName);
+            renameItemInContainer(undoProviders, blockProperties.getScreenItemGroupContainer(EJScreenType.QUERY), oldName, newName);
         }
         
         // Now check if item is being used on an LOV Mapping and update it
@@ -216,7 +224,7 @@ public class EJPluginItemChanger
                 Iterator<EJPluginRelationJoinProperties> allRelJoins = relation.getRelationJoins().iterator();
                 while (allRelJoins.hasNext())
                 {
-                   final EJPluginRelationJoinProperties joinProperties = allRelJoins.next();
+                    final EJPluginRelationJoinProperties joinProperties = allRelJoins.next();
                     if (joinProperties.getMasterItemName().equals(oldName))
                     {
                         if (deleteReference)
@@ -241,6 +249,7 @@ public class EJPluginItemChanger
                     }
                 }
             }
+            
         }
         
         // Now rename the item on all mirrored blocks
@@ -263,7 +272,7 @@ public class EJPluginItemChanger
                     });
                     
                 }
-                changeItem(undoProviders,childBlock, oldName, newName, deleteReference);
+                changeItem(undoProviders, childBlock, oldName, newName, deleteReference);
             }
         }
         
@@ -354,9 +363,20 @@ public class EJPluginItemChanger
             }
         }
         
+        // renderer changes
+        
+        EJDevBlockRendererDefinition rendererDefinition = blockProperties.getBlockRendererDefinition();
+        EJFrameworkExtensionProperties rendererProperties = blockProperties.getBlockRendererProperties();
+        if (rendererDefinition != null)
+        {
+            
+            validateRendererProperties(oldName, newName, blockProperties.getFormProperties(), blockProperties,
+                    rendererDefinition.getBlockPropertyDefinitionGroup(), rendererProperties);
+        }
+        
     }
     
-    private static void removeItemFromContainer(List<UndoProvider> undoProviders,EJPluginItemGroupContainer container, String name)
+    private static void removeItemFromContainer(List<UndoProvider> undoProviders, EJPluginItemGroupContainer container, String name)
     {
         Iterator<EJPluginItemGroupProperties> allItemGroups = container.getAllResequancableItems().iterator();
         while (allItemGroups.hasNext())
@@ -365,8 +385,8 @@ public class EJPluginItemChanger
             
             if (props.containsItemReference(name))
             {
-               final  EJPluginScreenItemProperties item = props.getItemPropertiesForBlockItem(name);
-              final  int index = props.deleteItem(item);
+                final EJPluginScreenItemProperties item = props.getItemPropertiesForBlockItem(name);
+                final int index = props.deleteItem(item);
                 undoProviders.add(new UndoProvider()
                 {
                     
@@ -380,11 +400,12 @@ public class EJPluginItemChanger
             }
             
             // Now check all child item groups
-            removeItemFromContainer(undoProviders,props.getChildItemGroupContainer(), name);
+            removeItemFromContainer(undoProviders, props.getChildItemGroupContainer(), name);
         }
     }
     
-    private static void renameItemInContainer(List<UndoProvider> undoProviders,EJItemGroupPropertiesContainer container,final String oldName,final String newName)
+    private static void renameItemInContainer(List<UndoProvider> undoProviders, EJItemGroupPropertiesContainer container, final String oldName,
+            final String newName)
     {
         Iterator<EJItemGroupProperties> allItemGroups = container.getAllItemGroupProperties().iterator();
         while (allItemGroups.hasNext())
@@ -396,7 +417,7 @@ public class EJPluginItemChanger
                 Iterator<EJScreenItemProperties> allItemProps = props.getAllItemProperties().iterator();
                 while (allItemProps.hasNext())
                 {
-                   final EJPluginScreenItemProperties itemProperties = (EJPluginScreenItemProperties) allItemProps.next();
+                    final EJPluginScreenItemProperties itemProperties = (EJPluginScreenItemProperties) allItemProps.next();
                     if (itemProperties.getName() != null && itemProperties.getName().equals(oldName))
                     {
                         itemProperties.internalSetName(newName);
@@ -415,7 +436,7 @@ public class EJPluginItemChanger
             }
             
             // Now check all child item groups
-            renameItemInContainer(undoProviders,props.getChildItemGroupContainer(), oldName, newName);
+            renameItemInContainer(undoProviders, props.getChildItemGroupContainer(), oldName, newName);
         }
     }
     
@@ -444,4 +465,70 @@ public class EJPluginItemChanger
         }
     }
     
+    static void validatePropertyDefinitionGroup(final String oldName, final String newName, EJPluginFormProperties formProperties,
+            EJPluginBlockProperties blockProperties, EJFrameworkExtensionProperties rendererProperties, EJPropertyDefinitionGroup definitionGroup)
+    {
+        if (definitionGroup == null) return;
+        
+        Collection<EJPropertyDefinition> propertyDefinitions = definitionGroup.getPropertyDefinitions();
+        for (EJPropertyDefinition definition : propertyDefinitions)
+        {
+            validatePropertyDefinition(oldName, newName, formProperties, blockProperties, rendererProperties, definitionGroup, definition);
+        }
+        
+        // handle sub groups
+        Collection<EJPropertyDefinitionGroup> subGroups = definitionGroup.getSubGroups();
+        for (final EJPropertyDefinitionGroup subGroup : subGroups)
+        {
+            validatePropertyDefinitionGroup(oldName, newName, formProperties, blockProperties, rendererProperties, subGroup);
+        }
+        
+    }
+    
+    static void validatePropertyDefinition(final String oldName, final String newName, EJPluginFormProperties formProperties,
+            EJPluginBlockProperties blockProperties, EJFrameworkExtensionProperties rendererProperties, EJPropertyDefinitionGroup definitionGroup,
+            EJPropertyDefinition definition)
+    {
+        
+        final String groupName;
+        if (definitionGroup.getFullGroupName() == null || definitionGroup.getFullGroupName().trim().length() == 0)
+        {
+            groupName = definition.getName();
+        }
+        else
+        {
+            groupName = String.format("%s.%s", definitionGroup.getFullGroupName(), definition.getName());
+        }
+        
+        String strValue = rendererProperties.getStringProperty(groupName);
+        boolean vlaueNull = (strValue == null || strValue.trim().length() == 0);
+        
+        if (vlaueNull) return;
+        
+        final EJPropertyDefinitionType dataType = definition.getPropertyType();
+        switch (dataType)
+        {
+            case BLOCK_ITEM:
+            {
+                if (oldName.equals(strValue))
+                {
+                    rendererProperties.setPropertyValue(groupName, newName);
+                }
+            }
+                break;
+            default:
+                break;
+        
+        }
+        
+    }
+    
+    static void validateRendererProperties(final String oldName, final String newName, EJPluginFormProperties formProperties,
+            EJPluginBlockProperties blockProperties, EJPropertyDefinitionGroup definitionGroup, EJFrameworkExtensionProperties rendererProperties)
+    {
+        if (definitionGroup != null && rendererProperties != null)
+        {
+            validatePropertyDefinitionGroup(oldName, newName, formProperties, blockProperties, rendererProperties, definitionGroup);
+        }
+    }
 }
