@@ -31,6 +31,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
@@ -365,13 +366,28 @@ public class EJPluginItemChanger
         
         // renderer changes
         
-        EJDevBlockRendererDefinition rendererDefinition = blockProperties.getBlockRendererDefinition();
-        EJFrameworkExtensionProperties rendererProperties = blockProperties.getBlockRendererProperties();
-        if (rendererDefinition != null)
+        {// block
+            EJDevBlockRendererDefinition rendererDefinition = blockProperties.getBlockRendererDefinition();
+            EJFrameworkExtensionProperties rendererProperties = blockProperties.getBlockRendererProperties();
+            if (rendererDefinition != null)
+            {
+                
+                validateRendererProperties(oldName, newName, blockProperties.getFormProperties(), blockProperties,
+                        rendererDefinition.getBlockPropertyDefinitionGroup(), rendererProperties);
+            }
+        }
+        
+        List<EJPluginBlockItemProperties> allItemProperties = blockProperties.getItemContainer().getAllItemProperties();
+        for (EJPluginBlockItemProperties itemProp : allItemProperties)
         {
-            
-            validateRendererProperties(oldName, newName, blockProperties.getFormProperties(), blockProperties,
-                    rendererDefinition.getBlockPropertyDefinitionGroup(), rendererProperties);
+            EJDevItemRendererDefinition rendererDefinition = itemProp.getItemRendererDefinition();
+            EJFrameworkExtensionProperties rendererProperties = itemProp.getItemRendererProperties();
+            if (rendererDefinition != null)
+            {
+                
+                validateRendererProperties(oldName, newName, blockProperties.getFormProperties(), blockProperties,
+                        rendererDefinition.getItemPropertyDefinitionGroup(), rendererProperties);
+            }
         }
         
     }
