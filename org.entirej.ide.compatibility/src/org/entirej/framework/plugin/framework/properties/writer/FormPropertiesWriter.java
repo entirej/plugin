@@ -485,6 +485,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     {
                         writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
                     }
+                    else if (canvasProps.getType() == EJCanvasType.FORM)
+                    {
+                        writeStringTAG(buffer, "referredFormId", canvasProps.getReferredFormId());
+                    }
                     else if (canvasProps.getType() == EJCanvasType.STACKED)
                     {
                         writeStringTAG(buffer, "initialStackedPageName", canvasProps.getInitialStackedPageName());

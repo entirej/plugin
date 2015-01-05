@@ -50,6 +50,8 @@ public class CanvasHandler extends EntireJTagHandler
     private static final String      ELEMENT_STACKED_PAGE         = "stackedPage";
     private static final String      ELEMENT_INITIAL_STACKED_PAGE = "initialStackedPageName";
     
+    private static final String      ELEMENT_REFERRED_FORM_ID     = "referredFormId";
+    
     private boolean                  _canvasCreated               = false;
     
     public CanvasHandler(EJPluginFormProperties formProperties)
@@ -105,6 +107,13 @@ public class CanvasHandler extends EntireJTagHandler
             if (value.length() > 0)
             {
                 _canvasProperties.setWidth(Integer.parseInt(value));
+            }
+        }
+        if (name.equals(ELEMENT_REFERRED_FORM_ID))
+        {
+            if (value.length() > 0)
+            {
+                _canvasProperties.setReferredFormId(value);
             }
         }
         else if (name.equals(ELEMENT_HEIGHT))

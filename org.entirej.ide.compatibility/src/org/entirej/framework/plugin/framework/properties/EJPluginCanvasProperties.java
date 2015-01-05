@@ -76,6 +76,8 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJPluginPopupCanvasContainer     _popupCanvasContainer;
     private EJPluginCanvasGroupPageContainer _canvasGroupContainer;
     private EJPluginCanvasSplitPageContainer _canvasSplitContainer;
+    
+    private String                               _referredFormId;
     //
     // If the Canvas type is TAB, then the following properties are also
     // available
@@ -707,5 +709,16 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     public void setObjectGroupRoot(boolean _objectGroupRoot)
     {
         this._objectGroupRoot = _objectGroupRoot;
+    }
+    
+    @Override
+    public String getReferredFormId()
+    {
+        return _referredFormId;
+    }
+
+    public void setReferredFormId(String referredFormId)
+    {
+        this._referredFormId = referredFormId;
     }
 }

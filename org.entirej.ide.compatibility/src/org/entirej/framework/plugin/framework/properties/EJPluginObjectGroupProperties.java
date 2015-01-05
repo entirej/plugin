@@ -265,6 +265,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
                     canvasProperties.setObjectGroupRoot(true);
                     canvas.setWidth(canvasProperties.getWidth());
                     canvas.setHeight(canvasProperties.getHeight());
+                    canvas.setReferredFormId(canvasProperties.getReferredFormId());
                     canvas.setExpandHorizontally(canvasProperties.canExpandHorizontally());
                     canvas.setExpandVertically(canvasProperties.canExpandVertically());
                     canvas.setVerticalSpan(canvasProperties.getVerticalSpan());

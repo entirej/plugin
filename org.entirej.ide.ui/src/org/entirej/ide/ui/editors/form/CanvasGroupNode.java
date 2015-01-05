@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -71,7 +72,7 @@ import org.entirej.ide.ui.nodes.INodeRenameProvider;
 import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
-import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
+import org.entirej.ide.ui.utils.FormsUtil;
 
 public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> implements NodeMoveProvider
 {
@@ -809,6 +810,44 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final FormCanvasNode node = FormCanvasNode.this;
+            
+            
+            AbstractDropDownDescriptor<String> formNameDescriptor = new AbstractDropDownDescriptor<String>("Referred Form")
+                    {
+
+                        @Override
+                        public void setValue(String value)
+                        {
+                           
+                            source.setReferredFormId(value);
+                            
+
+                            editor.setDirty(true);
+
+                            treeSection.refresh(node);
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getReferredFormId();
+                        }
+
+                        public String[] getOptions()
+                        {
+                            IJavaProject javaProject = editor.getJavaProject();
+                            if (javaProject != null)
+                            {
+                                return FormsUtil.getFormNames(javaProject).toArray(new String[0]);
+                            }
+                            return new String[0];
+                        }
+
+                        public String getOptionText(String t)
+                        {
+                            return t;
+                        }
+                    };
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
@@ -1087,7 +1126,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { layoutGroupDescriptor };
+            return new AbstractDescriptor<?>[] { formNameDescriptor,layoutGroupDescriptor };
 
         }
 

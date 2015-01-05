@@ -267,6 +267,7 @@ public class ObjectGroupAddOperation extends AbstractOperation
                             canvas.setExpandHorizontally(canvasProperties.canExpandHorizontally());
                             canvas.setExpandVertically(canvasProperties.canExpandVertically());
                             canvas.setVerticalSpan(canvasProperties.getVerticalSpan());
+                            canvas.setReferredFormId(canvasProperties.getReferredFormId());
                             canvas.setHorizontalSpan(canvasProperties.getHorizontalSpan());
                             canvasProperties.getParentCanvasContainer().replaceCanvasProperties(canvasProperties, canvas);
                             return Status.OK_STATUS;
