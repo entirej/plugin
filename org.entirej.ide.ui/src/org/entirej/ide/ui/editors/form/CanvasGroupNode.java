@@ -838,7 +838,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                             IJavaProject javaProject = editor.getJavaProject();
                             if (javaProject != null)
                             {
-                                return FormsUtil.getFormNames(javaProject).toArray(new String[0]);
+                                List<String> formNames = FormsUtil.getFormNames(javaProject);
+                                formNames.remove(source.getBlockProperties().getFormProperties().getName());
+                                return formNames.toArray(new String[0]);
                             }
                             return new String[0];
                         }
