@@ -52,7 +52,7 @@ public class BlockItemAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1|| index>=container.getItemCount())
                 container.addItemProperties(item);
             else
             {

@@ -44,7 +44,7 @@ public class DisplayItemAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getItemProperties().size())
                 container.addItemProperties(blockProperties);
             else
             {

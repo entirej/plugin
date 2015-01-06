@@ -45,7 +45,7 @@ public class DisplayItemGroupAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getAllResequancableItems().size())
                 container.addItemGroupProperties(blockProperties);
             else
             {

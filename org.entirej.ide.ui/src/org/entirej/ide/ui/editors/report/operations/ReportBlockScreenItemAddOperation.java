@@ -51,7 +51,7 @@ public class ReportBlockScreenItemAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getAllItemProperties().size())
                 container.addItemProperties(item);
             else
             {

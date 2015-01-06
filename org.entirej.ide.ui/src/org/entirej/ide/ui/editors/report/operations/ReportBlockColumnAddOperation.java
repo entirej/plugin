@@ -51,7 +51,7 @@ public class ReportBlockColumnAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getAllColumnProperties().size())
                 container.addColumnProperties(item);
             else
             {

@@ -47,7 +47,7 @@ public class ReportBlockContainerItemAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getAllBlockProperties().size())
                 container.addBlockProperties(blockProperties);
             else
             {

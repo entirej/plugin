@@ -57,7 +57,7 @@ public class BlockAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getBlockContainerItems().size())
                 container.addBlockProperties(blockProperties);
             else
             {
@@ -80,7 +80,7 @@ public class BlockAddOperation extends AbstractOperation
         }
         if (group != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=group.getAllBlockProperties().size())
                 group.addBlockProperties((EJPluginBlockProperties)blockProperties);
             else
             {

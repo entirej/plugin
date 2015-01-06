@@ -46,7 +46,7 @@ public class LovAddOperation extends AbstractOperation
 
         if (container != null)
         {
-            if (index == -1)
+            if (index == -1 || index>=container.getAllLovDefinitionProperties().size())
                 container.addLovDefinitionProperties(blockProperties);
             else
             {
