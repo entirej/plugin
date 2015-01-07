@@ -392,6 +392,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                     if(cleanup)
                     {
                        ReversibleOperation operation = new ReversibleOperation("Remove Item");
+                       final String name = source.getName();
                        operation.add(new BlockItemRemoveOperation(treeSection, BlockItemsGroupNode.this.source, source));
                        operation.add(new AbstractOperation("clean")
                        {
@@ -403,6 +404,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                {
                                    provider.undo();
                                }
+                                treeSection.refresh(treeSection.findNode(source.getBlockProperties()));
                                return Status.OK_STATUS;
                            }
                            
@@ -416,9 +418,12 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                            @Override
                            public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
                            {
-                              deleteItemOnForm = EJPluginItemChanger.deleteItemOnForm(source.getBlockProperties(), source.getName());
+                            
+                            deleteItemOnForm = EJPluginItemChanger.deleteItemOnForm(source.getBlockProperties(), name);
+                            treeSection.refresh(treeSection.findNode(source.getBlockProperties()));
                                return Status.OK_STATUS;
                            }
+                           
                        });
                        return operation;
                     }
