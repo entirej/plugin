@@ -110,6 +110,16 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
             styledString.append(" [ * ] ", StyledString.DECORATIONS_STYLER);
             
         }
+        
+        if(source.getReferencedItemName()!=null)
+        {
+            EJItemProperties itemProperties = source.getBlockProperties().getItemProperties(source.getReferencedItemName());
+            if(itemProperties!=null)
+            {
+                styledString.append(" : ", StyledString.QUALIFIER_STYLER);
+                styledString.append(itemProperties.getItemRendererName(), StyledString.DECORATIONS_STYLER);
+            }
+        }
     }
 
     @Override
