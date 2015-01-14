@@ -99,6 +99,25 @@ public class EntireJPropertiesReader
                 }
                 
             }
+            if (EJFXRendererConfigFix.isFXCF(newProperties))
+            {
+                
+                try
+                {
+                    EJFXRendererConfigFix rendererFix = new EJFXRendererConfigFix();
+                    boolean configed = rendererFix.config(newProperties);
+                    if(configed)
+                    {
+                        new EntireJPropertiesWriter().saveEntireJProperitesFile(newProperties, file, null);
+                    }
+                    
+                }
+                catch (Exception e)
+                {
+                    // ignore
+                }
+                
+            }
             
         }
         catch (SAXException e)
