@@ -37,7 +37,7 @@ public class RWTRapRuntimeClasspathContainer implements IClasspathContainer
     public RWTRapRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-rap/"));
-        description = "EntireJ RWT/RAP [2.3.3] Extension Libraries.";
+        description = "EntireJ RWT/RAP [3.0.0] Extension Libraries.";
     }
 
     final String           description;

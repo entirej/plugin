@@ -37,7 +37,7 @@ public class RWTCFRuntimeClasspathContainer implements IClasspathContainer
     public RWTCFRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-tmt/"));
-        description = "EntireJ Tabris CF [2.3.3]  Libraries.";
+        description = "EntireJ Tabris CF [3.0.0]  Libraries.";
     }
 
     final String           description;
