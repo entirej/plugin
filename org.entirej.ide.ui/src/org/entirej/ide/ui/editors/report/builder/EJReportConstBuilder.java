@@ -60,10 +60,14 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportPropertiesLoader;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.reader.EntireJReportReader;
 import org.entirej.framework.plugin.reports.reader.ReportHandler;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJPluginEntireJClassLoader;
 import org.entirej.ide.core.project.EJReportProject;
@@ -114,7 +118,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                         // {
                         // EJCoreLog.log(e);
                         // }
-                         genConstantFile(candidate, monitor);
+                        genConstantFile(candidate, monitor);
                     }
 
                 }
@@ -709,19 +713,200 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         }
 
         builder.append("\n");
+
+        EJPluginReportScreenProperties layoutScreenProperties = blockProperties.getLayoutScreenProperties();
+        EJReportScreenType screenType = layoutScreenProperties.getScreenType();
+        switch (screenType)
+        {
+            case FORM_LATOUT:
+            {
+
+                Collection<EJPluginReportScreenItemProperties> screenItems = layoutScreenProperties.getScreenItems();
+
+                if (screenItems.size() > 0)
+                {
+
+                    builder.append("\n");
+                    builder.append("public static class DETAIL");
+                    builder.append("\n");
+                    builder.append("{");
+                    builder.append("\n");
+
+                    for (EJPluginReportScreenItemProperties item : screenItems)
+                    {
+                        if (item.getName() != null && item.getName().length() > 0)
+                        {
+                            // add block ID
+                            builder.append("    public static final String I_");
+                            builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
+                            builder.append(" = ");
+                            builder.append("\"");
+                            builder.append(item.getName());
+                            builder.append("\"");
+                            builder.append(";");
+                            builder.append("\n");
+                        }
+                    }
+
+                    builder.append("\n");
+                    builder.append("}");
+                }
+
+                break;
+            }
+            case TABLE_LAYOUT:
+            {
+                List<EJPluginReportColumnProperties> allColumnProperties = layoutScreenProperties.getColumnContainer().getAllColumnProperties();
+
+                for (EJPluginReportColumnProperties col : allColumnProperties)
+                {
+                    builder.append("\n");
+                    builder.append("public static class C_");
+                    builder.append(toVAR(col.getName()).toUpperCase().replaceAll(" ", "_"));
+                    builder.append("\n");
+                    builder.append("{");
+                    builder.append("\n");
+
+                    // add Column ID
+                    builder.append("    public static final String ID = ");
+                    builder.append("\"");
+                    builder.append(col.getName());
+                    builder.append("\"");
+                    builder.append(";");
+                    builder.append("\n");
+
+                    if (col.isShowHeader())
+                    {
+
+                        Collection<EJPluginReportScreenItemProperties> screenItems = col.getHeaderScreen().getScreenItems();
+
+                        if (screenItems.size() > 0)
+                        {
+
+                            builder.append("\n");
+                            builder.append("public static class HEADER");
+                            builder.append("\n");
+                            builder.append("{");
+                            builder.append("\n");
+
+                            for (EJPluginReportScreenItemProperties item : screenItems)
+                            {
+                                if (item.getName() != null && item.getName().length() > 0)
+                                {
+                                    // add block ID
+                                    builder.append("    public static final String I_");
+                                    builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
+                                    builder.append(" = ");
+                                    builder.append("\"");
+                                    builder.append(item.getName());
+                                    builder.append("\"");
+                                    builder.append(";");
+                                    builder.append("\n");
+                                }
+                            }
+
+                            builder.append("\n");
+                            builder.append("}");
+                        }
+                    }
+
+                    {
+
+                        Collection<EJPluginReportScreenItemProperties> screenItems = col.getDetailScreen().getScreenItems();
+
+                        if (screenItems.size() > 0)
+                        {
+
+                            builder.append("\n");
+                            builder.append("public static class DETAIL");
+                            builder.append("\n");
+                            builder.append("{");
+                            builder.append("\n");
+
+                            for (EJPluginReportScreenItemProperties item : screenItems)
+                            {
+                                if (item.getName() != null && item.getName().length() > 0)
+                                {
+                                    // add block ID
+                                    builder.append("    public static final String I_");
+                                    builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
+                                    builder.append(" = ");
+                                    builder.append("\"");
+                                    builder.append(item.getName());
+                                    builder.append("\"");
+                                    builder.append(";");
+                                    builder.append("\n");
+                                }
+                            }
+
+                            builder.append("\n");
+                            builder.append("}");
+                        }
+                    }
+                    
+                    
+                    
+                    if (col.isShowFooter())
+                    {
+
+                        Collection<EJPluginReportScreenItemProperties> screenItems = col.getFooterScreen().getScreenItems();
+
+                        if (screenItems.size() > 0)
+                        {
+
+                            builder.append("\n");
+                            builder.append("public static class FOOTER");
+                            builder.append("\n");
+                            builder.append("{");
+                            builder.append("\n");
+
+                            for (EJPluginReportScreenItemProperties item : screenItems)
+                            {
+                                if (item.getName() != null && item.getName().length() > 0)
+                                {
+                                    // add block ID
+                                    builder.append("    public static final String I_");
+                                    builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
+                                    builder.append(" = ");
+                                    builder.append("\"");
+                                    builder.append(item.getName());
+                                    builder.append("\"");
+                                    builder.append(";");
+                                    builder.append("\n");
+                                }
+                            }
+
+                            builder.append("\n");
+                            builder.append("}");
+                        }
+                    }
+
+
+                    builder.append("\n");
+                    builder.append("}");
+                }
+
+                break;
+            }
+
+            default:
+                break;
+
+        }
+
+        builder.append("\n");
         builder.append("}");
         builder.append("\n");
     }
 
     static String toVAR(String item)
     {
-        
-        
+
         StringBuilder nameBuild = new StringBuilder();
-        
+
         for (char c : item.toCharArray())
         {
-            if( !Character.isJavaIdentifierPart(c))
+            if (!Character.isJavaIdentifierPart(c))
             {
                 nameBuild.append("_");
             }
@@ -730,7 +915,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                 nameBuild.append(c);
             }
         }
-        
+
         item = nameBuild.toString();
 
         StringBuilder builder = new StringBuilder();
