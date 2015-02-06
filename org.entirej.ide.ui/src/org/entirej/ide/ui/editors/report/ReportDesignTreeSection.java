@@ -62,6 +62,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.actionprocessor.EJDefaultReportActionProcessor;
 import org.entirej.framework.report.actionprocessor.interfaces.EJReportActionProcessor;
@@ -223,13 +224,14 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     @Override
     public Action[] getBaseActions()
     {
-
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), };
+        BlockGroup firstPage = editor.getReportProperties().getBlockContainer().getFirstPage();
+        return new Action[] { createNewBlockAction(firstPage,false), createNewBlockAction(firstPage,true), };
     }
 
     protected Action[] getNewBlockActions()
     {
-        return new Action[] { createNewBlockAction(false), createNewBlockAction(true), };
+        BlockGroup firstPage = editor.getReportProperties().getBlockContainer().getFirstPage();
+        return new Action[] { createNewBlockAction(firstPage,false), createNewBlockAction(firstPage,true), };
     }
 
     @Override
@@ -1439,7 +1441,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
         void refresh();
     }
 
-    public Action createNewBlockAction(final boolean controlBlock)
+    public Action createNewBlockAction(final BlockGroup blockGroup, final boolean controlBlock)
     {
 
         return new Action(controlBlock ? "New Report Control Block" : "New Report Service Block")
@@ -1491,7 +1493,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                         }
                         
                         
-                        ReportBlockAddOperation addOperation = new ReportBlockAddOperation(ReportDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties,-1); 
+                        ReportBlockAddOperation addOperation = new ReportBlockAddOperation(ReportDesignTreeSection.this, blockGroup, blockProperties,-1); 
 
                         getEditor().execute(addOperation, new NullProgressMonitor());
                     }

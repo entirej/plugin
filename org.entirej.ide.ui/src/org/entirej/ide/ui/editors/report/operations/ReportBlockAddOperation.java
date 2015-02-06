@@ -16,7 +16,6 @@ import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
 public class ReportBlockAddOperation extends AbstractOperation
 {
 
-    private EJReportBlockContainer        container;
     private BlockGroup                    group;
     private EJPluginReportBlockProperties blockProperties;
     private AbstractNodeTreeSection       treeSection;
@@ -24,15 +23,7 @@ public class ReportBlockAddOperation extends AbstractOperation
 
     private int                           index = -1;
 
-    public ReportBlockAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, EJPluginReportBlockProperties blockProperties,
-            int index)
-    {
-        super("Add Block");
-        this.treeSection = treeSection;
-        this.container = container;
-        this.blockProperties = blockProperties;
-        this.index = index;
-    }
+ 
 
     public ReportBlockAddOperation(final AbstractNodeTreeSection treeSection, BlockGroup group, EJPluginReportBlockProperties blockProperties, int index)
     {
@@ -54,29 +45,7 @@ public class ReportBlockAddOperation extends AbstractOperation
     {
         dirty = treeSection.isDirty();
 
-        if (container != null)
-        {
-            if (index == -1 || index>=container.getBlockContainerItems().size())
-                container.addBlockProperties(blockProperties);
-            else
-            {
-                container.addBlockProperties(index, blockProperties);
-            }
-
-            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-            {
-
-                public void run()
-                {
-                    treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
-                    treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 2);
-
-                }
-            });
-        }
+        
         if (group != null)
         {
             if (index == -1|| index>=group.getAllBlockProperties().size())
@@ -107,20 +76,7 @@ public class ReportBlockAddOperation extends AbstractOperation
     @Override
     public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
     {
-        if (container != null)
-        {
-            container.removeBlockContainerItem(blockProperties);
-            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-            {
-
-                public void run()
-                {
-
-                    treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                }
-            });
-        }
+       
         if (group != null)
         {
             group.removeBlockProperties(blockProperties);

@@ -26,16 +26,16 @@ import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 
 public class EJReportBlockContainer
 {
-    private List<BlockContainerItem> _blockProperties;
+    private List<BlockGroup> _blockProperties;
     private EJPluginReportProperties _reportProperties;
     
-    private  BlockGroup         headerSection = new BlockGroup("Header Section");
-    private  BlockGroup         footerSection = new BlockGroup("Footer Section");
+    private BlockGroup               headerSection = new BlockGroup("Header Section");
+    private BlockGroup               footerSection = new BlockGroup("Footer Section");
     
     public EJReportBlockContainer(EJPluginReportProperties reportProperties)
     {
         _reportProperties = reportProperties;
-        _blockProperties = new ArrayList<BlockContainerItem>();
+        _blockProperties = new ArrayList<BlockGroup>();
     }
     
     public EJPluginReportProperties getReportProperties()
@@ -49,7 +49,6 @@ public class EJReportBlockContainer
         
     }
     
-    
     public void setHeaderSection(BlockGroup headerSection)
     {
         this.headerSection = headerSection;
@@ -60,7 +59,6 @@ public class EJReportBlockContainer
     {
         return headerSection;
     }
-    
     
     public void setFooterSection(BlockGroup footerSection)
     {
@@ -73,34 +71,20 @@ public class EJReportBlockContainer
         return footerSection;
     }
     
-    
     public boolean contains(String blockName)
     {
-        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        Iterator<BlockGroup> iti = _blockProperties.iterator();
         while (iti.hasNext())
         {
             
-            BlockContainerItem containerItem = iti.next();
-            if ((containerItem instanceof BlockGroup))
-            {
-                BlockGroup blockGroup = (BlockGroup) containerItem;
+            BlockGroup blockGroup = iti.next();
+           
                 EJPluginReportBlockProperties blockProperties = blockGroup.getBlockProperties(blockName);
                 if (blockProperties != null)
                 {
                     return true;
                 }
-                continue;
-            }
-            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
-            if (props.getName().equalsIgnoreCase(blockName))
-            {
-                return true;
-            }
-            EJPluginReportBlockProperties blockProperties = props.getLayoutScreenProperties().getSubBlocks().getBlockProperties(blockName);
-            if (blockProperties != null)
-            {
-                return true;
-            }
+           
         }
         
         EJPluginReportBlockProperties blockProperties = headerSection.getBlockProperties(blockName);
@@ -108,7 +92,7 @@ public class EJReportBlockContainer
         {
             return true;
         }
-         blockProperties = footerSection.getBlockProperties(blockName);
+        blockProperties = footerSection.getBlockProperties(blockName);
         if (blockProperties != null)
         {
             return true;
@@ -117,7 +101,7 @@ public class EJReportBlockContainer
         return false;
     }
     
-    public void addBlockProperties(BlockContainerItem blockProperties)
+    public void addPage(BlockGroup blockProperties)
     {
         if (blockProperties != null)
         {
@@ -144,15 +128,7 @@ public class EJReportBlockContainer
             BlockGroup blockGroupByBlock = getBlockGroupByBlock(oldProp);
             if (blockGroupByBlock == null)
             {
-                int indexOf = _blockProperties.indexOf(oldProp);
-                if (indexOf > -1)
-                {
-                    _blockProperties.set(indexOf, newProp);
-                }
-                else
-                {
-                    _blockProperties.add(newProp);
-                }
+                return;
             }
             else
             {
@@ -161,7 +137,7 @@ public class EJReportBlockContainer
         }
     }
     
-    public void addBlockProperties(int index, BlockContainerItem blockProperties)
+    public void addPage(int index, BlockGroup blockProperties)
     {
         if (blockProperties != null)
         {
@@ -204,33 +180,19 @@ public class EJReportBlockContainer
     public EJPluginReportBlockProperties getBlockProperties(String blockName)
     {
         
-        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        Iterator<BlockGroup> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
         {
             
-            BlockContainerItem containerItem = iti.next();
-            if ((containerItem instanceof BlockGroup))
-            {
-                EJPluginReportBlockProperties blockProperties = ((BlockGroup) containerItem).getBlockProperties(blockName);
+            BlockGroup containerItem = iti.next();
+            
+                EJPluginReportBlockProperties blockProperties = ( containerItem).getBlockProperties(blockName);
                 if (blockProperties != null)
                 {
                     return blockProperties;
                 }
-                continue;
-            }
-            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
-            
-            if (props.getName().equalsIgnoreCase(blockName))
-            {
-                return props;
-            }
-            
-            EJPluginReportBlockProperties blockProperties = props.getLayoutScreenProperties().getSubBlocks().getBlockProperties(blockName);
-            if (blockProperties != null)
-            {
-                return blockProperties;
-            }
+           
         }
         
         EJPluginReportBlockProperties blockProperties = headerSection.getBlockProperties(blockName);
@@ -238,7 +200,7 @@ public class EJReportBlockContainer
         {
             return blockProperties;
         }
-         blockProperties = footerSection.getBlockProperties(blockName);
+        blockProperties = footerSection.getBlockProperties(blockName);
         if (blockProperties != null)
         {
             return blockProperties;
@@ -246,43 +208,46 @@ public class EJReportBlockContainer
         
         return null;
     }
-    
-    public BlockGroup getBlockGroupByBlock(EJPluginReportBlockProperties blockProperties)
+    public BlockGroup getPage(String page)
     {
         
-        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        Iterator<BlockGroup> iti = _blockProperties.iterator();
         
         while (iti.hasNext())
         {
             
-            BlockContainerItem containerItem = iti.next();
-            if ((containerItem instanceof BlockGroup))
+            BlockGroup containerItem = iti.next();
+            if (containerItem.getName().equals(page))
             {
-                BlockGroup blockGroup = (BlockGroup) containerItem;
-                
+                return containerItem;
+            }
+            
+        }
+        
+       
+        
+        return null;
+    }
+    
+    public BlockGroup getBlockGroupByBlock(EJPluginReportBlockProperties blockProperties)
+    {
+        
+        Iterator<BlockGroup> iti = _blockProperties.iterator();
+        
+        while (iti.hasNext())
+        {
+            
+            BlockGroup blockGroup = iti.next();
+            
                 BlockGroup blockGroupByBlock = blockGroup.getBlockGroupByBlock(blockProperties);
                 if (blockGroupByBlock != null)
                 {
                     return blockGroupByBlock;
                 }
-                continue;
-            }
-            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
             
-            if (props.equals(blockProperties))
-            {
-                return null;
-            }
-            
-            BlockGroup blockGroup = props.getLayoutScreenProperties().getSubBlocks().getBlockGroupByBlock(blockProperties);
-            if (blockGroup != null)
-            {
-                return blockGroup;
-            }
+           
         }
         
-        
-
         BlockGroup blockGroupByBlock = headerSection.getBlockGroupByBlock(blockProperties);
         if (blockGroupByBlock != null)
         {
@@ -300,27 +265,29 @@ public class EJReportBlockContainer
     {
         List<EJPluginReportBlockProperties> list = new ArrayList<EJPluginReportBlockProperties>();
         
-        Iterator<BlockContainerItem> iti = _blockProperties.iterator();
+        Iterator<BlockGroup> iti = _blockProperties.iterator();
         while (iti.hasNext())
         {
             
-            BlockContainerItem containerItem = iti.next();
-            if ((containerItem instanceof BlockGroup))
-            {
-                list.addAll(((BlockGroup) containerItem).getAllBlockProperties());
-                continue;
-            }
-            EJPluginReportBlockProperties props = (EJPluginReportBlockProperties) containerItem;
-            list.add(props);
+            BlockGroup containerItem = iti.next();
+            
+                list.addAll((containerItem).getAllBlockProperties());
+           
         }
         
         return list;
     }
     
-    public List<BlockContainerItem> getBlockContainerItems()
+    public List<BlockGroup> getPages()
     {
-        return _blockProperties;
+        List<BlockGroup> list = new ArrayList<BlockGroup>(_blockProperties);
+        
+       
+        
+        return list;
+        
     }
+
     
     public String getDefaultBlockName()
     {
@@ -476,6 +443,18 @@ public class EJReportBlockContainer
         {
             return _blockProperties;
         }
+    }
+
+    public BlockGroup getFirstPage()
+    {
+       if(_blockProperties.size()>0)
+       {
+           return _blockProperties.get(0);
+       }
+       BlockGroup page = new BlockGroup("PAGE1");
+       _blockProperties.add(page);
+       return page;
+        
     }
     
 }

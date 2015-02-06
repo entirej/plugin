@@ -79,7 +79,7 @@ public class EJUIImages
     public static final ImageDescriptor DESC_NEWEJPRJ_WIZ            = create(PATH_WIZBAN, "newejprj_wiz.png");                                        //$NON-NLS-1$
     public static final ImageDescriptor DESC_NEWEJFRM_WIZ            = create(PATH_WIZBAN, "newejfrm_wiz.png");                                        //$NON-NLS-1$
     public static final ImageDescriptor DESC_NEWEJPOJO_SERV_WIZ      = create(PATH_WIZBAN, "newservpojo_wiz.png");                                     //$NON-NLS-1$
-    public static final ImageDescriptor DESC_NEWEJREPORT_SERV_WIZ      = create(PATH_WIZBAN, "newejreport_wiz.png");                                     //$NON-NLS-1$
+    public static final ImageDescriptor DESC_NEWEJREPORT_SERV_WIZ    = create(PATH_WIZBAN, "newejreport_wiz.png");                                     //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_HELP                    = create(PATH_ETOOLS16, "help.gif");                                              //$NON-NLS-1$
 
@@ -137,8 +137,10 @@ public class EJUIImages
     public static final ImageDescriptor DESC_TABLE                   = create(PATH_OBJ16, "table.gif");                                                //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_FORM                    = create(PATH_OBJ16, "form.png");                                                 //$NON-NLS-1$
-    public static final ImageDescriptor DESC_REPORT                    = create(PATH_OBJ16, "report_16.png");                                                 //$NON-NLS-1$
-    public static final ImageDescriptor DESC_OBJGROUP                = create(PATH_OBJ16, "object_group.png");                                         //$NON-NLS-1$
+    public static final ImageDescriptor DESC_REPORT                  = create(PATH_OBJ16, "report_16.png");                                            //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OBJGROUP                = create(PATH_OBJ16, "object_group.png");
+    public static final ImageDescriptor DESC_REPORT_PAGE             = create(PATH_OBJ16, "report_page_obj.gif");                                      //$NON-NLS-1$
+    //$NON-NLS-1$
 
     public static final ImageDescriptor DESC_LOV_DEF                 = create(PATH_OBJ16, "lov_def.png");                                              //$NON-NLS-1$
     public static final ImageDescriptor DESC_LOV_REF                 = create(PATH_OBJ16, "lov_ref.png");                                              //$NON-NLS-1$

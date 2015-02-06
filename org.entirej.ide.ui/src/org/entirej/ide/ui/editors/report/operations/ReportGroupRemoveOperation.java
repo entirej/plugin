@@ -23,7 +23,7 @@ public class ReportGroupRemoveOperation extends AbstractOperation
 
     public ReportGroupRemoveOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, BlockGroup group)
     {
-        super("Remove Block Group");
+        super("Remove Report Page");
         this.treeSection = treeSection;
         this.container = container;
         this.group = group;
@@ -68,11 +68,11 @@ public class ReportGroupRemoveOperation extends AbstractOperation
         {
             if (index == -1)
             {
-                container.addBlockProperties(group);
+                container.addPage(group);
             }
             else
             {
-                container.addBlockProperties(index, group);
+                container.addPage(index, group);
             }
 
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()

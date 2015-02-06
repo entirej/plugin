@@ -24,7 +24,7 @@ public class ReportBlockGroupAddOperation extends AbstractOperation
     
     public ReportBlockGroupAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, BlockGroup group, int index)
     {
-        super("Add Block Group");
+        super("Add Report Page");
         this.treeSection = treeSection;
         this.container = container;
         this.group = group;
@@ -45,11 +45,11 @@ public class ReportBlockGroupAddOperation extends AbstractOperation
         {
             if(index==-1)
             {
-                container.addBlockProperties(group);
+                container.addPage(group);
             }
             else
             {
-                container.addBlockProperties(index,group);
+                container.addPage(index,group);
             }
             
 

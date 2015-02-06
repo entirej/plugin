@@ -172,24 +172,10 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             
         }
         
-        List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
+        List<BlockGroup> blockContainerItems = blockContainer.getPages();
         for (BlockContainerItem item : blockContainerItems)
         {
-            if (item instanceof EJPluginReportBlockProperties)
-            {
-                EJPluginReportBlockProperties blockProps = (EJPluginReportBlockProperties) item;
-                
-                if (blockProps.isReferenceBlock())
-                {
-                    // FIXME
-                    // addReferencedBlockProperties(blockProps, buffer);
-                }
-                else
-                {
-                    addBlockProperties(blockProps, buffer);
-                }
-                continue;
-            }
+            
             // write Block groups
             if (item instanceof BlockGroup)
             {

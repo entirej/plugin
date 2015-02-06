@@ -21,6 +21,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJTagHandler;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.report.enumerations.EJReportExportType;
 import org.entirej.framework.report.interfaces.EJReportProperties;
 import org.xml.sax.Attributes;
@@ -272,24 +274,27 @@ public class ReportHandler extends EntireJTagHandler
     
     public void cleanUpAfterDelegate(String name, EntireJTagHandler currentDelegate)
     {
+        EJReportBlockContainer blockContainer = _reportProperties.getBlockContainer();
         if (name.equals(ELEMENT_BLOCK))
-        {
-            _reportProperties.getBlockContainer().addBlockProperties(((BlockHandler) currentDelegate).getBlockProperties());
+        {//old format, add compatibility Page group 
+            
+            BlockGroup page = blockContainer.getFirstPage();
+            page.addBlockProperties(((BlockHandler) currentDelegate).getBlockProperties());
             return;
         }
         else if (name.equals(ELEMENT_BLOCK_GROUP))
         {
-            _reportProperties.getBlockContainer().addBlockProperties(((BlockGroupHandler) currentDelegate).getBlockGroup());
+            blockContainer.addPage(((BlockGroupHandler) currentDelegate).getBlockGroup());
             return;
         }
         else if (name.equals(ELEMENT_BLOCK_HEADER))
         {
-            _reportProperties.getBlockContainer().setHeaderSection(((BlockGroupHandler) currentDelegate).getBlockGroup());
+            blockContainer.setHeaderSection(((BlockGroupHandler) currentDelegate).getBlockGroup());
             return;
         }
         else if (name.equals(ELEMENT_BLOCK_FOOTER))
         {
-            _reportProperties.getBlockContainer().setFooterSection(((BlockGroupHandler) currentDelegate).getBlockGroup());
+            blockContainer.setFooterSection(((BlockGroupHandler) currentDelegate).getBlockGroup());
             return;
         }
         

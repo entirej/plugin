@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
-import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockContainerItem;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
@@ -16,16 +16,16 @@ public class ReportBlockContainerItemAddOperation extends AbstractOperation
 {
 
     private EJReportBlockContainer        container;
-    private BlockContainerItem blockProperties;
+    private BlockGroup blockProperties;
     private AbstractNodeTreeSection       treeSection;
     private boolean                       dirty;
 
     private int                           index = -1;
 
-    public ReportBlockContainerItemAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, BlockContainerItem blockProperties,
+    public ReportBlockContainerItemAddOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, BlockGroup blockProperties,
             int index)
     {
-        super("Add Block");
+        super("Add Page");
         this.treeSection = treeSection;
         this.container = container;
         this.blockProperties = blockProperties;
@@ -48,10 +48,10 @@ public class ReportBlockContainerItemAddOperation extends AbstractOperation
         if (container != null)
         {
             if (index == -1 || index>=container.getAllBlockProperties().size())
-                container.addBlockProperties(blockProperties);
+                container.addPage(blockProperties);
             else
             {
-                container.addBlockProperties(index, blockProperties);
+                container.addPage(index, blockProperties);
             }
 
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()

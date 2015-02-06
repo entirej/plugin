@@ -52,6 +52,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 
@@ -68,6 +69,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     protected final Color  COLOR_HEADER       = new Color(Display.getCurrent(), new RGB(180, 180, 180));
     protected final Color  COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
 
+    protected BlockGroup   page;
+
     public void dispose()
     {
         COLOR_BLOCK.dispose();
@@ -75,6 +78,16 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         COLOR_HEADER.dispose();
         COLOR_FOOTER.dispose();
         MOVE.dispose();
+    }
+
+    public ReportPreviewImpl()
+    {
+        this(null);
+    }
+
+    public ReportPreviewImpl(BlockGroup page)
+    {
+        this.page = page;
     }
 
     protected EJPluginReportProperties getReportProperties(AbstractEJReportEditor editor)
@@ -129,9 +142,25 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
         EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
 
-        headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
-        detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
-        footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+        if (page == null)
+        {
+            headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+            detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+            footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+        }
+        else
+        {
+            final Composite reportBody = new Composite(report, SWT.NONE);
+            reportBody.setLayout(null);
+            setPreviewBackground(reportBody, COLOR_WHITE);
+
+            reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(), (width - (formProperties
+                    .getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()
+                    + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+
+           
+            buildPage(page, editor, previewComposite, width, height, blockContainer, reportBody);
+        }
 
     }
 
@@ -248,7 +277,15 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 .getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()
                 + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
 
-        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        BlockGroup firstPage = blockContainer.getFirstPage();
+        buildPage(firstPage, editor, previewComposite, width, height, blockContainer, reportBody);
+    }
+
+    private void buildPage(BlockGroup page, final AbstractEJReportEditor editor, ScrolledComposite previewComposite, int width, int height,
+            EJReportBlockContainer blockContainer, final Composite reportBody)
+    {
+
+        for (EJPluginReportBlockProperties properties : page.getAllBlockProperties())
         {
             createBlockPreview(editor, reportBody, properties);
         }

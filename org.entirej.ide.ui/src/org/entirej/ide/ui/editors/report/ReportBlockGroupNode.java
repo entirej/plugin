@@ -83,6 +83,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     private final ReportDesignTreeSection       treeSection;
     private final AbstractEJReportEditor        editor;
     private final static Image                  GROUP            = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
+    private final static Image                  REPORT_PAGE            = EJUIImages.getImage(EJUIImages.DESC_REPORT_PAGE);
     private final static Image                  BLOCK            = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
     private final static Image                  BLOCK_MIRROR     = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
     private final static Image                  BLOCK_MIRROR_REF = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
@@ -187,25 +188,26 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     public Action[] getActions()
     {
 
-        return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null, createNewBlockGroupAction() };
+        BlockGroup firstPage = source.getFirstPage();
+        return new Action[] { treeSection.createNewBlockAction(firstPage,false), treeSection.createNewBlockAction(firstPage,true), null, createNewBlockGroupAction() };
     }
 
     public Action createNewBlockGroupAction()
     {
 
-        return new Action("New Block Group")
+        return new Action("New Report Page")
         {
 
             @Override
             public void runWithEvent(Event event)
             {
-                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), "New Block Group", "Group Name", null, new IInputValidator()
+                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), "New  Report Page", "Page Name", null, new IInputValidator()
                 {
 
                     public String isValid(String newText)
                     {
                         if (newText == null || newText.trim().length() == 0)
-                            return "Group name can't be empty.";
+                            return "Page name can't be empty.";
                         return null;
                     }
                 });
@@ -253,6 +255,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         @Override
         public <S> S getAdapter(Class<S> adapter)
         {
+            if (IReportPreviewProvider.class.isAssignableFrom(adapter))
+            {
+                  return adapter.cast(new ReportPreviewImpl(source));
+            }
+            
             return ReportBlockGroupNode.this.getAdapter(adapter);
         }
 
@@ -281,7 +288,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         @Override
         public Image getImage()
         {
-            return ReportBlockGroupNode.this.getImage();
+            return REPORT_PAGE;
         }
 
         @Override
@@ -467,20 +474,15 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
             List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
 
-            List<BlockContainerItem> blockContainerItems = source.source.getBlockContainerItems();
+            List<BlockGroup> blockContainerItems = source.source.getPages();
 
-            for (BlockContainerItem item : blockContainerItems)
+            for (BlockGroup item : blockContainerItems)
             {
-                if (item instanceof EJPluginReportBlockProperties)
-                {
-
-                    nodes.add(new BlockNode(this, (EJPluginReportBlockProperties) item));
-                }
-                else if (item instanceof BlockGroup)
-                {
+               
+              
 
                     nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
-                }
+                
             }
 
             return nodes.toArray(new AbstractNode<?>[0]);
@@ -488,7 +490,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
         public boolean canMove(Neighbor relation, Object source)
         {
-            return source instanceof EJPluginReportBlockProperties;
+            return source instanceof BlockGroup;
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -503,11 +505,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     if (!before)
                         index++;
 
-                    source.source.addBlockProperties(index, (EJPluginReportBlockProperties) dSource);
+                    source.source.addPage(index, (BlockGroup) dSource);
                 }
             }
             else
-                source.source.addBlockProperties((EJPluginReportBlockProperties) dSource);
+                source.source.addPage((BlockGroup) dSource);
 
         }
 
@@ -523,11 +525,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     if (!before)
                         index++;
                     
-                    return new ReportBlockAddOperation(treeSection, source.source, (EJPluginReportBlockProperties) dSource, index);
+                    return new ReportBlockGroupAddOperation(treeSection, source.source, (BlockGroup) dSource, index);
                     
                 }
             }
-            return new ReportBlockAddOperation(treeSection, source.source, (EJPluginReportBlockProperties) dSource,-1);
+            return new ReportBlockGroupAddOperation(treeSection, source.source, (BlockGroup) dSource,-1);
             
         }
     }
@@ -787,7 +789,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         public Action[] getActions()
         {
 
-            return new Action[] { treeSection.createNewBlockAction(false), treeSection.createNewBlockAction(true), null, createCopyNameAction() };
+            BlockGroup groupByBlock = ReportBlockGroupNode.this.source.getBlockGroupByBlock(source);
+            return new Action[] { treeSection.createNewBlockAction(groupByBlock,false), treeSection.createNewBlockAction(groupByBlock,true), null, createCopyNameAction() };
 
         }
 
@@ -818,7 +821,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 return adapter.cast(validator);
             }
 
-            return null;
+            return parent==null ?null:parent.getAdapter(adapter);
         }
 
         @Override
@@ -880,8 +883,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
                         BlockGroup groupByBlock = ReportBlockGroupNode.this.source.getBlockGroupByBlock(source);
-                        return groupByBlock == null ? new ReportBlockRemoveOperation(treeSection, ReportBlockGroupNode.this.source, source)
-                                : new ReportBlockRemoveOperation(treeSection, groupByBlock, source);
+                        assert groupByBlock !=null;
+                        return  new ReportBlockRemoveOperation(treeSection, groupByBlock, source);
                     }
                 };
             return super.getDeleteProvider();
@@ -1632,18 +1635,18 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         if (neighbor != null)
         {
             Object methodNeighbor = neighbor.getNeighborSource();
-            List<BlockContainerItem> items = source.getBlockContainerItems();
+            List<BlockGroup> items = source.getPages();
             if (items.contains(methodNeighbor))
             {
                 int index = items.indexOf(methodNeighbor);
                 if (!before)
                     index++;
 
-                source.addBlockProperties(index, (BlockContainerItem) dSource);
+                source.addPage(index, (BlockGroup) dSource);
             }
         }
         else
-            source.addBlockProperties((BlockContainerItem) dSource);
+            source.addPage((BlockGroup) dSource);
 
     }
 
@@ -1652,19 +1655,19 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         if (neighbor != null)
         {
             Object methodNeighbor = neighbor.getNeighborSource();
-            List<BlockContainerItem> items = source.getBlockContainerItems();
+            List<BlockGroup> items = source.getPages();
             if (items.contains(methodNeighbor))
             {
                 int index = items.indexOf(methodNeighbor);
                 if (!before)
                     index++;
 
-                return new ReportBlockContainerItemAddOperation(treeSection, source, (BlockContainerItem) dSource, index);
+                return new ReportBlockContainerItemAddOperation(treeSection, source, (BlockGroup) dSource, index);
             }
 
         }
 
-        return new ReportBlockContainerItemAddOperation(treeSection, source, (BlockContainerItem) dSource, -1);
+        return new ReportBlockContainerItemAddOperation(treeSection, source, (BlockGroup) dSource, -1);
     }
 
     public AbstractNode<?> createScreenGroupNode(ReportScreenNode reportScreenNode, BlockGroup subBlocks)

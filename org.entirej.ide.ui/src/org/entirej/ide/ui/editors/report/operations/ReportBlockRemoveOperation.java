@@ -16,20 +16,11 @@ import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
 public class ReportBlockRemoveOperation extends AbstractOperation
 {
 
-    private EJReportBlockContainer        container;
     private BlockGroup                    group;
     private EJPluginReportBlockProperties blockProperties;
     private AbstractNodeTreeSection       treeSection;
     private boolean                       dirty;
     private int                           index = -1;
-
-    public ReportBlockRemoveOperation(final AbstractNodeTreeSection treeSection, EJReportBlockContainer container, EJPluginReportBlockProperties blockProperties)
-    {
-        super("Remove Block");
-        this.treeSection = treeSection;
-        this.container = container;
-        this.blockProperties = blockProperties;
-    }
 
     public ReportBlockRemoveOperation(final AbstractNodeTreeSection treeSection, BlockGroup group, EJPluginReportBlockProperties blockProperties)
     {
@@ -50,21 +41,6 @@ public class ReportBlockRemoveOperation extends AbstractOperation
     {
         dirty = treeSection.isDirty();
 
-        if (container != null)
-        {
-
-            index = container.removeBlockContainerItem(blockProperties);
-            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-            {
-
-                public void run()
-                {
-
-                    treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                }
-            });
-        }
         if (group != null)
         {
             index = group.removeBlockProperties(blockProperties);
@@ -88,31 +64,7 @@ public class ReportBlockRemoveOperation extends AbstractOperation
     @Override
     public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
     {
-        if (container != null)
-        {
-            if (index == -1)
-            {
-                container.addBlockProperties(blockProperties);
-            }
-            else
-            {
-                container.addBlockProperties(index, blockProperties);
-            }
 
-            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
-            {
-
-                public void run()
-                {
-                    treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
-                    treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 2);
-
-                }
-            });
-        }
         if (group != null)
         {
 
