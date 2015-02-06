@@ -416,31 +416,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         };
         
         
-        final AbstractBooleanDescriptor startOnnewPage = new AbstractBooleanDescriptor("Page Break Before Print")
-        {
-            
-            @Override
-            public void setValue(Boolean value)
-            {
-                
-                source.setStartOnNewPage(value);
-                treeSection.getEditor().setDirty(true);
-                treeSection.refresh(ReportScreenNode.this);
-                
-            }
-            @Override
-            public void runOperation(AbstractOperation operation)
-            {
-                treeSection.getEditor().execute(operation);
-                
-            }
-            @Override
-            public Boolean getValue()
-            {
-                return source.isStartOnNewPage();
-            }
-        }; 
-        
+       
         
 
         AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Layout", "The renderer you have chosen for your block")
@@ -519,7 +495,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             descriptors.add(rendererDescriptor);
             
 
-            descriptors.add(startOnnewPage);
             descriptors.add(xDescriptor);
             descriptors.add(yDescriptor);
         }

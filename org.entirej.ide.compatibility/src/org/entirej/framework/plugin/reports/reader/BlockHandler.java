@@ -39,7 +39,6 @@ public class BlockHandler extends EntireJTagHandler
     private static final String           ELEMENT_ACTION_PROCESSOR      = "actionProcessorClassName";
     private static final String           ELEMENT_SCREEN_TYPE           = "screenType";
     
-    private static final String           ELEMENT_SCREEN_STARTONNEWPAGE = "startOnNewpage";
     private static final String           ELEMENT_ODD_VA                = "oddVA";
     private static final String           ELEMENT_EVEN_VA               = "evenVA";
     private static final String           ELEMENT_SCREEN_X              = "x";
@@ -156,11 +155,7 @@ public class BlockHandler extends EntireJTagHandler
         {
             _blockProperties.getLayoutScreenProperties().setScreenType(EJReportScreenType.valueOf(value));;
         }
-        else if (name.equals(ELEMENT_SCREEN_STARTONNEWPAGE))
-        {
-            _blockProperties.getLayoutScreenProperties().setStartOnNewPage(Boolean.parseBoolean(value));
-            
-        }
+   
         else if (name.equals(ELEMENT_ODD_VA))
         {
             _blockProperties.getLayoutScreenProperties().setOddRowVAName(value);
