@@ -48,7 +48,8 @@ import org.entirej.ide.core.spi.DBConnectivityProvider;
 
 public class HSQLDBConnectivityProvider implements DBConnectivityProvider
 {
-    private static final String HSQL_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedReportConnectionFactory.java";
+    private static final String HSQL_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedConnectionFactory.java";
+    private static final String HSQL_REPORT_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedReportConnectionFactory.java";
     private static final String HSQL_CONNECTION_DB   = "/templates/hsqlOptions/demo.h2.db";
 
     public void addEntireJReportNature(IConfigurationElement configElement, final IJavaProject project, final IProgressMonitor monitor)
@@ -57,7 +58,7 @@ public class HSQLDBConnectivityProvider implements DBConnectivityProvider
         {
             CFProjectHelper.verifySourceContainer(project, "src");
 
-            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_FILE,
+            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_REPORT_CONNECTION_FILE,
                     "src/org/entirej/db/connection/EmbeddedReportConnectionFactory.java");
             CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_DB, "src/db/demo.h2.db");
 
