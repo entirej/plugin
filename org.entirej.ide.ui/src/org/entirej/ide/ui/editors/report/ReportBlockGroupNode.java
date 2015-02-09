@@ -385,6 +385,13 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
             return source instanceof EJPluginReportBlockProperties;
         }
+        
+        @Override
+        public Action[] getActions()
+        {
+            return new Action[] { treeSection.createNewBlockAction(source,false), treeSection.createNewBlockAction(source,true) };
+
+        }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
         {
