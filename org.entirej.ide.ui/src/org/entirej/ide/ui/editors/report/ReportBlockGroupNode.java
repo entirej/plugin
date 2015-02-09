@@ -1269,6 +1269,10 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 actionDescriptor.setBaseClass(EJReportActionProcessor.class.getName());
                 actionDescriptor.setDefaultClass(EJDefaultReportActionProcessor.class.getName());
                 descriptors.add(actionDescriptor);
+                descriptors.add(xDescriptor);
+                descriptors.add(yDescriptor);
+                descriptors.add(widthDescriptor);
+                descriptors.add(heightDescriptor);
             }
             else
             {
