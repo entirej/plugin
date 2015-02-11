@@ -865,6 +865,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
 
                         }
                         treeSection.refresh(ItemNode.this);
+                        treeSection.refresh();
                     }
 
                     if (treeSection.getDescriptorViewer() != null)
