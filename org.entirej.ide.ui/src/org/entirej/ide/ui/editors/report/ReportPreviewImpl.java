@@ -183,7 +183,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
-
+            int x,y;
             @Override
             public void dragOver(DropTargetEvent event)
             {
@@ -193,7 +193,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
-                    droppedObj.indicate(event.x, event.y);
+                    droppedObj.indicate(x=event.x, y=event.y);
                 }
             }
 
@@ -206,6 +206,17 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(event.x, event.y);
+                }
+            }
+            @Override
+            public void dragLeave(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+                
+                if (droppedObj != null)
+                {
+                    droppedObj.setBond(x,y);
                 }
             }
         };
@@ -235,6 +246,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
 
+            int x,y;
             @Override
             public void dragOver(DropTargetEvent event)
             {
@@ -244,7 +256,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
-                    droppedObj.indicate(event.x, event.y);
+                    droppedObj.indicate(x=event.x, y=event.y);
                 }
             }
 
@@ -257,6 +269,17 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(event.x, event.y);
+                }
+            }
+            @Override
+            public void dragLeave(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+                
+                if (droppedObj != null)
+                {
+                    droppedObj.setBond(x, y);
                 }
             }
         };
@@ -297,6 +320,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
 
+            int x,y;
             @Override
             public void dragOver(DropTargetEvent event)
             {
@@ -306,7 +330,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
-                    droppedObj.indicate(event.x, event.y);
+                    droppedObj.indicate(x=event.x, y=event.y);
                 }
             }
 
@@ -319,6 +343,18 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(event.x, event.y);
+                }
+            }
+           
+            @Override
+            public void dragLeave(DropTargetEvent event)
+            {
+                final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
+                        : null;
+                
+                if (droppedObj != null)
+                {
+                    droppedObj.setBond(x, y);
                 }
             }
         };
