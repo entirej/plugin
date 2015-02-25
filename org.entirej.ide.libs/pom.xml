@@ -66,7 +66,7 @@
 							<type>jar</type>
 							 
 							<outputDirectory>../org.entirej.ext.jasper/extlibs</outputDirectory>
-							<destFileName>entirej-reports-jasper.jar</destFileName>
+							<destFileName>entirej-report-jasper.jar</destFileName>
 						</artifactItem>
 						<artifactItem>
 							<groupId>org.entirej</groupId>
