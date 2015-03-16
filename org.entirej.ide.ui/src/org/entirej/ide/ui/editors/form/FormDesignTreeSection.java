@@ -2052,7 +2052,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             if (entry == null)
                                 return;
 
-                            source.getFormProperties().removeFormParameter(entry);
+                            
                             if (tableViewer != null)
                             {
                                 ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), entry);
