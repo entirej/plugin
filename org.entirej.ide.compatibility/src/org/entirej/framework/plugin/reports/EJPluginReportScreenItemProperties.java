@@ -38,6 +38,13 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     }
     
     @Override
+    public void setVisualAttribute(String name)
+    {
+        _visualAttributeName = name;
+        
+    }
+    
+    @Override
     public int getWidth()
     {
         return width;

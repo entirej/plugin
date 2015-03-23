@@ -59,7 +59,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
 
     private String                       blockServiceClass;
 
-    private EJReportScreenType           type = EJReportScreenType.FORM_LATOUT;
+    private EJReportScreenType           type = EJReportScreenType.FORM_LAYOUT;
 
     private int                          x;
     private int                          y;
@@ -288,7 +288,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
 
                 if(wizardContext.isBlockTablelayout())
                 {
-                    return new EJReportScreenType[]{EJReportScreenType.NONE,EJReportScreenType.FORM_LATOUT};
+                    return new EJReportScreenType[]{EJReportScreenType.NONE,EJReportScreenType.FORM_LAYOUT};
                 }
                 
                 return EJReportScreenType.values();
@@ -322,7 +322,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
    {
        switch (type)
     {
-        case FORM_LATOUT:
+        case FORM_LAYOUT:
             
             break;
         case TABLE_LAYOUT:

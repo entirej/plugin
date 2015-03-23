@@ -255,7 +255,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             endTAG(buffer, "itemList");
             
             // Now add the block items
-            if (layoutScreenProperties.getScreenType() == EJReportScreenType.FORM_LATOUT)
+            if (layoutScreenProperties.getScreenType() == EJReportScreenType.FORM_LAYOUT)
             {
                 startTAG(buffer, "screenItemList");
                 {

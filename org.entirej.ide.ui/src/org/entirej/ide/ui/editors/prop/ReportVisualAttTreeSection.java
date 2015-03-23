@@ -66,6 +66,7 @@ import org.entirej.framework.report.enumerations.EJReportFontWeight;
 import org.entirej.framework.report.enumerations.EJReportMarkupType;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportVAPattern;
+import org.entirej.framework.report.properties.EJCoreReportVisualAttributeProperties;
 import org.entirej.framework.report.properties.EJReportVisualAttributeContainer;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 import org.entirej.ide.ui.EJUIImages;
@@ -166,8 +167,8 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                     List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
 
                     EJReportVisualAttributeContainer attributesContainer = props.getVisualAttributesContainer();
-                    Collection<EJReportVisualAttributeProperties> visualAttributes = attributesContainer.getVisualAttributes();
-                    for (EJReportVisualAttributeProperties attributeProperties : visualAttributes)
+                    Collection<EJCoreReportVisualAttributeProperties> visualAttributes = attributesContainer.getVisualAttributes();
+                    for (EJCoreReportVisualAttributeProperties attributeProperties : visualAttributes)
                     {
                         nodes.add(new VisualAttributeNode(attributeProperties));
                     }
@@ -206,7 +207,7 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                 if (dlg.open() == Window.OK)
                 {
                     EJReportVisualAttributeContainer attributeContainer = editor.getEntireJProperties().getVisualAttributesContainer();
-                    EJReportVisualAttributeProperties attributeProperties = new EJReportVisualAttributeProperties(dlg.getValue().trim());
+                    EJCoreReportVisualAttributeProperties attributeProperties = new EJCoreReportVisualAttributeProperties(dlg.getValue().trim());
                     attributeContainer.addVisualAttribute(attributeProperties);
                     editor.setDirty(true);
                     refresh();
@@ -217,11 +218,11 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
         };
     }
 
-    private class VisualAttributeNode extends AbstractNode<EJReportVisualAttributeProperties>
+    private class VisualAttributeNode extends AbstractNode<EJCoreReportVisualAttributeProperties>
     {
         private final Image ELEMENT = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 
-        public VisualAttributeNode(EJReportVisualAttributeProperties source)
+        public VisualAttributeNode(EJCoreReportVisualAttributeProperties source)
         {
             super(null, source);
         }

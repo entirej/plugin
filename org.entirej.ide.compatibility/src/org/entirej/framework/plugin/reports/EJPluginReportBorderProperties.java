@@ -93,5 +93,32 @@ public class EJPluginReportBorderProperties implements EJReportBorderProperties
         // igmore this in PLUGIN
         return null;
     }
+
+    @Override
+    public boolean showBottomLine()
+    {
+        return isShowBottomLine();
+    }
+
+    @Override
+    public boolean showLeftLine()
+    {
+        // TODO Auto-generated method stub
+        return isShowLeftLine();
+    }
+
+    @Override
+    public boolean showRightLine()
+    {
+        // TODO Auto-generated method stub
+        return isShowRightLine();
+    }
+
+    @Override
+    public boolean showTopLine()
+    {
+        // TODO Auto-generated method stub
+        return isShowTopLine();
+    }
     
 }

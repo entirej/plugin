@@ -31,6 +31,7 @@ import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.report.interfaces.EJEntireJReportProperties;
+import org.entirej.framework.report.properties.EJCoreReportVisualAttributeProperties;
 import org.entirej.framework.report.properties.EJReportVisualAttributeContainer;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
@@ -52,7 +53,7 @@ public class EJPluginEntireJReportProperties implements EJEntireJReportPropertie
     {
         _javaProject = javaProject;
         _reportPackageNames = new ArrayList<String>();
-        _visualAttributeContainer = new EJReportVisualAttributeContainer(new ArrayList<EJReportVisualAttributeProperties>());
+        _visualAttributeContainer = new EJReportVisualAttributeContainer(new ArrayList<EJCoreReportVisualAttributeProperties>());
         
         _applicationLevelParameters = new ArrayList<EJPluginApplicationParameter>();
     }

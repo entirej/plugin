@@ -2,9 +2,8 @@ package org.entirej.framework.plugin.reports;
 
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.framework.report.interfaces.EJReportBlockProperties;
-import org.entirej.framework.report.interfaces.EJReportColumnProperties;
 
-public class EJPluginReportColumnProperties implements EJReportColumnProperties
+public class EJPluginReportColumnProperties 
 {
     
     private EJPluginReportBlockProperties  blockProperties;
@@ -27,12 +26,12 @@ public class EJPluginReportColumnProperties implements EJReportColumnProperties
         header = new EJPluginReportScreenProperties(blockProperties);
         detail = new EJPluginReportScreenProperties(blockProperties);
         footer = new EJPluginReportScreenProperties(blockProperties);
-        header.setScreenType(EJReportScreenType.FORM_LATOUT);
-        detail.setScreenType(EJReportScreenType.FORM_LATOUT);
-        footer.setScreenType(EJReportScreenType.FORM_LATOUT);
+        header.setScreenType(EJReportScreenType.FORM_LAYOUT);
+        detail.setScreenType(EJReportScreenType.FORM_LAYOUT);
+        footer.setScreenType(EJReportScreenType.FORM_LAYOUT);
     }
     
-    @Override
+   
     public EJReportBlockProperties getBlockProperties()
     {
         return blockProperties;
@@ -58,19 +57,19 @@ public class EJPluginReportColumnProperties implements EJReportColumnProperties
         this.showFooter = showFooter;
     }
     
-    @Override
+
     public EJPluginReportScreenProperties getHeaderScreen()
     {
         return header;
     }
     
-    @Override
+ 
     public EJPluginReportScreenProperties getDetailScreen()
     {
         return detail;
     }
     
-    @Override
+ 
     public EJPluginReportScreenProperties getFooterScreen()
     {
         return footer;
@@ -86,20 +85,20 @@ public class EJPluginReportColumnProperties implements EJReportColumnProperties
         this.name = name;
     }
     
-    @Override
+   
     public EJPluginReportBorderProperties getHeaderBorderProperties()
     {
         return headerBorderProperties;
     }
     
-    @Override
+    
     public EJPluginReportBorderProperties getDetailBorderProperties()
     {
         return detailBorderProperties;
     }
     
     
-    @Override
+  
     public EJPluginReportBorderProperties getFooterBorderProperties()
     {
         return footerBorderProperties;

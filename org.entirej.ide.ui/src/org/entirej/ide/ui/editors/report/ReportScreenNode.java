@@ -119,7 +119,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             styledString.append(" : ", StyledString.DECORATIONS_STYLER);
             styledString.append(source.getScreenType().toString(), StyledString.QUALIFIER_STYLER);
         }
-        if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+        if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
         {
             styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
             styledString.append("(width,height) = (" + source.getWidth() + " ," + source.getHeight() + ")", StyledString.DECORATIONS_STYLER);
@@ -795,7 +795,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
-            if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+            if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                 return adapter.cast(new ReportScreenPreviewImpl(source));
 
             if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
@@ -823,7 +823,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
         List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
 
-        if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+        if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
         {
             nodes.add(new ReportBlockScreenItemsGroupNode(treeSection, this, forColumnSection));
             if (blockGroupNode != null)

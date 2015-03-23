@@ -718,7 +718,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         EJReportScreenType screenType = layoutScreenProperties.getScreenType();
         switch (screenType)
         {
-            case FORM_LATOUT:
+            case FORM_LAYOUT:
             {
 
                 Collection<EJPluginReportScreenItemProperties> screenItems = layoutScreenProperties.getScreenItems();

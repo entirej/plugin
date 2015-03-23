@@ -12,6 +12,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.Bl
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.report.interfaces.EJReportBlockProperties;
 import org.entirej.framework.report.interfaces.EJReportItemProperties;
+import org.entirej.framework.report.properties.EJCoreReportScreenProperties;
 import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.core.EJCoreLog;
 
@@ -46,7 +47,7 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     
     
     
-    @Override
+    
     public EJPluginReportScreenProperties getLayoutScreenProperties()
     {
         return _layoutScreenProperties;
@@ -54,6 +55,16 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
     
    
     
+   
+    
+    @Override
+    public EJCoreReportScreenProperties getScreenProperties()
+    {
+        return null;
+    }
+
+
+
     @Override
     public Collection<EJReportItemProperties> getAllItemProperties()
     {

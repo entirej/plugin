@@ -37,6 +37,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
 import org.entirej.framework.plugin.utils.EJPluginLogger;
+import org.entirej.framework.report.properties.EJCoreReportVisualAttributeProperties;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EntireJReportPropertiesWriter extends AbstractXmlWriter
@@ -114,7 +115,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
     
     private void addVisualAttributes(EJPluginEntireJReportProperties properties, StringBuffer buffer)
     {
-        Iterator<EJReportVisualAttributeProperties> visualAttributes = properties.getVisualAttributesContainer().getVisualAttributes().iterator();
+        Iterator<EJCoreReportVisualAttributeProperties> visualAttributes = properties.getVisualAttributesContainer().getVisualAttributes().iterator();
         EJReportVisualAttributeProperties visAttr;
         while (visualAttributes.hasNext())
         {

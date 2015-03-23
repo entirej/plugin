@@ -328,7 +328,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
                         {
-                            if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                            if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                                 return adapter.cast(new ReportScreenPreviewImpl(source)
                                 {
                                     
@@ -375,7 +375,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                     if (IReportPreviewProvider.class.isAssignableFrom(adapter))
                     {
-                        if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                        if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                             return adapter.cast(new ReportScreenPreviewImpl(source)
                             {
                                 
@@ -423,7 +423,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
                         {
-                            if (source.getScreenType() == EJReportScreenType.FORM_LATOUT)
+                            if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                                 return adapter.cast(new ReportScreenPreviewImpl(source)
                                 {
                                     

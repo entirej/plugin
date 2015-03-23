@@ -221,7 +221,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                     
                     if(borderProperties!=null)
                     {
-                        if(!borderProperties.isShowRightLine())
+                        if(!borderProperties.showRightLine())
                         {
                             //add dummy maker
                             e.gc.setLineWidth(1);
@@ -248,20 +248,20 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                                 e.gc.setLineStyle(SWT.LINE_SOLID);
                                 break;
                         }
-                        if(borderProperties.isShowTopLine())
+                        if(borderProperties.showTopLine())
                         {
                            
 
                             e.gc.drawLine(colLocation, 0, colLocation+x, 0);
                         }
-                        if(borderProperties.isShowBottomLine())
+                        if(borderProperties.showBottomLine())
                         {
                            
                             
                             
                             e.gc.drawLine(colLocation, composite.getBounds().height-lineWidth, colLocation+x, composite.getBounds().height-lineWidth);
                         }
-                        if(borderProperties.isShowLeftLine())
+                        if(borderProperties.showLeftLine())
                         {
                             
                             
@@ -269,7 +269,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                             e.gc.drawLine(colLocation, 0, colLocation, composite.getBounds().height);
                         }
                         
-                        if(borderProperties.isShowRightLine())
+                        if(borderProperties.showRightLine())
                         {
                             
 

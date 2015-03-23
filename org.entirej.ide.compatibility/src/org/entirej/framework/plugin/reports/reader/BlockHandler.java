@@ -153,6 +153,14 @@ public class BlockHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_SCREEN_TYPE))
         {
+            if (value.equals("FORM_LATOUT"))
+            {
+                value = "FORM_LAYOUT";// typofix
+            }
+            if (value.equals("TABLE_LATOUT"))
+            {
+                value = "TABLE_LAYOUT";// typofix
+            }
             _blockProperties.getLayoutScreenProperties().setScreenType(EJReportScreenType.valueOf(value));;
         }
    
