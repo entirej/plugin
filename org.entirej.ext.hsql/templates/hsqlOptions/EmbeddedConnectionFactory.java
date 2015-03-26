@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.entirej.framework.core.EJFrameworkManager;
 import org.entirej.framework.core.interfaces.EJConnectionFactory;
@@ -17,12 +18,10 @@ public class EmbeddedConnectionFactory implements EJConnectionFactory
 
     public EmbeddedConnectionFactory() throws UnsupportedEncodingException
     {
-        //access to current app root
+        // access to current app root
         URL r = this.getClass().getResource("/");
 
         String decoded = URLDecoder.decode(r.getFile(), "UTF-8");
-
-
 
         dbPath = decoded;
     }
@@ -31,77 +30,83 @@ public class EmbeddedConnectionFactory implements EJConnectionFactory
     public EJFrameworkConnection createConnection(EJFrameworkManager arg0)
     {
 
-        try
+        return new EJFrameworkConnection()
         {
+            private AtomicBoolean            init = new AtomicBoolean(false);
+            Connection connection;
 
-            // create embedded db in class path
+            @Override
+            public void rollback()
+            {
+                try
+                {
+                    if (connection != null)
+                        connection.rollback();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
 
-            Class.forName("org.h2.Driver");
+            }
 
-            final Connection connection = DriverManager.getConnection(String.format("jdbc:h2:%sdb/demo", dbPath), "SA", "");
-
-            return new EJFrameworkConnection()
+            @Override
+            public Object getConnectionObject()
             {
 
-                @Override
-                public void rollback()
+                try
                 {
-                    try
+                    if(!init.get())
                     {
-                        connection.rollback();
+                        Class.forName("org.h2.Driver");
+                        connection = DriverManager.getConnection(String.format("jdbc:h2:%sdb/demo", dbPath), "SA", "");
+                        init.set(true);
                     }
-                    catch (SQLException e)
-                    {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                @Override
-                public Object getConnectionObject()
-                {
                     return connection;
                 }
-
-                @Override
-                public void commit()
+                catch (SQLException e)
                 {
-                    try
-                    {
+                    e.printStackTrace();
+                }
+                catch (ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+                return null;
+
+            }
+
+            @Override
+            public void commit()
+            {
+                try
+                {
+                    if (connection != null)
                         connection.commit();
-                    }
-                    catch (SQLException e)
-                    {
-
-                        e.printStackTrace();
-                    }
-
                 }
-
-                @Override
-                public void close()
+                catch (SQLException e)
                 {
-                    try
-                    {
-                        connection.close();
-                    }
-                    catch (SQLException e)
-                    {
-                        e.printStackTrace();
-                    }
 
+                    e.printStackTrace();
                 }
-            };
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+
+            }
+
+            @Override
+            public void close()
+            {
+                try
+                {
+                    if (connection != null)
+                        connection.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+        };
 
     }
 
