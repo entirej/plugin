@@ -18,8 +18,16 @@
  ******************************************************************************/
 package org.entirej.ide.core;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.equinox.internal.p2.ui.ProvUI;
+import org.eclipse.equinox.internal.p2.ui.ProvUIActivator;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -30,6 +38,7 @@ public class EJCorePlugin extends AbstractUIPlugin implements IStartup
 {
     private BundleContext       bundleContext;
     public static final String  ID = "org.entirej.ide.core";
+    private static final String UPDATE_SITE_URL = "http://entirej.org/entirej/plugin/updatesite/releases/r3.x";
 
     private static EJCorePlugin plugin;
 
@@ -43,6 +52,7 @@ public class EJCorePlugin extends AbstractUIPlugin implements IStartup
 
         super.start(context);
         this.bundleContext = context;
+        setupUpdatSite();
     }
 
     public void stop(BundleContext context) throws Exception
@@ -91,6 +101,27 @@ public class EJCorePlugin extends AbstractUIPlugin implements IStartup
     public static IWorkbenchWindow getActiveWorkbenchWindow()
     {
         return getDefault().getWorkbench().getActiveWorkbenchWindow();
+    }
+    
+    
+    @SuppressWarnings("restriction")
+    void setupUpdatSite()
+    {
+       
+        try
+        {
+            final ProvisioningUI ui = ProvUIActivator.getDefault().getProvisioningUI();
+            IArtifactRepositoryManager artifactManager = ProvUI.getArtifactRepositoryManager(ui.getSession());
+            artifactManager.addRepository(new URI(UPDATE_SITE_URL));
+
+            IMetadataRepositoryManager metadataManager = ProvUI.getMetadataRepositoryManager(ui.getSession());
+            metadataManager.addRepository(new URI(UPDATE_SITE_URL));
+        }
+        catch (URISyntaxException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }
