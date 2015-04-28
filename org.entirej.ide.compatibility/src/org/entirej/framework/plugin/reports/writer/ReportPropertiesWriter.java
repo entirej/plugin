@@ -245,8 +245,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "width", layoutScreenProperties.getWidth() + "");
             writeStringTAG(buffer, "height", layoutScreenProperties.getHeight() + "");
             writeStringTAG(buffer, "headerColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
-            writeStringTAG(buffer, "detailColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
-            writeStringTAG(buffer, "footerColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
+            writeStringTAG(buffer, "detailColHeight", layoutScreenProperties.getDetailColumnHeight() + "");
+            writeStringTAG(buffer, "footerColHeight", layoutScreenProperties.getFooterColumnHeight() + "");
             // Now add the block items
             startTAG(buffer, "itemList");
             {
