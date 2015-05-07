@@ -648,7 +648,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         }
         enum TYPE
         {
-            EMPTY, BLOCK_ITEM, REPORT_PARAMETER, APP_PARAMETER, CLASS_FIELD;
+            EMPTY, BLOCK_ITEM, REPORT_PARAMETER, APP_PARAMETER, CLASS_FIELD,VARIABLE;
 
             public String toString()
             {
@@ -664,6 +664,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                         return "Report Parameter";
                     case CLASS_FIELD:
                         return "Class Field";
+                    case VARIABLE:
+                        return "Report Variable";
                     default:
                         return super.toString();
                 }
@@ -829,6 +831,57 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 return "";
                             }
                         } };
+                        
+                    case VARIABLE:
+                        return new AbstractDescriptor<?>[] { new AbstractTextDropDownDescriptor("Variable")
+                        {
+                            @Override
+                            public void runOperation(AbstractOperation operation)
+                            {
+                                editor.execute(operation);
+                                
+                            }
+                            public String[] getOptions()
+                            {
+                                List<String> list = new ArrayList<String>();
+                                list.add("");
+                                list.add("PAGE_NUMBER");
+                                list.add("PAGE_COUNT");
+                                list.add("CURRENT_DATE");
+                                list.add("");
+                                
+
+                                return list.toArray(new String[0]);
+                            }
+
+                            public String getOptionText(String t)
+                            {
+                                return t;
+                            }
+
+                            @Override
+                            public void setValue(String value)
+                            {
+                                if (value != null && value.trim().length() > 0)
+                                {
+                                    ItemDefaultValue.this.setValue(String.format("%s:%s", entry.name(), value));
+                                }
+                                else
+                                    ItemDefaultValue.this.setValue("");
+
+                            }
+
+                            @Override
+                            public String getValue()
+                            {
+                                String value = ItemDefaultValue.this.getValue();
+                                if (value != null && value.trim().length() > 0 && value.indexOf(":") > 0)
+                                {
+                                    return value.substring(value.indexOf(":") + 1);
+                                }
+                                return "";
+                            }
+                        } };    
                     case BLOCK_ITEM:
                         return new AbstractDescriptor<?>[] { new AbstractCustomDescriptor<String>("Block Item", "")
                         {
