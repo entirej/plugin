@@ -848,6 +848,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 list.add("PAGE_NUMBER");
                                 list.add("PAGE_COUNT");
                                 list.add("CURRENT_DATE");
+                                list.add("PAGE_NUMBER_OF_TOTAL_PAGES");
                                 list.add("");
                                 
 
