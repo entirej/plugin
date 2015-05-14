@@ -29,6 +29,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginApplicationPara
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportChartProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
@@ -355,6 +356,28 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "screenColumnList");
             }
+            else if (layoutScreenProperties.getScreenType() == EJReportScreenType.CHART_LAYOUT)
+            {
+                EJPluginReportChartProperties properties = layoutScreenProperties.getChartProperties();
+                
+                startOpenTAG(buffer, "chartConfig");
+                {
+                    writePROPERTY(buffer, "type", properties.getChartType().name());
+                    writePROPERTY(buffer, "categoryItem", properties.getCategoryItem());
+                    writePROPERTY(buffer, "labelItem", properties.getLabelItem());
+                    writePROPERTY(buffer, "seriesItem", properties.getSeriesItem());
+                    writePROPERTY(buffer, "value1Item", properties.getValue1Item());
+                    writePROPERTY(buffer, "value2Item", properties.getValue2Item());
+                    writePROPERTY(buffer, "value3Item", properties.getValue3Item());
+                    writePROPERTY(buffer, "title", properties.getTitle());
+                    writePROPERTY(buffer, "subtitle", properties.getSeriesItem());
+                    writePROPERTY(buffer, "titleVA", properties.getTitleVA());
+                    writePROPERTY(buffer, "subtitleVA", properties.getSubtitleVA());
+                    closeOpenTAG(buffer);
+                    
+                }
+                endTAG(buffer, "chartConfig");
+            }
         }
         endTAG(buffer, "block");
     }
@@ -375,7 +398,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "width", itemProps.getWidth() + "");
                 writeStringTAG(buffer, "height", itemProps.getHeight() + "");
                 writeStringTAG(buffer, "widthAsPercentage", String.valueOf(itemProps.isWidthAsPercentage()));
-                writeStringTAG(buffer, "heightAsPercentage",String.valueOf( itemProps.isHeightAsPercentage()));
+                writeStringTAG(buffer, "heightAsPercentage", String.valueOf(itemProps.isHeightAsPercentage()));
                 writeStringTAG(buffer, "visible", String.valueOf(itemProps.isVisible()));
                 
                 if (itemProps.getVisualAttributeName() != null) writeStringTAG(buffer, "va", itemProps.getVisualAttributeName());

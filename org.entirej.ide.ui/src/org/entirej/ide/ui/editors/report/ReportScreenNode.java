@@ -458,7 +458,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 
                 for (EJReportScreenType type : EJReportScreenType.values())
                 {
-                    if(blockTableLayout && type==EJReportScreenType.TABLE_LAYOUT)continue;
+                    if(blockTableLayout && type!=EJReportScreenType.FORM_LAYOUT)continue;
                     options.add(type.name());
                 }
                 return options.toArray(new String[0]);
@@ -478,6 +478,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
                 treeSection.expand(ReportScreenNode.this);
+                treeSection.getDescriptorViewer().showDetails(ReportScreenNode.this);
                 if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
@@ -786,6 +787,9 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             descriptors.add(vaOddDescriptor);
             descriptors.add(vaEvenDescriptor);
         }
+        
+        
+        
 
         return descriptors.toArray(new AbstractDescriptor<?>[0]);
     }
@@ -839,7 +843,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     @Override
     public boolean isLeaf()
     {
-        return false;
+        return source.getScreenType() != EJReportScreenType.CHART_LAYOUT;
     }
 
     @Override
