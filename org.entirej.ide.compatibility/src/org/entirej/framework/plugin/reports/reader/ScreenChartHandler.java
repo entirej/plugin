@@ -51,6 +51,7 @@ public class ScreenChartHandler extends EntireJTagHandler
             chartProperties.setChartType(EJReportChartType.valueOf(attributes.getValue("type")));
             chartProperties.setUse3dView(Boolean.valueOf(attributes.getValue("use3dView")));
             chartProperties.setCategoryItem((attributes.getValue("categoryItem")));
+            chartProperties.setSeriesItem((attributes.getValue("seriesItem")));
             chartProperties.setLabelItem((attributes.getValue("labelItem")));
             chartProperties.setValue1Item((attributes.getValue("value1Item")));
             chartProperties.setValue2Item((attributes.getValue("value2Item")));

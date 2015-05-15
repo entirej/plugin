@@ -594,7 +594,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             switch (source.getChartProperties().getChartType())
             {
                 case BAR_CHART:
-                case PIE_CHART:
                 {
                     descriptors.add(new AbstractBooleanDescriptor("Use 3d View")
                     {
@@ -719,6 +718,116 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     };
                     descriptors.add(categoryProvider);
                     
+                    
+                    
+                    
+                }
+                
+                break;
+                
+              
+                case PIE_CHART:
+                {
+                    descriptors.add(new AbstractBooleanDescriptor("Use 3d View")
+                    {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            treeSection.getEditor().execute(operation);
+
+                        }
+
+                        @Override
+                        public void setValue(Boolean value)
+                        {
+                            source.getChartProperties().setUse3dView(value);
+                            treeSection.getEditor().setDirty(true);
+                        }
+
+                        @Override
+                        public Boolean getValue()
+                        {
+                            return  source.getChartProperties().isUse3dView();
+                        }
+                    });
+                    
+                    //value 1 as basic value provider
+                    
+                    ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue( treeSection.getEditor(),source.getBlockProperties()
+                            .getReportProperties(), source.getBlockProperties(), "Value")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return  source.getChartProperties().getValue1Item();
+                        }
+
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            source.getChartProperties().setValue1Item((String) value);
+                            editor.setDirty(true);
+                        }
+
+                        @Override
+                        public String getDefaultBlockValue()
+                        {
+                            return ReportScreenNode.this.source.getBlockProperties().getName();
+                        }
+
+                    };
+                    descriptors.add(valueProvider);
+                    
+                    ReportBlockItemsGroupNode.ItemDefaultValue labelProvider = new ReportBlockItemsGroupNode.ItemDefaultValue( treeSection.getEditor(),source.getBlockProperties()
+                            .getReportProperties(), source.getBlockProperties(), "Label")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return  source.getChartProperties().getLabelItem();
+                        }
+                        
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            source.getChartProperties().setLabelItem((String) value);
+                            editor.setDirty(true);
+                        }
+                        
+                        @Override
+                        public String getDefaultBlockValue()
+                        {
+                            return ReportScreenNode.this.source.getBlockProperties().getName();
+                        }
+                        
+                    };
+                  
+                    ReportBlockItemsGroupNode.ItemDefaultValue seriesProvider = new ReportBlockItemsGroupNode.ItemDefaultValue( treeSection.getEditor(),source.getBlockProperties()
+                            .getReportProperties(), source.getBlockProperties(), "Key")
+                    {
+                        @Override
+                        public String getValue()
+                        {
+                            return  source.getChartProperties().getSeriesItem();
+                        }
+                        
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            source.getChartProperties().setSeriesItem((String) value);
+                            editor.setDirty(true);
+                        }
+                        
+                        @Override
+                        public String getDefaultBlockValue()
+                        {
+                            return ReportScreenNode.this.source.getBlockProperties().getName();
+                        }
+                        
+                    };
+                    descriptors.add(seriesProvider);
+                   
+                    descriptors.add(labelProvider);
                     
                     
                     

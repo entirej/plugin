@@ -1035,14 +1035,18 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                     {
                                         blockViewer.setSelection(new StructuredSelection(split[0]));
 
-                                        Collection<EJPluginReportItemProperties> allItemProperties = formProp.getBlockProperties(split[0])
-                                                .getAllItemProperties();
-                                        for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
+                                        EJReportBlockItemContainer blockProperties2 = formProp.getBlockProperties(split[0]);
+                                        if(blockProperties2!=null)
                                         {
-                                            if (ejItemProperties.getName().equals(split[1]))
+                                            Collection<EJPluginReportItemProperties> allItemProperties = blockProperties2
+                                                    .getAllItemProperties();
+                                            for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
                                             {
-                                                itemViewer.setSelection(new StructuredSelection(ejItemProperties));
-                                                break;
+                                                if (ejItemProperties.getName().equals(split[1]))
+                                                {
+                                                    itemViewer.setSelection(new StructuredSelection(ejItemProperties));
+                                                    break;
+                                                }
                                             }
                                         }
 
