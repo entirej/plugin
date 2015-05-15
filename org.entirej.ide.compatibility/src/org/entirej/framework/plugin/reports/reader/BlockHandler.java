@@ -95,6 +95,11 @@ public class BlockHandler extends EntireJTagHandler
             setDelegate(new ScreenColumnHandler(_blockProperties));
             return;
         }
+        else if (name.equals("chartLayout"))
+        {
+            setDelegate(new ScreenChartHandler(_blockProperties));
+            return;
+        }
         else if (name.equals(ELEMENT_BLOCK_GROUP))
         {
             setDelegate(new BlockGroupHandler(_formProperties, _blockProperties.getLayoutScreenProperties().getSubBlocks()));

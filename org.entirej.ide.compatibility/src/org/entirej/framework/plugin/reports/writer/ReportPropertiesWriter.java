@@ -360,7 +360,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             {
                 EJPluginReportChartProperties properties = layoutScreenProperties.getChartProperties();
                 
-                startOpenTAG(buffer, "chartConfig");
+                startTAG(buffer, "chartLayout");
+                startOpenTAG(buffer, "config");
                 {
                     writePROPERTY(buffer, "type", properties.getChartType().name());
                     writePROPERTY(buffer, "categoryItem", properties.getCategoryItem());
@@ -376,7 +377,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     closeOpenTAG(buffer);
                     
                 }
-                endTAG(buffer, "chartConfig");
+                endTAG(buffer, "config");
+                endTAG(buffer, "chartLayout");
             }
         }
         endTAG(buffer, "block");
