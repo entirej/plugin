@@ -49,5 +49,6 @@ public interface ReportNodeTag
     public static final int    UPDATE           = 1 << 22;
     public static final int    QUERY            = 1 << 23;
     public static final int    OBJGROUP         = 1 << 24;
+    public static final int    CHART_TYPE       = 1 << 25;
 
 }

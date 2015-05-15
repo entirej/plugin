@@ -19,6 +19,8 @@ public class EJPluginReportChartProperties
     private String                               titleVA;
     private String                               subtitleVA;
     
+    private boolean                              use3dView;
+    
     private final EJPluginReportScreenProperties screenProperties;
     
     public EJPluginReportChartProperties(EJPluginReportScreenProperties screenProperties)
@@ -100,48 +102,55 @@ public class EJPluginReportChartProperties
     {
         this.seriesItem = seriesItem;
     }
-
+    
     public String getTitle()
     {
         return title;
     }
-
+    
     public void setTitle(String title)
     {
         this.title = title;
     }
-
+    
     public String getSubtitle()
     {
         return subtitle;
     }
-
+    
     public void setSubtitle(String subtitle)
     {
         this.subtitle = subtitle;
     }
-
+    
     public String getTitleVA()
     {
         return titleVA;
     }
-
+    
     public void setTitleVA(String titleVA)
     {
         this.titleVA = titleVA;
     }
-
+    
     public String getSubtitleVA()
     {
         return subtitleVA;
     }
-
+    
     public void setSubtitleVA(String subtitleVA)
     {
         this.subtitleVA = subtitleVA;
     }
     
+    public boolean isUse3dView()
+    {
+        return use3dView;
+    }
     
-    
+    public void setUse3dView(boolean use3dView)
+    {
+        this.use3dView = use3dView;
+    }
     
 }

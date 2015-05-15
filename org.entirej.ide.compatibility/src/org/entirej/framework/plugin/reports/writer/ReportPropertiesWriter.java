@@ -364,6 +364,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "config");
                 {
                     writePROPERTY(buffer, "type", properties.getChartType().name());
+                    writePROPERTY(buffer, "use3dView", properties.isUse3dView()+"");
                     writePROPERTY(buffer, "categoryItem", properties.getCategoryItem());
                     writePROPERTY(buffer, "labelItem", properties.getLabelItem());
                     writePROPERTY(buffer, "seriesItem", properties.getSeriesItem());

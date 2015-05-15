@@ -24,22 +24,20 @@ import org.entirej.framework.plugin.reports.EJPluginReportChartProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.report.enumerations.EJReportChartType;
 import org.entirej.framework.report.interfaces.EJReportBorderProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class ScreenChartHandler extends EntireJTagHandler
 {
-    private EJPluginReportProperties       _formProperties;
-    private EJPluginReportBlockProperties  _blockProperties;
-    private EJPluginReportColumnProperties _column;
-    private static final String            ELEMENT_ITEM            = "config";
+    private EJPluginReportBlockProperties       _blockProperties;
+    private static final String                 ELEMENT_ITEM = "config";
     private final EJPluginReportChartProperties chartProperties;
-   
     
     public ScreenChartHandler(EJPluginReportBlockProperties blockProperties)
     {
-        _formProperties = blockProperties.getReportProperties();
+        
         _blockProperties = blockProperties;
         chartProperties = _blockProperties.getLayoutScreenProperties().getChartProperties();
         
@@ -50,13 +48,17 @@ public class ScreenChartHandler extends EntireJTagHandler
         if (name.equals(ELEMENT_ITEM))
         {
             
-            String itemname = attributes.getValue("name");
-            
-            _column = new EJPluginReportColumnProperties(_blockProperties);
-            _column.setName(itemname);
-            _column.setShowHeader(Boolean.valueOf(attributes.getValue("showHeader")));
-            _column.setShowFooter(Boolean.valueOf(attributes.getValue("showFooter")));
-            _blockProperties.getLayoutScreenProperties().getColumnContainer().addColumnProperties(_column);
+            chartProperties.setChartType(EJReportChartType.valueOf(attributes.getValue("type")));
+            chartProperties.setUse3dView(Boolean.valueOf(attributes.getValue("use3dView")));
+            chartProperties.setCategoryItem((attributes.getValue("categoryItem")));
+            chartProperties.setLabelItem((attributes.getValue("labelItem")));
+            chartProperties.setValue1Item((attributes.getValue("value1Item")));
+            chartProperties.setValue2Item((attributes.getValue("value2Item")));
+            chartProperties.setValue3Item((attributes.getValue("value3Item")));
+            chartProperties.setTitle((attributes.getValue("title")));
+            chartProperties.setTitleVA((attributes.getValue("titleVA")));
+            chartProperties.setSubtitle((attributes.getValue("subtitle")));
+            chartProperties.setSubtitleVA((attributes.getValue("subtitleVA")));
         }
         
     }
