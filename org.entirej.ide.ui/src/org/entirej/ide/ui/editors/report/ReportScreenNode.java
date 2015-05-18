@@ -585,7 +585,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
             descriptors.add(rendererDescriptor);
 
-            descriptors.add(new AbstractBooleanDescriptor("Use 3d View")
+            AbstractBooleanDescriptor support3dView = new AbstractBooleanDescriptor("Use 3d View")
             {
                 @Override
                 public void runOperation(AbstractOperation operation)
@@ -606,7 +606,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 {
                     return source.getChartProperties().isUse3dView();
                 }
-            });
+            };
+            
 
             // value 1 as basic value provider
 
@@ -723,7 +724,20 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     descriptors.add(valueProvider);
                     descriptors.add(categoryProvider);
                     descriptors.add(labelProvider);
-
+                    descriptors.add(support3dView);
+                    break;
+                }
+                case AREA_CHART:
+                case STACKED_AREA_CHART:
+                {
+                    
+                    seriesProvider.setRequired(true);
+                    valueProvider.setRequired(true);
+                    descriptors.add(seriesProvider);
+                    descriptors.add(valueProvider);
+                    descriptors.add(categoryProvider);
+                    descriptors.add(labelProvider);
+                    
                 }
 
                     break;
@@ -738,6 +752,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     descriptors.add(seriesProvider);
                     descriptors.add(valueProvider);
                     descriptors.add(labelProvider);
+                    descriptors.add(support3dView);
 
                 }
 
