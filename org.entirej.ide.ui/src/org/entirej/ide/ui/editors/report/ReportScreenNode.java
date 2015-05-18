@@ -728,6 +728,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     break;
                 }
                 case AREA_CHART:
+                case LINE_CHART:
                 case STACKED_AREA_CHART:
                 {
                     
