@@ -607,7 +607,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     return source.getChartProperties().isUse3dView();
                 }
             };
-            
 
             // value 1 as basic value provider
 
@@ -624,6 +623,31 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 public void setValue(Object value)
                 {
                     source.getChartProperties().setValue1Item((String) value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getDefaultBlockValue()
+                {
+                    return ReportScreenNode.this.source.getBlockProperties().getName();
+                }
+
+            };
+            // value 2 as basic value provider
+
+            ReportBlockItemsGroupNode.ItemDefaultValue value2Provider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
+                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value2")
+            {
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getValue2Item();
+                }
+
+                @Override
+                public void setValue(Object value)
+                {
+                    source.getChartProperties().setValue2Item((String) value);
                     editor.setDirty(true);
                 }
 
@@ -706,11 +730,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 }
 
             };
-            
-            
-            
-            
-            
 
             switch (source.getChartProperties().getChartType())
             {
@@ -731,14 +750,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 case LINE_CHART:
                 case STACKED_AREA_CHART:
                 {
-                    
+
                     seriesProvider.setRequired(true);
                     valueProvider.setRequired(true);
                     descriptors.add(seriesProvider);
                     descriptors.add(valueProvider);
                     descriptors.add(categoryProvider);
                     descriptors.add(labelProvider);
-                    
+
                 }
 
                     break;
@@ -754,6 +773,24 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     descriptors.add(valueProvider);
                     descriptors.add(labelProvider);
                     descriptors.add(support3dView);
+
+                }
+                    break;
+
+                case XY_AREA_CHART:
+                case XY_BAR_CHART:
+                case XY_LINE_CHART:
+                {
+
+                    valueProvider.setText("X");
+                    value2Provider.setText("Y");
+
+                    seriesProvider.setRequired(true);
+                    valueProvider.setRequired(true);
+                    descriptors.add(seriesProvider);
+                    descriptors.add(valueProvider);
+                    descriptors.add(value2Provider);
+                    descriptors.add(labelProvider);
 
                 }
 
