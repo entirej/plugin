@@ -191,25 +191,7 @@
 							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs</outputDirectory>
 							<destFileName>entirej-rwt-renderer-defs.jar</destFileName>
 						</artifactItem>
-						<!-- RWT_EXT -->
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-rwt-rap</artifactId>
-							<version>${VERSION.RWT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-rap</outputDirectory>
-							<destFileName>entirej-rwt-appframework-rap.jar</destFileName>
-						</artifactItem>
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-rwt-rcp</artifactId>
-							<version>${VERSION.RWT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-rcp</outputDirectory>
-							<destFileName>entirej-rwt-appframework-rcp.jar</destFileName>
-						</artifactItem>
+					
 						
 						<!-- TMT_BASE -->
 						<artifactItem>

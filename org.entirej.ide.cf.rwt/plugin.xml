@@ -7,12 +7,7 @@
             class="org.entirej.ide.cf.rwt.RWTClientFrameworkProvider">
       </provider>
    </extension>
-      <extension
-         point="org.entirej.ide.core.spi.clientframework.exportProvider">
-      <provider
-            class="org.entirej.ide.cf.rwt.RWTRCPClientFrameworkProvider">
-      </provider>
-   </extension>
+
     
     <extension
          point="org.entirej.ide.core.spi.clientframework.exportProvider">
@@ -76,30 +71,6 @@
           class="org.entirej.ide.cf.rwt.lib.tabris.RWTCoreRuntimeContainerPage"/>
    </extension>  
   
-<extension
-       point="org.eclipse.jdt.core.classpathContainerInitializer">
-      <classpathContainerInitializer
-          id="org.eclipse.rwt.runtime.EJCF_RWT_RAP_CONTAINER"
-          class="org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeClasspathContainerInitializer"/>
-   </extension>   
-<extension 
-       point="org.eclipse.jdt.ui.classpathContainerPage">
-      <classpathContainerPage
-          id="org.eclipse.rwt.runtime.EJCF_RWT_RAP_CONTAINER"
-          name="EntireJ RWT/RAP Extension"
-          class="org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeContainerPage"/>
-   </extension>
-<extension
-       point="org.eclipse.jdt.core.classpathContainerInitializer">
-      <classpathContainerInitializer
-          id="org.eclipse.rwt.runtime.EJCF_RWT_RCP_CONTAINER"
-          class="org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeClasspathContainerInitializer"/>
-   </extension>   
-<extension 
-       point="org.eclipse.jdt.ui.classpathContainerPage">
-      <classpathContainerPage
-          id="org.eclipse.rwt.runtime.EJCF_RWT_RCP_CONTAINER"
-          name="EntireJ RWT/RCP Extension"
-          class="org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeContainerPage"/>
-   </extension>         
+  
+        
 </plugin>
