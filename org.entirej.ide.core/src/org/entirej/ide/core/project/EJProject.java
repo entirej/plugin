@@ -26,13 +26,9 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.entirej.ide.core.EJConstants;
 import org.entirej.ide.core.EJCoreLog;
-import org.entirej.ide.core.cf.CFProjectHelper;
 
 public class EJProject extends PlatformObject implements IProjectNature
 {
@@ -186,17 +182,6 @@ public class EJProject extends PlatformObject implements IProjectNature
     {
         try
         {
-            //org.eclipse.rwt.runtime.EJCF_RWT_RAP_CONTAINER cleanup
-            Path path = new Path("org.eclipse.rwt.runtime.EJCF_RWT_RAP_CONTAINER");
-            IJavaProject jproject = JavaCore.create(project);
-            if(CFProjectHelper.hasClasspath(jproject, path))
-            {
-              
-              
-                CFProjectHelper.removeFromClasspath(jproject, path);
-                
-            }
-            
             IProjectDescription description = getProject().getDescription();
             if (getBuilderCommand(description, EJConstants.EJ_FORM_CONST_BUILDER_ID) == null)
             {
