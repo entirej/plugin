@@ -39,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.entirej.ide.cf.rwt.lib.RWTCFRuntimeClasspathContainer;
 import org.entirej.ide.cf.rwt.lib.RWTCoreRuntimeClasspathContainer;
+import org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeClasspathContainer;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.cf.CFProjectHelper;
 import org.entirej.ide.core.cf.EmptyClientFrameworkProvider;
@@ -72,7 +73,7 @@ public class RWTClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.addEntireJBaseLibraries(project, attributes);
             CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTCFRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
             CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTCoreRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
-            //CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTRapRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
+            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTRapRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
             CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jst.j2ee.internal.web.container")));
             CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jst.j2ee.internal.module.container")));
 
