@@ -1134,7 +1134,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     @Override
     public boolean isLeaf()
     {
-        return source.getScreenType() != EJReportScreenType.CHART_LAYOUT;
+        return source.getScreenType() == EJReportScreenType.CHART_LAYOUT;
     }
 
     @Override
