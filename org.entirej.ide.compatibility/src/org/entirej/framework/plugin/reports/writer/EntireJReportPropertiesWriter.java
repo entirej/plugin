@@ -138,6 +138,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "vAlignment", visAttr.getVAlignment().name());
                 writeStringTAG(buffer, "localeFormat", visAttr.getLocalePattern().name());
                 writeStringTAG(buffer, "manualFormat", visAttr.getManualPattern());
+                writeStringTAG(buffer, "decimalDigits", ""+visAttr.getMaximumDecimalDigits());
             }
             endTAG(buffer, "visualAttribute");
         }
