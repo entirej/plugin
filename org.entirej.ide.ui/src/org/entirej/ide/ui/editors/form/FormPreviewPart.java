@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -171,10 +172,20 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
         getSection().setRedraw(false);
         if (previewComposite != null)
         {
-            previewComposite.dispose();
+            final Composite drop = previewComposite;
+            final Shell shell = new Shell();
+            drop.setParent(shell);
+            // Defer disposal so that the effect of refresh in cleaning resources happens.
+            drop. getDisplay().asyncExec(new Runnable() {
+              public void run() {
+                  drop.dispose();
+                shell.dispose();
+              }
+            });
             previewComposite = null;
             if (previewProvider != null)
             {
+                
                 previewProvider.dispose();
                 previewProvider = null;
             }
