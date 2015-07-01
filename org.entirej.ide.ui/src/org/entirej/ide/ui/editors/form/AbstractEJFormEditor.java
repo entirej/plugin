@@ -40,6 +40,7 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
     protected volatile EJPluginFormProperties formProperties;
     protected volatile IJavaProject           project;
     protected EJFormBasePage                  formBasePage;
+    protected EJFormUsagePage                 usagePage;
 
     @Override
     protected void addPages()
@@ -100,12 +101,17 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
     @Override
     public AbstractEditorPage[] getAbstractEditorPages()
     {
-        return new AbstractEditorPage[] { formBasePage = createFormPage() };
+        return new AbstractEditorPage[] { formBasePage = createFormPage(),usagePage = createFormUsagePage() };
     }
 
     protected EJFormBasePage createFormPage()
     {
         return new EJFormBasePage(this);
+    }
+
+    protected EJFormUsagePage createFormUsagePage()
+    {
+        return new EJFormUsagePage(this);
     }
 
     @Override
