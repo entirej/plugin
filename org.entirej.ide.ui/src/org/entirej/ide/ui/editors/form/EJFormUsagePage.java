@@ -22,15 +22,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
 import org.entirej.ide.ui.EJUIImages;
@@ -41,6 +45,7 @@ import org.entirej.ide.ui.editors.form.UsageTreeSection.UsageGroup;
 import org.entirej.ide.ui.editors.handlers.PageActionHandler;
 import org.entirej.ide.ui.editors.handlers.PageActionHandlerProvider;
 import org.entirej.ide.ui.utils.FormsUtil;
+import org.entirej.ide.ui.utils.JavaAccessUtils;
 
 public class EJFormUsagePage extends AbstractEditorPage implements PageActionHandlerProvider
 {
@@ -219,41 +224,81 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
 
         {// ref Blocks groups
             List<Usage> innerObjGroupUsage = new ArrayList<UsageTreeSection.Usage>();
+            List<Usage> blockServicesUsages = new ArrayList<UsageTreeSection.Usage>();
             List<EJPluginBlockProperties> groupProperties = form.getBlockContainer().getAllBlockProperties();
             for (final EJPluginBlockProperties objgroup : groupProperties)
             {
-                if (objgroup.isImportFromObjectGroup() || !objgroup.isReferenceBlock())
+                if (objgroup.isImportFromObjectGroup() || objgroup.isMirrorChild())
                 {
                     continue;
                 }
-                Usage usage = new Usage(objgroup.getReferencedBlockName())
+                if (objgroup.isReferenceBlock())
                 {
-
-                    @Override
-                    public void open()
+                    Usage usage = new Usage(objgroup.getReferencedBlockName())
                     {
-                        FormsUtil.openObjectRefrence(editor.getJavaProject(), objgroup.getReferencedBlockName());
 
-                    }
+                        @Override
+                        public void open()
+                        {
+                            FormsUtil.openObjectRefrence(editor.getJavaProject(), objgroup.getReferencedBlockName());
 
-                    @Override
-                    public String getUsageInfo()
+                        }
+
+                        @Override
+                        public String getUsageInfo()
+                        {
+                            return String.format("Referenced by  Block : '%s'", objgroup.getName());
+                        }
+
+                        @Override
+                        public Image getImage()
+                        {
+                            return EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
+                        }
+                    };
+                    innerObjGroupUsage.add(usage);
+                }
+                if (!objgroup.isControlBlock())
+                {
+                    final String serviceClassName = objgroup.getServiceClassName();
+                    if(serviceClassName!=null && !serviceClassName.isEmpty())
                     {
-                        return String.format("Referenced by  Block : '%s'", objgroup.getName());
-                    }
+                        Usage usage = new Usage(serviceClassName)
+                        {
 
-                    @Override
-                    public Image getImage()
-                    {
-                        return EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
+                            @Override
+                            public void open()
+                            {
+                                JavaAccessUtils.findOrCreateClass(serviceClassName, editor.getJavaProject().getProject(), EJBlockService.class.getName(), null,true);
+
+                            }
+
+                            @Override
+                            public String getUsageInfo()
+                            {
+                                return String.format("Referenced by  Block : '%s'", objgroup.getName());
+                            }
+
+                            @Override
+                            public Image getImage()
+                            {
+                                return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
+                            }
+                        };
+                        blockServicesUsages.add(usage);
                     }
-                };
-                innerObjGroupUsage.add(usage);
+                }
+
             }
             if (innerObjGroupUsage.size() > 0)
             {
                 groups.add(new UsageGroup("Referred Blocks", "Referred blocks inside this form.", innerObjGroupUsage));
 
+            }
+            if (blockServicesUsages.size() > 0)
+            {
+                groups.add(new UsageGroup("Block Services", "Referred block services inside this form.", blockServicesUsages));
+                
             }
 
         }
@@ -267,7 +312,51 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                 {
                     continue;
                 }
-                Usage usage = new Usage(objgroup.getReferencedLovDefinitionName())
+
+                List<Usage> sub = new ArrayList<UsageTreeSection.Usage>();
+
+                for (final EJPluginBlockProperties blockProperties : form.getBlockContainer().getAllBlockProperties())
+                {
+                    if (blockProperties.isImportFromObjectGroup() || blockProperties.isReferenceBlock() || blockProperties.isMirrorChild())
+                        continue;
+                    List<EJPluginLovMappingProperties> lovMappingProperties = blockProperties.getLovMappingContainer().getAllLovMappingProperties();
+                    for (final EJPluginLovMappingProperties mapping : lovMappingProperties)
+                    {
+                        if (mapping.getLovDefinitionName() != null && mapping.getLovDefinitionName().equals(objgroup.getName()))
+                        {
+                            Usage usage = new Usage(mapping.getName())
+                            {
+
+                                @Override
+                                public void open()
+                                {
+                                    editor.setActivePage(EJFormBasePage.PAGE_ID);
+                                    editor.getFormBasePage().getTreeSection().expand(blockProperties);
+                                    editor.getFormBasePage().getTreeSection()
+                                            .selectNodes(true, editor.getFormBasePage().getTreeSection().findNode(mapping, true));
+                                }
+
+                                @Override
+                                public String getUsageInfo()
+                                {
+                                    return String.format("Referenced LOV : '%s' Used in Block %s : Lov Mapping %s", objgroup.getName(),
+                                            blockProperties.getName(), mapping.getName());
+                                }
+
+                                @Override
+                                public Image getImage()
+                                {
+                                    return EJUIImages.getImage(EJUIImages.DESC_LOV_MAPPING);
+                                }
+
+                            };
+                            sub.add(usage);
+                        }
+                    }
+
+                }
+
+                Usage usage = new Usage(objgroup.getReferencedLovDefinitionName(), sub)
                 {
 
                     @Override
@@ -280,7 +369,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                     @Override
                     public String getUsageInfo()
                     {
-                        return String.format("Referenced by LOV : '%s'", objgroup.getName());
+                        return String.format("Referenced LOV : '%s'", objgroup.getReferencedLovDefinitionName());
                     }
 
                     @Override
@@ -331,6 +420,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
         {
             dependencySection.refresh();
             refrenceSection.refresh();
+
             dependencySection.expandNodes();
             refrenceSection.expandNodes();
         }

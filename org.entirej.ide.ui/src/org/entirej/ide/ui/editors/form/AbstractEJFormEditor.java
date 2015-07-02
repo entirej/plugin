@@ -127,6 +127,11 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
             formBasePage.refreshAfterBuid();
     }
 
+    public EJFormBasePage getFormBasePage()
+    {
+        return formBasePage;
+    }
+    
     @Override
     public void saveFile(IFile file, IProgressMonitor monitor) throws IOException
     {

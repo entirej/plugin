@@ -175,6 +175,14 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             treeview.expandToLevel(node, 1);
         }
     }
+    public void expand(Object node)
+    {
+        expand(findNode(node,true));
+    }
+    public void expand(Object node, int level)
+    {
+        expand(findNode(node),level);
+    }
 
     public void expand(AbstractNode<?> node, int level)
     {

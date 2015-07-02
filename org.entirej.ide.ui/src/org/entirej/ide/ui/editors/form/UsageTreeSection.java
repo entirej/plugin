@@ -19,6 +19,7 @@
 package org.entirej.ide.ui.editors.form;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -154,7 +155,7 @@ public abstract class UsageTreeSection extends AbstractNodeTreeSection
     private class UsageNode extends AbstractNode<Usage> implements NodeOverview
     {
 
-        public UsageNode(final GroupNode parent, Usage source)
+        public UsageNode(final AbstractNode<?> parent, Usage source)
         {
             super(parent, source);
         }
@@ -162,6 +163,25 @@ public abstract class UsageTreeSection extends AbstractNodeTreeSection
         public String getName()
         {
             return source.getName();
+        }
+
+        @Override
+        public boolean isLeaf()
+        {
+            return source.getUsages().size() == 0;
+        }
+
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<UsageNode> nodes = new ArrayList<UsageNode>();
+
+            for (Usage usage : source.getUsages())
+            {
+                nodes.add(new UsageNode(this, usage));
+            }
+
+            return nodes.toArray(new AbstractNode<?>[0]);
         }
 
         @Override
@@ -223,16 +243,30 @@ public abstract class UsageTreeSection extends AbstractNodeTreeSection
 
     public static abstract class Usage
     {
-        private final String name;
+        private final String      name;
+
+        private final List<Usage> usages;
+
+        public Usage(String name, List<Usage> usages)
+        {
+            this.name = name;
+            this.usages = usages;
+        }
 
         public Usage(String name)
         {
             this.name = name;
+            usages = Collections.emptyList();
         }
 
         public String getName()
         {
             return name;
+        }
+
+        public List<Usage> getUsages()
+        {
+            return usages;
         }
 
         public abstract void open();
