@@ -51,12 +51,11 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
 {
     protected AbstractEJFormEditor editor;
     protected UsageTreeSection     dependencySection;
-    protected UsageTreeSection     refrenceSection;
-    public static final String     PAGE_ID = "ej.form.usage"; //$NON-NLS-1$
+    public static final String     PAGE_ID = "ej.form.usage.dependencies"; //$NON-NLS-1$
 
     public EJFormUsagePage(AbstractEJFormEditor editor)
     {
-        super(editor, PAGE_ID, "Usage");
+        super(editor, PAGE_ID, "Dependencies");
         this.editor = editor;
     }
 
@@ -65,41 +64,14 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
     {
 
         Composite body = managedForm.getForm().getBody();
-        body.setLayout(EditorLayoutFactory.createFormGridLayout(true, 2));
+        body.setLayout(EditorLayoutFactory.createFormGridLayout(true, 1));
 
         dependencySection = createDependencySection(body);
-        refrenceSection = createRefrenceSection(body);
 
         managedForm.addPart(dependencySection);
-        managedForm.addPart(refrenceSection);
     }
 
-    protected UsageTreeSection createRefrenceSection(Composite body)
-    {
-
-        return new UsageTreeSection(editor, this, body)
-        {
-
-            @Override
-            protected UsageGroup[] getUsageGroups()
-            {
-                return new UsageGroup[0];
-            }
-
-            @Override
-            public String getSectionTitle()
-            {
-                return "References";
-            }
-
-            @Override
-            public String getSectionDescription()
-            {
-
-                return "Referred from other resources.";
-            }
-        };
-    }
+   
 
     protected UsageTreeSection createDependencySection(Composite body)
     {
@@ -392,7 +364,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
     @Override
     protected String getPageHeader()
     {
-        return "Form Usage";
+        return "Form Dependencies";
     }
 
     public PageActionHandler getActionHandler(String commandId)
@@ -419,10 +391,8 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
         if (active)
         {
             dependencySection.refresh();
-            refrenceSection.refresh();
-
+           
             dependencySection.expandNodes();
-            refrenceSection.expandNodes();
         }
     }
 

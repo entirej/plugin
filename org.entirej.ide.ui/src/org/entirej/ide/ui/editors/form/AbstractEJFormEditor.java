@@ -101,7 +101,9 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
     @Override
     public AbstractEditorPage[] getAbstractEditorPages()
     {
-        return new AbstractEditorPage[] { formBasePage = createFormPage(),usagePage = createFormUsagePage() };
+        EJFormReferencePage referencePage = createFormReferencePage();
+        
+        return new AbstractEditorPage[] { formBasePage = createFormPage(), usagePage = createFormUsagePage() ,referencePage};
     }
 
     protected EJFormBasePage createFormPage()
@@ -112,6 +114,11 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
     protected EJFormUsagePage createFormUsagePage()
     {
         return new EJFormUsagePage(this);
+    }
+
+    protected EJFormReferencePage createFormReferencePage()
+    {
+        return new EJFormReferencePage(this);
     }
 
     @Override
@@ -131,7 +138,7 @@ public abstract class AbstractEJFormEditor extends AbstractEditor implements IJa
     {
         return formBasePage;
     }
-    
+
     @Override
     public void saveFile(IFile file, IProgressMonitor monitor) throws IOException
     {
