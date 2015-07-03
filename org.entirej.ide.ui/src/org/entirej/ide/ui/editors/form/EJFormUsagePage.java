@@ -29,8 +29,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.properties.definitions.EJPropertyDefinitionType;
+import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
+import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
+import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.service.EJBlockService;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemRendererDefinition;
+import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
@@ -70,8 +76,6 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
 
         managedForm.addPart(dependencySection);
     }
-
-   
 
     protected UsageTreeSection createDependencySection(Composite body)
     {
@@ -233,7 +237,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                 if (!objgroup.isControlBlock())
                 {
                     final String serviceClassName = objgroup.getServiceClassName();
-                    if(serviceClassName!=null && !serviceClassName.isEmpty())
+                    if (serviceClassName != null && !serviceClassName.isEmpty())
                     {
                         Usage usage = new Usage(serviceClassName)
                         {
@@ -241,7 +245,8 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                             @Override
                             public void open()
                             {
-                                JavaAccessUtils.findOrCreateClass(serviceClassName, editor.getJavaProject().getProject(), EJBlockService.class.getName(), null,true);
+                                JavaAccessUtils.findOrCreateClass(serviceClassName, editor.getJavaProject().getProject(), EJBlockService.class.getName(), null,
+                                        true);
 
                             }
 
@@ -270,7 +275,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
             if (blockServicesUsages.size() > 0)
             {
                 groups.add(new UsageGroup("Block Services", "Referred block services inside this form.", blockServicesUsages));
-                
+
             }
 
         }
@@ -326,6 +331,8 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                         }
                     }
 
+                    sub.addAll(extractLovDefUsageInBlockItems(objgroup.getName(), blockProperties));
+
                 }
 
                 Usage usage = new Usage(objgroup.getReferencedLovDefinitionName(), sub)
@@ -350,6 +357,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                         return EJUIImages.getImage(EJUIImages.DESC_LOV_REF);
                     }
                 };
+                usage.setUnused(sub.isEmpty());
                 innerObjGroupUsage.add(usage);
             }
             if (innerObjGroupUsage.size() > 0)
@@ -391,9 +399,143 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
         if (active)
         {
             dependencySection.refresh();
-           
+
             dependencySection.expandNodes();
         }
+    }
+
+    public List<Usage> extractLovDefUsageInBlockItems(String lov, EJPluginBlockProperties properties)
+    {
+        List<Usage> list = new ArrayList<Usage>();
+
+        Collection<EJPluginBlockItemProperties> allItemDisplayProperties = properties.getItemContainer().getAllItemProperties();
+
+        for (EJPluginBlockItemProperties item : allItemDisplayProperties)
+        {
+            EJFrameworkExtensionProperties rendererProperties = item.getItemRendererProperties();
+            EJDevItemRendererDefinition itemRendererDefinition = item.getItemRendererDefinition();
+            if (rendererProperties != null && itemRendererDefinition != null)
+                processForLOVPropertyDefinitionGroup(item, lov, list, rendererProperties, itemRendererDefinition.getItemPropertyDefinitionGroup());
+        }
+
+        return list;
+    }
+
+    void processForLOVPropertyDefinitionGroup(EJPluginBlockItemProperties item, String lov, List<Usage> list,
+            EJFrameworkExtensionProperties rendererProperties, EJPropertyDefinitionGroup definitionGroup)
+    {
+        if (definitionGroup == null)
+            return;
+
+        Collection<EJPropertyDefinition> propertyDefinitions = definitionGroup.getPropertyDefinitions();
+        for (EJPropertyDefinition definition : propertyDefinitions)
+        {
+            processForLOVPropertyDefinition(item, lov, list, rendererProperties, definitionGroup, definition);
+        }
+
+        // handle sub groups
+        Collection<EJPropertyDefinitionGroup> subGroups = definitionGroup.getSubGroups();
+        for (final EJPropertyDefinitionGroup subGroup : subGroups)
+        {
+            processForLOVPropertyDefinitionGroup(item, lov, list, rendererProperties, subGroup);
+        }
+
+    }
+
+    void processForLOVPropertyDefinition(final EJPluginBlockItemProperties item, final String lov, List<Usage> list,
+            final EJFrameworkExtensionProperties rendererProperties, EJPropertyDefinitionGroup definitionGroup, final EJPropertyDefinition definition)
+    {
+
+        final String groupName;
+        if (definitionGroup.getFullGroupName() == null || definitionGroup.getFullGroupName().trim().length() == 0)
+        {
+            groupName = definition.getName();
+        }
+        else
+        {
+            groupName = String.format("%s.%s", definitionGroup.getFullGroupName(), definition.getName());
+        }
+
+        String strValue = rendererProperties.getStringProperty(groupName);
+        boolean vlaueNull = (strValue == null || strValue.trim().length() == 0);
+
+        if (vlaueNull)
+            return;
+
+        final EJPropertyDefinitionType dataType = definition.getPropertyType();
+        switch (dataType)
+        {
+            case LOV_DEFINITION:
+            {
+                if (lov.equals(strValue))
+                {
+                    Usage usage = new Usage(item.getName())
+                    {
+
+                        @Override
+                        public void open()
+                        {
+                            editor.setActivePage(EJFormBasePage.PAGE_ID);
+
+                            editor.getFormBasePage().getTreeSection().selectNodes(true, editor.getFormBasePage().getTreeSection().findNode(item, true));
+                        }
+
+                        @Override
+                        public String getUsageInfo()
+                        {
+                            return String.format("Referenced LOV : '%s' Used in Block %s :Item %s (%s)", lov, item.getBlockName(), item.getName(),
+                                    definition.getName());
+                        }
+
+                        @Override
+                        public Image getImage()
+                        {
+                            return EJUIImages.getImage(EJUIImages.DESC_BLOCK_ITEM);
+                        }
+
+                    };
+                    list.add(usage);
+                }
+            }
+                break;
+            case LOV_DEFINITION_WITH_ITEMS:
+            {
+                if (strValue != null && lov.equals(strValue.split("\\.")[0]))
+                {
+                    Usage usage = new Usage(item.getName())
+                    {
+
+                        @Override
+                        public void open()
+                        {
+                            editor.setActivePage(EJFormBasePage.PAGE_ID);
+
+                            editor.getFormBasePage().getTreeSection().selectNodes(true, editor.getFormBasePage().getTreeSection().findNode(item, true));
+                        }
+
+                        @Override
+                        public String getUsageInfo()
+                        {
+                            return String.format("Referenced LOV : '%s' Used in Block %s :Item %s (%s)", lov, item.getBlockName(), item.getName(),
+                                    definition.getName());
+                        }
+
+                        @Override
+                        public Image getImage()
+                        {
+                            return EJUIImages.getImage(EJUIImages.DESC_BLOCK_ITEM);
+                        }
+
+                    };
+                    list.add(usage);
+                }
+            }
+                break;
+            default:
+                break;
+
+        }
+
     }
 
 }

@@ -23,9 +23,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
@@ -38,6 +40,9 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 
 public abstract class UsageTreeSection extends AbstractNodeTreeSection
 {
+    
+    public static final Styler UNSUED_STYLER = StyledString.createColorRegistryStyler(
+            JFacePreferences.ERROR_COLOR, null);
     private final AbstractEJFormEditor editor;
 
     public UsageTreeSection(AbstractEJFormEditor editor, FormPage page, Composite parent)
@@ -198,6 +203,12 @@ public abstract class UsageTreeSection extends AbstractNodeTreeSection
 
         public void addOverview(StyledString styledString)
         {
+            
+            if(source.isUnused())
+            {
+                styledString.append(" : ", StyledString.QUALIFIER_STYLER);
+                styledString.append("Unused", UNSUED_STYLER);
+            }
             styledString.append(" : ", StyledString.QUALIFIER_STYLER);
             styledString.append(source.getUsageInfo(), StyledString.COUNTER_STYLER);
 
@@ -246,11 +257,26 @@ public abstract class UsageTreeSection extends AbstractNodeTreeSection
         private final String      name;
 
         private final List<Usage> usages;
+        
+        private boolean unused;
+        
+        
 
         public Usage(String name, List<Usage> usages)
         {
             this.name = name;
             this.usages = usages;
+        }
+        
+        
+        public boolean isUnused()
+        {
+            return unused;
+        }
+        
+        public void setUnused(boolean unused)
+        {
+            this.unused = unused;
         }
 
         public Usage(String name)
