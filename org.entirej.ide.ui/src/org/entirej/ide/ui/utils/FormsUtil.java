@@ -89,7 +89,7 @@ public class FormsUtil
         }
         return false;
     }
-    public static boolean openObjectRefrence(IJavaProject project, String id)
+    public static boolean openObjectGroupRefrence(IJavaProject project, String id)
     {
         
         IPackageFragmentRoot[] packageFragmentRoots;
@@ -100,7 +100,57 @@ public class FormsUtil
             for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
             {
                 if (iPackageFragmentRoot.getResource() instanceof IContainer)
-                    if (handelOpenRefresourceIn((IContainer) iPackageFragmentRoot.getResource(), id, true))
+                    if (handelOpenRefresourceIn((IContainer) iPackageFragmentRoot.getResource(), id, EJDevConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX))
+                    {
+                        
+                        return true;
+                    }
+            }
+            
+        }
+        catch (CoreException e)
+        {
+            EJCoreLog.log(e);
+        }
+        return false;
+    }
+    public static boolean openLovRefrence(IJavaProject project, String id)
+    {
+        
+        IPackageFragmentRoot[] packageFragmentRoots;
+        try
+        {
+            packageFragmentRoots = project.getPackageFragmentRoots();
+            
+            for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
+            {
+                if (iPackageFragmentRoot.getResource() instanceof IContainer)
+                    if (handelOpenRefresourceIn((IContainer) iPackageFragmentRoot.getResource(), id, EJDevConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX))
+                    {
+                        
+                        return true;
+                    }
+            }
+            
+        }
+        catch (CoreException e)
+        {
+            EJCoreLog.log(e);
+        }
+        return false;
+    }
+    public static boolean openRefBlockRefrence(IJavaProject project, String id)
+    {
+        
+        IPackageFragmentRoot[] packageFragmentRoots;
+        try
+        {
+            packageFragmentRoots = project.getPackageFragmentRoots();
+            
+            for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
+            {
+                if (iPackageFragmentRoot.getResource() instanceof IContainer)
+                    if (handelOpenRefresourceIn((IContainer) iPackageFragmentRoot.getResource(), id, EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX))
                     {
                         
                         return true;
@@ -216,7 +266,7 @@ public class FormsUtil
         
         return false;
     }
-    private static boolean handelOpenRefresourceIn(IContainer container, String name, boolean formsonly) throws CoreException
+    private static boolean handelOpenRefresourceIn(IContainer container, String name, String fileExtension) throws CoreException
     {
         
         IResource[] members = container.members();
@@ -224,13 +274,13 @@ public class FormsUtil
         {
             final IResource member = members[i];
             if (member instanceof IContainer){
-                if (handelOpenRefresourceIn((IContainer) member, name, formsonly))
+                if (handelOpenRefresourceIn((IContainer) member, name, fileExtension))
                     return true;
             }
             else if (member instanceof IFile && isRefFormFile((IFile) member))
             {
                 
-                if (getFormName((IFile) member).equals(name))
+                if (((IFile) member).getName().equals(name+"."+fileExtension))
                 {
                     BasicNewResourceWizard.selectAndReveal((IFile) member, EJUIPlugin.getActiveWorkbenchWindow());
                     final IWorkbenchPage activePage = EJUIPlugin.getActiveWorkbenchWindow().getActivePage();

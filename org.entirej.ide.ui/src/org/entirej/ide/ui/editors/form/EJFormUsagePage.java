@@ -172,7 +172,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                     @Override
                     public void open()
                     {
-                        FormsUtil.openObjectRefrence(editor.getJavaProject(), objgroup.getName());
+                        FormsUtil.openObjectGroupRefrence(editor.getJavaProject(), objgroup.getName());
 
                     }
 
@@ -216,7 +216,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                         @Override
                         public void open()
                         {
-                            FormsUtil.openObjectRefrence(editor.getJavaProject(), objgroup.getReferencedBlockName());
+                            FormsUtil.openRefBlockRefrence(editor.getJavaProject(), objgroup.getReferencedBlockName());
 
                         }
 
@@ -341,7 +341,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                     @Override
                     public void open()
                     {
-                        FormsUtil.openObjectRefrence(editor.getJavaProject(), objgroup.getReferencedLovDefinitionName());
+                        FormsUtil.openLovRefrence(editor.getJavaProject(), objgroup.getReferencedLovDefinitionName());
 
                     }
 
