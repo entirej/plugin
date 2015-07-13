@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 public class ReportRuntimeVersions
 {
 
-    public static Version V_2_3 = new Version("3.0.0", ReportRuntimeClasspathContainerInitializer.ID);
+    public static Version V_2_3 = new Version("3.1.0", ReportRuntimeClasspathContainerInitializer.ID);
     //public static Version V_1_0 = new Version("1.0", CoreRuntimeClasspathContainerInitializer.ID_V_1_0);
 
     public static class Version

@@ -26,10 +26,10 @@ import org.entirej.ide.cf.rwt.lib.rcp.RWTRcpRuntimeClasspathContainer;
 public class RWTRuntimeVersions
 {
 
-    public static Version CF_V_2_3     = new Version("3.0.0", RWTCFRuntimeClasspathContainer.ID);
-    public static Version CF_RAP_V_2_3 = new Version("3.0.0", RWTRapRuntimeClasspathContainer.ID);
-    public static Version CF_RCP_V_2_3 = new Version("3.0.0", RWTRcpRuntimeClasspathContainer.ID);
-    public static Version CF_TMT_V_2_3 = new Version("3.0.0", RWTCFRuntimeClasspathContainer.ID);
+    public static Version CF_V_2_3     = new Version("3.1.0", RWTCFRuntimeClasspathContainer.ID);
+    public static Version CF_RAP_V_2_3 = new Version("3.1.0", RWTRapRuntimeClasspathContainer.ID);
+    public static Version CF_RCP_V_2_3 = new Version("3.1.0", RWTRcpRuntimeClasspathContainer.ID);
+    public static Version CF_TMT_V_2_3 = new Version("3.1.0", RWTCFRuntimeClasspathContainer.ID);
 
     public static class Version
     {
