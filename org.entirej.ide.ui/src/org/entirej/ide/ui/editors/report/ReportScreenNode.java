@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
+import org.entirej.framework.report.enumerations.EJReportChartType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
@@ -97,12 +98,11 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         forColumnSection = true;
     }
 
-    
     public boolean isWidthSuppoted()
     {
         return true;
     }
-    
+
     @Override
     public String getName()
     {
@@ -135,17 +135,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         return GROUP;
     }
 
-    
-    
-    
     @Override
     public AbstractDescriptor<?>[] getNodeDescriptors()
     {
         List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
         final List<IMarker> fmarkers = validator.getMarkers();
-        
-        
 
         final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
         {
@@ -165,12 +160,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return validator.getErrorMarkerMsg(fmarkers, vfilter);
             }
+
             @Override
             public void runOperation(AbstractOperation operation)
             {
                 treeSection.getEditor().execute(operation);
-                
+
             }
+
             @Override
             public String getTooltip()
             {
@@ -243,12 +240,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return validator.getErrorMarkerMsg(fmarkers, vfilter);
             }
+
             @Override
             public void runOperation(AbstractOperation operation)
             {
                 treeSection.getEditor().execute(operation);
-                
+
             }
+
             @Override
             public String getWarnings()
             {
@@ -312,12 +311,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return "The X <b>(in pixels)</b> of the report within it's Page.";
             }
+
             @Override
             public void runOperation(AbstractOperation operation)
             {
                 treeSection.getEditor().execute(operation);
-                
+
             }
+
             @Override
             public void setValue(String value)
             {
@@ -368,12 +369,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return "The Y <b>(in pixels)</b> of the report within it's Page.";
             }
+
             @Override
             public void runOperation(AbstractOperation operation)
             {
                 treeSection.getEditor().execute(operation);
-                
+
             }
+
             @Override
             public void setValue(String value)
             {
@@ -414,10 +417,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 super.addEditorAssist(control);
             }
         };
-        
-        
-       
-        
 
         AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Layout", "The renderer you have chosen for your block")
         {
@@ -437,12 +436,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
                 return validator.getErrorMarkerMsg(fmarkers, vfilter);
             }
+
             @Override
             public void runOperation(AbstractOperation operation)
             {
                 treeSection.getEditor().execute(operation);
-                
+
             }
+
             @Override
             public String getWarnings()
             {
@@ -452,13 +453,15 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             public String[] getOptions()
             {
                 List<String> options = new ArrayList<String>();
-                
+
                 EJReportBlockContainer blockContainer = source.getBlockProperties().getReportProperties().getBlockContainer();
-               boolean blockTableLayout =  blockContainer.getHeaderSection().contains(source.getBlockProperties().getName()) || blockContainer.getFooterSection().contains(source.getBlockProperties().getName());
-                
+                boolean blockTableLayout = blockContainer.getHeaderSection().contains(source.getBlockProperties().getName())
+                        || blockContainer.getFooterSection().contains(source.getBlockProperties().getName());
+
                 for (EJReportScreenType type : EJReportScreenType.values())
                 {
-                    if(blockTableLayout && type==EJReportScreenType.TABLE_LAYOUT)continue;
+                    if (blockTableLayout && type != EJReportScreenType.FORM_LAYOUT)
+                        continue;
                     options.add(type.name());
                 }
                 return options.toArray(new String[0]);
@@ -478,6 +481,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(ReportScreenNode.this);
                 treeSection.expand(ReportScreenNode.this);
+                treeSection.getDescriptorViewer().showDetails(ReportScreenNode.this);
                 if (blockGroupNode != null)
                     treeSection.refresh(blockGroupNode);
             }
@@ -489,29 +493,323 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             }
         };
 
-        
         if (!forColumnSection)
         {
             descriptors.add(rendererDescriptor);
-            
 
             descriptors.add(xDescriptor);
             descriptors.add(yDescriptor);
         }
 
-        if(isWidthSuppoted())
+        if (isWidthSuppoted())
             descriptors.add(widthDescriptor);
         descriptors.add(heightDescriptor);
 
+        tableLayoutSettings(descriptors);
+
+        chartLayoutSettings(fmarkers, descriptors);
+
+        return descriptors.toArray(new AbstractDescriptor<?>[0]);
+    }
+
+    private void chartLayoutSettings(final List<IMarker> fmarkers, List<AbstractDescriptor<?>> descriptors)
+    {
+        if (source.getScreenType() == EJReportScreenType.CHART_LAYOUT)
+        {
+            AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Type", "The chart type need to renderer")
+            {
+                Filter vfilter = new Filter()
+                               {
+
+                                   public boolean match(int tag, IMarker marker)
+                                   {
+
+                                       return (tag & ReportNodeTag.CHART_TYPE) != 0;
+                                   }
+                               };
+
+                @Override
+                public String getErrors()
+                {
+
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+
+                }
+
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+
+                public String[] getOptions()
+                {
+                    List<String> options = new ArrayList<String>();
+
+                    for (EJReportChartType type : EJReportChartType.values())
+                    {
+
+                        options.add(type.name());
+                    }
+                    return options.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+
+                    return EJReportChartType.valueOf(t).toString();
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    source.getChartProperties().setChartType(EJReportChartType.valueOf(value));
+
+                    treeSection.getDescriptorViewer().showDetails(ReportScreenNode.this);
+
+                    treeSection.getEditor().setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getChartType().name();
+                }
+            };
+
+            descriptors.add(rendererDescriptor);
+
+            AbstractBooleanDescriptor support3dView = new AbstractBooleanDescriptor("Use 3d View")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    treeSection.getEditor().execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.getChartProperties().setUse3dView(value);
+                    treeSection.getEditor().setDirty(true);
+                }
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getChartProperties().isUse3dView();
+                }
+            };
+
+            // value 1 as basic value provider
+
+            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
+                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value")
+            {
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getValue1Item();
+                }
+
+                @Override
+                public void setValue(Object value)
+                {
+                    source.getChartProperties().setValue1Item((String) value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getDefaultBlockValue()
+                {
+                    return ReportScreenNode.this.source.getBlockProperties().getName();
+                }
+
+            };
+            // value 2 as basic value provider
+
+            ReportBlockItemsGroupNode.ItemDefaultValue value2Provider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
+                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value2")
+            {
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getValue2Item();
+                }
+
+                @Override
+                public void setValue(Object value)
+                {
+                    source.getChartProperties().setValue2Item((String) value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getDefaultBlockValue()
+                {
+                    return ReportScreenNode.this.source.getBlockProperties().getName();
+                }
+
+            };
+
+            ReportBlockItemsGroupNode.ItemDefaultValue labelProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
+                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Label")
+            {
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getLabelItem();
+                }
+
+                @Override
+                public void setValue(Object value)
+                {
+                    source.getChartProperties().setLabelItem((String) value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getDefaultBlockValue()
+                {
+                    return ReportScreenNode.this.source.getBlockProperties().getName();
+                }
+
+            };
+
+            ReportBlockItemsGroupNode.ItemDefaultValue seriesProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
+                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Series")
+            {
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getSeriesItem();
+                }
+
+                @Override
+                public void setValue(Object value)
+                {
+                    source.getChartProperties().setSeriesItem((String) value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getDefaultBlockValue()
+                {
+                    return ReportScreenNode.this.source.getBlockProperties().getName();
+                }
+
+            };
+
+            ReportBlockItemsGroupNode.ItemDefaultValue categoryProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
+                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Category")
+            {
+                @Override
+                public String getValue()
+                {
+                    return source.getChartProperties().getCategoryItem();
+                }
+
+                @Override
+                public void setValue(Object value)
+                {
+                    source.getChartProperties().setCategoryItem((String) value);
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getDefaultBlockValue()
+                {
+                    return ReportScreenNode.this.source.getBlockProperties().getName();
+                }
+
+            };
+
+            switch (source.getChartProperties().getChartType())
+            {
+                case BAR_CHART:
+                case STACKED_BAR_CHART:
+                {
+
+                    seriesProvider.setRequired(true);
+                    valueProvider.setRequired(true);
+                    descriptors.add(seriesProvider);
+                    descriptors.add(valueProvider);
+                    descriptors.add(categoryProvider);
+                    descriptors.add(labelProvider);
+                    descriptors.add(support3dView);
+                    break;
+                }
+                case AREA_CHART:
+                case LINE_CHART:
+                case STACKED_AREA_CHART:
+                {
+
+                    seriesProvider.setRequired(true);
+                    valueProvider.setRequired(true);
+                    descriptors.add(seriesProvider);
+                    descriptors.add(valueProvider);
+                    descriptors.add(categoryProvider);
+                    descriptors.add(labelProvider);
+
+                }
+
+                    break;
+
+                case PIE_CHART:
+                {
+
+                    seriesProvider.setText("Key");
+
+                    seriesProvider.setRequired(true);
+                    valueProvider.setRequired(true);
+                    descriptors.add(seriesProvider);
+                    descriptors.add(valueProvider);
+                    descriptors.add(labelProvider);
+                    descriptors.add(support3dView);
+
+                }
+                    break;
+
+                case XY_AREA_CHART:
+                case XY_BAR_CHART:
+                case XY_LINE_CHART:
+                {
+
+                    valueProvider.setText("X");
+                    value2Provider.setText("Y");
+
+                    seriesProvider.setRequired(true);
+                    valueProvider.setRequired(true);
+                    descriptors.add(seriesProvider);
+                    descriptors.add(valueProvider);
+                    descriptors.add(value2Provider);
+                    descriptors.add(labelProvider);
+
+                }
+
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+    }
+
+    private void tableLayoutSettings(List<AbstractDescriptor<?>> descriptors)
+    {
         if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
         {
-            
+
             final AbstractTextDescriptor hHeightDescriptor = new AbstractTextDescriptor("Header")
             {
-                
-
-               
-
 
                 @Override
                 public void setValue(String value)
@@ -534,12 +832,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     if (blockGroupNode != null)
                         treeSection.refresh(blockGroupNode);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     treeSection.getEditor().execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getValue()
                 {
@@ -558,18 +858,15 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     super.addEditorAssist(control);
                 }
             };
-            
-            
+
             final AbstractTextDescriptor dHeightDescriptor = new AbstractTextDescriptor("Detail")
             {
-                
 
-               
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     treeSection.getEditor().execute(operation);
-                    
+
                 }
 
                 @Override
@@ -612,20 +909,16 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     super.addEditorAssist(control);
                 }
             };
-            
-            
-            
+
             final AbstractTextDescriptor fHeightDescriptor = new AbstractTextDescriptor("Footer")
             {
-                
 
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     treeSection.getEditor().execute(operation);
-                    
-                }
 
+                }
 
                 @Override
                 public void setValue(String value)
@@ -667,22 +960,20 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     super.addEditorAssist(control);
                 }
             };
-            
-            
-          
-            
+
             AbstractGroupDescriptor sectionheights = new AbstractGroupDescriptor("Default Column Heights")
             {
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     treeSection.getEditor().execute(operation);
-                    
+
                 }
+
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
                     // TODO Auto-generated method stub
-                    return new AbstractDescriptor<?>[]{hHeightDescriptor,dHeightDescriptor,fHeightDescriptor};
+                    return new AbstractDescriptor<?>[] { hHeightDescriptor, dHeightDescriptor, fHeightDescriptor };
                 }
             };
             AbstractTextDropDownDescriptor vaOddDescriptor = new AbstractTextDropDownDescriptor("Odd Record VA", "")
@@ -696,12 +987,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     source.setOddRowVAName(value);
                     treeSection.getEditor().setDirty(true);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     treeSection.getEditor().execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getValue()
                 {
@@ -744,12 +1037,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                     source.setEvenRowVAName(value);
                     treeSection.getEditor().setDirty(true);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     treeSection.getEditor().execute(operation);
-                    
+
                 }
+
                 @Override
                 public String getValue()
                 {
@@ -786,8 +1081,6 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             descriptors.add(vaOddDescriptor);
             descriptors.add(vaEvenDescriptor);
         }
-
-        return descriptors.toArray(new AbstractDescriptor<?>[0]);
     }
 
     public <S> S getAdapter(Class<S> adapter)
@@ -800,6 +1093,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
             if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
                 return adapter.cast(new ReportScreenColumnPreviewImpl(source));
+            if (source.getScreenType() == EJReportScreenType.CHART_LAYOUT)
+                return adapter.cast(new ReportScreenChatPreviewImpl(source));
         }
         return null;
     }
@@ -839,7 +1134,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
     @Override
     public boolean isLeaf()
     {
-        return false;
+        return source.getScreenType() == EJReportScreenType.CHART_LAYOUT;
     }
 
     @Override

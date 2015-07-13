@@ -221,6 +221,15 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             formPreviewer.showDetails(node);
     }
 
+    protected void showNodeDetails(Object node)
+    {
+        AbstractNode<?> findNode = findNode(node, true);
+        if (findNode != null)
+        {
+            showNodeDetails(findNode);
+        }
+    }
+
     public void refreshPreview()
     {
         if (formPreviewer != null)
@@ -956,29 +965,26 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             return;
                         }
 
-                      
-                        
-                        ReversibleOperation operation = new ReversibleOperation("Import Object Group"){
-                            
-                            
+                        ReversibleOperation operation = new ReversibleOperation("Import Object Group")
+                        {
+
                             @Override
                             protected void refresh()
                             {
-                               Display.getDefault().asyncExec(new Runnable()
-                            {
-                                
-                                public void run()
+                                Display.getDefault().asyncExec(new Runnable()
                                 {
-                                    FormDesignTreeSection.this.refresh();
-                                    
-                                }
-                            });
+
+                                    public void run()
+                                    {
+                                        FormDesignTreeSection.this.refresh();
+
+                                    }
+                                });
                             }
                         };
-                        AbstractOperation objectsToForm = ObjectGroupAddOperation.importObjectsToForm(FormDesignTreeSection.this, objectGroupDef, formProperties,operation);
+                        AbstractOperation objectsToForm = ObjectGroupAddOperation.importObjectsToForm(FormDesignTreeSection.this, objectGroupDef,
+                                formProperties, operation);
                         editor.execute(objectsToForm);
-
-                       
 
                     }
 
@@ -1750,8 +1756,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
             }
 
-            
-             class ParameterDialog extends TitleAreaDialog
+            class ParameterDialog extends TitleAreaDialog
             {
 
                 private String                       message = "";
@@ -1817,9 +1822,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     layout.numColumns = 4;
                     layout.verticalSpacing = 9;
 
-                    
-
-                    
                     Label nameLabel = new Label(container, SWT.NULL);
                     nameLabel.setText("Parameter Name:");
                     nameText = new Text(container, SWT.BORDER | SWT.SINGLE);
@@ -1847,7 +1849,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         {
                             verifyDefaultValue();
                             validate();
-                            
+
                         }
                     });
 
@@ -1884,7 +1886,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     defaultValueText = new Text(container, SWT.BORDER | SWT.SINGLE);
                     if (applicationParameter != null && applicationParameter.getDefaultValue() != null)
                         defaultValueText.setText(applicationParameter.getDefaultValue());
-                     gd = new GridData(GridData.FILL_HORIZONTAL);
+                    gd = new GridData(GridData.FILL_HORIZONTAL);
                     gd.horizontalSpan = 3;
                     defaultValueText.setLayoutData(gd);
                     defaultValueText.addModifyListener(new ModifyListener()
@@ -1897,11 +1899,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     verifyDefaultValue();
                 }
 
-                
                 private void verifyDefaultValue()
                 {
                     String type = dataTypeText.getText();
-                    if(type.length()==0 || !EJPluginApplicationParameter.isValidDefaultValueType(type))
+                    if (type.length() == 0 || !EJPluginApplicationParameter.isValidDefaultValueType(type))
                     {
                         defaultValueText.setEnabled(false);
                         defaultValueText.setText("");
@@ -1909,10 +1910,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     else
                     {
                         defaultValueText.setEnabled(true);
-                        
+
                     }
                 }
-                
+
                 private void validate()
                 {
                     IStatus iStatus = org.eclipse.core.runtime.Status.OK_STATUS;
@@ -1929,10 +1930,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     {
                         iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a parameter type.");
                     }
-                    else  if (iStatus.isOK() && defaultValueText != null && (defaultValueText.getText().length() != 0))
+                    else if (iStatus.isOK() && defaultValueText != null && (defaultValueText.getText().length() != 0))
                     {
                         String defaultValueError = EJPluginApplicationParameter.validateDefaultValue(dataTypeText.getText(), defaultValueText.getText());
-                        if(defaultValueError!=null)
+                        if (defaultValueError != null)
                             iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), defaultValueError);
                     }
 
@@ -1953,7 +1954,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         setMessage(iStatus.getMessage(), IMessageProvider.ERROR);
 
                     }
-                    if(getButton(IDialogConstants.OK_ID)!=null)
+                    if (getButton(IDialogConstants.OK_ID) != null)
                         getButton(IDialogConstants.OK_ID).setEnabled(iStatus.isOK());
 
                 }
@@ -1989,7 +1990,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
 
             }
-            
+
             AbstractGroupDescriptor parametersDes = new AbstractGroupDescriptor("Form Parameters")
             {
                 IRefreshHandler              handler;
@@ -2022,8 +2023,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         {
 
                             EJPluginApplicationParameter newEntry = new EJPluginApplicationParameter("", "java.lang.String");
-                            
-                            
+
                             ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), newEntry);
                             if (dialog.open() == Window.OK)
                             {
@@ -2034,9 +2034,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                     tableViewer.add(newEntry);
                                     tableViewer.setSelection(new StructuredSelection(newEntry), true);
                                 }
-                                editor.setDirty(true); 
+                                editor.setDirty(true);
                             }
-                            
+
                         }
 
                     };
@@ -2052,7 +2052,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             if (entry == null)
                                 return;
 
-                            
                             if (tableViewer != null)
                             {
                                 ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), entry);
@@ -2072,13 +2071,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     // create delete Action
                     deleteAction = new Action("Delete", IAction.AS_PUSH_BUTTON)
                     {
-                        
+
                         @Override
                         public void run()
                         {
                             if (entry == null)
                                 return;
-                            
+
                             source.getFormProperties().removeFormParameter(entry);
                             if (tableViewer != null)
                             {
@@ -2093,13 +2092,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             }
                             editor.setDirty(true);
                         }
-                        
+
                     };
                     deleteAction.setImageDescriptor(EJUIImages.DESC_DELETE_ITEM);
                     deleteAction.setDisabledImageDescriptor(EJUIImages.DESC_DELETE_ITEM_DISABLED);
                     deleteAction.setEnabled(entry != null);
 
-                    return new Action[] { addAction,editAction, deleteAction };
+                    return new Action[] { addAction, editAction, deleteAction };
                 }
 
                 public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
@@ -2149,11 +2148,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     });
                     factory.createColumn("Default Value", 200, new ColumnLabelProvider()
                     {
-                        
+
                         @Override
                         public String getText(Object element)
                         {
-                            
+
                             if (element instanceof EJPluginApplicationParameter)
                             {
                                 EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
@@ -2210,7 +2209,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                     });
 
-                    
                     tableViewer.addDoubleClickListener(new IDoubleClickListener()
                     {
 
@@ -2232,7 +2230,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                         }
                     });
-                    
+
                     tableViewer.setInput(new Object());
                     if (tableViewer.getTable().getItemCount() > 0)
                         tableViewer.getTable().select(0);
@@ -2248,9 +2246,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    
-                        return new AbstractDescriptor<?>[0];
-                   
+
+                    return new AbstractDescriptor<?>[0];
+
                 }
             };
 

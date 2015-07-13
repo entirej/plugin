@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.entirej.ide.feature_3.0.0.qualifier.jar" id="org.entirej.ide.feature" version="3.0.0.qualifier">
+   <feature url="features/org.entirej.ide.feature_3.1.0.qualifier.jar" id="org.entirej.ide.feature" version="3.1.0.qualifier">
       <category name="entirej_core_features"/>
    </feature>
-   <feature url="features/org.entirej.fx.feature_3.0.0.qualifier.jar" id="org.entirej.fx.feature" version="3.0.0.qualifier">
+   <feature url="features/org.entirej.fx.feature_3.1.0.qualifier.jar" id="org.entirej.fx.feature" version="3.1.0.qualifier">
       <category name="entirej_fx_features"/>
    </feature>
    <category-def name="entirej_core_features" label="EntireJ"/>

@@ -1442,7 +1442,7 @@ public class EJFormValidateImpl implements EJFormValidateProvider
         return file.getName().endsWith(EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX);
     }
 
-    EJPluginFormProperties getFormProperties(IFile file, IJavaProject project)
+    static EJPluginFormProperties getFormProperties(IFile file, IJavaProject project)
     {
 
         EJPluginFormProperties formProperties = null;
@@ -1498,7 +1498,7 @@ public class EJFormValidateImpl implements EJFormValidateProvider
         return tagMarker(addMarker(file, p), tag);
     }
 
-    public IMarker addMarker(IFile file, Problem p)
+    public static IMarker addMarker(IFile file, Problem p)
     {
         if (p != null)
         {

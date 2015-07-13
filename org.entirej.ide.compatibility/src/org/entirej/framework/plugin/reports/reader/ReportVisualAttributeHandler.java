@@ -50,6 +50,9 @@ public class ReportVisualAttributeHandler extends EntireJTagHandler
     private static final String               MANUALFORMAT      = "manualFormat";
     private static final String               LOCALEFORMAT      = "localeFormat";
     
+
+    private static final String                   FORMAT_DECIMAL_DIGITS = "decimalDigits";
+    
     @Override
     public void startLocalElement(String name, Attributes attributes) throws SAXException
     {
@@ -118,6 +121,13 @@ public class ReportVisualAttributeHandler extends EntireJTagHandler
             if (value.length() > 0)
             {
                 _vaProperties.setBackgroundRGB(value);
+            }
+        }
+        else if (name.equals(FORMAT_DECIMAL_DIGITS))
+        {
+            if (value.length() > 0)
+            {
+                _vaProperties.setMaximumDecimalDigits(Integer.valueOf(value));
             }
         }
         

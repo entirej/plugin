@@ -34,6 +34,9 @@ import org.entirej.ide.core.EJCoreLog;
 public class EJFormEditor extends AbstractEJFormEditor
 {
 
+    
+    
+    
     @Override
     public void loadFile(IFile file)
     {

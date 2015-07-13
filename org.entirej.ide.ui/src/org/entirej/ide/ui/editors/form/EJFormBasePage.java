@@ -276,5 +276,11 @@ public class EJFormBasePage extends AbstractEditorPage implements PageActionHand
         }
 
     }
+    
+    public FormDesignTreeSection getTreeSection()
+    {
+        return treeSection;
+    }
+    
 
 }

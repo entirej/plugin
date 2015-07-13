@@ -577,8 +577,59 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                         }
 
                     };
+                    
+                    final AbstractTextDescriptor sizeDescriptor = new AbstractTextDescriptor("Maximum Decimal  Digits")
+                    {
 
-                    return new AbstractDescriptor<?>[] { fontGroupDescriptor, colorGroupDescriptor, markup, hAlignment, vAlignment, lformat, mformatDescriptor };
+                        @Override
+                        public void setValue(String value)
+                        {
+                            try
+                            {
+                                source.setMaximumDecimalDigits(Integer.parseInt(value));
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                source.setMaximumDecimalDigits(-1);
+                            }
+                            editor.setDirty(true);
+                            refresh(VisualAttributeNode.this);
+                        
+                        }
+
+                        @Override
+                        public String getValue()
+                        {
+                            if (source.getMaximumDecimalDigits() == -1)
+                                return EJCoreVisualAttributeProperties.UNSPECIFIED;
+                            return String.valueOf(source.getMaximumDecimalDigits());
+                        }
+
+                        @Override
+                        public void addEditorAssist(Control control)
+                        {
+                            final Text text = (Text) control;
+                            ((Text) control).addVerifyListener(new EJPluginEntireJNumberVerifier()
+                            {
+                                @Override
+                                public void verifyText(VerifyEvent e)
+                                {
+                                    if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS && text.getText().equals(EJCoreVisualAttributeProperties.UNSPECIFIED))
+                                    {
+                                        e.doit = false;
+                                        text.setText("");
+                                    }
+                                    super.verifyText(e);
+                                }
+
+                            });
+
+                            super.addEditorAssist(control);
+                        }
+                    };
+                    
+
+                    return new AbstractDescriptor<?>[] { fontGroupDescriptor, colorGroupDescriptor, markup, hAlignment, vAlignment, lformat, mformatDescriptor,sizeDescriptor };
 
                 }
 

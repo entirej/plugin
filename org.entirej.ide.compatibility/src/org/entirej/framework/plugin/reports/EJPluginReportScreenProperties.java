@@ -7,6 +7,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.Bl
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
+import org.entirej.framework.report.properties.EJCoreReportChartProperties;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
 public class EJPluginReportScreenProperties 
@@ -29,17 +30,26 @@ public class EJPluginReportScreenProperties
     private String                        oddRowVAName;
     private String                        evenRowVAName;
     
+    private final EJPluginReportChartProperties chartProperties; 
+    
     public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
         this.blockProperties = blockProperties;
         _screenItemContainer = new EJReportScreenItemContainer(blockProperties, this);
         _columnContainer = new EJReportColumnContainer(blockProperties);
+        chartProperties = new EJPluginReportChartProperties(this);
     }
     
    
     public EJPluginReportBlockProperties getBlockProperties()
     {
         return blockProperties;
+    }
+    
+    
+    public EJPluginReportChartProperties getChartProperties()
+    {
+        return chartProperties;
     }
     
    
