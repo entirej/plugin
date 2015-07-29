@@ -35,6 +35,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJFormReader;
 import org.entirej.framework.plugin.framework.properties.reader.FormHandler;
 import org.entirej.ide.core.EJCoreLog;
+import org.entirej.ide.ui.editors.AbstractEditorPage;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeContentProvider;
 
@@ -59,6 +60,13 @@ public class EJRefLovEditor extends AbstractEJFormEditor
         };
     }
 
+    
+    public AbstractEditorPage[] getAbstractEditorPages()
+    {
+        EJFormReferencePage referencePage = createFormReferencePage();
+        
+        return new AbstractEditorPage[] { formBasePage = createFormPage(),referencePage};
+    }
     @Override
     public String getActivePageID()
     {
@@ -192,6 +200,9 @@ public class EJRefLovEditor extends AbstractEJFormEditor
         {
             return new Action[] { /* ignore */};
         }
+        
+        
+        
 
     }
 
