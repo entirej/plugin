@@ -58,6 +58,9 @@ public class EJRWTRendererConfigFix
         // items
         mappingItem.add(new Entry("ListItem", "org.entirej.applicationframework.rwt.renderers.item.EJRWTListItemRenderer",
                 "org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTListBoxRendererDefinition"));
+        // items
+        mappingItem.add(new Entry("StackedItem", "org.entirej.applicationframework.rwt.renderers.item.EJRWTStackedItemRenderer",
+                "org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTStackedItemRendererDefinition"));
     }
     
     public boolean config(EJPluginEntireJProperties properties)
