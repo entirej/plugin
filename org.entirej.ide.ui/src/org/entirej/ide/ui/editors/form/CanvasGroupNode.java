@@ -3188,6 +3188,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
+                        break;
                     case FORM:
                         nodes.add(new FormCanvasNode(this, canvas));
                         break;
