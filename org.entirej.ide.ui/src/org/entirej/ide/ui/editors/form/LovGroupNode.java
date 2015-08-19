@@ -73,6 +73,7 @@ import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
@@ -1166,6 +1167,33 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 }
             };
 
+            
+            
+            final AbstractBooleanDescriptor automaticRefresh = new AbstractBooleanDescriptor("Automatic Refresh")
+            {
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setAutomaticRefresh(value);
+                    editor.setDirty(true);
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return source.refreshAutomatically();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+            };
+            
+            
             final AbstractTextDescriptor heightDescriptor = new AbstractTextDescriptor("Height")
             {
                 @Override
@@ -1214,6 +1242,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 }
             };
 
+            descriptors.add(automaticRefresh);
             AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
             {
                 @Override

@@ -648,6 +648,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
             
             writeIntTAG(buffer, "width", lovDefProps.getWidth());
             writeIntTAG(buffer, "height", lovDefProps.getHeight());
+            writeBooleanTAG(buffer, "automaticRefresh", lovDefProps.refreshAutomatically());
             writeStringTAG(buffer, "actionProcessorClassName", lovDefProps.getActionProcessorClassName());
             
             startTAG(buffer, "lovRendererProperties");
