@@ -481,6 +481,16 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
             if (serviceType != null)
             {
                 String[] superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                
+                while (superInterfaces.length==0 && !Object.class.getName().equals(serviceType.getSuperclassTypeSignature()))
+                {
+                    
+                    serviceType = getEntireJProperties().getJavaProject().findType(serviceType.getSuperclassTypeSignature());
+                    superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                    
+                }
+                
+                
                 for (String superInterface : superInterfaces)
                 {
                     String typeErasure = Signature.getTypeErasure(Signature.toString(superInterface));
