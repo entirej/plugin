@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.entirej.framework.core.EJApplicationException;
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 
@@ -57,14 +58,48 @@ public class EJPluginMethodRetriever
         return nameList;
     }
     
+    
+    
+    public static Class<?> getPojoFromService(Class<?> service)
+    {
+
+        Type[] types = service.getGenericInterfaces();
+        
+        while (types.length==0 && !Object.class.equals(service.getSuperclass()))
+        {
+            service = service.getSuperclass();
+            types = service.getGenericInterfaces();
+            
+        }
+        if(types.length>0)
+        {
+            for (Type type : types)
+            {
+                if(type instanceof ParameterizedType && ((ParameterizedType)type).getRawType().equals(EJBlockService.class))
+                {
+                 
+                    
+                    Type[] sub =  ((ParameterizedType)type).getActualTypeArguments();
+
+                    if(sub.length>0)
+                    {
+                       return  (Class<?>) sub[0];
+                    }
+                   
+                }
+            }
+            
+        }
+            
+       
+        throw new EJApplicationException("Pojo Is not correclty defind on impl of  Interface EJBlockService<>");
+
+    }
     public static Map<String, String> getPropertyNamesAndDatatypesFromService(EJPluginEntireJProperties entireJProperties, Class<?> serviceClass)
     {
-        Type[] types = serviceClass.getGenericInterfaces();
-        ParameterizedType type = (ParameterizedType) types[0];
-        Type typeArgument = type.getActualTypeArguments()[0];
-        Class<?> pojoClass = (Class<?>) typeArgument;
         
-        return getPojoProperties(pojoClass);
+        
+        return getPojoProperties(getPojoFromService(serviceClass));
     }
     
     public static Map<String, String> getPojoProperties(Class<?> pojoClass)
