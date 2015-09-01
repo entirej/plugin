@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -200,6 +201,15 @@ public class EJPluginReportBlockProperties implements EJReportBlockProperties, B
             if (serviceType != null)
             {
                 String[] superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                
+                while (superInterfaces.length==0 && !Object.class.getName().equals(Signature.toString(serviceType.getSuperclassTypeSignature())))
+                {
+                   
+                    serviceType = serviceType.newSupertypeHierarchy(new NullProgressMonitor()).getSuperclass(serviceType);
+                    superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                    
+                }
+                
                 for (String superInterface : superInterfaces)
                 {
                     String typeErasure = Signature.getTypeErasure(Signature.toString(superInterface));
