@@ -83,7 +83,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJCanvasTabPosition              _tabPosition                 = EJCanvasTabPosition.TOP;
     private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
 
-    private boolean _closeableMessagePane;
+    private boolean _closeableMessagePane = true;
     
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
