@@ -1359,7 +1359,7 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
         if (_isReferenced)
         {
             EJPluginBlockProperties blockProperties = _formProperties.getBlockProperties(_referencedBlockName);
-            if (blockProperties != null) return blockProperties.getLovMappingContainer();
+            if (blockProperties != null && !blockProperties.equals(this)) return blockProperties.getLovMappingContainer();
         }
         return _lovMappingContainer;
     }
