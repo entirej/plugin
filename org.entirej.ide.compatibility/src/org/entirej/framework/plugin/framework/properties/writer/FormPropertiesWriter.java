@@ -516,6 +516,8 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
                     }
                     
+                    writeBooleanTAG(buffer, "closeableMessagePane", canvasProps.getCloseableMessagePane());
+                    
                     addTabPageProperties(canvasProps, buffer);
                     addStackedPageProperties(canvasProps, buffer);
                     addCanvasGroupCanvases(canvasProps, buffer);

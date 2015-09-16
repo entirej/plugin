@@ -34,14 +34,13 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginStac
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginTabPageContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginFormPreviewProvider;
 
-
 public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFormPreviewProvider
 {
     /**
      * 
      */
-    private static final long serialVersionUID = 2469290104959744115L;
-
+    private static final long                serialVersionUID             = 2469290104959744115L;
+    
     // This is the container to which this canvas property object belongs. This
     // is required by the item mover to know where to remove the canvas from and
     // where to put it
@@ -66,8 +65,8 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private String                           _buttonTwoText               = "";
     private String                           _buttonThreeText             = "";
     private String                           _firstInitialStackedPageName = "";
-
-    private String                           _referencedObjectGroupName    = "";
+    
+    private String                           _referencedObjectGroupName   = "";
     
     private boolean                          _objectGroupRoot;
     
@@ -77,12 +76,14 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJPluginCanvasGroupPageContainer _canvasGroupContainer;
     private EJPluginCanvasSplitPageContainer _canvasSplitContainer;
     
-    private String                               _referredFormId;
+    private String                           _referredFormId;
     //
     // If the Canvas type is TAB, then the following properties are also
     // available
     private EJCanvasTabPosition              _tabPosition                 = EJCanvasTabPosition.TOP;
     private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
+
+    private boolean _closeableMessagePane;
     
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
@@ -684,8 +685,6 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         return null;
     }
     
-    
-    
     public String getReferencedObjectGroupName()
     {
         return _referencedObjectGroupName;
@@ -698,7 +697,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     
     public boolean isImportFromObjectGroup()
     {
-        return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
+        return _referencedObjectGroupName != null && _referencedObjectGroupName.trim().length() > 0;
     }
     
     public boolean isObjectGroupRoot()
@@ -716,9 +715,19 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     {
         return _referredFormId;
     }
-
+    
     public void setReferredFormId(String referredFormId)
     {
         this._referredFormId = referredFormId;
+    }
+    
+    public void setCloseableMessagePane(boolean closeableMessagePane)
+    {
+        this._closeableMessagePane = closeableMessagePane;
+    }
+    
+    public Boolean getCloseableMessagePane()
+    {
+        return _closeableMessagePane;
     }
 }

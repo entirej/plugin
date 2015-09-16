@@ -730,6 +730,32 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 descriptors.add(canvasDescriptor);
             }
 
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+            descriptors.add(canvasMessagePane);
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
 
@@ -810,46 +836,44 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final FormCanvasNode node = FormCanvasNode.this;
-            
-            
+
             AbstractDropDownDescriptor<String> formNameDescriptor = new AbstractDropDownDescriptor<String>("Referred Form")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+
+                    source.setReferredFormId(value);
+
+                    editor.setDirty(true);
+
+                    treeSection.refresh(node);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getReferredFormId();
+                }
+
+                public String[] getOptions()
+                {
+                    IJavaProject javaProject = editor.getJavaProject();
+                    if (javaProject != null)
                     {
+                        List<String> formNames = FormsUtil.getFormNames(javaProject);
+                        formNames.remove(editor.getFormProperties().getName());
+                        return formNames.toArray(new String[0]);
+                    }
+                    return new String[0];
+                }
 
-                        @Override
-                        public void setValue(String value)
-                        {
-                           
-                            source.setReferredFormId(value);
-                            
-
-                            editor.setDirty(true);
-
-                            treeSection.refresh(node);
-                        }
-
-                        @Override
-                        public String getValue()
-                        {
-                            return source.getReferredFormId();
-                        }
-
-                        public String[] getOptions()
-                        {
-                            IJavaProject javaProject = editor.getJavaProject();
-                            if (javaProject != null)
-                            {
-                                List<String> formNames = FormsUtil.getFormNames(javaProject);
-                                formNames.remove(editor.getFormProperties().getName());
-                                return formNames.toArray(new String[0]);
-                            }
-                            return new String[0];
-                        }
-
-                        public String getOptionText(String t)
-                        {
-                            return t;
-                        }
-                    };
+                public String getOptionText(String t)
+                {
+                    return t;
+                }
+            };
 
             final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
@@ -1128,7 +1152,34 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { formNameDescriptor,layoutGroupDescriptor };
+
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+
+            return new AbstractDescriptor<?>[] { formNameDescriptor, layoutGroupDescriptor, canvasMessagePane };
 
         }
 
@@ -1725,7 +1776,33 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, layoutGroupDescriptor };
+
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, canvasMessagePane, layoutGroupDescriptor };
         }
 
     }
@@ -2169,7 +2246,33 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+            
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+            return new AbstractDescriptor<?>[] { orientationDescriptor,canvasMessagePane, layoutGroupDescriptor };
         }
 
     }
@@ -2597,7 +2700,34 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+            
+            return new AbstractDescriptor<?>[] { orientationDescriptor,canvasMessagePane, layoutGroupDescriptor };
         }
 
     }
@@ -3029,7 +3159,33 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+            return new AbstractDescriptor<?>[] { orientationDescriptor, canvasMessagePane, layoutGroupDescriptor };
         }
 
     }
@@ -3542,7 +3698,34 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
-            return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, layoutGroupDescriptor, actionsGroupDescriptor };
+            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+
+            };
+            canvasMessagePane.setText("Closeable Message Pane");
+
+            return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, canvasMessagePane, layoutGroupDescriptor, actionsGroupDescriptor };
         }
 
     }
