@@ -754,7 +754,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
             descriptors.add(canvasMessagePane);
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
@@ -1177,8 +1178,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
-
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+            
             return new AbstractDescriptor<?>[] { formNameDescriptor, layoutGroupDescriptor, canvasMessagePane };
 
         }
@@ -1801,7 +1803,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+            
             return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, canvasMessagePane, layoutGroupDescriptor };
         }
 
@@ -2271,7 +2275,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+            
             return new AbstractDescriptor<?>[] { orientationDescriptor,canvasMessagePane, layoutGroupDescriptor };
         }
 
@@ -2725,7 +2731,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
             
             return new AbstractDescriptor<?>[] { orientationDescriptor,canvasMessagePane, layoutGroupDescriptor };
         }
@@ -3184,7 +3191,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+            
             return new AbstractDescriptor<?>[] { orientationDescriptor, canvasMessagePane, layoutGroupDescriptor };
         }
 
@@ -3723,7 +3732,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
             };
-            canvasMessagePane.setText("Closeable Message Pane");
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+            
 
             return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, canvasMessagePane, layoutGroupDescriptor, actionsGroupDescriptor };
         }
