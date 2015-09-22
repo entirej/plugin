@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
@@ -414,6 +415,130 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
         }
 
+        protected AbstractGroupDescriptor createMessagePaneSettings()
+        {
+
+            final AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+
+            
+            final AbstractTextDescriptor sizeHintDescriptor = new AbstractTextDescriptor("Size")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setMessagePaneSize(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setWidth(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getMessagePaneSize());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            
+            
+            final AbstractDropDownDescriptor<EJCanvasMessagePosition> position = new AbstractDropDownDescriptor<EJCanvasMessagePosition>("Position")
+                    {
+
+                        public EJCanvasMessagePosition[] getOptions()
+                        {
+
+                            return EJCanvasMessagePosition.values();
+                        }
+
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
+
+                        public String getOptionText(EJCanvasMessagePosition t)
+                        {
+                            return t.toString();
+                        }
+
+                        public void setValue(EJCanvasMessagePosition value)
+                        {
+                            source.setMessagePosition(value);
+                            editor.setDirty(true);
+                        }
+
+                        public EJCanvasMessagePosition getValue()
+                        {
+                            return source.getMessagePosition();
+                        }
+                    };
+
+            
+            return new AbstractGroupDescriptor("Message Pane Settings")
+            {
+
+                public AbstractDescriptor<?>[] getDescriptors()
+                {
+                    return new AbstractDescriptor<?>[] { canvasMessagePane,sizeHintDescriptor,position };
+                }
+            };
+        }
+
         @Override
         public INodeRenameProvider getRenameProvider()
         {
@@ -730,33 +855,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 descriptors.add(canvasDescriptor);
             }
 
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            descriptors.add(canvasMessagePane);
+           descriptors.add(createMessagePaneSettings());
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
 
@@ -1154,34 +1253,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            
-            return new AbstractDescriptor<?>[] { formNameDescriptor, layoutGroupDescriptor, canvasMessagePane };
+       
+            return new AbstractDescriptor<?>[] { formNameDescriptor, layoutGroupDescriptor, createMessagePaneSettings() };
 
         }
 
@@ -1779,34 +1852,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            
-            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, canvasMessagePane, layoutGroupDescriptor };
+           
+            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -2250,35 +2297,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
 
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            
-            return new AbstractDescriptor<?>[] { orientationDescriptor,canvasMessagePane, layoutGroupDescriptor };
+           
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -2707,34 +2728,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            
-            return new AbstractDescriptor<?>[] { orientationDescriptor,canvasMessagePane, layoutGroupDescriptor };
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -3167,34 +3161,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            
-            return new AbstractDescriptor<?>[] { orientationDescriptor, canvasMessagePane, layoutGroupDescriptor };
+          
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -3707,36 +3675,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
-            AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.getCloseableMessagePane();
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setCloseableMessagePane(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            canvasMessagePane.setText("Keep Message Pane open");
-            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
-            
-
-            return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, canvasMessagePane, layoutGroupDescriptor, actionsGroupDescriptor };
+            return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, createMessagePaneSettings(), layoutGroupDescriptor, actionsGroupDescriptor };
         }
 
     }

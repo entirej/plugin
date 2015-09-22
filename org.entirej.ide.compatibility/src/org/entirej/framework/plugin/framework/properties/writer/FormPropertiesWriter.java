@@ -138,16 +138,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 endTAG(buffer, "formRendererProperties");
                 
-    
-                
-                
                 // Now add the forms canvases
                 startTAG(buffer, "canvasList");
                 {
                     addCanvasList(form.getCanvasContainer(), buffer);
                 }
                 endTAG(buffer, "canvasList");
-                
                 
                 // Now add the blocks
                 // The block items will be added during the addBlockList method
@@ -172,9 +168,6 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     }
                 }
                 endTAG(buffer, "objGroupDefinitionList");
-                
-                
-               
                 
                 // Now add the forms relations
                 startTAG(buffer, "relationList");
@@ -406,7 +399,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (relations.hasNext())
         {
             EJPluginRelationProperties relationProps = relations.next();
-            if(relationProps.isImportFromObjectGroup())
+            if (relationProps.isImportFromObjectGroup())
             {
                 continue;
             }
@@ -445,12 +438,11 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         {
             EJCanvasProperties canvasProps = canvases.next();
             
-            
-            if(canvasProps instanceof EJPluginCanvasProperties && (!((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot() && ((EJPluginCanvasProperties)canvasProps).isImportFromObjectGroup()))
+            if (canvasProps instanceof EJPluginCanvasProperties
+                    && (!((EJPluginCanvasProperties) canvasProps).isObjectGroupRoot() && ((EJPluginCanvasProperties) canvasProps).isImportFromObjectGroup()))
             {
                 continue;
             }
-            
             
             startOpenTAG(buffer, "canvas");
             {
@@ -469,14 +461,9 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     writeBooleanTAG(buffer, "expandVertically", canvasProps.canExpandVertically());
                 }
                 
-                
-                
-                
-                
-                
-                if(canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties)canvasProps).isObjectGroupRoot())
+                if (canvasProps instanceof EJPluginCanvasProperties && ((EJPluginCanvasProperties) canvasProps).isObjectGroupRoot())
                 {
-                    //ignore and do not add any sub items
+                    // ignore and do not add any sub items
                 }
                 else
                 {
@@ -517,15 +504,15 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     }
                     
                     writeBooleanTAG(buffer, "closeableMessagePane", canvasProps.getCloseableMessagePane());
+                    writeIntTAG(buffer, "messagePaneSize", canvasProps.getMessagePaneSize());
+                    writeStringTAG(buffer, "messagePosition", canvasProps.getMessagePosition().name());
                     
                     addTabPageProperties(canvasProps, buffer);
                     addStackedPageProperties(canvasProps, buffer);
                     addCanvasGroupCanvases(canvasProps, buffer);
                     addCanvasSplitCanvases(canvasProps, buffer);
                     
-                    
                 }
-                
                 
             }
             endTAG(buffer, "canvas");
@@ -538,10 +525,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         List<BlockContainerItem> blockContainerItems = blockContainer.getBlockContainerItems();
         for (BlockContainerItem item : blockContainerItems)
         {
-            if(item instanceof EJPluginBlockProperties)
+            if (item instanceof EJPluginBlockProperties)
             {
                 EJPluginBlockProperties blockProps = (EJPluginBlockProperties) item;
-                if(blockProps.isImportFromObjectGroup())
+                if (blockProps.isImportFromObjectGroup())
                 {
                     addObjectGroupBlockProperties(blockProps, buffer);
                     continue;
@@ -557,8 +544,8 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 }
                 continue;
             }
-            //write Block groups
-            if(item instanceof BlockGroup)
+            // write Block groups
+            if (item instanceof BlockGroup)
             {
                 BlockGroup group = (BlockGroup) item;
                 startOpenTAG(buffer, "blockGroup");
@@ -568,7 +555,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     List<EJPluginBlockProperties> allBlockProperties = group.getAllBlockProperties();
                     for (EJPluginBlockProperties blockProps : allBlockProperties)
                     {
-                        if(blockProps.isImportFromObjectGroup())
+                        if (blockProps.isImportFromObjectGroup())
                         {
                             addObjectGroupBlockProperties(blockProps, buffer);
                             continue;
@@ -597,7 +584,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         while (lovDefinitions.hasNext())
         {
             EJLovDefinitionProperties lovDefinition = lovDefinitions.next();
-            if(lovDefinition instanceof EJPluginLovDefinitionProperties && ((EJPluginLovDefinitionProperties)lovDefinition).isImportFromObjectGroup())
+            if (lovDefinition instanceof EJPluginLovDefinitionProperties && ((EJPluginLovDefinitionProperties) lovDefinition).isImportFromObjectGroup())
             {
                 continue;
             }
@@ -891,6 +878,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         }
         endTAG(buffer, "block");
     }
+    
     protected void addObjectGroupBlockProperties(EJPluginBlockProperties blockProperties, StringBuffer buffer)
     {
         startOpenTAG(buffer, "block");
@@ -899,7 +887,6 @@ public class FormPropertiesWriter extends AbstractXmlWriter
             writePROPERTY(buffer, "objectgroup", blockProperties.getReferencedObjectGroupName());
             writePROPERTY(buffer, "referenced", "true");
             closeOpenTAG(buffer);
-            
             
         }
         endTAG(buffer, "block");

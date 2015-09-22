@@ -19,6 +19,7 @@ package org.entirej.framework.plugin.framework.properties;
 
 import java.util.Iterator;
 
+import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
@@ -84,6 +85,13 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
 
     private boolean _closeableMessagePane = true;
+    
+
+    private int                                  _messagePaneSize              = 200;
+    
+    
+
+    private EJCanvasMessagePosition              _messagePosition              = EJCanvasMessagePosition.RIGHT;
     
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
@@ -729,5 +737,26 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     public Boolean getCloseableMessagePane()
     {
         return _closeableMessagePane;
+    }
+    
+    
+    public void setMessagePosition(EJCanvasMessagePosition messagePosition)
+    {
+        this._messagePosition = messagePosition;
+    }
+
+    public EJCanvasMessagePosition getMessagePosition()
+    {
+        return _messagePosition;
+    }
+
+    public int getMessagePaneSize()
+    {
+        return _messagePaneSize;
+    }
+
+    public void setMessagePaneSize(int messagePaneSize)
+    {
+        this._messagePaneSize = messagePaneSize;
     }
 }
