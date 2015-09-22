@@ -424,7 +424,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 @Override
                 public Boolean getValue()
                 {
-                    return source.getCloseableMessagePane();
+                    return !source.getCloseableMessagePane();
                 }
 
                 @Override
@@ -437,7 +437,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 @Override
                 public void setValue(Boolean value)
                 {
-                    source.setCloseableMessagePane(value.booleanValue());
+                    source.setCloseableMessagePane(!value.booleanValue());
                     editor.setDirty(true);
                 }
 
