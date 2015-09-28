@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -43,6 +44,7 @@ import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
@@ -61,7 +63,9 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
+import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
+import org.entirej.ide.ui.editors.form.RelationsGroupNode.RelationNode;
 import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasBlockAssignmentOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasRemoveOperation;
@@ -445,7 +449,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             canvasMessagePane.setText("Keep Message Pane open");
             canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
 
-            
             final AbstractTextDescriptor sizeHintDescriptor = new AbstractTextDescriptor("Size")
             {
                 @Override
@@ -492,49 +495,46 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     super.addEditorAssist(control);
                 }
             };
-            
-            
-            
+
             final AbstractDropDownDescriptor<EJCanvasMessagePosition> position = new AbstractDropDownDescriptor<EJCanvasMessagePosition>("Position")
-                    {
+            {
 
-                        public EJCanvasMessagePosition[] getOptions()
-                        {
+                public EJCanvasMessagePosition[] getOptions()
+                {
 
-                            return EJCanvasMessagePosition.values();
-                        }
+                    return EJCanvasMessagePosition.values();
+                }
 
-                        @Override
-                        public void runOperation(AbstractOperation operation)
-                        {
-                            editor.execute(operation);
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
 
-                        }
+                }
 
-                        public String getOptionText(EJCanvasMessagePosition t)
-                        {
-                            return t.toString();
-                        }
+                public String getOptionText(EJCanvasMessagePosition t)
+                {
+                    return t.toString();
+                }
 
-                        public void setValue(EJCanvasMessagePosition value)
-                        {
-                            source.setMessagePosition(value);
-                            editor.setDirty(true);
-                        }
+                public void setValue(EJCanvasMessagePosition value)
+                {
+                    source.setMessagePosition(value);
+                    editor.setDirty(true);
+                }
 
-                        public EJCanvasMessagePosition getValue()
-                        {
-                            return source.getMessagePosition();
-                        }
-                    };
+                public EJCanvasMessagePosition getValue()
+                {
+                    return source.getMessagePosition();
+                }
+            };
 
-            
             return new AbstractGroupDescriptor("Message Pane Settings")
             {
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { canvasMessagePane,sizeHintDescriptor,position };
+                    return new AbstractDescriptor<?>[] { canvasMessagePane, sizeHintDescriptor, position };
                 }
             };
         }
@@ -855,7 +855,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 descriptors.add(canvasDescriptor);
             }
 
-           descriptors.add(createMessagePaneSettings());
+            descriptors.add(createMessagePaneSettings());
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
 
@@ -1253,7 +1253,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-       
             return new AbstractDescriptor<?>[] { formNameDescriptor, layoutGroupDescriptor, createMessagePaneSettings() };
 
         }
@@ -1852,7 +1851,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-           
             return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
@@ -2298,7 +2296,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-           
             return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
@@ -3161,7 +3158,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-          
             return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
@@ -3660,6 +3656,42 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
+            final AbstractDropDownDescriptor<EJPopupButton> defaultButtonDescriptor = new AbstractDropDownDescriptor<EJPopupButton>("Default Button")
+            {
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                public EJPopupButton[] getOptions()
+                {
+
+                    return EJPopupButton.values();
+                }
+
+                @Override
+                public void setValue(EJPopupButton value)
+                {
+                    source.setDefaultPopupButton(value);
+
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public EJPopupButton getValue()
+                {
+                    return source.getDefaultPopupButton();
+                }
+
+                public String getOptionText(EJPopupButton t)
+                {
+                    return t.toString();
+                }
+            };
+
             AbstractGroupDescriptor actionsGroupDescriptor = new AbstractGroupDescriptor("Actions")
             {
                 @Override
@@ -3671,7 +3703,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { button1Descriptor, button2Descriptor, button3Descriptor };
+                    return new AbstractDescriptor<?>[] { button1Descriptor, button2Descriptor, button3Descriptor,defaultButtonDescriptor };
                 }
             };
 

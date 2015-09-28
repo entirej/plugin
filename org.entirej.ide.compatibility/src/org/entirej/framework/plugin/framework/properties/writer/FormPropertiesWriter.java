@@ -486,6 +486,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "buttonOneText", canvasProps.getButtonOneText());
                         writeStringTAG(buffer, "buttonTwoText", canvasProps.getButtonTwoText());
                         writeStringTAG(buffer, "buttonThreeText", canvasProps.getButtonThreeText());
+                        writeStringTAG(buffer, "defaultButton", canvasProps.getDefaultPopupButton().name());
                         
                         startTAG(buffer, "canvasList");
                         {

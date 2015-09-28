@@ -23,6 +23,7 @@ import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
@@ -50,6 +51,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJPluginFormProperties           _formProperties;
     
     private EJCanvasType                     _type                        = EJCanvasType.BLOCK;
+    private EJPopupButton                        _button                       = EJPopupButton.ONE;
     
     private int                              _width                       = 0;
     private int                              _height                      = 0;
@@ -759,4 +761,17 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     {
         this._messagePaneSize = messagePaneSize;
     }
+    
+    public void setDefaultPopupButton(EJPopupButton button)
+    {
+        _button =button;
+
+    }
+    
+    public EJPopupButton getDefaultPopupButton()
+    {
+        return _button;
+    }
+
+
 }

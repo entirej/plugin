@@ -21,6 +21,7 @@ import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.xml.sax.Attributes;
@@ -43,9 +44,9 @@ public class CanvasHandler extends EntireJTagHandler
     
     private static final String      ELEMENT_CLOSEABLE_MESSAGE_PANE = "closeableMessagePane";
     
-
-    private static final String            ELEMENT_MESSAGE_POSITION       = "messagePosition";
-    private static final String            ELEMENT_MESSAGE_PANE_SIZE      = "messagePaneSize";
+    private static final String      ELEMENT_MESSAGE_POSITION       = "messagePosition";
+    private static final String      ELEMENT_MESSAGE_PANE_SIZE      = "messagePaneSize";
+    private static final String      ELEMENT_DEFAULT_BUTTON_ID      = "defaultButton";
     private static final String      ELEMENT_FRAME_TITLE            = "groupFrameTitle";
     private static final String      ELEMENT_POPUP_PAGE_TITLE       = "popupPageTitle";
     private static final String      ELEMENT_TAB_POSITION           = "tabPosition";
@@ -194,6 +195,10 @@ public class CanvasHandler extends EntireJTagHandler
             {
                 _canvasProperties.setMessagePaneSize(Integer.parseInt(value));
             }
+        }
+        else if (name.equals(ELEMENT_DEFAULT_BUTTON_ID))
+        {
+            _canvasProperties.setDefaultPopupButton(EJPopupButton.valueOf(value));
         }
         else if (name.equals(ELEMENT_INITIAL_STACKED_PAGE))
         {
