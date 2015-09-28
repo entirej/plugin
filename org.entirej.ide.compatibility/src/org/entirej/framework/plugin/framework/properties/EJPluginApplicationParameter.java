@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
+import java.math.BigDecimal;
+
 public class EJPluginApplicationParameter
 {
     private String _name = null;
@@ -115,6 +117,11 @@ public class EJPluginApplicationParameter
         {
             return true;
         }
+        // BigDecimal
+        if (BigDecimal.class.getName().equals(dataTypeName))
+        {
+            return true;
+        }
         
         
         
@@ -199,6 +206,19 @@ public class EJPluginApplicationParameter
             catch (NumberFormatException  e)
             {
                 return "Incorrect default value for 'Double' Type: Valid values are numbers.";
+            }
+            return null;
+        }
+        // BigDecimal
+        if (BigDecimal.class.getName().equals(dataTypeName))
+        {
+            try
+            {
+                new BigDecimal(value);
+            }
+            catch (NumberFormatException  e)
+            {
+                return "Incorrect default value for 'BigDecimal' Type: Valid values are numbers.";
             }
             return null;
         }
