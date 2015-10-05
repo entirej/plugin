@@ -51,7 +51,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJPluginFormProperties           _formProperties;
     
     private EJCanvasType                     _type                        = EJCanvasType.BLOCK;
-    private EJPopupButton                        _button                       = EJPopupButton.ONE;
+    private EJPopupButton                    _button                      = EJPopupButton.ONE;
     
     private int                              _width                       = 0;
     private int                              _height                      = 0;
@@ -60,6 +60,16 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private int                              _horizontalSpan              = 1;
     private boolean                          _expandHorizontally          = true;
     private boolean                          _expandVertically            = true;
+    private int                              widthOG                       = 0;
+    private int                              heightOG                       = 0;
+    private int                              numColsOG                      = 1;
+    private int                              verticalSpanOG                 = 1;
+    private int                              horizontalSpanOG               = 1;
+    private boolean                          expandHorizontallyOG           = true;
+    private boolean                          expandVerticallyOG             = true;
+    
+    
+    
     private boolean                          _displayGroupFrame           = false;
     private String                           _name                        = "";
     private String                           _popupPageTitle              = "";
@@ -85,15 +95,12 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     // available
     private EJCanvasTabPosition              _tabPosition                 = EJCanvasTabPosition.TOP;
     private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
-
-    private boolean _closeableMessagePane = true;
     
-
-    private int                                  _messagePaneSize              = 200;
+    private boolean                          _closeableMessagePane        = true;
     
+    private int                              _messagePaneSize             = 200;
     
-
-    private EJCanvasMessagePosition              _messagePosition              = EJCanvasMessagePosition.RIGHT;
+    private EJCanvasMessagePosition          _messagePosition             = EJCanvasMessagePosition.RIGHT;
     
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
@@ -741,22 +748,21 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         return _closeableMessagePane;
     }
     
-    
     public void setMessagePosition(EJCanvasMessagePosition messagePosition)
     {
         this._messagePosition = messagePosition;
     }
-
+    
     public EJCanvasMessagePosition getMessagePosition()
     {
         return _messagePosition;
     }
-
+    
     public int getMessagePaneSize()
     {
         return _messagePaneSize;
     }
-
+    
     public void setMessagePaneSize(int messagePaneSize)
     {
         this._messagePaneSize = messagePaneSize;
@@ -764,8 +770,8 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     
     public void setDefaultPopupButton(EJPopupButton button)
     {
-        _button =button;
-
+        _button = button;
+        
     }
     
     public EJPopupButton getDefaultPopupButton()
@@ -773,5 +779,79 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         return _button;
     }
 
+    public int getWidthOG()
+    {
+        return widthOG;
+    }
 
+    public void setWidthOG(int widthOG)
+    {
+        this.widthOG = widthOG;
+    }
+
+    public int getHeightOG()
+    {
+        return heightOG;
+    }
+
+    public void setHeightOG(int heightOG)
+    {
+        this.heightOG = heightOG;
+    }
+
+    public int getNumColsOG()
+    {
+        return numColsOG;
+    }
+
+    public void setNumColsOG(int numColsOG)
+    {
+        this.numColsOG = numColsOG;
+    }
+
+    public int getVerticalSpanOG()
+    {
+        return verticalSpanOG;
+    }
+
+    public void setVerticalSpanOG(int verticalSpanOG)
+    {
+        this.verticalSpanOG = verticalSpanOG;
+    }
+
+    public int getHorizontalSpanOG()
+    {
+        return horizontalSpanOG;
+    }
+
+    public void setHorizontalSpanOG(int horizontalSpanOG)
+    {
+        this.horizontalSpanOG = horizontalSpanOG;
+    }
+
+    public boolean canExpandHorizontallyOG()
+    {
+        return expandHorizontallyOG;
+    }
+
+    public void setExpandHorizontallyOG(boolean expandHorizontallyOG)
+    {
+        this.expandHorizontallyOG = expandHorizontallyOG;
+    }
+
+    public boolean canExpandVerticallyOG()
+    {
+        return expandVerticallyOG;
+    }
+
+    public void setExpandVerticallyOG(boolean expandVerticallyOG)
+    {
+        this.expandVerticallyOG = expandVerticallyOG;
+    }
+
+  
+    
+    
+    
+    
 }

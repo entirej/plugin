@@ -53,6 +53,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingPrope
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJFormReader;
 import org.entirej.framework.plugin.framework.properties.reader.FormHandler;
+import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
 import org.entirej.framework.plugin.utils.EJPluginCanvasRetriever;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJProject;
@@ -221,6 +222,92 @@ public class EJFormReferencePage extends AbstractEditorPage implements PageActio
             else if (member instanceof IFile && isFormFile((IFile) member))
             {
                 findInFile((IFile) member, groups, monitor);
+            }
+        }
+        monitor.done();
+
+    }
+
+    public static void updateObjectGroupRef(EJPluginObjectGroupProperties properties, final AbstractEJFormEditor editor, IProgressMonitor monitor)
+    {
+        IPackageFragmentRoot[] packageFragmentRoots;
+        try
+        {
+            packageFragmentRoots = editor.getJavaProject().getPackageFragmentRoots();
+            for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
+            {
+                if (monitor.isCanceled())
+                    break;
+                if (iPackageFragmentRoot.getResource() instanceof IContainer)
+                    updateOBjInForm((IContainer) iPackageFragmentRoot.getResource(), properties, editor, monitor);
+            }
+        }
+        catch (JavaModelException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (CoreException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void updateOBjInForm(IContainer container, EJPluginObjectGroupProperties properties, final AbstractEJFormEditor editor,
+            IProgressMonitor monitor) throws CoreException
+    {
+        if (monitor.isCanceled())
+            return;
+        monitor.subTask("Finding references in  EJ Forms...");
+        IResource[] members = container.members();
+        for (int i = 0; i < members.length; i++)
+        {
+            IResource member = members[i];
+            if (member instanceof IContainer)
+                updateOBjInForm((IContainer) member, properties, editor, monitor);
+            else if (member instanceof IFile && isFormFile((IFile) member))
+            {
+                IFile file = (IFile) member;
+                if (monitor.isCanceled())
+                    return;
+
+                if (!(isForm(file)))
+                {
+                    return;
+                }
+
+                try
+                {
+                    // try to ignore outpu path
+                    IJavaProject project = editor.getJavaProject();
+                    IPath outputLocation = project.getOutputLocation();
+                    if (outputLocation.isPrefixOf(file.getFullPath()))
+                        return;
+                }
+                catch (JavaModelException e)
+                {
+                    // ignore
+                }
+
+                IFile propFile = EJProject.getPropertiesFile(file.getProject());
+                if (propFile == null || !propFile.exists())
+                {
+                    return;
+                }
+
+                EJPluginFormProperties formProperties = getFormProperties(file, editor.getJavaProject());
+                if (formProperties != null)
+                {
+                    boolean updateCanvasSettings = properties.updateCanvasSettings(formProperties);
+                    if (updateCanvasSettings)
+
+                    {
+                        FormPropertiesWriter write = new FormPropertiesWriter();
+                        write.saveForm(formProperties, file, monitor);
+                    }
+                }
             }
         }
         monitor.done();
@@ -548,12 +635,12 @@ public class EJFormReferencePage extends AbstractEditorPage implements PageActio
         return group;
     }
 
-    private boolean isFormFile(IFile file)
+    private static boolean isFormFile(IFile file)
     {
         return EJDevConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
     }
 
-    private boolean isRefFormFile(IFile file)
+    private static boolean isRefFormFile(IFile file)
     {
         String fileExtension = file.getFileExtension();
         return EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(fileExtension)
@@ -597,22 +684,22 @@ public class EJFormReferencePage extends AbstractEditorPage implements PageActio
         }
     }
 
-    boolean isForm(IFile file)
+    static boolean isForm(IFile file)
     {
         return file.getName().endsWith(EJDevConstants.FORM_PROPERTIES_FILE_SUFFIX);
     }
 
-    boolean isRefBlock(IFile file)
+    static boolean isRefBlock(IFile file)
     {
         return file.getName().endsWith(EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX);
     }
 
-    boolean isObjGroup(IFile file)
+    static boolean isObjGroup(IFile file)
     {
         return file.getName().endsWith(EJDevConstants.OBJECT_GROUP_PROPERTIES_FILE_SUFFIX);
     }
 
-    boolean isRefLov(IFile file)
+    static boolean isRefLov(IFile file)
     {
         return file.getName().endsWith(EJDevConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX);
     }
