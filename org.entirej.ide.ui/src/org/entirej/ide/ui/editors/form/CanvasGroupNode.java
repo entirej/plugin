@@ -1295,6 +1295,38 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         // MASTER
         AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
         {
+            
+            public Action[] getToolbarActions()
+            {
+                if(node.getSource().isObjectGroupRoot())
+                {
+                    return new Action[]{
+                            new Action("Reset Object Group Defaults", EJUIImages.DESC_OBJGROUP)
+                            {
+                                
+                                @Override
+                                public void run()
+                                {
+                                    node.getSource().setWidth(node.getSource().getWidthOG());
+                                    node.getSource().setHeight(node.getSource().getHeightOG());
+                                    node.getSource().setExpandHorizontally(node.getSource().canExpandHorizontallyOG());
+                                    node.getSource().setExpandVertically(node.getSource().canExpandVerticallyOG());
+                                    node.getSource().setVerticalSpan(node.getSource().getVerticalSpanOG());
+                                    node.getSource().setHorizontalSpan(node.getSource().getHorizontalSpanOG());
+                                    node.getSource().setNumCols(node.getSource().getNumColsOG());
+                                    editor.setDirty(true);
+                                    treeSection.refresh(node);
+                                    treeSection.refreshPreview();
+                                    treeSection.showNodeDetails(node);
+                                }
+                            }
+                            
+                    };
+                }
+                
+                return new Action[0];
+            }
+            
             @Override
             public void runOperation(AbstractOperation operation)
             {
