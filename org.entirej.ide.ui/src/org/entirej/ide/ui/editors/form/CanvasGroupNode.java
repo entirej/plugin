@@ -693,6 +693,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     }
                 };
                 descriptors.add(refItemDescriptor);
+                descriptors.add(createMessagePaneSettings());
                 if (blockProperties.getMainScreenProperties() != null)
                 {
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
@@ -856,7 +857,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 descriptors.add(canvasDescriptor);
             }
 
-            descriptors.add(createMessagePaneSettings());
+            
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
 

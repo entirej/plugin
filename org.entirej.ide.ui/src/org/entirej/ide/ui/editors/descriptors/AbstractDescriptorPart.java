@@ -482,10 +482,19 @@ public abstract class AbstractDescriptorPart extends SectionPart
             String text = descriptor.getText();
             if (descriptor.isRequired())
             {
+                if (descriptor.isOverride())
+                {
+                    text += " [overridden] "; //$NON-NLS-1$
+                }
                 text += " :* "; //$NON-NLS-1$
             }
+            
             else
             {
+                if (descriptor.isOverride())
+                {
+                    text += " [overridden] "; //$NON-NLS-1$
+                }
                 text += " : "; //$NON-NLS-1$
             }
             if (descriptor.hasLableLink())
