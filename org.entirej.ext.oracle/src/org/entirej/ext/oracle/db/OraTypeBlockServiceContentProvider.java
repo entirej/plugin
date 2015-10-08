@@ -750,7 +750,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             private void createReportResources(IProgressMonitor monitor)
             {
                 List<String> addedInner = new ArrayList<String>();
-                List<EJReportPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJReportPojoGeneratorType>();
+               
                 Procedure procedure = columnSelectionPage.getProcedure();
                 
 
@@ -762,6 +762,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 {
                     for (Argument argument : collectionType.getArguments())
                     {
+                        List<EJReportPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJReportPojoGeneratorType>();
                         
 
                         if (argument instanceof ObjectArgument)
@@ -770,56 +771,61 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
                             collectReportTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                         }
+                        Collections.reverse(innerPojoGeneratorTypes);
+                        for (EJReportPojoGeneratorType inner : innerPojoGeneratorTypes)
+                        {
+                            String objName = inner.getClassName();
+
+                            inner.setClassName(objName);
+                            try
+                            {
+                                reValidateReportDataTypes(inner);
+                                String clazz = rcontext.createPojoClass(inner, monitor);
+                                innerClass.put(objName, clazz);
+                            }
+                            catch (Exception e)
+                            {
+
+                                e.printStackTrace();
+                            }
+                        }
                     }
 
                 }
-                Collections.reverse(innerPojoGeneratorTypes);
-                for (EJReportPojoGeneratorType inner : innerPojoGeneratorTypes)
-                {
-                    String objName = inner.getClassName();
-
-                    inner.setClassName(objName);
-                    try
-                    {
-                        reValidateReportDataTypes(inner);
-                        String clazz = rcontext.createPojoClass(inner, monitor);
-                        innerClass.put(objName, clazz);
-                    }
-                    catch (Exception e)
-                    {
-
-                        e.printStackTrace();
-                    }
-                }
-                innerPojoGeneratorTypes.clear();
+                
+               
                 for (Argument argument : procedure.getArguments())
                 {
-                   
+                 
+                    List<EJReportPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJReportPojoGeneratorType>();
+                    
+
                     if (argument instanceof ObjectArgument)
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
 
                         collectReportTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                     }
-                }
-                Collections.reverse(innerPojoGeneratorTypes);
-                for (EJReportPojoGeneratorType inner : innerPojoGeneratorTypes)
-                {
-                    String objName = inner.getClassName();
-
-                    inner.setClassName(objName);
-                    try
+                    Collections.reverse(innerPojoGeneratorTypes);
+                    for (EJReportPojoGeneratorType inner : innerPojoGeneratorTypes)
                     {
-                        reValidateReportDataTypes(inner);
-                        String clazz = rcontext.createPojoClass(inner, monitor);
-                        innerClass.put(objName, clazz);
-                    }
-                    catch (Exception e)
-                    {
+                        String objName = inner.getClassName();
 
-                        e.printStackTrace();
+                        inner.setClassName(objName);
+                        try
+                        {
+                            reValidateReportDataTypes(inner);
+                            String clazz = rcontext.createPojoClass(inner, monitor);
+                            innerClass.put(objName, clazz);
+                        }
+                        catch (Exception e)
+                        {
+
+                            e.printStackTrace();
+                        }
                     }
                 }
+                
             }
 
         };
