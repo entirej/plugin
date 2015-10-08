@@ -545,7 +545,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             private void createFormResources(IProgressMonitor monitor)
             {
                 List<String> addedInner = new ArrayList<String>();
-                List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
+              
                 Procedure procedure = columnSelectionPage.getProcedure();
                 
                 ObjectArgument collectionType = procedure.getCollectionType();
@@ -554,6 +554,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 {
                     for (Argument argument : collectionType.getArguments())
                     {
+                        List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
                         EJTableColumn tableColumn = new EJTableColumn();
                         tableColumn.setName(argument._name);
 
@@ -563,33 +564,36 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
                             collectTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                         }
+                        
+                        Collections.reverse(innerPojoGeneratorTypes);
+                        for (EJPojoGeneratorType inner : innerPojoGeneratorTypes)
+                        {
+                            String objName = inner.getClassName();
+
+                            inner.setClassName(objName);
+                            try
+                            {
+                                reValidateDataTypes(inner);
+                                String clazz = context.createPojoClass(inner, monitor);
+                                innerClass.put(objName, clazz);
+                            }
+                            catch (Exception e)
+                            {
+
+                                e.printStackTrace();
+                            }
+                        }
                     }
 
                 }
                 
                 
-                Collections.reverse(innerPojoGeneratorTypes);
-                for (EJPojoGeneratorType inner : innerPojoGeneratorTypes)
-                {
-                    String objName = inner.getClassName();
-
-                    inner.setClassName(objName);
-                    try
-                    {
-                        reValidateDataTypes(inner);
-                        String clazz = context.createPojoClass(inner, monitor);
-                        innerClass.put(objName, clazz);
-                    }
-                    catch (Exception e)
-                    {
-
-                        e.printStackTrace();
-                    }
-                }
+               
                 
-                innerPojoGeneratorTypes.clear();
+               
                 for (Argument argument : procedure.getArguments())
                 {
+                    List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
                     EJReportTableColumn tableColumn = new EJReportTableColumn();
                     tableColumn.setName(argument._name);
 
@@ -603,25 +607,26 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             collectTypes(objectArgument, addedInner, innerPojoGeneratorTypes);
                         }
                     }
-                }
-                Collections.reverse(innerPojoGeneratorTypes);
-                for (EJPojoGeneratorType inner : innerPojoGeneratorTypes)
-                {
-                    String objName = inner.getClassName();
-
-                    inner.setClassName(objName);
-                    try
+                    Collections.reverse(innerPojoGeneratorTypes);
+                    for (EJPojoGeneratorType inner : innerPojoGeneratorTypes)
                     {
-                        reValidateDataTypes(inner);
-                        String clazz = context.createPojoClass(inner, monitor);
-                        innerClass.put(objName, clazz);
-                    }
-                    catch (Exception e)
-                    {
+                        String objName = inner.getClassName();
 
-                        e.printStackTrace();
+                        inner.setClassName(objName);
+                        try
+                        {
+                            reValidateDataTypes(inner);
+                            String clazz = context.createPojoClass(inner, monitor);
+                            innerClass.put(objName, clazz);
+                        }
+                        catch (Exception e)
+                        {
+
+                            e.printStackTrace();
+                        }
                     }
                 }
+               
             }
 
             
