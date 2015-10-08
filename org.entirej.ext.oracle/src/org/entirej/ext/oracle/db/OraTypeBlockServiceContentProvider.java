@@ -248,7 +248,16 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                         if (objectArgument.objName != null)
                         {
-                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
+                            String type = innerClass.get(objectArgument.objName);
+                            if(type==null)
+                            {
+                                tableColumn.setDatatypeName(objectArgument.objName);
+                            }
+                            else
+                            {
+                                tableColumn.setDatatypeName(type);
+                            }
+                            
                         }
                     }
 
@@ -295,7 +304,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                         if (objectArgument.objName != null)
                         {
-                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
+                            String type = innerClass.get(objectArgument.objName);
+                            if(type==null)
+                            {
+                                tableColumn.setDatatypeName(objectArgument.objName);
+                            }
+                            else
+                            {
+                                tableColumn.setDatatypeName(type);
+                            }
                         }
                     }
                     
@@ -344,7 +361,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                         if (objectArgument.objName != null)
                         {
-                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
+                            String type = innerClass.get(objectArgument.objName);
+                            if(type==null)
+                            {
+                                tableColumn.setDatatypeName(objectArgument.objName);
+                            }
+                            else
+                            {
+                                tableColumn.setDatatypeName(type);
+                            }
                         }
                     }
 
@@ -412,7 +437,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         }
                         if (objectArgument.objName != null)
                         {
-                            tableColumn.setDatatypeName(innerClass.get(objectArgument.objName));
+                            String type = innerClass.get(objectArgument.objName);
+                            if(type==null)
+                            {
+                                tableColumn.setDatatypeName(objectArgument.objName);
+                            }
+                            else
+                            {
+                                tableColumn.setDatatypeName(type);
+                            }
                         }
                     }
                     
@@ -606,6 +639,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         {
                             ejReportTableColumn.setDatatypeName(type);
                         }
+                        else
+                        {
+                            ejReportTableColumn.setDatatypeName(ejReportTableColumn.getProperty("OBJECT_NAME"));
+                        }
                     }
                 } 
             }
@@ -622,6 +659,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         if(type!=null)
                         {
                             ejReportTableColumn.setDatatypeName(type);
+                        }
+                        else
+                        {
+                            ejReportTableColumn.setDatatypeName(ejReportTableColumn.getProperty("OBJECT_NAME"));
                         }
                     }
                 } 
