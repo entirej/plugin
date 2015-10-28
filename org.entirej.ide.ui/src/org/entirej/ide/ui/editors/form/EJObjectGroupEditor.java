@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.Action;
@@ -136,6 +137,16 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
             }
         }
 
+    }
+    
+    @Override
+    public void saveFile(IFile file, IProgressMonitor monitor) throws IOException
+    {
+        
+        EJFormReferencePage.updateObjectGroupRef((EJPluginObjectGroupProperties) formProperties, this, monitor);
+        super.saveFile(file, monitor);
+        
+       
     }
 
     private static class BlockDesignTreeSection extends FormDesignTreeSection

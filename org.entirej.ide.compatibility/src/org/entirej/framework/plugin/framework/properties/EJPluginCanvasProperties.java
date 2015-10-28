@@ -19,9 +19,11 @@ package org.entirej.framework.plugin.framework.properties;
 
 import java.util.Iterator;
 
+import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
@@ -34,14 +36,13 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginStac
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginTabPageContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginFormPreviewProvider;
 
-
 public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFormPreviewProvider
 {
     /**
      * 
      */
-    private static final long serialVersionUID = 2469290104959744115L;
-
+    private static final long                serialVersionUID             = 2469290104959744115L;
+    
     // This is the container to which this canvas property object belongs. This
     // is required by the item mover to know where to remove the canvas from and
     // where to put it
@@ -50,6 +51,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJPluginFormProperties           _formProperties;
     
     private EJCanvasType                     _type                        = EJCanvasType.BLOCK;
+    private EJPopupButton                    _button                      = EJPopupButton.ONE;
     
     private int                              _width                       = 0;
     private int                              _height                      = 0;
@@ -58,6 +60,16 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private int                              _horizontalSpan              = 1;
     private boolean                          _expandHorizontally          = true;
     private boolean                          _expandVertically            = true;
+    private int                              widthOG                       = 0;
+    private int                              heightOG                       = 0;
+    private int                              numColsOG                      = 1;
+    private int                              verticalSpanOG                 = 1;
+    private int                              horizontalSpanOG               = 1;
+    private boolean                          expandHorizontallyOG           = true;
+    private boolean                          expandVerticallyOG             = true;
+    
+    
+    
     private boolean                          _displayGroupFrame           = false;
     private String                           _name                        = "";
     private String                           _popupPageTitle              = "";
@@ -66,8 +78,8 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private String                           _buttonTwoText               = "";
     private String                           _buttonThreeText             = "";
     private String                           _firstInitialStackedPageName = "";
-
-    private String                           _referencedObjectGroupName    = "";
+    
+    private String                           _referencedObjectGroupName   = "";
     
     private boolean                          _objectGroupRoot;
     
@@ -77,12 +89,18 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJPluginCanvasGroupPageContainer _canvasGroupContainer;
     private EJPluginCanvasSplitPageContainer _canvasSplitContainer;
     
-    private String                               _referredFormId;
+    private String                           _referredFormId;
     //
     // If the Canvas type is TAB, then the following properties are also
     // available
     private EJCanvasTabPosition              _tabPosition                 = EJCanvasTabPosition.TOP;
     private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
+    
+    private boolean                          _closeableMessagePane        = true;
+    
+    private int                              _messagePaneSize             = 200;
+    
+    private EJCanvasMessagePosition          _messagePosition             = EJCanvasMessagePosition.RIGHT;
     
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
@@ -684,8 +702,6 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         return null;
     }
     
-    
-    
     public String getReferencedObjectGroupName()
     {
         return _referencedObjectGroupName;
@@ -698,7 +714,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     
     public boolean isImportFromObjectGroup()
     {
-        return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
+        return _referencedObjectGroupName != null && _referencedObjectGroupName.trim().length() > 0;
     }
     
     public boolean isObjectGroupRoot()
@@ -716,9 +732,126 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     {
         return _referredFormId;
     }
-
+    
     public void setReferredFormId(String referredFormId)
     {
         this._referredFormId = referredFormId;
     }
+    
+    public void setCloseableMessagePane(boolean closeableMessagePane)
+    {
+        this._closeableMessagePane = closeableMessagePane;
+    }
+    
+    public Boolean getCloseableMessagePane()
+    {
+        return _closeableMessagePane;
+    }
+    
+    public void setMessagePosition(EJCanvasMessagePosition messagePosition)
+    {
+        this._messagePosition = messagePosition;
+    }
+    
+    public EJCanvasMessagePosition getMessagePosition()
+    {
+        return _messagePosition;
+    }
+    
+    public int getMessagePaneSize()
+    {
+        return _messagePaneSize;
+    }
+    
+    public void setMessagePaneSize(int messagePaneSize)
+    {
+        this._messagePaneSize = messagePaneSize;
+    }
+    
+    public void setDefaultPopupButton(EJPopupButton button)
+    {
+        _button = button;
+        
+    }
+    
+    public EJPopupButton getDefaultPopupButton()
+    {
+        return _button;
+    }
+
+    public int getWidthOG()
+    {
+        return widthOG;
+    }
+
+    public void setWidthOG(int widthOG)
+    {
+        this.widthOG = widthOG;
+    }
+
+    public int getHeightOG()
+    {
+        return heightOG;
+    }
+
+    public void setHeightOG(int heightOG)
+    {
+        this.heightOG = heightOG;
+    }
+
+    public int getNumColsOG()
+    {
+        return numColsOG;
+    }
+
+    public void setNumColsOG(int numColsOG)
+    {
+        this.numColsOG = numColsOG;
+    }
+
+    public int getVerticalSpanOG()
+    {
+        return verticalSpanOG;
+    }
+
+    public void setVerticalSpanOG(int verticalSpanOG)
+    {
+        this.verticalSpanOG = verticalSpanOG;
+    }
+
+    public int getHorizontalSpanOG()
+    {
+        return horizontalSpanOG;
+    }
+
+    public void setHorizontalSpanOG(int horizontalSpanOG)
+    {
+        this.horizontalSpanOG = horizontalSpanOG;
+    }
+
+    public boolean canExpandHorizontallyOG()
+    {
+        return expandHorizontallyOG;
+    }
+
+    public void setExpandHorizontallyOG(boolean expandHorizontallyOG)
+    {
+        this.expandHorizontallyOG = expandHorizontallyOG;
+    }
+
+    public boolean canExpandVerticallyOG()
+    {
+        return expandVerticallyOG;
+    }
+
+    public void setExpandVerticallyOG(boolean expandVerticallyOG)
+    {
+        this.expandVerticallyOG = expandVerticallyOG;
+    }
+
+  
+    
+    
+    
+    
 }

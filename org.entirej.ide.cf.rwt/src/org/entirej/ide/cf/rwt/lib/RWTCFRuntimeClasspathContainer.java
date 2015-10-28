@@ -37,7 +37,7 @@ public class RWTCFRuntimeClasspathContainer implements IClasspathContainer
     public RWTCFRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs/"));
-        description = "EntireJ RWT/CF [3.1.0] Runtime Libraries.";
+        description = "EntireJ RWT/CF [3.2.0] Runtime Libraries.";
     }
     final String description ;
     final IPath              runtimePath ;

@@ -47,7 +47,7 @@ public class ReportRuntimeClasspathContainer implements IClasspathContainer
 //        else
 //        {
             runtimePath = CFProjectHelper.getPathInPlugin(EJRuntimePlugin.getDefault().getBundle(), new Path("/extlibs-report/"));
-            description = "EntireJ Report [3.1.0] Runtime Libraries.";
+            description = "EntireJ Report [3.2.0] Runtime Libraries.";
 //        }
     }
     

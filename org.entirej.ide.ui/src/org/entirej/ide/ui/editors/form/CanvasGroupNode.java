@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -39,9 +40,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
@@ -60,7 +63,9 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
+import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
+import org.entirej.ide.ui.editors.form.RelationsGroupNode.RelationNode;
 import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasBlockAssignmentOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasRemoveOperation;
@@ -414,6 +419,126 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
         }
 
+        protected AbstractGroupDescriptor createMessagePaneSettings()
+        {
+
+            final AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+
+                @Override
+                public Boolean getValue()
+                {
+                    return !source.getCloseableMessagePane();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setCloseableMessagePane(!value.booleanValue());
+                    editor.setDirty(true);
+                }
+
+            };
+            canvasMessagePane.setText("Keep Message Pane open");
+            canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
+
+            final AbstractTextDescriptor sizeHintDescriptor = new AbstractTextDescriptor("Size")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setMessagePaneSize(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setWidth(0);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getMessagePaneSize());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            final AbstractDropDownDescriptor<EJCanvasMessagePosition> position = new AbstractDropDownDescriptor<EJCanvasMessagePosition>("Position")
+            {
+
+                public EJCanvasMessagePosition[] getOptions()
+                {
+
+                    return EJCanvasMessagePosition.values();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                public String getOptionText(EJCanvasMessagePosition t)
+                {
+                    return t.toString();
+                }
+
+                public void setValue(EJCanvasMessagePosition value)
+                {
+                    source.setMessagePosition(value);
+                    editor.setDirty(true);
+                }
+
+                public EJCanvasMessagePosition getValue()
+                {
+                    return source.getMessagePosition();
+                }
+            };
+
+            return new AbstractGroupDescriptor("Message Pane Settings")
+            {
+
+                public AbstractDescriptor<?>[] getDescriptors()
+                {
+                    return new AbstractDescriptor<?>[] { canvasMessagePane, sizeHintDescriptor, position };
+                }
+            };
+        }
+
         @Override
         public INodeRenameProvider getRenameProvider()
         {
@@ -568,11 +693,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     }
                 };
                 descriptors.add(refItemDescriptor);
+                descriptors.add(createMessagePaneSettings());
                 if (blockProperties.getMainScreenProperties() != null)
                 {
                     if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
                             && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
                     {
+                        
                         final EJCanvasSplitOrientation orientation = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation();
 
                         final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Weight")
@@ -730,6 +857,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 descriptors.add(canvasDescriptor);
             }
 
+            
             return descriptors.toArray(new AbstractDescriptor<?>[0]);
         }
 
@@ -810,73 +938,16 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
             }
             final FormCanvasNode node = FormCanvasNode.this;
-            
-            
+
             AbstractDropDownDescriptor<String> formNameDescriptor = new AbstractDropDownDescriptor<String>("Referred Form")
-                    {
-
-                        @Override
-                        public void setValue(String value)
-                        {
-                           
-                            source.setReferredFormId(value);
-                            
-
-                            editor.setDirty(true);
-
-                            treeSection.refresh(node);
-                        }
-
-                        @Override
-                        public String getValue()
-                        {
-                            return source.getReferredFormId();
-                        }
-
-                        public String[] getOptions()
-                        {
-                            IJavaProject javaProject = editor.getJavaProject();
-                            if (javaProject != null)
-                            {
-                                List<String> formNames = FormsUtil.getFormNames(javaProject);
-                                formNames.remove(editor.getFormProperties().getName());
-                                return formNames.toArray(new String[0]);
-                            }
-                            return new String[0];
-                        }
-
-                        public String getOptionText(String t)
-                        {
-                            return t;
-                        }
-                    };
-
-            final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
             {
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
 
                 @Override
                 public void setValue(String value)
                 {
-                    try
-                    {
-                        source.setHorizontalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setHorizontalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
+
+                    source.setReferredFormId(value);
+
                     editor.setDirty(true);
 
                     treeSection.refresh(node);
@@ -885,250 +956,35 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 @Override
                 public String getValue()
                 {
-                    return String.valueOf(source.getHorizontalSpan());
+                    return source.getReferredFormId();
                 }
 
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
+                public String[] getOptions()
                 {
+                    IJavaProject javaProject = editor.getJavaProject();
+                    if (javaProject != null)
+                    {
+                        List<String> formNames = FormsUtil.getFormNames(javaProject);
+                        formNames.remove(editor.getFormProperties().getName());
+                        return formNames.toArray(new String[0]);
+                    }
+                    return new String[0];
+                }
 
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
+                public String getOptionText(String t)
+                {
+                    return t;
                 }
             };
 
-            final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setVerticalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setVerticalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getVerticalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandHorizontally();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandHorizontally(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-            };
-            hExpandDescriptor.setText("Expand Horizontally");
-            final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandVertically();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandVertically(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-            };
-            vExpandDescriptor.setText("Expand Vertically");
-
-            final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
-            {
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setWidth(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getWidth());
-                }
-
-                Text text;
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-            final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
-            {
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHeight(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHeight());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                public AbstractDescriptor<?>[] getDescriptors()
-                {
-                    if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
-                            && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
-                    {
-
-                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
-                                : heightHintDescriptor;
-                        descriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { descriptor, };
-                    }
-
-                    return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor };
-                }
-            };
+            AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, node);
             if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { formNameDescriptor,layoutGroupDescriptor };
+
+            return new AbstractDescriptor<?>[] { formNameDescriptor, layoutGroupDescriptor, createMessagePaneSettings() };
 
         }
 
@@ -1170,6 +1026,331 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
         }
+    }
+
+    private static AbstractGroupDescriptor createLayoutSettings(final AbstractEJFormEditor editor, final FormDesignTreeSection treeSection,
+            final AbstractCanvas node)
+    {
+        final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
+        {
+
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+
+            @Override
+            public void setValue(String value)
+            {
+                try
+                {
+                    node.getSource().setHorizontalSpan(Integer.parseInt(value));
+                }
+                catch (NumberFormatException e)
+                {
+                    node.getSource().setHorizontalSpan(1);
+                    if (text != null)
+                    {
+                        text.setText(getValue());
+                        text.selectAll();
+                    }
+                }
+                editor.setDirty(true);
+
+                treeSection.refresh(node);
+            }
+
+            @Override
+            public String getValue()
+            {
+                return String.valueOf(node.getSource().getHorizontalSpan());
+            }
+
+            Text text;
+
+            @Override
+            public void addEditorAssist(Control control)
+            {
+
+                text = (Text) control;
+                text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                super.addEditorAssist(control);
+            }
+            
+            
+        };
+        
+        
+
+        final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
+        {
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+
+            @Override
+            public void setValue(String value)
+            {
+                try
+                {
+                    node.getSource().setVerticalSpan(Integer.parseInt(value));
+                }
+                catch (NumberFormatException e)
+                {
+                    node.getSource().setVerticalSpan(1);
+                    if (text != null)
+                    {
+                        text.setText(getValue());
+                        text.selectAll();
+                    }
+                }
+                editor.setDirty(true);
+
+                treeSection.refresh(node);
+            }
+
+            @Override
+            public String getValue()
+            {
+                return String.valueOf(node.getSource().getVerticalSpan());
+            }
+
+            Text text;
+
+            @Override
+            public void addEditorAssist(Control control)
+            {
+
+                text = (Text) control;
+                text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                super.addEditorAssist(control);
+            }
+        };
+
+        final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+        {
+
+            @Override
+            public Boolean getValue()
+            {
+                return node.getSource().canExpandHorizontally();
+            }
+
+            @Override
+            public void setValue(Boolean value)
+            {
+                node.getSource().setExpandHorizontally(value.booleanValue());
+                editor.setDirty(true);
+                treeSection.refresh(node);
+            }
+
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+        };
+        hExpandDescriptor.setText("Expand Horizontally");
+        final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+        {
+
+            @Override
+            public Boolean getValue()
+            {
+                return node.getSource().canExpandVertically();
+            }
+
+            @Override
+            public void setValue(Boolean value)
+            {
+                node.getSource().setExpandVertically(value.booleanValue());
+                editor.setDirty(true);
+                treeSection.refresh(node);
+            }
+
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+        };
+        vExpandDescriptor.setText("Expand Vertically");
+
+        final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
+        {
+
+            @Override
+            public void setValue(String value)
+            {
+                try
+                {
+                    node.getSource().setWidth(Integer.parseInt(value));
+                }
+                catch (NumberFormatException e)
+                {
+                    node.getSource().setWidth(0);
+                    if (text != null)
+                    {
+                        text.setText(getValue());
+                        text.selectAll();
+                    }
+                }
+                editor.setDirty(true);
+                treeSection.refresh(node);
+            }
+
+            @Override
+            public String getValue()
+            {
+                return String.valueOf(node.getSource().getWidth());
+            }
+
+            Text text;
+
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+
+            @Override
+            public void addEditorAssist(Control control)
+            {
+
+                text = (Text) control;
+                text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                super.addEditorAssist(control);
+            }
+        };
+        final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
+        {
+
+            @Override
+            public void setValue(String value)
+            {
+                try
+                {
+                    node.getSource().setHeight(Integer.parseInt(value));
+                }
+                catch (NumberFormatException e)
+                {
+                    node.getSource().setWidth(0);
+                    if (text != null)
+                    {
+                        text.setText(getValue());
+                        text.selectAll();
+                    }
+                }
+                editor.setDirty(true);
+                treeSection.refresh(node);
+            }
+
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+
+            @Override
+            public String getValue()
+            {
+                return String.valueOf(node.getSource().getHeight());
+            }
+
+            Text text;
+
+            @Override
+            public void addEditorAssist(Control control)
+            {
+
+                text = (Text) control;
+                text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                super.addEditorAssist(control);
+            }
+        };
+        
+        if(node.getSource().isObjectGroupRoot())
+        {
+            hSapnDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().getHorizontalSpanOG()));
+            vSapnDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().getVerticalSpanOG()));
+            hExpandDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().canExpandHorizontallyOG()));
+            vExpandDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().canExpandVerticallyOG()));
+            hSapnDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().getHorizontalSpan()));
+            widthHintDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().getWidthOG()));
+            heightHintDescriptor.setTooltip(String.format("Object Group Value: %s", ""+node.getSource().getHeightOG()));
+        }
+        
+        // MASTER
+        AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
+        {
+            
+            public Action[] getToolbarActions()
+            {
+                if(node.getSource().isObjectGroupRoot())
+                {
+                    return new Action[]{
+                            new Action("Reset Object Group Defaults", EJUIImages.DESC_OBJGROUP)
+                            {
+                                
+                                @Override
+                                public void run()
+                                {
+                                    node.getSource().setWidth(node.getSource().getWidthOG());
+                                    node.getSource().setHeight(node.getSource().getHeightOG());
+                                    node.getSource().setExpandHorizontally(node.getSource().canExpandHorizontallyOG());
+                                    node.getSource().setExpandVertically(node.getSource().canExpandVerticallyOG());
+                                    node.getSource().setVerticalSpan(node.getSource().getVerticalSpanOG());
+                                    node.getSource().setHorizontalSpan(node.getSource().getHorizontalSpanOG());
+                                    node.getSource().setNumCols(node.getSource().getNumColsOG());
+                                    editor.setDirty(true);
+                                    treeSection.refresh(node);
+                                    treeSection.refreshPreview();
+                                    treeSection.showNodeDetails(node);
+                                }
+                            }
+                            
+                    };
+                }
+                
+                return new Action[0];
+            }
+            
+            @Override
+            public void runOperation(AbstractOperation operation)
+            {
+                editor.execute(operation);
+
+            }
+
+            public AbstractDescriptor<?>[] getDescriptors()
+            {
+                if (node.getSource().getParentCanvasContainer() != null && node.getSource().getParentCanvasContainer().getParnetCanvas() != null
+                        && node.getSource().getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
+                {
+                    AbstractTextDescriptor descriptor = node.getSource().getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
+                            : heightHintDescriptor;
+                    descriptor.setText("Weight");
+                    return new AbstractDescriptor<?>[] { descriptor, };
+                }
+
+                return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
+                        heightHintDescriptor };
+            }
+        };
+        return layoutGroupDescriptor;
     }
 
     private void cleanBlockAssignment(EJPluginCanvasProperties source)
@@ -1452,280 +1633,15 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             };
             borderDescriptor.setText("Display Frame");
 
-            final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHorizontalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setHorizontalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHorizontalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setVerticalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setVerticalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getVerticalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandHorizontally();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandHorizontally(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            hExpandDescriptor.setText("Expand Horizontally");
-            final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandVertically();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandVertically(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            vExpandDescriptor.setText("Expand Vertically");
-
-            final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setWidth(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getWidth());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-            final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHeight(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHeight());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                public AbstractDescriptor<?>[] getDescriptors()
-                {
-                    if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
-                            && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
-                    {
-                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
-                                : heightHintDescriptor;
-                        descriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { descriptor, };
-                    }
-
-                    return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor };
-                }
-            };
+          
+            AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, this);
             if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, layoutGroupDescriptor };
+
+            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -1895,281 +1811,15 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
-            final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
-            {
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHorizontalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setHorizontalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHorizontalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setVerticalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setVerticalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getVerticalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandHorizontally();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandHorizontally(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-            };
-            hExpandDescriptor.setText("Expand Horizontally");
-            final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandVertically();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandVertically(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-            };
-            vExpandDescriptor.setText("Expand Vertically");
-
-            final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setWidth(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getWidth());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-            final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHeight(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHeight());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                public AbstractDescriptor<?>[] getDescriptors()
-                {
-
-                    if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
-                            && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
-                    {
-                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
-                                : heightHintDescriptor;
-                        descriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { descriptor, };
-                    }
-                    return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor };
-                }
-            };
+        
+            AbstractGroupDescriptor layoutGroupDescriptor  = createLayoutSettings(editor, treeSection, this);
             if (source.isObjectGroupRoot())
             {
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -2289,274 +1939,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             final TabCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
-            final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHorizontalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setHorizontalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHorizontalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setVerticalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setVerticalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getVerticalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandHorizontally();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandHorizontally(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            hExpandDescriptor.setText("Expand Horizontally");
-            final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandVertically();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandVertically(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            vExpandDescriptor.setText("Expand Vertically");
-
-            final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setWidth(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getWidth());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-            final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHeight(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHeight());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                public AbstractDescriptor<?>[] getDescriptors()
-                {
-                    if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
-                            && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
-                    {
-                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
-                                : heightHintDescriptor;
-                        descriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { descriptor, };
-                    }
-
-                    return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor };
-                }
-            };
+      
+            AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, this);
 
             AbstractDropDownDescriptor<EJCanvasTabPosition> orientationDescriptor = new AbstractDropDownDescriptor<EJCanvasTabPosition>("Orientation")
             {
@@ -2597,7 +1981,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -2717,273 +2102,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             final StackedCanvasNode node = this;
             final AbstractEJFormEditor editor = treeSection.getEditor();
 
-            final AbstractTextDescriptor hSapnDescriptor = new AbstractTextDescriptor("Horizontal Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHorizontalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setHorizontalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHorizontalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractTextDescriptor vSapnDescriptor = new AbstractTextDescriptor("Vertical Span")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setVerticalSpan(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setVerticalSpan(1);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getVerticalSpan());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            final AbstractDescriptor<Boolean> hExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandHorizontally();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandHorizontally(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            hExpandDescriptor.setText("Expand Horizontally");
-            final AbstractDescriptor<Boolean> vExpandDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public Boolean getValue()
-                {
-                    return source.canExpandVertically();
-                }
-
-                @Override
-                public void setValue(Boolean value)
-                {
-                    source.setExpandVertically(value.booleanValue());
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-            };
-            vExpandDescriptor.setText("Expand Vertically");
-
-            final AbstractTextDescriptor widthHintDescriptor = new AbstractTextDescriptor("Width")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setWidth(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getWidth());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-            final AbstractTextDescriptor heightHintDescriptor = new AbstractTextDescriptor("Height")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                @Override
-                public void setValue(String value)
-                {
-                    try
-                    {
-                        source.setHeight(Integer.parseInt(value));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        source.setWidth(0);
-                        if (text != null)
-                        {
-                            text.setText(getValue());
-                            text.selectAll();
-                        }
-                    }
-                    editor.setDirty(true);
-                    treeSection.refresh(node);
-                }
-
-                @Override
-                public String getValue()
-                {
-                    return String.valueOf(source.getHeight());
-                }
-
-                Text text;
-
-                @Override
-                public void addEditorAssist(Control control)
-                {
-
-                    text = (Text) control;
-                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
-
-                    super.addEditorAssist(control);
-                }
-            };
-
-            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Layout Settings")
-            {
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                public AbstractDescriptor<?>[] getDescriptors()
-                {
-                    if (source.getParentCanvasContainer() != null && source.getParentCanvasContainer().getParnetCanvas() != null
-                            && source.getParentCanvasContainer().getParnetCanvas().getType() == EJCanvasType.SPLIT)
-                    {
-                        AbstractTextDescriptor descriptor = source.getParentCanvasContainer().getParnetCanvas().getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? widthHintDescriptor
-                                : heightHintDescriptor;
-                        descriptor.setText("Weight");
-                        return new AbstractDescriptor<?>[] { descriptor, };
-                    }
-                    return new AbstractDescriptor<?>[] { hSapnDescriptor, vSapnDescriptor, hExpandDescriptor, vExpandDescriptor, widthHintDescriptor,
-                            heightHintDescriptor };
-                }
-            };
+    
+            AbstractGroupDescriptor layoutGroupDescriptor  = createLayoutSettings(editor, treeSection, this);
 
             AbstractDropDownDescriptor<String> orientationDescriptor = new AbstractDropDownDescriptor<String>("Default Page")
             {
@@ -3029,7 +2149,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
     }
@@ -3188,6 +2309,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
+                        break;
                     case FORM:
                         nodes.add(new FormCanvasNode(this, canvas));
                         break;
@@ -3526,6 +2648,42 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
             };
 
+            final AbstractDropDownDescriptor<EJPopupButton> defaultButtonDescriptor = new AbstractDropDownDescriptor<EJPopupButton>("Default Button")
+            {
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                public EJPopupButton[] getOptions()
+                {
+
+                    return EJPopupButton.values();
+                }
+
+                @Override
+                public void setValue(EJPopupButton value)
+                {
+                    source.setDefaultPopupButton(value);
+
+                    editor.setDirty(true);
+                }
+
+                @Override
+                public EJPopupButton getValue()
+                {
+                    return source.getDefaultPopupButton();
+                }
+
+                public String getOptionText(EJPopupButton t)
+                {
+                    return t.toString();
+                }
+            };
+
             AbstractGroupDescriptor actionsGroupDescriptor = new AbstractGroupDescriptor("Actions")
             {
                 @Override
@@ -3537,11 +2695,11 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { button1Descriptor, button2Descriptor, button3Descriptor };
+                    return new AbstractDescriptor<?>[] { button1Descriptor, button2Descriptor, button3Descriptor, defaultButtonDescriptor };
                 }
             };
 
-            return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, layoutGroupDescriptor, actionsGroupDescriptor };
+            return new AbstractDescriptor<?>[] { nameDescriptor, colDescriptor, createMessagePaneSettings(), layoutGroupDescriptor, actionsGroupDescriptor };
         }
 
     }

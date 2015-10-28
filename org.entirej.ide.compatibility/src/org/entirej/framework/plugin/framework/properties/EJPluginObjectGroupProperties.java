@@ -107,6 +107,76 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         return null;
     }
 
+    
+    
+    public boolean  updateCanvasSettings(EJPluginFormProperties form)
+    {
+        
+        boolean updated= false;
+      //clean all canvas
+        EJPluginCanvasContainer canvasContainer = form.getCanvasContainer();
+        Collection<EJPluginCanvasProperties> allCanvasProperties = canvasContainer.getCanvasProperties();
+        for (EJPluginCanvasProperties canvas : new ArrayList<EJPluginCanvasProperties>(allCanvasProperties))
+        {
+            if(canvas.isImportFromObjectGroup()  && canvas.isObjectGroupRoot() && canvas.getReferencedObjectGroupName().equals(getName()))
+                        
+            {
+                EJCanvasProperties canvasProperties = getCanvasProperties(canvas.getName());
+                if(canvas.getWidth() == canvas.getWidthOG() && canvas.getWidth()!= canvasProperties.getWidth())
+                {
+                    canvas.setWidth(canvasProperties.getWidth());
+                    canvas.setWidthOG(canvasProperties.getWidth());
+                    updated = true;
+                }
+                if(canvas.getHeight() == canvas.getHeightOG()  && canvas.getHeight()!= canvasProperties.getHeight())
+                {
+                    canvas.setHeight(canvasProperties.getHeight());
+                    canvas.setHeightOG(canvasProperties.getHeight());
+                    updated = true;
+                }
+                if(canvas.getNumColsOG() == canvas.getNumCols() && canvas.getNumCols()!= canvasProperties.getNumCols())
+                {
+                    canvas.setNumCols(canvasProperties.getNumCols());
+                    canvas.setNumColsOG(canvasProperties.getNumCols());
+                    updated = true;
+                }
+                if(canvas.canExpandHorizontally() == canvas.canExpandHorizontally()  && canvas.canExpandHorizontally()!= canvasProperties.canExpandHorizontally())
+                {
+                    canvas.setExpandHorizontally(canvasProperties.canExpandHorizontally());
+                    canvas.setExpandHorizontallyOG(canvasProperties.canExpandHorizontally());
+                    updated = true;
+                }
+                if(canvas.canExpandVertically() == canvas.canExpandVertically()  && canvas.canExpandVertically()!= canvasProperties.canExpandVertically())
+                {
+                    canvas.setExpandVertically(canvasProperties.canExpandVertically());
+                    canvas.setExpandVerticallyOG(canvasProperties.canExpandVertically());
+                    updated = true;
+                }
+                
+                
+                
+                if(canvas.getHorizontalSpan() == canvas.getHorizontalSpanOG()  && canvas.getHorizontalSpan()!= canvasProperties.getHorizontalSpan())
+                {
+                    canvas.setHorizontalSpan(canvasProperties.getHorizontalSpan());
+                    canvas.setHorizontalSpanOG(canvasProperties.getHorizontalSpan());
+                    updated = true;
+                }
+                
+                
+                if(canvas.getVerticalSpan() == canvas.getVerticalSpanOG()  && canvas.getVerticalSpan()!= canvasProperties.getVerticalSpan())
+                {
+                    canvas.setVerticalSpan(canvasProperties.getVerticalSpan());
+                    canvas.setVerticalSpanOG(canvasProperties.getVerticalSpan());
+                    updated = true;
+                }
+                
+                
+            }
+        }
+        
+        return updated;
+    }
+    
     public void removeObjects(EJPluginFormProperties form)
     {
         EJPluginBlockContainer blockContainer = form.getBlockContainer();
@@ -258,11 +328,28 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
                 EJPluginCanvasProperties canvasProperties = (EJPluginCanvasProperties) EJPluginCanvasRetriever.getCanvasProperties(form, canvas.getName());
                 if(canvasProperties == null)
                 {
+                    
+                    canvas.setWidthOG(canvas.getWidth());
+                    canvas.setHeightOG(canvas.getHeight());
+                    canvas.setExpandHorizontallyOG(canvas.canExpandHorizontally());
+                    canvas.setExpandVerticallyOG(canvas.canExpandVertically());
+                    canvas.setVerticalSpanOG(canvas.getVerticalSpan());
+                    canvas.setHorizontalSpanOG(canvas.getHorizontalSpan());
+                    canvas.setNumColsOG(canvas.getNumCols());
                     formContainer.addCanvasProperties(canvas);
                 }
                 else
                 {
                     canvasProperties.setObjectGroupRoot(true);
+                    
+                    canvas.setWidthOG(canvas.getWidth());
+                    canvas.setHeightOG(canvas.getHeight());
+                    canvas.setExpandHorizontallyOG(canvas.canExpandHorizontally());
+                    canvas.setExpandVerticallyOG(canvas.canExpandVertically());
+                    canvas.setVerticalSpanOG(canvas.getVerticalSpan());
+                    canvas.setHorizontalSpanOG(canvas.getHorizontalSpan());
+                    canvas.setNumColsOG(canvas.getNumCols());
+                    
                     canvas.setWidth(canvasProperties.getWidth());
                     canvas.setHeight(canvasProperties.getHeight());
                     canvas.setReferredFormId(canvasProperties.getReferredFormId());
@@ -270,6 +357,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
                     canvas.setExpandVertically(canvasProperties.canExpandVertically());
                     canvas.setVerticalSpan(canvasProperties.getVerticalSpan());
                     canvas.setHorizontalSpan(canvasProperties.getHorizontalSpan());
+                    canvas.setNumCols(canvasProperties.getNumCols());
                     canvasProperties.getParentCanvasContainer().replaceCanvasProperties(canvasProperties, canvas);
                 }
                 canvas.setObjectGroupRoot(true);

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 public class FXRuntimeVersions
 {
 
-    public static Version CF_V_2_3 = new Version("3.1.0", FXCFRuntimeClasspathContainer.ID);
+    public static Version CF_V_2_3 = new Version("3.2.0", FXCFRuntimeClasspathContainer.ID);
 
     public static class Version
     {

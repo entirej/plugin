@@ -17,9 +17,11 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
+import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.xml.sax.Attributes;
@@ -30,29 +32,35 @@ public class CanvasHandler extends EntireJTagHandler
     private EJPluginFormProperties   _formProperties;
     private EJPluginCanvasProperties _canvasProperties;
     
-    private static final String      ELEMENT_CANVAS               = "canvas";
-    private static final String      ELEMENT_WIDTH                = "width";
-    private static final String      ELEMENT_HEIGHT               = "height";
-    private static final String      ELEMENT_NUM_COLS             = "numCols";
-    private static final String      ELEMENT_HORIZONTAL_SPAN      = "horizontalSpan";
-    private static final String      ELEMENT_VERTICAL_SPAN        = "verticalSpan";
-    private static final String      ELEMENT_EXPAND_HORIZONTALLY  = "expandHorizontally";
-    private static final String      ELEMENT_EXPAND_VERTICALLY    = "expandVertically";
-    private static final String      ELEMENT_DISPLAY_GROUP_FRAME  = "displayGroupFrame";
-    private static final String      ELEMENT_FRAME_TITLE          = "groupFrameTitle";
-    private static final String      ELEMENT_POPUP_PAGE_TITLE     = "popupPageTitle";
-    private static final String      ELEMENT_TAB_POSITION         = "tabPosition";
-    private static final String      ELEMENT_SPLIT_ORIENTATION    = "splitOrientation";
-    private static final String      ELEMENT_BUTTON_ONE_TEXT      = "buttonOneText";
-    private static final String      ELEMENT_BUTTON_TWO_TEXT      = "buttonTwoText";
-    private static final String      ELEMENT_BUTTON_THREE_TEXT    = "buttonThreeText";
-    private static final String      ELEMENT_TAB_PAGE             = "tabPage";
-    private static final String      ELEMENT_STACKED_PAGE         = "stackedPage";
-    private static final String      ELEMENT_INITIAL_STACKED_PAGE = "initialStackedPageName";
+    private static final String      ELEMENT_CANVAS                 = "canvas";
+    private static final String      ELEMENT_WIDTH                  = "width";
+    private static final String      ELEMENT_HEIGHT                 = "height";
+    private static final String      ELEMENT_NUM_COLS               = "numCols";
+    private static final String      ELEMENT_HORIZONTAL_SPAN        = "horizontalSpan";
+    private static final String      ELEMENT_VERTICAL_SPAN          = "verticalSpan";
+    private static final String      ELEMENT_EXPAND_HORIZONTALLY    = "expandHorizontally";
+    private static final String      ELEMENT_EXPAND_VERTICALLY      = "expandVertically";
+    private static final String      ELEMENT_DISPLAY_GROUP_FRAME    = "displayGroupFrame";
     
-    private static final String      ELEMENT_REFERRED_FORM_ID     = "referredFormId";
+    private static final String      ELEMENT_CLOSEABLE_MESSAGE_PANE = "closeableMessagePane";
     
-    private boolean                  _canvasCreated               = false;
+    private static final String      ELEMENT_MESSAGE_POSITION       = "messagePosition";
+    private static final String      ELEMENT_MESSAGE_PANE_SIZE      = "messagePaneSize";
+    private static final String      ELEMENT_DEFAULT_BUTTON_ID      = "defaultButton";
+    private static final String      ELEMENT_FRAME_TITLE            = "groupFrameTitle";
+    private static final String      ELEMENT_POPUP_PAGE_TITLE       = "popupPageTitle";
+    private static final String      ELEMENT_TAB_POSITION           = "tabPosition";
+    private static final String      ELEMENT_SPLIT_ORIENTATION      = "splitOrientation";
+    private static final String      ELEMENT_BUTTON_ONE_TEXT        = "buttonOneText";
+    private static final String      ELEMENT_BUTTON_TWO_TEXT        = "buttonTwoText";
+    private static final String      ELEMENT_BUTTON_THREE_TEXT      = "buttonThreeText";
+    private static final String      ELEMENT_TAB_PAGE               = "tabPage";
+    private static final String      ELEMENT_STACKED_PAGE           = "stackedPage";
+    private static final String      ELEMENT_INITIAL_STACKED_PAGE   = "initialStackedPageName";
+    
+    private static final String      ELEMENT_REFERRED_FORM_ID       = "referredFormId";
+    
+    private boolean                  _canvasCreated                 = false;
     
     public CanvasHandler(EJPluginFormProperties formProperties)
     {
@@ -164,6 +172,33 @@ public class CanvasHandler extends EntireJTagHandler
             {
                 _canvasProperties.setDisplayGroupFrame(Boolean.parseBoolean(value));
             }
+        }
+        else if (name.equals(ELEMENT_CLOSEABLE_MESSAGE_PANE))
+        {
+            if (value.length() > 0)
+            {
+                _canvasProperties.setCloseableMessagePane(Boolean.parseBoolean(value));
+            }
+        }
+        
+        else if (name.equals(ELEMENT_MESSAGE_POSITION))
+        {
+            if (value.length() > 0)
+            {
+                _canvasProperties.setMessagePosition(EJCanvasMessagePosition.valueOf(value));
+            }
+        }
+        
+        else if (name.equals(ELEMENT_MESSAGE_PANE_SIZE))
+        {
+            if (value.length() > 0)
+            {
+                _canvasProperties.setMessagePaneSize(Integer.parseInt(value));
+            }
+        }
+        else if (name.equals(ELEMENT_DEFAULT_BUTTON_ID))
+        {
+            _canvasProperties.setDefaultPopupButton(EJPopupButton.valueOf(value));
         }
         else if (name.equals(ELEMENT_INITIAL_STACKED_PAGE))
         {

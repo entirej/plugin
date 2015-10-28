@@ -44,6 +44,8 @@ public class EJPluginLovDefinitionProperties implements EJLovDefinitionPropertie
     private String                         _referencedLovDefinitionName;
     private boolean                        _isReferenced = false;
     private String                         _lovRendererName;
+
+    private boolean                        _automaticRefresh            = true;
     private int                            _width;
     private int                            _height;
     private EJFrameworkExtensionProperties _lovRendererProperties;
@@ -455,6 +457,32 @@ public class EJPluginLovDefinitionProperties implements EJLovDefinitionPropertie
     public boolean isImportFromObjectGroup()
     {
         return _referencedObjectGroupName!=null && _referencedObjectGroupName.trim().length()>0;
+    }
+    
+    
+    /**
+     * If automatic refresh has been set, then the LOV Values will be cleared
+     * and re-queried each time the LOV is opened, if set to false, then the
+     * values will be kept once an initial query has been made
+     * 
+     * @return true if an automatic refresh has been set, otherwise false
+     */
+    public boolean refreshAutomatically()
+    {
+        return _automaticRefresh;
+    }
+
+    /**
+     * Sets the automatic refresh flag for this LovDefinition
+     * 
+     * @param automaticRefresh
+     *            <code>true</code> if the lov data will be cleared each time the lov is used
+     *            <code>false</code> if it should not
+     * @see #refreshAutomatically()
+     */
+    public void setAutomaticRefresh(boolean automaticRefresh)
+    {
+        _automaticRefresh = automaticRefresh;
     }
     
 }

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -481,6 +482,16 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
             if (serviceType != null)
             {
                 String[] superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                
+                while (superInterfaces.length==0 && !Object.class.getName().equals(Signature.toString(serviceType.getSuperclassTypeSignature())))
+                {
+                   
+                    serviceType = serviceType.newSupertypeHierarchy(new NullProgressMonitor()).getSuperclass(serviceType);
+                    superInterfaces = serviceType.getSuperInterfaceTypeSignatures();
+                    
+                }
+                
+                
                 for (String superInterface : superInterfaces)
                 {
                     String typeErasure = Signature.getTypeErasure(Signature.toString(superInterface));
@@ -1348,7 +1359,7 @@ public class EJPluginBlockProperties implements EJBlockProperties, EJDevBlockDis
         if (_isReferenced)
         {
             EJPluginBlockProperties blockProperties = _formProperties.getBlockProperties(_referencedBlockName);
-            if (blockProperties != null) return blockProperties.getLovMappingContainer();
+            if (blockProperties != null && !blockProperties.equals(this)) return blockProperties.getLovMappingContainer();
         }
         return _lovMappingContainer;
     }

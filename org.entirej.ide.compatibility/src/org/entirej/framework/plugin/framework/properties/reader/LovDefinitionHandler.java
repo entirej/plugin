@@ -35,6 +35,8 @@ public class LovDefinitionHandler extends EntireJTagHandler
     private static final String                 ELEMENT_LOV_DEF             = "lovDefinition";
     private static final String                 ELEMENT_WIDTH               = "width";
     private static final String                 ELEMENT_HEIGHT              = "height";
+    
+    private static final String                 ELEMENT_AUTOMATIC_REFRESH   = "automaticRefresh";
     private static final String                 ELEMENT_RENDERER_PROPERTIES = "lovRendererProperties";
     private static final String                 ELEMENT_BLOCK               = "block";
     private static final String                 ELEMENT_ITEM                = "item";
@@ -168,6 +170,13 @@ public class LovDefinitionHandler extends EntireJTagHandler
                 if (value.length() > 0)
                 {
                     _lovDefinitionProperties.setWidth(Integer.parseInt(value.trim()));
+                }
+            }
+            else if (name.equals(ELEMENT_AUTOMATIC_REFRESH))
+            {
+                if (value.length() > 0)
+                {
+                    _lovDefinitionProperties.setAutomaticRefresh(Boolean.parseBoolean(value.trim()));
                 }
             }
             else if (name.equals(ELEMENT_ACTION_PROCESSOR))

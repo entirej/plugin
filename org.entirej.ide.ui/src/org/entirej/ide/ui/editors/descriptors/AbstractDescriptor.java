@@ -36,6 +36,7 @@ public abstract class AbstractDescriptor<T>
 
     private final TYPE type;
     private boolean    required;
+    private boolean    override ;
     private String     text;
     private String     tooltip;
 
@@ -65,6 +66,17 @@ public abstract class AbstractDescriptor<T>
         this.tooltip = tooltip;
     }
 
+    
+    public boolean isOverride()
+    {
+        return override;
+    }
+    
+    public void setOverride(boolean override)
+    {
+        this.override = override;
+    }
+    
     public boolean isRequired()
     {
         return required;
