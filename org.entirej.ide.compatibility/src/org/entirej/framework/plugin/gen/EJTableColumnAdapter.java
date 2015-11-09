@@ -28,6 +28,8 @@ public class EJTableColumnAdapter extends WrappingTemplateModel implements Adapt
         values.put("var_name", toPropertyName(column.getName()));
         values.put("method_name", toMethodName(column.getName()));
         values.put("data_type_with_pkg", column.getDatatypeName());
+        values.put("is_array", ""+column.isArray());
+        values.put("is_struct", ""+column.isStruct());
         
         if (column.getDatatypeName().contains("."))
         {
