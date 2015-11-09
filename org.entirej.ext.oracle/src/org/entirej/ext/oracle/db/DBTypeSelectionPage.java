@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +89,114 @@ public class DBTypeSelectionPage extends WizardPage
         return labelProvider;
     }
 
+    
+    public static int getDataTypeIntForOraType(String jdbcType)
+    {
+        
+       if("BINARY_INTEGER".equals(jdbcType))
+       {
+           return Types.BINARY;
+       }
+       if("NATURAL".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("NATURALN".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("PLS_INTEGER".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("POSITIVE".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("SIGNTYPE".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("INTEGER".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("INT".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("SMALLINT".equals(jdbcType))
+       {
+           return Types.SMALLINT;
+       }
+       if("BIGINT".equals(jdbcType))
+       {
+           return Types.BIGINT;
+       }
+       if("DECIMAL".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       if("DEC".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       if("NUMBER".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       if("NUMERIC".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       
+       
+       if("DOUBLE".equals(jdbcType))
+       {
+           return Types.DOUBLE;
+       }
+       if("PRECISION".equals(jdbcType))
+       {
+           return Types.DOUBLE;
+       }
+       if("FLOAT".equals(jdbcType))
+       {
+           return Types.FLOAT;
+       }
+       if("DATE".equals(jdbcType))
+       {
+           return Types.DATE;
+       }
+       if("TIMESTAMP".equals(jdbcType))
+       {
+           return Types.TIMESTAMP;
+       }
+       if("REAL".equals(jdbcType))
+       {
+           return Types.REAL;
+       }
+        
+        
+        
+       
+        
+       
+        if ("BOOLEAN".equals(jdbcType))
+            return Types.BOOLEAN;
+        if ("OBJECT".equals(jdbcType))
+            return Types.STRUCT;
+        if ("TABLE".equals(jdbcType))
+            return Types.ARRAY;
+        if ("CLOB".equals(jdbcType))
+            return Types.CLOB;
+        if ("BLOB".equals(jdbcType))
+            return Types.BLOB;
+        if ("STRUCT".equals(jdbcType))
+            return Types.STRUCT;
+        
+        return Types.VARCHAR;
+    }
+    
     protected void init(IJavaProject javaProject)
     {
         try
@@ -530,6 +639,9 @@ public class DBTypeSelectionPage extends WizardPage
             }
         }
 
+        
+        
+        
         public List<Procedure> getPackagedElements(Connection con, String pkgName) throws SQLException
         {
             List<Procedure> procedures = new ArrayList<Procedure>();
@@ -568,7 +680,7 @@ public class DBTypeSelectionPage extends WizardPage
                             }
                             else
                             {
-                                returnArg = new Argument(argName, dataType);
+                                returnArg = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                             }
                             if(argName==null)
                             {
@@ -603,7 +715,7 @@ public class DBTypeSelectionPage extends WizardPage
                     }
                     else
                     {
-                        argument = new Argument(argName, dataType);
+                        argument = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                     }
                     if ("IN/OUT".equals(inOut))
                         argument.type = Type.IN_OUT;
@@ -661,7 +773,7 @@ public class DBTypeSelectionPage extends WizardPage
                             }
                             else
                             {
-                                returnArg = new Argument(argName, dataType);
+                                returnArg = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                                 returnArg.type = Type.OUT;
                             }
                             proc = new Function(objectName, returnArg);
@@ -684,7 +796,7 @@ public class DBTypeSelectionPage extends WizardPage
                     }
                     else
                     {
-                        argument = new Argument(argName, dataType);
+                        argument = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                     }
                     if ("IN/OUT".equals(inOut))
                         argument.type = Type.IN_OUT;
@@ -741,7 +853,7 @@ public class DBTypeSelectionPage extends WizardPage
 
         public ObjectArgument createObjectArgument(Connection con, String tableName, String objectName, String argName) throws SQLException
         {
-            ObjectArgument argument = new ObjectArgument(tableName, objectName, argName, "OBJECT");
+            ObjectArgument argument = new ObjectArgument(tableName, objectName, argName, "OBJECT",Types.STRUCT);
             Statement statement = con.createStatement();
             ResultSet rset = statement.executeQuery("SELECT * FROM USER_TYPE_ATTRS WHERE TYPE_NAME = '" + objectName + "' ORDER BY ATTR_NO");
             try
@@ -790,7 +902,7 @@ public class DBTypeSelectionPage extends WizardPage
             {
                 return createObjectArgumentFromTableType(con, attrTypeName, attrName);
             }
-            return new Argument(attrName, attrTypeName);
+            return new Argument(attrName, attrTypeName,getDataTypeIntForOraType(attrTypeName));
         }
 
         private String prevObjectName = null;

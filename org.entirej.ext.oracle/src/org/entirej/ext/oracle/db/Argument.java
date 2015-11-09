@@ -27,12 +27,14 @@ class Argument
 
     protected String        _name;
     protected String        _datatype;
+    protected int        _datatypeInt;
     protected Argument.Type type = Type.IN_OUT;
 
-    public Argument(String name, String datatype)
+    public Argument(String name, String datatype,int datatypeInt)
     {
         _name = name;
         this._datatype = datatype;
+        this._datatypeInt = datatypeInt;
     }
 
     public String getName()
@@ -43,6 +45,11 @@ class Argument
     public String getDataType()
     {
         return _datatype;
+    }
+    
+    public int getDatatypeInt()
+    {
+        return _datatypeInt;
     }
 
 }

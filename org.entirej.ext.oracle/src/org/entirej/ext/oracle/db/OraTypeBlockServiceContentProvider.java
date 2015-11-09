@@ -23,6 +23,7 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Struct;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -260,7 +261,11 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         if (objectArgument.tableName != null)
                             tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
                         if (objectArgument.objName != null)
-                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                            tableColumn.setProperty("DB_OBJECT_NAME", objectArgument.objName);
+                       
+                        
+                        tableColumn.setProperty("DB_OBJECT_TYPE", ""+objectArgument.getDatatypeInt());
+                            
                         if (objectArgument.tableName != null)
                         {
                             tableColumn.setArray(true);
@@ -547,6 +552,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
                 return String.class;
             }
+            
             public boolean isStructForOraType(String jdbcType)
             {
                 
@@ -574,8 +580,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     for (Argument argument : collectionType.getArguments())
                     {
                         List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
-                        EJTableColumn tableColumn = new EJTableColumn();
-                        tableColumn.setName(argument._name);
+                       
 
                         if (argument instanceof ObjectArgument)
                         {
@@ -749,8 +754,11 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     if (objectArgument.tableName != null)
                         inner.setProperty("TABLE_NAME", objectArgument.tableName);
                     if (objectArgument.objName != null)
-                        inner.setProperty("OBJECT_NAME", objectArgument.objName);
+                        inner.setProperty("DB_OBJECT_NAME", objectArgument.objName);
+                    if (objectArgument.objName != null)
+                        inner.setProperty("JAVA_OBJECT_NAME", toCamelCase(objectArgument.objName));
                     inner.setColumnNames(createPojoCloumns(objectArgument));
+                    
                     inner.setClassName(objectArgument.objName);
                     addedInner.add(objectArgument.objName);
                     innerPojoGeneratorTypes.add(inner);

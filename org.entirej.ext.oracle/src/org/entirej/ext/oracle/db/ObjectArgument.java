@@ -27,16 +27,16 @@ class ObjectArgument extends Argument
     final String                objName;
     private ArrayList<Argument> _arguments = new ArrayList<Argument>();
 
-    public ObjectArgument(String tableName, String objName, String name, String dataType)
+    public ObjectArgument(String tableName, String objName, String name, String dataType,int typeInt)
     {
-        super(name, dataType);
+        super(name, dataType,typeInt);
         this.tableName = tableName;
         this.objName = objName;
     }
 
-    public ObjectArgument(String name, String type)
+    public ObjectArgument(String name, String type,int typeInt)
     {
-        this(null, null, name, type);
+        this(null, null, name, type,typeInt);
     }
 
     public void addArgument(Argument arg)
