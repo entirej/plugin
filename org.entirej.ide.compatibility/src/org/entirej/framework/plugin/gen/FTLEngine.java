@@ -70,7 +70,7 @@ public class FTLEngine
         }
         
         {
-            List<EJTableColumn> fields = new ArrayList<>();
+            List<EJTableColumn> fields = new ArrayList<EJTableColumn>();
             Map<String, Class<?>> gettersAndDatatypes = EJPojoHelper.getGettersAndDatatypes(serviceGeneratorType.getPojo());
             for (Entry<String, Class<?>> filed : gettersAndDatatypes.entrySet())
             {
