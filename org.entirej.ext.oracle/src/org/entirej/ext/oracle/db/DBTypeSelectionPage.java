@@ -184,7 +184,7 @@ public class DBTypeSelectionPage extends WizardPage
         if ("BOOLEAN".equals(jdbcType))
             return Types.BOOLEAN;
         if ("OBJECT".equals(jdbcType))
-            return Types.STRUCT;
+            return Types.ARRAY;
         if ("TABLE".equals(jdbcType))
             return Types.ARRAY;
         if ("CLOB".equals(jdbcType))
