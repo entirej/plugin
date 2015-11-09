@@ -22,6 +22,7 @@ Export-Package: org.entirej.framework.plugin,
  org.entirej.framework.plugin.framework.properties.interfaces,
  org.entirej.framework.plugin.framework.properties.reader,
  org.entirej.framework.plugin.framework.properties.writer,
+ org.entirej.framework.plugin.gen,
  org.entirej.framework.plugin.preferences,
  org.entirej.framework.plugin.reports,
  org.entirej.framework.plugin.reports.containers,
@@ -30,3 +31,5 @@ Export-Package: org.entirej.framework.plugin,
  org.entirej.framework.plugin.ui.wizards.utils,
  org.entirej.framework.plugin.utils
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ ext/freemarker-2.3.23.jar

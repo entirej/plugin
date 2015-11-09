@@ -69,6 +69,7 @@ import org.entirej.framework.core.service.EJPojoContentGenerator;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceContentGenerator;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.plugin.gen.FTLEngine;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJPluginEntireJClassLoader;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
@@ -546,7 +547,9 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             connectedCU = parentCU;
 
             IBuffer buffer = parentCU.getBuffer();
-            String fileContents = pojoContentGenerator.generateContent(pojoGeneratorType);
+            
+            
+            String fileContents = FTLEngine.genrateFormPojo(pojoContentGenerator.getTemplate(), pojoGeneratorType);
 
             if (fileContents == null)
             {
@@ -646,7 +649,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             connectedCU = parentCU;
 
             IBuffer buffer = parentCU.getBuffer();
-            String fileContents = serviceContentGenerator.generateContent(serviceGeneratorType);
+            String fileContents = FTLEngine.genrateFormService(serviceContentGenerator.getTemplate(), serviceGeneratorType);
 
             if (fileContents == null)
             {
