@@ -255,6 +255,9 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     EJTableColumn tableColumn = new EJTableColumn();
                     tableColumn.setName(argument._name);
 
+                    
+                    tableColumn.setProperty("JAVA_OBJECT_TYPE", ""+argument.getDatatypeInt());
+                    
                     if (argument instanceof ObjectArgument)
                     {
                         ObjectArgument objectArgument = (ObjectArgument) argument;
@@ -264,7 +267,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             tableColumn.setProperty("DB_OBJECT_NAME", objectArgument.objName);
                        
                         
-                        tableColumn.setProperty("DB_OBJECT_TYPE", ""+objectArgument.getDatatypeInt());
+                        
                             
                         if (objectArgument.tableName != null)
                         {
