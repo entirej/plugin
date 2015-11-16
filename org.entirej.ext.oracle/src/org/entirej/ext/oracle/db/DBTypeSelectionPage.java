@@ -822,7 +822,7 @@ public class DBTypeSelectionPage extends WizardPage
         public ObjectArgument createObjectArgumentFromTableType(Connection con, String TableType, String argName) throws SQLException
         {
             
-            ObjectArgument tab = new ObjectArgument(TableType, TableType, TableType, "TABLE",Types.ARRAY);
+            ObjectArgument tab = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
             
             
             
