@@ -821,20 +821,26 @@ public class DBTypeSelectionPage extends WizardPage
 
         public ObjectArgument createObjectArgumentFromTableType(Connection con, String TableType, String argName) throws SQLException
         {
+            
+            ObjectArgument tab = new ObjectArgument(TableType, TableType, TableType, "TABLE",Types.ARRAY);
+            
+            
+            
             Statement statement = con.createStatement();
             ResultSet rset = statement.executeQuery("SELECT ELEM_TYPE_NAME FROM USER_COLL_TYPES WHERE TYPE_NAME = '" + TableType + "'");
             try
             {
-                String objectName = null;
+                String objectType = null;
+             
                 while (rset.next())
                 {
-                    objectName = rset.getString("ELEM_TYPE_NAME");
+                    objectType = rset.getString("ELEM_TYPE_NAME");
                     break;
                 }
 
-                if (objectName != null)
+                if (objectType != null)
                 {
-                    return createObjectArgument(con, TableType, objectName, argName);
+                    tab.addArgument(createObjectArgument(con, null, objectType, objectType));
                 }
             }
             finally
@@ -843,7 +849,7 @@ public class DBTypeSelectionPage extends WizardPage
                 statement.close();
             }
 
-            return null;
+            return tab;
         }
 
         public ObjectArgument createObjectArgument(Connection con, String objectName, String argName) throws SQLException

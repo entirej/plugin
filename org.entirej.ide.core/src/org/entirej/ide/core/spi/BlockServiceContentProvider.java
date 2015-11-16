@@ -54,6 +54,8 @@ public interface BlockServiceContentProvider
         boolean canFinish(IWizardPage page);
 
         boolean skipPage(IWizardPage page);
+        
+        boolean skipMainPojo();
 
         void createRequiredResources(IProgressMonitor monitor);
 

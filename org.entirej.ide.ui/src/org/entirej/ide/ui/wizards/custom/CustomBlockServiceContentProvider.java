@@ -61,6 +61,12 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
     {
         return new BlockServiceWizardProvider()
         {
+            public boolean skipMainPojo()
+            {
+                // TODO Auto-generated method stub
+                return false;
+            }
+            
             private CustomFieldsPage columnSelectionPage = new CustomFieldsPage();
 
             public void init(GeneratorContext context)

@@ -56,6 +56,13 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
     {
         return new BlockServiceWizardProvider()
         {
+            
+            public boolean skipMainPojo()
+            {
+                // TODO Auto-generated method stub
+                return false;
+            }
+            
             private DBSelectStatementWizardPage columnSelectionPage  = new DBSelectStatementWizardPage();
             private DBStatementsWizardPage      statementsWizardPage = new DBStatementsWizardPage();
             private GeneratorContext            context;

@@ -61,6 +61,12 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
     {
         return new BlockServiceWizardProvider()
         {
+            
+            public boolean skipMainPojo()
+            {
+                // TODO Auto-generated method stub
+                return false;
+            }
             private DBColumnSelectionPage columnSelectionPage = new DBColumnSelectionPage();
 
             public void init(GeneratorContext context)

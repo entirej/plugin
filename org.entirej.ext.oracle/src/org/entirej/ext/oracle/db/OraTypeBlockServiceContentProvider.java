@@ -73,6 +73,12 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
     {
         return new BlockServiceWizardProvider()
         {
+            
+            public boolean skipMainPojo()
+            {
+                return true;
+            }
+            
             private DBTypeSelectionPage    columnSelectionPage  = new DBTypeSelectionPage();
             private DBInnerTypePage        innerTypePage;
             private DBProceduresWizardPage proceduresWizardPage = new DBProceduresWizardPage(columnSelectionPage);
@@ -278,7 +284,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             String type = innerClass.get(objectArgument.objName);
                             if(type==null)
                             {
-                                tableColumn.setDatatypeName(objectArgument.objName);
+                                tableColumn.setDatatypeName(toCamelCase(objectArgument.objName));
                             }
                             else
                             {
@@ -334,7 +340,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             String type = innerClass.get(objectArgument.objName);
                             if(type==null)
                             {
-                                tableColumn.setDatatypeName(objectArgument.objName);
+                                tableColumn.setDatatypeName(toCamelCase(objectArgument.objName));
                             }
                             else
                             {
@@ -754,15 +760,21 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 if (objectArgument.objName != null && !addedInner.contains(objectArgument.objName))
                 {
                     EJPojoGeneratorType inner = new EJPojoGeneratorType();
+                    inner.setProperty("TABLE_NAME", "");
                     if (objectArgument.tableName != null)
+                    {
                         inner.setProperty("TABLE_NAME", objectArgument.tableName);
+                        if(objectArgument.getArguments().size()>0){
+                            inner.setProperty("JAVA_REC_NAME", toCamelCase(((ObjectArgument)objectArgument.getArguments().get(0)).objName));
+                        }
+                    }
                     if (objectArgument.objName != null)
                         inner.setProperty("DB_OBJECT_NAME", objectArgument.objName);
                     if (objectArgument.objName != null)
                         inner.setProperty("JAVA_OBJECT_NAME", toCamelCase(objectArgument.objName));
                     inner.setColumnNames(createPojoCloumns(objectArgument));
                     
-                    inner.setClassName(objectArgument.objName);
+                    inner.setClassName(toCamelCase(objectArgument.objName));
                     addedInner.add(objectArgument.objName);
                     innerPojoGeneratorTypes.add(inner);
                 }

@@ -486,7 +486,9 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             EJReportPojoGeneratorType pojoGeneratorType = blockServiceContent.getpPojoGeneratorType();
             pojoGeneratorType.setPackageName(pojoGeneratorType.getPackageName());
             pojoGeneratorType.setClassName(pojoPage.getTypeName());
-            String pojoClassName = createPojoClass(pojoGeneratorType, monitor);
+            String pojoClassName = null;//todo
+            if(! wizardProvider.skipMainPojo())
+                pojoClassName = createPojoClass(pojoGeneratorType, monitor);
 
             if (pojoPage.isCreateSerivce())
             {
