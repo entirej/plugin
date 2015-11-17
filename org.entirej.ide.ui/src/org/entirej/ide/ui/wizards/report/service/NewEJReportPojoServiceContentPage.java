@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.text.edits.TextEdit;
+import org.entirej.framework.plugin.gen.FTLEngine;
 import org.entirej.framework.report.service.EJReportPojoContentGenerator;
 import org.entirej.framework.report.service.EJReportPojoGeneratorType;
 import org.entirej.framework.report.service.EJReportServiceContentGenerator;
@@ -80,19 +81,19 @@ import org.entirej.ide.ui.wizards.NewWizard;
 public class NewEJReportPojoServiceContentPage extends WizardPage implements BlockServiceContentProvider.ReportGeneratorContext
 {
 
-    private ComboViewer                      comboProviderViewer;
-    private Label                            providerDescription;
-    private BlockServiceContentProvider      blockServiceContentProvider;
-    private BlockServiceWizardProvider       wizardProvider;
-    private final IJavaProjectProvider       projectProvider;
+    private ComboViewer                            comboProviderViewer;
+    private Label                                  providerDescription;
+    private BlockServiceContentProvider            blockServiceContentProvider;
+    private BlockServiceWizardProvider             wizardProvider;
+    private final IJavaProjectProvider             projectProvider;
     private final NewEJReportPojoServiceSelectPage pojoPage;
 
-    private IJavaProject                     currentProject;
-    private String                           contentProviderError;
+    private IJavaProject      currentProject;
+    private String            contentProviderError;
     /**
      * This wizard's list of pages (element type: <code>IWizardPage</code>).
      */
-    private List<IWizardPage>                pages = new ArrayList<IWizardPage>();
+    private List<IWizardPage> pages = new ArrayList<IWizardPage>();
 
     public NewEJReportPojoServiceContentPage(NewEJReportPojoServiceSelectPage pojoServiceSelectPage)
     {
@@ -486,8 +487,8 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             EJReportPojoGeneratorType pojoGeneratorType = blockServiceContent.getpPojoGeneratorType();
             pojoGeneratorType.setPackageName(pojoGeneratorType.getPackageName());
             pojoGeneratorType.setClassName(pojoPage.getTypeName());
-            String pojoClassName = null;//todo
-            if(! wizardProvider.skipMainPojo())
+            String pojoClassName = null;// todo
+            if (!wizardProvider.skipMainPojo())
                 pojoClassName = createPojoClass(pojoGeneratorType, monitor);
 
             if (pojoPage.isCreateSerivce())
@@ -508,18 +509,16 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
         }
     }
 
-    
     @SuppressWarnings("restriction")
-    private void organizeImports(ICompilationUnit cu)
-            throws OperationCanceledException, CoreException {
-        
+    private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
+    {
+
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
-      
-        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
-                true, true, true, null);
+
+        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
         op.run(new NullProgressMonitor());
     }
-    
+
     public String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
 
@@ -560,7 +559,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             connectedCU = parentCU;
 
             IBuffer buffer = parentCU.getBuffer();
-            String fileContents = pojoContentGenerator.generateContent(pojoGeneratorType);
+            String fileContents = FTLEngine.genrateReportPojo(pojoContentGenerator.getTemplate(), pojoGeneratorType);
 
             if (fileContents == null)
             {
@@ -580,7 +579,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            
+
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -609,10 +608,11 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
 
     }
 
-    private void createServiceClass(ReportBlockServiceContent blockServiceContent, String pojoClassName, NewEJReportGenServicePage servicePage, IProgressMonitor monitor)
-            throws Exception, CoreException
+    private void createServiceClass(ReportBlockServiceContent blockServiceContent, String pojoClassName, NewEJReportGenServicePage servicePage,
+            IProgressMonitor monitor) throws Exception, CoreException
     {
-        EJReportServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(), servicePage.getPojoGeneratorClass());
+        EJReportServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(),
+                servicePage.getPojoGeneratorClass());
         Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
 
         EJReportServiceGeneratorType serviceGeneratorType = blockServiceContent.getServiceGeneratorType();
@@ -644,7 +644,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             connectedCU = parentCU;
 
             IBuffer buffer = parentCU.getBuffer();
-            String fileContents = serviceContentGenerator.generateContent(serviceGeneratorType);
+            String fileContents = FTLEngine.genrateReportService(serviceContentGenerator.getTemplate(), serviceGeneratorType);
 
             if (fileContents == null)
             {
@@ -660,10 +660,10 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             }
 
             buffer.setContents(fileContents);
-            final IType createdType = parentCU.getType(pojoClassName); 
+            final IType createdType = parentCU.getType(pojoClassName);
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-           
+
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()

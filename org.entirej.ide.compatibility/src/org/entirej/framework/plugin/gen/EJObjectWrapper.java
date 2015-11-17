@@ -1,6 +1,7 @@
 package org.entirej.framework.plugin.gen;
 
 import org.entirej.framework.core.service.EJTableColumn;
+import org.entirej.framework.report.service.EJReportTableColumn;
 
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.TemplateModel;
@@ -21,6 +22,10 @@ public class EJObjectWrapper extends DefaultObjectWrapper
         if (obj instanceof EJTableColumn)
         {
             return new EJTableColumnAdapter((EJTableColumn) obj, this);
+        }
+        if (obj instanceof EJReportTableColumn)
+        {
+            return new EJReportTableColumnAdapter((EJReportTableColumn) obj, this);
         }
         
         return super.handleUnknownType(obj);
