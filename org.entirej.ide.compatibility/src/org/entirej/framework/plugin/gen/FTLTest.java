@@ -35,7 +35,7 @@ public class FTLTest
             pojoGeneratorType.setPackageName("org.entirej");
             pojoGeneratorType.setProperty("dev", "anuradha");
             
-            List<EJTableColumn> columns = new ArrayList<>();
+            List<EJTableColumn> columns = new ArrayList<EJTableColumn>();
             
             {
                 EJTableColumn column1 = new EJTableColumn();
