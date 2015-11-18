@@ -48,12 +48,27 @@ import freemarker.template.TemplateException;
 
 public class FTLEngine
 {
+    
+    public static String ftlValue(String string)
+    {
+        if (string == null)
+        {
+            
+            return "";
+        }
+        
+        return string;
+    }
+    
     public static String genrateFormService(String tl, EJServiceGeneratorType serviceGeneratorType)
     {
         // Build the data-model
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("pojo_name_full", serviceGeneratorType.getPojo().getName());
-        data.put("pojo_name", serviceGeneratorType.getPojo().getSimpleName());
+        if (serviceGeneratorType.getPojo() != null)
+        {
+            data.put("pojo_name_full",serviceGeneratorType.getPojo().getName());
+            data.put("pojo_name", serviceGeneratorType.getPojo().getSimpleName());
+        }
         data.put("service_name", serviceGeneratorType.getServiceName());
         data.put("package_name", serviceGeneratorType.getPackageName());
         data.put("table_name", serviceGeneratorType.getTableName());
@@ -69,10 +84,10 @@ public class FTLEngine
         data.put("insert_statement", splitStatementToStrBuilder(serviceGeneratorType.getInsertStatement()));
         data.put("update_statement", splitStatementToStrBuilder(serviceGeneratorType.getUpdateStatement()));
         
-        data.put("query_procedure", serviceGeneratorType.getSelectProcedureName());
-        data.put("delete_procedure", serviceGeneratorType.getDeleteProcedureName());
-        data.put("insert_procedure", serviceGeneratorType.getInsertProcedureName());
-        data.put("update_procedure", serviceGeneratorType.getUpdateProcedureName());
+        data.put("query_procedure",  ftlValue(serviceGeneratorType.getSelectProcedureName()));
+        data.put("delete_procedure",  ftlValue(serviceGeneratorType.getDeleteProcedureName()));
+        data.put("insert_procedure",  ftlValue(serviceGeneratorType.getInsertProcedureName()));
+        data.put("update_procedure",  ftlValue(serviceGeneratorType.getUpdateProcedureName()));
         Collection<String> props = serviceGeneratorType.getPropertyKeys();
         
         for (String key : props)
@@ -91,7 +106,7 @@ public class FTLEngine
                 fields.add(column);
             }
             data.put("fields", fields);
-        
+            
         }
         
         Set<String> imports = new TreeSet<String>();
@@ -106,7 +121,7 @@ public class FTLEngine
             }
         }
         
-        if(serviceGeneratorType.getSelectProcedureParameters()!=null)
+        if (serviceGeneratorType.getSelectProcedureParameters() != null)
         {
             
             data.put("query_parameters", serviceGeneratorType.getSelectProcedureParameters());
@@ -132,7 +147,7 @@ public class FTLEngine
                 
             }
         }
-        if(serviceGeneratorType.getInsertProcedureParameters()!=null)
+        if (serviceGeneratorType.getInsertProcedureParameters() != null)
         {
             
             data.put("insert_parameters", serviceGeneratorType.getInsertProcedureParameters());
@@ -158,7 +173,7 @@ public class FTLEngine
                 
             }
         }
-        if(serviceGeneratorType.getUpdateProcedureParameters()!=null)
+        if (serviceGeneratorType.getUpdateProcedureParameters() != null)
         {
             
             data.put("update_parameters", serviceGeneratorType.getUpdateProcedureParameters());
@@ -184,7 +199,7 @@ public class FTLEngine
                 
             }
         }
-        if(serviceGeneratorType.getDeleteProcedureParameters()!=null)
+        if (serviceGeneratorType.getDeleteProcedureParameters() != null)
         {
             
             data.put("delete_parameters", serviceGeneratorType.getDeleteProcedureParameters());
@@ -249,13 +264,14 @@ public class FTLEngine
         }
         catch (IOException e)
         {
-           throw new EJApplicationException(e.getMessage());
+            throw new EJApplicationException(e.getMessage());
         }
         catch (TemplateException e)
         {
             throw new EJApplicationException(e.getMessage());
         }
     }
+    
     public static String genrateReportService(String tl, EJReportServiceGeneratorType serviceGeneratorType)
     {
         // Build the data-model
@@ -271,8 +287,6 @@ public class FTLEngine
             queryStatement = buildReportSelectStatement(serviceGeneratorType);
         }
         data.put("query_statement", queryStatement);
-        
-       
         
         data.put("query_procedure", serviceGeneratorType.getSelectProcedureName());
         Collection<String> props = serviceGeneratorType.getPropertyKeys();
@@ -308,7 +322,7 @@ public class FTLEngine
             }
         }
         
-        if(serviceGeneratorType.getSelectProcedureParameters()!=null)
+        if (serviceGeneratorType.getSelectProcedureParameters() != null)
         {
             
             data.put("query_parameters", serviceGeneratorType.getSelectProcedureParameters());
@@ -334,7 +348,6 @@ public class FTLEngine
                 
             }
         }
-       
         
         imports.add(EJReport.class.getName());
         imports.add(EJApplicationException.class.getName());
@@ -456,6 +469,7 @@ public class FTLEngine
             throw new EJApplicationException(e.getMessage());
         }
     }
+    
     public static String genrateReportPojo(String tl, EJReportPojoGeneratorType pojoGeneratorType)
     {
         // Build the data-model
@@ -592,6 +606,7 @@ public class FTLEngine
         selectStatementBuffer.append("\"");
         return selectStatementBuffer.toString();
     }
+    
     public static String buildReportSelectStatement(EJReportServiceGeneratorType generatorType)
     {
         String baseTableName = generatorType.getTableName();
@@ -628,9 +643,9 @@ public class FTLEngine
     private static String splitStatementToStrBuilder(String stmt)
     {
         
-        if(stmt==null || stmt.isEmpty())
+        if (stmt == null || stmt.isEmpty())
         {
-           return ""; 
+            return "";
         }
         
         StringBuilder builder = new StringBuilder();
