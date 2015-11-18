@@ -177,6 +177,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                         {
                             pojoGeneratorType.setProperty("DB_OBJECT_NAME", collectionType.objName);
                             pojoGeneratorType.setProperty("JAVA_OBJECT_NAME", toCamelCase(collectionType.objName));
+                            serviceGeneratorType.setProperty("JAVA_OBJECT_NAME", toCamelCase(collectionType.objName));
+                            
+                            if (collectionType.tableName != null)
+                            {
+                                
+                                if(collectionType.getArguments().size()>0){
+                                    serviceGeneratorType.setProperty("JAVA_REC_NAME", toCamelCase(((ObjectArgument)collectionType.getArguments().get(0)).objName));
+                                }
+                            }
                         }
                         pojoGeneratorType.setColumnNames(createPojoCloumns(collectionType));
                         serviceGeneratorType.setTableName(collectionType.getTableName());
