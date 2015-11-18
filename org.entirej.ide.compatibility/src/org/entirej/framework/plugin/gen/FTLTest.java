@@ -57,10 +57,10 @@ public class FTLTest
             pojoGeneratorType.setColumnNames(columns);
         }
         String tl = "${columns?size}\n"+
-                     "<#list columns as column>${column.name}<#if column?has_next >, </#if></#list>";
+                     "<#if columns??><#list columns as column>${column.name}<#if column?has_next >, </#if></#list></#if>";
         FTLEngine.genrateFormPojo(tl, pojoGeneratorType);
     }
-    
+   
     
     
     private static void test1()

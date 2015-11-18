@@ -608,17 +608,23 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
 
     }
 
-    private void createServiceClass(ReportBlockServiceContent blockServiceContent, String pojoClassName, NewEJReportGenServicePage servicePage,
+    private void createServiceClass(ReportBlockServiceContent blockServiceContent,final String pojoClassName, NewEJReportGenServicePage servicePage,
             IProgressMonitor monitor) throws Exception, CoreException
     {
         EJReportServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(),
                 servicePage.getPojoGeneratorClass());
-        Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
+        
+        
+        
 
         EJReportServiceGeneratorType serviceGeneratorType = blockServiceContent.getServiceGeneratorType();
         String serviceClassName = servicePage.getTypeName();
         serviceGeneratorType.setServiceName(serviceClassName);
-        serviceGeneratorType.setPojo(pojoClass);
+        if(pojoClassName!=null)
+        {
+            Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
+            serviceGeneratorType.setPojo(pojoClass);
+        }
         serviceGeneratorType.setPackageName(servicePage.getPackageText());
 
         IPackageFragmentRoot root = servicePage.getPackageFragmentRoot();
@@ -638,7 +644,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
 
         try
         {
-            ICompilationUnit parentCU = pack.createCompilationUnit(serviceClassName + ".java", "", false, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
+            final ICompilationUnit parentCU = pack.createCompilationUnit(serviceClassName + ".java", "", false, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
             // create a working copy with a new owner
             parentCU.becomeWorkingCopy(new SubProgressMonitor(monitor, 1));
             connectedCU = parentCU;
@@ -660,7 +666,7 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
             }
 
             buffer.setContents(fileContents);
-            final IType createdType = parentCU.getType(pojoClassName);
+           
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
 
@@ -672,8 +678,13 @@ public class NewEJReportPojoServiceContentPage extends WizardPage implements Blo
                     if (iWizard instanceof NewWizard)
                     {
                         NewWizard wizard = (NewWizard) iWizard;
-                        wizard.selectAndReveal(createdType.getResource());
-                        wizard.openResource((IFile) createdType.getResource());
+                        if(pojoClassName!=null)
+                        {
+                            final IType createdType = parentCU.getType(pojoClassName);
+                            wizard.selectAndReveal(createdType.getResource());
+                            wizard.openResource((IFile) createdType.getResource());
+                        }
+                       
                     }
 
                 }

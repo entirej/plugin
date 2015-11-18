@@ -487,7 +487,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             EJPojoGeneratorType pojoGeneratorType = blockServiceContent.getpPojoGeneratorType();
             pojoGeneratorType.setPackageName(pojoGeneratorType.getPackageName());
             pojoGeneratorType.setClassName(pojoPage.getTypeName());
-            String pojoClassName = null;//todo
+            String pojoClassName = null;
             if(! wizardProvider.skipMainPojo())
                 pojoClassName = createPojoClass(pojoGeneratorType, monitor);
 
@@ -616,16 +616,23 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
         
     }
 
-    private void createServiceClass(BlockServiceContent blockServiceContent, String pojoClassName, NewEJGenServicePage servicePage, IProgressMonitor monitor)
+    private void createServiceClass(BlockServiceContent blockServiceContent, final String pojoClassName, NewEJGenServicePage servicePage, IProgressMonitor monitor)
             throws Exception, CoreException
     {
         EJServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(), servicePage.getPojoGeneratorClass());
-        Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
+       
+       
 
         EJServiceGeneratorType serviceGeneratorType = blockServiceContent.getServiceGeneratorType();
         String serviceClassName = servicePage.getTypeName();
+        
         serviceGeneratorType.setServiceName(serviceClassName);
-        serviceGeneratorType.setPojo(pojoClass);
+        
+        if(pojoClassName!=null)
+        {
+            Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
+            serviceGeneratorType.setPojo(pojoClass);
+        }
         serviceGeneratorType.setPackageName(servicePage.getPackageText());
 
         IPackageFragmentRoot root = servicePage.getPackageFragmentRoot();
@@ -645,7 +652,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
 
         try
         {
-            ICompilationUnit parentCU = pack.createCompilationUnit(serviceClassName + ".java", "", false, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
+           final ICompilationUnit parentCU = pack.createCompilationUnit(serviceClassName + ".java", "", false, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
             // create a working copy with a new owner
             parentCU.becomeWorkingCopy(new SubProgressMonitor(monitor, 1));
             connectedCU = parentCU;
@@ -667,7 +674,8 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             }
 
             buffer.setContents(fileContents);
-            final IType createdType = parentCU.getType(pojoClassName);
+            
+         
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
           
@@ -679,8 +687,12 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
                     if (iWizard instanceof NewWizard)
                     {
                         NewWizard wizard = (NewWizard) iWizard;
-                        wizard.selectAndReveal(createdType.getResource());
-                        wizard.openResource((IFile) createdType.getResource());
+                        if(pojoClassName!=null)
+                        {
+                            IType createdType = parentCU.getType(pojoClassName);
+                            wizard.selectAndReveal(createdType.getResource());
+                            wizard.openResource((IFile) createdType.getResource());
+                        }
                     }
 
                 }

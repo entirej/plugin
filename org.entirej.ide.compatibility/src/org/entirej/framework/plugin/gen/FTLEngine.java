@@ -286,9 +286,9 @@ public class FTLEngine
         {
             queryStatement = buildReportSelectStatement(serviceGeneratorType);
         }
-        data.put("query_statement", queryStatement);
+        data.put("query_statement", ftlValue(queryStatement));
         
-        data.put("query_procedure", serviceGeneratorType.getSelectProcedureName());
+        data.put("query_procedure", ftlValue(serviceGeneratorType.getSelectProcedureName()));
         Collection<String> props = serviceGeneratorType.getPropertyKeys();
         
         for (String key : props)
