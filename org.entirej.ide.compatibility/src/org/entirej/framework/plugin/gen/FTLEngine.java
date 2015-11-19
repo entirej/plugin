@@ -148,12 +148,12 @@ public class FTLEngine
                 
             }
             
-            if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(0).getName()==null)
+            if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(selectProcedureParameters.size()-1).getName()==null)
             {
-                EJTableColumn value = selectProcedureParameters.get(0);
+                EJTableColumn value = selectProcedureParameters.get(selectProcedureParameters.size()-1);
                 value.setName("RETURN");
                 data.put("query_returntype", value);
-                selectProcedureParameters.remove(0);
+                selectProcedureParameters.remove(selectProcedureParameters.size()-1);
                 
             }
             data.put("query_parameters", selectProcedureParameters);
@@ -363,12 +363,12 @@ public class FTLEngine
                 
             }
             
-            if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(0).getName()==null)
+            if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(selectProcedureParameters.size()-1).getName()==null)
             {
-                EJReportTableColumn value = selectProcedureParameters.get(0);
+                EJReportTableColumn value = selectProcedureParameters.get(selectProcedureParameters.size()-1);
                 value.setName("RETURN");
                 data.put("query_returntype", value);
-                selectProcedureParameters.remove(0);
+                selectProcedureParameters.remove(selectProcedureParameters.size()-1);
                 
             }
             data.put("query_parameters", selectProcedureParameters);
