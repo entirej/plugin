@@ -70,6 +70,9 @@ public class EJTableColumnAdapter extends WrappingTemplateModel implements Adapt
     
     protected String toPropertyName(String columnName)
     {
+        if(columnName==null)
+            return "";
+                    
         if (columnName != null && !columnName.contains("_"))
         {
             if (columnName.toUpperCase().equals(columnName))
@@ -96,7 +99,8 @@ public class EJTableColumnAdapter extends WrappingTemplateModel implements Adapt
     
     protected String toMethodName(String columnName)
     {
-        
+        if(columnName==null)
+            return "";
         String propertyName = toPropertyName(columnName);
         return propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
