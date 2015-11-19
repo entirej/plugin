@@ -236,7 +236,8 @@ public class FTLEngine
         imports.add(EJStatementParameter.class.getName());
         imports.add(ArrayList.class.getName());
         imports.add(List.class.getName());
-        imports.add(serviceGeneratorType.getPojo().getName());
+        if(serviceGeneratorType.getPojo()!=null)
+            imports.add(serviceGeneratorType.getPojo().getName());
         
         data.put("imports", imports);
         
@@ -359,6 +360,7 @@ public class FTLEngine
         imports.add(EJReportStatementParameter.class.getName());
         imports.add(ArrayList.class.getName());
         imports.add(List.class.getName());
+        if(serviceGeneratorType.getPojo()!=null)
         imports.add(serviceGeneratorType.getPojo().getName());
         
         data.put("imports", imports);
