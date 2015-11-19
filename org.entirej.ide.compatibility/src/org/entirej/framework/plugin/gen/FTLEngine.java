@@ -151,7 +151,7 @@ public class FTLEngine
             if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(selectProcedureParameters.size()-1).getName()==null)
             {
                 EJTableColumn value = selectProcedureParameters.get(selectProcedureParameters.size()-1);
-                value.setName("RETURN");
+                value.setName("RETURN_TYPE");
                 data.put("query_returntype", value);
                 selectProcedureParameters.remove(selectProcedureParameters.size()-1);
                 
@@ -366,7 +366,7 @@ public class FTLEngine
             if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(selectProcedureParameters.size()-1).getName()==null)
             {
                 EJReportTableColumn value = selectProcedureParameters.get(selectProcedureParameters.size()-1);
-                value.setName("RETURN");
+                value.setName("RETURN_TYPE");
                 data.put("query_returntype", value);
                 selectProcedureParameters.remove(selectProcedureParameters.size()-1);
                 
