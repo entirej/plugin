@@ -150,7 +150,7 @@ public class FTLEngine
             EJTableColumn selectReturnType = serviceGeneratorType.getSelectReturnType();
             
             String pack = null;
-            if (selectReturnType.getDatatypeName().contains("."))
+            if (selectReturnType !=null && selectReturnType.getDatatypeName().contains("."))
             {
                 pack = selectReturnType.getDatatypeName().substring(0, selectReturnType.getDatatypeName().lastIndexOf("."));
             }
@@ -369,7 +369,7 @@ public class FTLEngine
             EJReportTableColumn selectReturnType = serviceGeneratorType.getSelectReturnType();
             
             String pack = null;
-            if (selectReturnType.getDatatypeName().contains("."))
+            if (selectReturnType!=null && selectReturnType.getDatatypeName().contains("."))
             {
                 pack = selectReturnType.getDatatypeName().substring(0, selectReturnType.getDatatypeName().lastIndexOf("."));
             }

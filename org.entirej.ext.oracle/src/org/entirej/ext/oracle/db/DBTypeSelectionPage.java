@@ -684,6 +684,7 @@ public class DBTypeSelectionPage extends WizardPage
                             }
                             if(argName==null)
                             {
+                                returnArg._name = "_return";
                                 returnArg.type = Type.RETURN;
                             }else {
                                 returnArg.type = Type.OUT;
@@ -723,6 +724,11 @@ public class DBTypeSelectionPage extends WizardPage
                         argument.type = argName==null?Type.RETURN :Type.OUT;
                     else
                         argument.type = Type.IN;
+                    
+                    if(argName==null)
+                    {
+                        argument._name = "_return";
+                    }
 
                     if(proc!=null)
                         proc.addArgument(argument);
