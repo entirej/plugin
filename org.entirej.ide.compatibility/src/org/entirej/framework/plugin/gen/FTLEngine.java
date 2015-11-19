@@ -146,6 +146,23 @@ public class FTLEngine
                 }
                 
             }
+            
+            EJTableColumn selectReturnType = serviceGeneratorType.getSelectReturnType();
+            
+            String pack = null;
+            if (selectReturnType.getDatatypeName().contains("."))
+            {
+                pack = selectReturnType.getDatatypeName().substring(0, selectReturnType.getDatatypeName().lastIndexOf("."));
+            }
+            
+            // If the type is not in java.lang, then add the import list
+            if (pack != null && (!"java.lang".equals(pack)))
+            {
+                imports.add(selectReturnType.getDatatypeName());
+            }
+            
+            data.put("query_returntype", selectReturnType);
+            
         }
         if (serviceGeneratorType.getInsertProcedureParameters() != null)
         {
@@ -348,6 +365,22 @@ public class FTLEngine
                 }
                 
             }
+            
+            EJReportTableColumn selectReturnType = serviceGeneratorType.getSelectReturnType();
+            
+            String pack = null;
+            if (selectReturnType.getDatatypeName().contains("."))
+            {
+                pack = selectReturnType.getDatatypeName().substring(0, selectReturnType.getDatatypeName().lastIndexOf("."));
+            }
+            
+            // If the type is not in java.lang, then add the import list
+            if (pack != null && (!"java.lang".equals(pack)))
+            {
+                imports.add(selectReturnType.getDatatypeName());
+            }
+            
+            data.put("query_returntype", selectReturnType);
         }
         
         imports.add(EJReport.class.getName());

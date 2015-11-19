@@ -166,6 +166,14 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     serviceGeneratorType.setSelectProcedureName(procedure.getFullName());
 
                     serviceGeneratorType.setSelectProcedureParameters(getParamters(procedure));
+                    if(procedure instanceof Function )
+                    {
+                        Function  fnc = (Function) procedure;
+                        if(fnc.getReturnType()!=null)
+                        {
+                            serviceGeneratorType.setSelectReturnType(createColumn(fnc.getReturnType()));
+                        }
+                    }
                     // get type details
                     ObjectArgument collectionType = procedure.getCollectionType();
 
@@ -247,6 +255,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     serviceGeneratorType.setSelectProcedureName(procedure.getFullName());
 
                     serviceGeneratorType.setSelectProcedureParameters(getReportParamters(procedure));
+                    if(procedure instanceof Function )
+                    {
+                        Function  fnc = (Function) procedure;
+                        if(fnc.getReturnType()!=null)
+                        {
+                            serviceGeneratorType.setSelectReturnType(createReportColumn(fnc.getReturnType()));
+                        }
+                    }
+                    
                     // get type details
                     ObjectArgument collectionType = procedure.getCollectionType();
 
@@ -258,6 +275,22 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             pojoGeneratorType.setProperty("OBJECT_NAME", collectionType.objName);
                         pojoGeneratorType.setColumnNames(createReportPojoCloumns(collectionType));
                         serviceGeneratorType.setTableName(collectionType.getTableName());
+                        
+                        pojoGeneratorType.setProperty("DB_OBJECT_NAME", collectionType.objName);
+                        pojoGeneratorType.setProperty("JAVA_OBJECT_NAME", toCamelCase(collectionType.objName));
+                        serviceGeneratorType.setProperty("JAVA_OBJECT_NAME", toCamelCase(collectionType.objName));
+                        
+                        if (collectionType.tableName != null)
+                        {
+                            
+                            if(collectionType.getArguments().size()>0){
+                                serviceGeneratorType.setProperty("JAVA_REC_NAME", toCamelCase(((ObjectArgument)collectionType.getArguments().get(0)).objName));
+                            }
+                        }
+                        else
+                        {
+                            serviceGeneratorType.setProperty("JAVA_REC_NAME",toCamelCase(collectionType.objName));
+                        }
                     }
 
                    
@@ -388,72 +421,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             private List<EJTableColumn> getParamters(Procedure procedure)
             {
                 List<EJTableColumn> args = new ArrayList<EJTableColumn>();
-
+               
                 for (Argument argument : procedure.getArguments())
                 {
-                    EJTableColumn tableColumn = new EJTableColumn();
-                    tableColumn.setName(argument._name);
-
-                    if (argument instanceof ObjectArgument)
-                    {
-                        ObjectArgument objectArgument = (ObjectArgument) argument;
-                        if (objectArgument.tableName != null)
-                            tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
-                        if (objectArgument.objName != null)
-                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
-                        if (objectArgument.tableName != null)
-                        {
-                            tableColumn.setArray(true);
-                        }
-                        if (objectArgument.objName != null)
-                        {
-                            String type = innerClass.get(objectArgument.objName);
-                            if(type==null)
-                            {
-                                tableColumn.setDatatypeName(objectArgument.objName);
-                            }
-                            else
-                            {
-                                tableColumn.setDatatypeName(type);
-                            }
-                        }
-                    }
-
-                    if(tableColumn.getDatatypeName()==null)
-                    {
-                        Class<?> type = getDataTypeForOraType(argument._datatype);
-                        if (type != null)
-                        {
-                            tableColumn.setDatatypeName(type.getName());
-                            type = null;
-                        }
-                        else
-                        {
-                            tableColumn.setDatatypeName(String.class.getName());
-                        }
-                    }
-                   
-                    
-                    if(!tableColumn.isArray())
-                    {
-                        tableColumn.setStruct(isStructForOraType(argument._datatype));
-                    }
-
-                    switch (argument.type)
-                    {
-                        case IN:
-                            tableColumn.setParameterType(EJParameterType.IN);
-                            break;
-                        case IN_OUT:
-                            tableColumn.setParameterType(EJParameterType.INOUT);
-                            break;
-                        case OUT:
-                            tableColumn.setParameterType(EJParameterType.OUT);
-                            break;
-                        case RETURN:
-                            tableColumn.setParameterType(EJParameterType.RETURN);
-                            break;
-                    }
+                    EJTableColumn tableColumn = createColumn(argument);
 
                     args.add(tableColumn);
                 }
@@ -461,79 +432,151 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 Collections.reverse(args);
                 return args;
             }
+            private EJTableColumn createColumn(Argument argument)
+            {
+                EJTableColumn tableColumn = new EJTableColumn();
+                tableColumn.setName(argument._name);
+
+                if (argument instanceof ObjectArgument)
+                {
+                    ObjectArgument objectArgument = (ObjectArgument) argument;
+                    if (objectArgument.tableName != null)
+                        tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
+                    if (objectArgument.objName != null)
+                        tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                    if (objectArgument.tableName != null)
+                    {
+                        tableColumn.setArray(true);
+                    }
+                    if (objectArgument.objName != null)
+                    {
+                        String type = innerClass.get(objectArgument.objName);
+                        if(type==null)
+                        {
+                            tableColumn.setDatatypeName(toCamelCase(objectArgument.objName));
+                        }
+                        else
+                        {
+                            tableColumn.setDatatypeName(type);
+                        }
+                    }
+                }
+
+                if(tableColumn.getDatatypeName()==null)
+                {
+                    Class<?> type = getDataTypeForOraType(argument._datatype);
+                    if (type != null)
+                    {
+                        tableColumn.setDatatypeName(type.getName());
+                        type = null;
+                    }
+                    else
+                    {
+                        tableColumn.setDatatypeName(String.class.getName());
+                    }
+                }
+               
+                
+                if(!tableColumn.isArray())
+                {
+                    tableColumn.setStruct(isStructForOraType(argument._datatype));
+                }
+
+                switch (argument.type)
+                {
+                    case IN:
+                        tableColumn.setParameterType(EJParameterType.IN);
+                        break;
+                    case IN_OUT:
+                        tableColumn.setParameterType(EJParameterType.INOUT);
+                        break;
+                    case OUT:
+                        tableColumn.setParameterType(EJParameterType.OUT);
+                        break;
+                    case RETURN:
+                        tableColumn.setParameterType(EJParameterType.RETURN);
+                        break;
+                }
+                return tableColumn;
+            }
             private List<EJReportTableColumn> getReportParamters(Procedure procedure)
             {
                 List<EJReportTableColumn> args = new ArrayList<EJReportTableColumn>();
                 
                 for (Argument argument : procedure.getArguments())
                 {
-                    EJReportTableColumn tableColumn = new EJReportTableColumn();
-                    tableColumn.setName(argument._name);
-                    
-                    if (argument instanceof ObjectArgument)
-                    {
-                        ObjectArgument objectArgument = (ObjectArgument) argument;
-                        if (objectArgument.tableName != null)
-                            tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
-                        if (objectArgument.objName != null)
-                            tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
-                        if (objectArgument.tableName != null)
-                        {
-                            tableColumn.setArray(true);
-                        }
-                        if (objectArgument.objName != null)
-                        {
-                            String type = innerClass.get(objectArgument.objName);
-                            if(type==null)
-                            {
-                                tableColumn.setDatatypeName(objectArgument.objName);
-                            }
-                            else
-                            {
-                                tableColumn.setDatatypeName(type);
-                            }
-                        }
-                    }
-                    
-                    if(tableColumn.getDatatypeName()==null)
-                    {
-                        Class<?> type = getDataTypeForOraType(argument._datatype);
-                        if (type != null)
-                        {
-                            tableColumn.setDatatypeName(type.getName());
-                            type = null;
-                        }
-                        else
-                        {
-                            tableColumn.setDatatypeName(String.class.getName());
-                        }
-                    }
-                    if(!tableColumn.isArray())
-                    {
-                        tableColumn.setStruct(isStructForOraType(argument._datatype));
-                    }
-                    
-                    switch (argument.type)
-                    {
-                        case IN:
-                            tableColumn.setParameterType(EJReportParameterType.IN);
-                            break;
-                        case IN_OUT:
-                            tableColumn.setParameterType(EJReportParameterType.INOUT);
-                            break;
-                        case OUT:
-                            tableColumn.setParameterType(EJReportParameterType.OUT);
-                            break;
-                        case RETURN:
-                            tableColumn.setParameterType(EJReportParameterType.RETURN);
-                            break;
-                    }
+                    EJReportTableColumn tableColumn = createReportColumn(argument);
                     
                     args.add(tableColumn);
                 }
                 // reverse args order.
                 Collections.reverse(args);
                 return args;
+            }
+            private EJReportTableColumn createReportColumn(Argument argument)
+            {
+                EJReportTableColumn tableColumn = new EJReportTableColumn();
+                tableColumn.setName(argument._name);
+                
+                if (argument instanceof ObjectArgument)
+                {
+                    ObjectArgument objectArgument = (ObjectArgument) argument;
+                    if (objectArgument.tableName != null)
+                        tableColumn.setProperty("TABLE_NAME", objectArgument.tableName);
+                    if (objectArgument.objName != null)
+                        tableColumn.setProperty("OBJECT_NAME", objectArgument.objName);
+                    if (objectArgument.tableName != null)
+                    {
+                        tableColumn.setArray(true);
+                    }
+                    if (objectArgument.objName != null)
+                    {
+                        String type = innerClass.get(objectArgument.objName);
+                        if(type==null)
+                        {
+                            tableColumn.setDatatypeName(toCamelCase(objectArgument.objName));
+                        }
+                        else
+                        {
+                            tableColumn.setDatatypeName(type);
+                        }
+                    }
+                }
+                
+                if(tableColumn.getDatatypeName()==null)
+                {
+                    Class<?> type = getDataTypeForOraType(argument._datatype);
+                    if (type != null)
+                    {
+                        tableColumn.setDatatypeName(type.getName());
+                        type = null;
+                    }
+                    else
+                    {
+                        tableColumn.setDatatypeName(String.class.getName());
+                    }
+                }
+                if(!tableColumn.isArray())
+                {
+                    tableColumn.setStruct(isStructForOraType(argument._datatype));
+                }
+                
+                switch (argument.type)
+                {
+                    case IN:
+                        tableColumn.setParameterType(EJReportParameterType.IN);
+                        break;
+                    case IN_OUT:
+                        tableColumn.setParameterType(EJReportParameterType.INOUT);
+                        break;
+                    case OUT:
+                        tableColumn.setParameterType(EJReportParameterType.OUT);
+                        break;
+                    case RETURN:
+                        tableColumn.setParameterType(EJReportParameterType.RETURN);
+                        break;
+                }
+                return tableColumn;
             }
 
             public Class<?> getDataTypeForOraType(String jdbcType)
