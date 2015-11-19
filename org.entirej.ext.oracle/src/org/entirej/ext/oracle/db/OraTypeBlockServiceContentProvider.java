@@ -166,14 +166,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     serviceGeneratorType.setSelectProcedureName(procedure.getFullName());
 
                     serviceGeneratorType.setSelectProcedureParameters(getParamters(procedure));
-                    if(procedure instanceof Function )
-                    {
-                        Function  fnc = (Function) procedure;
-                        if(fnc.getReturnType()!=null)
-                        {
-                            serviceGeneratorType.setSelectReturnType(createColumn(fnc.getReturnType()));
-                        }
-                    }
+                    
                     // get type details
                     ObjectArgument collectionType = procedure.getCollectionType();
 
@@ -255,14 +248,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     serviceGeneratorType.setSelectProcedureName(procedure.getFullName());
 
                     serviceGeneratorType.setSelectProcedureParameters(getReportParamters(procedure));
-                    if(procedure instanceof Function )
-                    {
-                        Function  fnc = (Function) procedure;
-                        if(fnc.getReturnType()!=null)
-                        {
-                            serviceGeneratorType.setSelectReturnType(createReportColumn(fnc.getReturnType()));
-                        }
-                    }
+                   
                     
                     // get type details
                     ObjectArgument collectionType = procedure.getCollectionType();

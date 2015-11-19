@@ -124,7 +124,8 @@ public class FTLEngine
         if (serviceGeneratorType.getSelectProcedureParameters() != null)
         {
             
-            data.put("query_parameters", serviceGeneratorType.getSelectProcedureParameters());
+            List<EJTableColumn> selectProcedureParameters = new ArrayList<EJTableColumn>(serviceGeneratorType.getSelectProcedureParameters());
+            
             // read imports for columns
             for (EJTableColumn param : serviceGeneratorType.getSelectProcedureParameters())
             {
@@ -147,21 +148,16 @@ public class FTLEngine
                 
             }
             
-            EJTableColumn selectReturnType = serviceGeneratorType.getSelectReturnType();
-            
-            String pack = null;
-            if (selectReturnType !=null && selectReturnType.getDatatypeName().contains("."))
+            if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(0).getName()==null)
             {
-                pack = selectReturnType.getDatatypeName().substring(0, selectReturnType.getDatatypeName().lastIndexOf("."));
+                EJTableColumn value = selectProcedureParameters.get(0);
+                value.setName("RETURN");
+                data.put("query_returntype", value);
+                selectProcedureParameters.remove(0);
+                
             }
-            
-            // If the type is not in java.lang, then add the import list
-            if (pack != null && (!"java.lang".equals(pack)))
-            {
-                imports.add(selectReturnType.getDatatypeName());
-            }
-            
-            data.put("query_returntype", selectReturnType);
+            data.put("query_parameters", selectProcedureParameters);
+           
             
         }
         if (serviceGeneratorType.getInsertProcedureParameters() != null)
@@ -343,7 +339,8 @@ public class FTLEngine
         if (serviceGeneratorType.getSelectProcedureParameters() != null)
         {
             
-            data.put("query_parameters", serviceGeneratorType.getSelectProcedureParameters());
+            List<EJReportTableColumn> selectProcedureParameters = new ArrayList<EJReportTableColumn>(serviceGeneratorType.getSelectProcedureParameters());
+            
             // read imports for columns
             for (EJReportTableColumn param : serviceGeneratorType.getSelectProcedureParameters())
             {
@@ -366,21 +363,15 @@ public class FTLEngine
                 
             }
             
-            EJReportTableColumn selectReturnType = serviceGeneratorType.getSelectReturnType();
-            
-            String pack = null;
-            if (selectReturnType!=null && selectReturnType.getDatatypeName().contains("."))
+            if(selectProcedureParameters.size()>0 && selectProcedureParameters.get(0).getName()==null)
             {
-                pack = selectReturnType.getDatatypeName().substring(0, selectReturnType.getDatatypeName().lastIndexOf("."));
+                EJReportTableColumn value = selectProcedureParameters.get(0);
+                value.setName("RETURN");
+                data.put("query_returntype", value);
+                selectProcedureParameters.remove(0);
+                
             }
-            
-            // If the type is not in java.lang, then add the import list
-            if (pack != null && (!"java.lang".equals(pack)))
-            {
-                imports.add(selectReturnType.getDatatypeName());
-            }
-            
-            data.put("query_returntype", selectReturnType);
+            data.put("query_parameters", selectProcedureParameters);
         }
         
         imports.add(EJReport.class.getName());
