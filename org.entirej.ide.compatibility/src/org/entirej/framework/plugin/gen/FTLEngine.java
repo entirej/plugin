@@ -163,7 +163,8 @@ public class FTLEngine
         if (serviceGeneratorType.getInsertProcedureParameters() != null)
         {
             
-            data.put("insert_parameters", serviceGeneratorType.getInsertProcedureParameters());
+            List<EJTableColumn> insertProcedureParameters = new ArrayList<EJTableColumn>(serviceGeneratorType.getInsertProcedureParameters());
+            
             // read imports for columns
             for (EJTableColumn param : serviceGeneratorType.getInsertProcedureParameters())
             {
@@ -185,11 +186,23 @@ public class FTLEngine
                 }
                 
             }
+
+            if(insertProcedureParameters.size()>0 && insertProcedureParameters.get(insertProcedureParameters.size()-1).getName()==null)
+            {
+                EJTableColumn value = insertProcedureParameters.get(insertProcedureParameters.size()-1);
+                value.setName("RETURN_TYPE");
+                data.put("insert_returntype", value);
+                insertProcedureParameters.remove(insertProcedureParameters.size()-1);
+                
+            }
+            
+            data.put("insert_parameters", insertProcedureParameters);
         }
         if (serviceGeneratorType.getUpdateProcedureParameters() != null)
         {
             
-            data.put("update_parameters", serviceGeneratorType.getUpdateProcedureParameters());
+            List<EJTableColumn> updateProcedureParameters = new ArrayList<EJTableColumn>(serviceGeneratorType.getUpdateProcedureParameters());
+          
             // read imports for columns
             for (EJTableColumn param : serviceGeneratorType.getUpdateProcedureParameters())
             {
@@ -210,12 +223,24 @@ public class FTLEngine
                     imports.add(param.getDatatypeName());
                 }
                 
+            }  
+            
+            if(updateProcedureParameters.size()>0 && updateProcedureParameters.get(updateProcedureParameters.size()-1).getName()==null)
+            {
+                EJTableColumn value = updateProcedureParameters.get(updateProcedureParameters.size()-1);
+                value.setName("RETURN_TYPE");
+                data.put("update_returntype", value);
+                updateProcedureParameters.remove(updateProcedureParameters.size()-1);
+                
             }
+            
+            data.put("update_parameters", updateProcedureParameters);
         }
         if (serviceGeneratorType.getDeleteProcedureParameters() != null)
         {
             
-            data.put("delete_parameters", serviceGeneratorType.getDeleteProcedureParameters());
+            List<EJTableColumn> deleteProcedureParameters = new ArrayList<EJTableColumn>(serviceGeneratorType.getDeleteProcedureParameters());
+            
             // read imports for columns
             for (EJTableColumn param : serviceGeneratorType.getDeleteProcedureParameters())
             {
@@ -237,6 +262,17 @@ public class FTLEngine
                 }
                 
             }
+            
+            if(deleteProcedureParameters.size()>0 && deleteProcedureParameters.get(deleteProcedureParameters.size()-1).getName()==null)
+            {
+                EJTableColumn value = deleteProcedureParameters.get(deleteProcedureParameters.size()-1);
+                value.setName("RETURN_TYPE");
+                data.put("delete_returntype", value);
+                deleteProcedureParameters.remove(deleteProcedureParameters.size()-1);
+                
+            }
+            
+            data.put("delete_parameters", deleteProcedureParameters);
         }
         
         imports.add(EJForm.class.getName());
