@@ -106,6 +106,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         
         if(contentPage.pageOfMain(page))
         {
+            pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
             return pojoServiceSelectPage;
         }
         
@@ -148,6 +149,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         
         if (page == contentPage.getOptinalStartingPage())
         {
+            pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
             if (pojoServiceSelectPage.isCreateSerivce())
                 return servicePage;
             else
@@ -155,7 +157,10 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         }
         
         if (page == servicePage)
+        {
+            pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
             return pojoServiceSelectPage;
+        }
 
        
      

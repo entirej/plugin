@@ -54,6 +54,7 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
    
     private boolean              createSerivce   = true;
     private boolean              serviceOptional = true;
+    private boolean              needPojo = true;
 
     public NewEJPojoServiceSelectPage()
     {
@@ -71,6 +72,12 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
     {
         this.createSerivce = createSerivce;
         this.serviceOptional = serviceOptional;
+    }
+    public void setPojoNeed(boolean needPojo)
+    {
+        this.needPojo = needPojo;
+        
+        setTypeName(getTypeName(), needPojo);
     }
 
     @Override

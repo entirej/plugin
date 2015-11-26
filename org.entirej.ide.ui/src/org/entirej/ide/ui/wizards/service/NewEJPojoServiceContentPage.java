@@ -109,6 +109,11 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
     {
         return pojoPage.getPackageFragmentRoot();
     }
+    
+    public BlockServiceWizardProvider getWizardProvider()
+    {
+        return wizardProvider;
+    }
 
     public IJavaProject getProject()
     {
