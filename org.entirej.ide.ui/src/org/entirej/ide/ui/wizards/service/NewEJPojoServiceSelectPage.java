@@ -106,7 +106,8 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
     private void doStatusUpdate()
     {
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus };
+        
+        IStatus[] status = needPojo ?new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus } : new IStatus[] { fContainerStatus, fPackageStatus, };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
