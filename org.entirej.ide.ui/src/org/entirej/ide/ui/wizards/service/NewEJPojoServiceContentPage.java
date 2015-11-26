@@ -94,6 +94,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
      * This wizard's list of pages (element type: <code>IWizardPage</code>).
      */
     private List<IWizardPage>                pages = new ArrayList<IWizardPage>();
+    private List<IWizardPage>                opPages = new ArrayList<IWizardPage>();
 
     public NewEJPojoServiceContentPage(NewEJPojoServiceSelectPage pojoServiceSelectPage)
     {
@@ -213,6 +214,13 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
                             pages.add(wizardPage);
                             wizardPage.setWizard(getWizard());
                         }
+                        subPages = wizardProvider.getOptionalPages();
+                        
+                        for (IWizardPage wizardPage : subPages)
+                        {
+                            opPages.add(wizardPage);
+                            wizardPage.setWizard(getWizard());
+                        }
 
                     }
                     catch (Exception e)
@@ -249,6 +257,11 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             page.dispose();
         }
         pages.clear();
+        for (IWizardPage page : opPages)
+        {
+            page.dispose();
+        }
+        opPages.clear();
     }
 
     private void updateProviderDesc()
@@ -402,6 +415,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
                 return false;
             }
         }
+        
 
         return true;
     }
@@ -419,6 +433,22 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             return getNextPage(iWizardPage);
         return iWizardPage;
     }
+    
+    public IWizardPage getOptionalNextPage(IWizardPage page)
+    {
+        int index = opPages.indexOf(page);
+        if ( index == -1)
+        {
+            if(opPages.isEmpty())
+              return null;
+            
+            opPages.get(0);
+        }
+        IWizardPage iWizardPage = opPages.get(index + 1);
+        if (wizardProvider.skipPage(iWizardPage))
+            return getOptionalNextPage(iWizardPage);
+        return iWizardPage;
+    }
 
     public IWizardPage getStartingPage()
     {
@@ -428,10 +458,22 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
         }
         return pages.get(0);
     }
+    public IWizardPage getOptinalStartingPage()
+    {
+        if (opPages.size() == 0)
+        {
+            return null;
+        }
+        return opPages.get(0);
+    }
 
     public int getPageCount()
     {
         return pages.size();
+    }
+    public int getOptionalPageCount()
+    {
+        return opPages.size();
     }
 
     public IWizardPage getPreviousPage(IWizardPage page)
@@ -445,6 +487,19 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
         IWizardPage iWizardPage = pages.get(index - 1);
         if (wizardProvider.skipPage(iWizardPage))
             return getPreviousPage(iWizardPage);
+        return iWizardPage;
+    }
+    public IWizardPage getOptionalPreviousPage(IWizardPage page)
+    {
+        int index = opPages.indexOf(page);
+        if (index == 0 || index == -1)
+        {
+            // first page or page not found
+            return null;
+        }
+        IWizardPage iWizardPage = opPages.get(index - 1);
+        if (wizardProvider.skipPage(iWizardPage))
+            return getOptionalPreviousPage(iWizardPage);
         return iWizardPage;
     }
 
@@ -512,7 +567,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
     public String createPojoClass(EJPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
 
-        Class<?> pojoGeneratorClass = EJPluginEntireJClassLoader.loadClass(projectProvider.getJavaProject(), pojoPage.getPojoGeneratorClass());
+        Class<?> pojoGeneratorClass = EJPluginEntireJClassLoader.loadClass(projectProvider.getJavaProject(), wizardProvider.getPogoGenerator());
         if (!EJPojoContentGenerator.class.isAssignableFrom(pojoGeneratorClass))
         {
             throw new IllegalArgumentException("The pojo generator does not implement the interface: EJPojoContentGenerator");
@@ -619,7 +674,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
     private void createServiceClass(BlockServiceContent blockServiceContent, final String pojoClassName, NewEJGenServicePage servicePage, IProgressMonitor monitor)
             throws Exception, CoreException
     {
-        EJServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(), servicePage.getPojoGeneratorClass());
+        EJServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(), wizardProvider.getServiceGenerator());
        
        
 
@@ -706,5 +761,11 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             }
         }
 
+    }
+
+    public boolean pageOfMain(IWizardPage page)
+    {
+        // TODO Auto-generated method stub
+        return pages.contains(page);
     }
 }

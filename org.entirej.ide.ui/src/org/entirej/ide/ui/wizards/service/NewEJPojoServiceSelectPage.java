@@ -50,23 +50,17 @@ import org.entirej.ide.ui.utils.TypeAssistProvider;
 
 public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJavaProjectProvider
 {
-    private String               pojoGeneratorClass;
-    private Text                 pojoGenText;
+   
+   
     private boolean              createSerivce   = true;
     private boolean              serviceOptional = true;
-
-    private static final IStatus S_DEFAULT_OK    = new Status(IStatus.OK, EJUIPlugin.getID(), null);
-    private IStatus              pojoGenStatus   = S_DEFAULT_OK;
 
     public NewEJPojoServiceSelectPage()
     {
         super(true, "ej.pojo.service");
     }
 
-    public String getPojoGeneratorClass()
-    {
-        return pojoGeneratorClass;
-    }
+  
 
     public boolean isCreateSerivce()
     {
@@ -105,7 +99,7 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
     private void doStatusUpdate()
     {
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, pojoGenStatus };
+        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
@@ -136,7 +130,6 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
         createContainerControls(composite, nColumns);
         createPackageControls(composite, nColumns);
         createSeparator(composite, nColumns);
-        createPojoGeneratorControls(composite, nColumns);
         createTypeNameControls(composite, nColumns);
         createEmptySpace(composite, 1);
         if (serviceOptional)
@@ -155,7 +148,7 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
     protected IStatus containerChanged()
     {
         IStatus containerChanged = super.containerChanged();
-        if (containerChanged.isOK() && pojoGenText != null)
+        if (containerChanged.isOK() )
         {
             _initProjectPref();
             _updateUI();
@@ -168,13 +161,11 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
     {
         if (getJavaProject() == null)
             return;
-        pojoGeneratorClass = "";
     }
 
     private void _updateUI()
     {
-        if (pojoGenText != null)
-            pojoGenText.setText(pojoGeneratorClass != null ? pojoGeneratorClass : "");
+       
     }
 
     private void createServiceOptionControls(Composite composite, int nColumns)
@@ -206,95 +197,7 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
         btnCreateService.setLayoutData(gd);
     }
 
-    private void createPojoGeneratorControls(Composite composite, int nColumns)
-    {
-        Label pojoGenLabel = new Label(composite, SWT.NULL);
-        pojoGenLabel.setText("Pojo Generator:");
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = 1;
-        pojoGenLabel.setLayoutData(gd);
-        pojoGenText = new Text(composite, SWT.BORDER | SWT.SINGLE);
 
-        gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = false;
-        gd.horizontalSpan = 2;
-        pojoGenText.setLayoutData(gd);
-        if (pojoGeneratorClass != null)
-            pojoGenText.setText(pojoGeneratorClass);
-        pojoGenText.addModifyListener(new ModifyListener()
-        {
-
-            public void modifyText(ModifyEvent e)
-            {
-                pojoGeneratorClass = pojoGenText.getText().trim();
-                pojoGenStatus = pojoGeneratorChanged();
-                doStatusUpdate();
-            }
-        });
-        pojoGenText.setText(pojoGeneratorClass = EJFormPojoGenerator.class.getName());
-        TypeAssistProvider.createTypeAssist(pojoGenText, this, IJavaElementSearchConstants.CONSIDER_CLASSES,
-                org.entirej.framework.core.service.EJPojoContentGenerator.class.getName());
-        final Button browse = new Button(composite, SWT.PUSH);
-        browse.setText("Browse...");
-        browse.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent e)
-            {
-                String value = pojoGenText.getText();
-                IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), getJavaProject().getResource(),
-                        IJavaElementSearchConstants.CONSIDER_CLASSES, value == null ? "" : value,
-                        org.entirej.framework.core.service.EJPojoContentGenerator.class.getName());
-                if (type != null)
-                {
-                    pojoGenText.setText(type.getFullyQualifiedName('$'));
-                }
-            }
-
-        });
-        gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = false;
-        gd.horizontalSpan = 1;
-        browse.setLayoutData(gd);
-    }
-
-    protected IStatus pojoGeneratorChanged()
-    {
-        IJavaProject javaProject = getJavaProject();
-        if (javaProject != null)
-        {
-            // Pojo Generator
-            if (pojoGeneratorClass == null)
-            {
-                return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Pojo Generator can't be empty.");
-            }
-
-            try
-            {
-                IType findType = javaProject.findType(pojoGeneratorClass);
-                if (findType == null)
-                {
-                    return new Status(IStatus.ERROR, EJUIPlugin.getID(), String.format("%s can't find in project build path.", pojoGeneratorClass));
-                }
-                else
-                {
-
-                    if (!JavaAccessUtils.isSubTypeOfInterface(findType, org.entirej.framework.core.service.EJPojoContentGenerator.class))
-                    {
-                        return new Status(IStatus.ERROR, EJUIPlugin.getID(), String.format("%s is not a sub type of %s.", pojoGeneratorClass,
-                                org.entirej.framework.core.service.EJPojoContentGenerator.class.getName()));
-                    }
-                }
-            }
-            catch (CoreException e)
-            {
-                return new Status(IStatus.ERROR, EJUIPlugin.getID(), e.getMessage());
-            }
-        }
-
-        return S_DEFAULT_OK;
-    }
 
     public static Control createEmptySpace(Composite parent, int span)
     {

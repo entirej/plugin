@@ -71,12 +71,16 @@ public class FTLEngine
         }
         data.put("service_name", serviceGeneratorType.getServiceName());
         data.put("package_name", serviceGeneratorType.getPackageName());
-        data.put("table_name", serviceGeneratorType.getTableName());
+        data.put("table_name", serviceGeneratorType.getTableName()==null?"":serviceGeneratorType.getTableName());
         data.put("queryInPages", String.valueOf(serviceGeneratorType.canQueryInPages()));
         String queryStatement = serviceGeneratorType.getQueryStatement();
         if (queryStatement == null || queryStatement.trim().isEmpty())
         {
             queryStatement = buildSelectStatement(serviceGeneratorType);
+        }
+        else
+        {
+            queryStatement = splitStatementToStrBuilder(queryStatement);
         }
         data.put("query_statement", queryStatement);
         
@@ -330,11 +334,15 @@ public class FTLEngine
         data.put("pojo_name", serviceGeneratorType.getPojo().getSimpleName());
         data.put("service_name", serviceGeneratorType.getServiceName());
         data.put("package_name", serviceGeneratorType.getPackageName());
-        data.put("table_name", serviceGeneratorType.getTableName());
+        data.put("table_name", serviceGeneratorType.getTableName()==null?"":serviceGeneratorType.getTableName());
         String queryStatement = serviceGeneratorType.getQueryStatement();
         if (queryStatement == null || queryStatement.trim().isEmpty())
         {
             queryStatement = buildReportSelectStatement(serviceGeneratorType);
+        }
+        else
+        {
+            queryStatement = splitStatementToStrBuilder(queryStatement);
         }
         data.put("query_statement", ftlValue(queryStatement));
         

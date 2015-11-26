@@ -60,13 +60,16 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         pojoServiceSelectPage.setDescription(EJUIMessages.NewPojoServiceWizard_MainPage_desc);
         pojoServiceSelectPage.init(getSelection());
         pojoServiceSelectPage.setCreateSerivce(true, serviceOptional);
+        
+        contentPage = new NewEJPojoServiceContentPage(pojoServiceSelectPage);
+        addPage(contentPage);
+        
         addPage(pojoServiceSelectPage);
 
         servicePage = new NewEJGenServicePage(pojoServiceSelectPage);
         addPage(servicePage);
 
-        contentPage = new NewEJPojoServiceContentPage(pojoServiceSelectPage);
-        addPage(contentPage);
+       
         super.addPages();
     }
 
@@ -81,15 +84,32 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
     public boolean canFinish()
     {
         IWizardPage page = getContainer().getCurrentPage();
-        if (page == pojoServiceSelectPage || page == servicePage || page == contentPage)
+        if ( page == contentPage)
             return false;
 
-        return contentPage.canFinish();
+        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!pojoServiceSelectPage.isCreateSerivce() || servicePage.isPageComplete()));
     }
 
     @Override
     public IWizardPage getNextPage(IWizardPage page)
     {
+        
+        if (page == contentPage)
+            return contentPage.getStartingPage();
+        
+        IWizardPage nextPage = contentPage.getNextPage(page);
+        
+        if(nextPage!=null)
+        {
+            return nextPage;
+        }
+        
+        if(contentPage.pageOfMain(page))
+        {
+            return pojoServiceSelectPage;
+        }
+        
+        
         if (page == pojoServiceSelectPage)
         {
             if (!pojoServiceSelectPage.isCreateSerivce())
@@ -97,33 +117,51 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
             else
                 return servicePage;
         }
-        if (page == servicePage)
-            return contentPage;
+       
 
-        if (page == contentPage)
-            return contentPage.getStartingPage();
+        
 
-        return contentPage.getNextPage(page);
+       
+        return contentPage.getOptionalNextPage(page);
     }
 
     @Override
     public IWizardPage getPreviousPage(IWizardPage page)
     {
-        if (page == pojoServiceSelectPage)
+        if (page == contentPage)
         {
             return null;
         }
-        if (page == servicePage)
-            return pojoServiceSelectPage;
-
-        if (page == contentPage)
+        if (page == contentPage.getStartingPage())
+        {
+            return contentPage;
+        }
+        
+        IWizardPage previousPage = contentPage.getPreviousPage(page);
+        
+        if(previousPage!=null)
+        {
+            return previousPage;
+        }
+        
+        
+        
+        if (page == contentPage.getOptinalStartingPage())
+        {
             if (pojoServiceSelectPage.isCreateSerivce())
                 return servicePage;
             else
                 return pojoServiceSelectPage;
+        }
+        
+        if (page == servicePage)
+            return pojoServiceSelectPage;
 
-        IWizardPage previousPage = contentPage.getPreviousPage(page);
-        return previousPage == null ? contentPage : previousPage;
+       
+     
+
+        
+        return contentPage.getOptionalPreviousPage(page);
     }
 
     @Override
@@ -131,7 +169,8 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
     {
         int pageCount = super.getPageCount();
 
-        return pageCount + contentPage.getPageCount();
+        int  i = pageCount + contentPage.getPageCount()+contentPage.getOptionalPageCount();
+        return  i;
     }
 
     public boolean isServiceOptional()

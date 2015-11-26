@@ -24,6 +24,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.entirej.framework.core.service.EJFormPojoGenerator;
+import org.entirej.framework.core.service.EJFormServiceGenerator;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
 import org.entirej.framework.report.service.EJReportPojoGeneratorType;
@@ -56,23 +58,24 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
     {
         return new BlockServiceWizardProvider()
         {
-            
+
             public boolean skipMainPojo()
             {
                 // TODO Auto-generated method stub
                 return false;
             }
-            
-            private DBSelectStatementWizardPage columnSelectionPage  = new DBSelectStatementWizardPage();
-            private DBStatementsWizardPage      statementsWizardPage = new DBStatementsWizardPage();
-            private GeneratorContext            context;
-            private ReportGeneratorContext            rcontext;
+
+            private DBSelectStatementWizardPage columnSelectionPage = new DBSelectStatementWizardPage();
+            private DBStatementsWizardPage statementsWizardPage = new DBStatementsWizardPage();
+            private GeneratorContext context;
+            private ReportGeneratorContext rcontext;
 
             public void init(GeneratorContext context)
             {
                 columnSelectionPage.init(context.getProject());
                 this.context = context;
             }
+
             public void init(ReportGeneratorContext context)
             {
                 columnSelectionPage.init(context.getProject());
@@ -91,10 +94,29 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
 
             public List<IWizardPage> getPages()
             {
-                if ((context!=null && context.skipService()) || (rcontext!=null))
-                    return Arrays.<IWizardPage> asList(columnSelectionPage);
 
-                return Arrays.<IWizardPage> asList(columnSelectionPage, statementsWizardPage);
+                return Arrays.<IWizardPage> asList(columnSelectionPage);
+            }
+
+            public String getPogoGenerator()
+            {
+                return EJFormPojoGenerator.class.getName();
+            }
+
+            public String getServiceGenerator()
+            {
+
+                return EJFormServiceGenerator.class.getName();
+
+            }
+            
+            
+            public List<IWizardPage> getOptionalPages()
+            {
+                if ((context != null && context.skipService()) || (rcontext != null))
+                    return Arrays.<IWizardPage> asList();
+
+                return Arrays.<IWizardPage> asList(statementsWizardPage);
             }
 
             public void createRequiredResources(IProgressMonitor monitor)
@@ -118,6 +140,7 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
                 }
                 return null;
             }
+
             public ReportBlockServiceContent getReportContent()
             {
                 if (columnSelectionPage.isPageComplete())
@@ -130,11 +153,11 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
                 }
                 return null;
             }
-            
-            
+
             private String escapeNextLine(String text)
             {
-                if(text==null)return text;
+                if (text == null)
+                    return text;
                 return text.replace("\r\n", " ").replace("\n", " ");
             }
         };

@@ -50,6 +50,7 @@ public interface BlockServiceContentProvider
         void init(ReportGeneratorContext context);
 
         List<IWizardPage> getPages();
+        List<IWizardPage> getOptionalPages();
 
         boolean canFinish(IWizardPage page);
 
@@ -60,6 +61,12 @@ public interface BlockServiceContentProvider
         void createRequiredResources(IProgressMonitor monitor);
 
         BlockServiceContent getContent();
+        
+        String getPogoGenerator();
+        String getServiceGenerator();
+        
+        //TODO : report
+        
         
         ReportBlockServiceContent getReportContent();
     }

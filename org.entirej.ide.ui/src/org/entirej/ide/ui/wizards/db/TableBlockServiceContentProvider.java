@@ -24,6 +24,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.entirej.framework.core.service.EJFormPojoGenerator;
+import org.entirej.framework.core.service.EJFormServiceGenerator;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
 import org.entirej.framework.report.service.EJReportPojoGeneratorType;
@@ -80,6 +82,19 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
                 
             }
 
+            
+            public String getPogoGenerator()
+            {
+                return EJFormPojoGenerator.class.getName();
+            }
+
+            public String getServiceGenerator()
+            {
+
+                return EJFormServiceGenerator.class.getName();
+
+            }
+            
             public boolean canFinish(IWizardPage page)
             {
                 return page.isPageComplete();
@@ -95,6 +110,12 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
                 return Arrays.<IWizardPage> asList(columnSelectionPage);
             }
 
+            
+            public List<IWizardPage> getOptionalPages()
+            {
+                return Arrays.asList();
+            }
+            
             public void createRequiredResources(IProgressMonitor monitor)
             {
                 // ignore
