@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -42,6 +43,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation;
+import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.Document;
@@ -56,7 +58,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -78,15 +79,14 @@ import org.entirej.ide.core.spi.BlockServiceContentProvider.BlockServiceWizardPr
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.wizards.NewWizard;
 
-public class NewEJPojoServiceContentPage extends WizardPage implements BlockServiceContentProvider.GeneratorContext
+public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements BlockServiceContentProvider.GeneratorContext
 {
 
     private ComboViewer                      comboProviderViewer;
     private Label                            providerDescription;
     private BlockServiceContentProvider      blockServiceContentProvider;
     private BlockServiceWizardProvider       wizardProvider;
-    private final IJavaProjectProvider       projectProvider;
-    private final NewEJPojoServiceSelectPage pojoPage;
+
 
     private IJavaProject                     currentProject;
     private String                           contentProviderError;
@@ -95,13 +95,14 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
      */
     private List<IWizardPage>                pages = new ArrayList<IWizardPage>();
     private List<IWizardPage>                opPages = new ArrayList<IWizardPage>();
+    private NewEJPojoServiceSelectPage pojoPage;
 
     public NewEJPojoServiceContentPage(NewEJPojoServiceSelectPage pojoServiceSelectPage)
     {
-        super("ej.pojo.content");
+        super(true,"ej.pojo.content");
         setTitle("Block Service Content");
         setDescription("Enter the data required to generate the block service.");
-        this.projectProvider = pojoServiceSelectPage;
+
         this.pojoPage = pojoServiceSelectPage;
     }
 
@@ -117,7 +118,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
 
     public IJavaProject getProject()
     {
-        return projectProvider.getJavaProject();
+        return getJavaProject();
     }
 
     public boolean skipService()
@@ -132,12 +133,12 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
 
-        int nColumns = 1;
+        int nColumns = 4;
 
         GridLayout layout = new GridLayout();
         layout.numColumns = nColumns;
         composite.setLayout(layout);
-
+        createContainerControls(composite, nColumns);
         createProviderGroup(composite);
         setControl(composite);
         Dialog.applyDialogFont(composite);
@@ -175,7 +176,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
 
     public void initServiceContentProvider()
     {
-        IJavaProject javaProject = projectProvider.getJavaProject();
+        IJavaProject javaProject = getJavaProject();
         if (!javaProject.equals(currentProject))
         {
             currentProject = javaProject;
@@ -280,7 +281,9 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
         final Group group = new Group(container, SWT.NONE);
         group.setText("Block Service Content Provider");
         group.setLayout(new GridLayout(2, false));
-        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData layoutData = new GridData(GridData.FILL_BOTH);
+        layoutData.horizontalSpan=4;
+        group.setLayoutData(layoutData);
 
         comboProviderViewer = new ComboViewer(group);
         comboProviderViewer.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -572,7 +575,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
     public String createPojoClass(EJPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
 
-        Class<?> pojoGeneratorClass = EJPluginEntireJClassLoader.loadClass(projectProvider.getJavaProject(), wizardProvider.getPogoGenerator());
+        Class<?> pojoGeneratorClass = EJPluginEntireJClassLoader.loadClass(getJavaProject(), wizardProvider.getPogoGenerator());
         if (!EJPojoContentGenerator.class.isAssignableFrom(pojoGeneratorClass))
         {
             throw new IllegalArgumentException("The pojo generator does not implement the interface: EJPojoContentGenerator");
@@ -656,7 +659,7 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
             {
                 connectedCU.discardWorkingCopy();
             }
-            IJavaProject javaProject = pojoPage.getJavaProject();
+            IJavaProject javaProject = getJavaProject();
             javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
         }
 
@@ -772,5 +775,12 @@ public class NewEJPojoServiceContentPage extends WizardPage implements BlockServ
     {
         // TODO Auto-generated method stub
         return pages.contains(page);
+    }
+
+       public void init(IStructuredSelection selection)
+    {
+        IJavaElement jelem = getInitialJavaElement(selection);
+        initContainerPage(jelem);
+        initTypePage(jelem);
     }
 }

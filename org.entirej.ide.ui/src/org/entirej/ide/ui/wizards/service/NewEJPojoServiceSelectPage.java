@@ -18,21 +18,14 @@
  ******************************************************************************/
 package org.entirej.ide.ui.wizards.service;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -41,14 +34,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.core.service.EJFormPojoGenerator;
-import org.entirej.ide.ui.EJUIPlugin;
-import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
-import org.entirej.ide.ui.utils.JavaAccessUtils;
-import org.entirej.ide.ui.utils.TypeAssistProvider;
 
-public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJavaProjectProvider
+public class NewEJPojoServiceSelectPage extends NewTypeWizardPage 
 {
    
    
@@ -175,6 +162,25 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage implements IJa
     {
        
     }
+    
+    
+    void  setProjectProvider(NewEJPojoServiceContentPage project)
+    {
+       
+           init(new StructuredSelection(project.getJavaProject()));
+           setPackageFragmentRoot(project.getPackageFragmentRoot(), false);
+       
+       validate();
+    }
+    
+    public void validate()
+    {
+        fTypeNameStatus = typeNameChanged();
+        fPackageStatus = packageChanged();
+       doStatusUpdate();
+        
+    }
+    
 
     private void createServiceOptionControls(Composite composite, int nColumns)
     {
