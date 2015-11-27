@@ -59,9 +59,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -89,6 +93,14 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
     private IJavaProject      currentProject;
     private String            contentProviderError;
+    
+    
+    private boolean createSerivce   = true;
+    private boolean serviceOptional = true;
+    
+    
+    
+    
     /**
      * This wizard's list of pages (element type: <code>IWizardPage</code>).
      */
@@ -115,9 +127,22 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         return getJavaProject();
     }
 
+    
+
+    public boolean isCreateSerivce()
+    {
+        return createSerivce;
+    }
+
+    public void setCreateSerivce(boolean createSerivce, boolean serviceOptional)
+    {
+        this.createSerivce = createSerivce;
+        this.serviceOptional = serviceOptional;
+    }
+    
     public boolean skipService()
     {
-        return !pojoPage.isCreateSerivce();
+        return !isCreateSerivce();
     }
 
     public void createControl(Composite parent)
@@ -133,7 +158,13 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         layout.numColumns = nColumns;
         composite.setLayout(layout);
         createContainerControls(composite, nColumns);
+        createEmptySpace(composite, 1);
+        createEmptySpace(composite, 4);
         createProviderGroup(composite);
+        
+       
+        if (serviceOptional)
+            createServiceOptionControls(composite, 3);
         setControl(composite);
         Dialog.applyDialogFont(composite);
     }
@@ -326,7 +357,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     protected void createProviderGroup(final Composite container)
     {
         final Group group = new Group(container, SWT.NONE);
-        group.setText("Block Service Content Provider");
+        group.setText("Content Provider");
         group.setLayout(new GridLayout(2, false));
         GridData layoutData = new GridData(GridData.FILL_BOTH);
         layoutData.horizontalSpan=4;
@@ -559,7 +590,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             if (!wizardProvider.skipMainPojo())
                 pojoClassName = createPojoClass(pojoGeneratorType, monitor);
 
-            if (pojoPage.isCreateSerivce())
+            if (isCreateSerivce())
             {
                 createServiceClass(blockServiceContent, pojoClassName, servicePage, monitor);
             }
@@ -775,5 +806,49 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     public boolean pageOfMain(IWizardPage page)
     {
         return pages.contains(page);
+    }
+    
+    
+    private void createServiceOptionControls(Composite composite, int nColumns)
+    {
+
+        final Button btnCreateService = new Button(composite, SWT.CHECK);
+        btnCreateService.setText("Generate Block Service");
+
+        btnCreateService.setSelection(createSerivce);
+
+        btnCreateService.addSelectionListener(new SelectionListener()
+        {
+
+            public void widgetSelected(SelectionEvent e)
+            {
+                createSerivce = btnCreateService.getSelection();
+             
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e)
+            {
+                createSerivce = btnCreateService.getSelection();
+               
+            }
+        });
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan = nColumns;
+
+        btnCreateService.setLayoutData(gd);
+    }
+
+    public static Control createEmptySpace(Composite parent, int span)
+    {
+        Label label = new Label(parent, SWT.LEFT);
+        GridData gd = new GridData();
+        gd.horizontalAlignment = GridData.BEGINNING;
+        gd.grabExcessHorizontalSpace = false;
+        gd.horizontalSpan = span;
+        gd.horizontalIndent = 0;
+        gd.widthHint = 0;
+        gd.heightHint = 0;
+        label.setLayoutData(gd);
+        return label;
     }
 }

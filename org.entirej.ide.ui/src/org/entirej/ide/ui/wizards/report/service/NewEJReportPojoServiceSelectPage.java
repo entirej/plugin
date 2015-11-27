@@ -52,8 +52,7 @@ import org.entirej.ide.ui.utils.TypeAssistProvider;
 public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implements IJavaProjectProvider
 {
 
-    private boolean createSerivce   = true;
-    private boolean serviceOptional = true;
+
     private boolean needPojo        = true;
 
     public NewEJReportPojoServiceSelectPage()
@@ -68,16 +67,6 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
         setTypeName(getTypeName(), needPojo);
     }
 
-    public boolean isCreateSerivce()
-    {
-        return createSerivce;
-    }
-
-    public void setCreateSerivce(boolean createSerivce, boolean serviceOptional)
-    {
-        this.createSerivce = createSerivce;
-        this.serviceOptional = serviceOptional;
-    }
 
     @Override
     public IWizardContainer getContainer()
@@ -138,8 +127,7 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
         createSeparator(composite, nColumns);
         createTypeNameControls(composite, nColumns);
         createEmptySpace(composite, 1);
-        if (serviceOptional)
-            createServiceOptionControls(composite, 3);
+        
         setControl(composite);
         Dialog.applyDialogFont(composite);
     }
@@ -153,10 +141,9 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
         {
             setPackageFragment(project.getPackageFragment(), true);
         }
-        if (getTypeName().isEmpty())
-        {
+        
             setTypeName(project.getWizardProvider().getPojoSuggest(), needPojo);
-        }
+        
         validate();
     }
     
@@ -207,34 +194,7 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
 
     }
 
-    private void createServiceOptionControls(Composite composite, int nColumns)
-    {
-
-        final Button btnCreateService = new Button(composite, SWT.CHECK);
-        btnCreateService.setText("Generate Block Service");
-
-        btnCreateService.setSelection(createSerivce);
-
-        btnCreateService.addSelectionListener(new SelectionListener()
-        {
-
-            public void widgetSelected(SelectionEvent e)
-            {
-                createSerivce = btnCreateService.getSelection();
-                doStatusUpdate();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent e)
-            {
-                createSerivce = btnCreateService.getSelection();
-                doStatusUpdate();
-            }
-        });
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = nColumns;
-
-        btnCreateService.setLayoutData(gd);
-    }
+  
 
     public static Control createEmptySpace(Composite parent, int span)
     {

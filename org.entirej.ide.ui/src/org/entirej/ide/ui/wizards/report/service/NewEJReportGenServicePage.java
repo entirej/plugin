@@ -160,10 +160,9 @@ public class NewEJReportGenServicePage extends NewTypeWizardPage implements IJav
             setPackageFragment(project.getPackageFragment(), true);
         }
         
-        if (getTypeName().isEmpty())
-        {
+        
             setTypeName(project.getWizardProvider().getServiceSuggest(), true);
-        }
+        
         validate();
     }
 

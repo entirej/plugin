@@ -108,7 +108,15 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             
             public String getServiceSuggest()
             {
-                return getPojoSuggest()+"Service";
+                String name = "";
+                
+                Procedure procedure = columnSelectionPage.getProcedure();
+                if (procedure != null)
+                {
+
+                       name = toCamelCase(procedure.getFullName()).trim()+"Service" ;
+                }
+                return name;
             }
             
             public String getPogoGenerator()

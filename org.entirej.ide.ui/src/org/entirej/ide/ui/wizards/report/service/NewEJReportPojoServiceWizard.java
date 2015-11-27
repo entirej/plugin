@@ -58,8 +58,10 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
         pojoServiceSelectPage.setTitle("EntireJ Report Block Pojo");
         pojoServiceSelectPage.setDescription("Create a new report block pojo");
         pojoServiceSelectPage.init(getSelection());
-        pojoServiceSelectPage.setCreateSerivce(true, serviceOptional);
+        
         contentPage = new NewEJReportPojoServiceContentPage(pojoServiceSelectPage);
+        
+        contentPage.setCreateSerivce(true, serviceOptional);
         contentPage.init(getSelection());
         addPage(contentPage);
         
@@ -86,7 +88,7 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
         if ( page == contentPage)
             return false;
 
-        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!pojoServiceSelectPage.isCreateSerivce() || servicePage.isPageComplete()));
+        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!contentPage.isCreateSerivce() || servicePage.isPageComplete()));
     }
 
     @Override
@@ -114,7 +116,7 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
         if (page == pojoServiceSelectPage)
         {
             servicePage.setProjectProvider(contentPage);
-            if (!pojoServiceSelectPage.isCreateSerivce())
+            if (!contentPage.isCreateSerivce())
                 return getNextPage(servicePage);
             else
                 return servicePage;
@@ -151,7 +153,7 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
         if (page == contentPage.getOptinalStartingPage())
         {
             pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
-            if (pojoServiceSelectPage.isCreateSerivce())
+            if (contentPage.isCreateSerivce())
                 return servicePage;
             else
                 return pojoServiceSelectPage;

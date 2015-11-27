@@ -59,9 +59,10 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         pojoServiceSelectPage.setTitle(EJUIMessages.NewPojoServiceWizard_MainPage_title);
         pojoServiceSelectPage.setDescription(EJUIMessages.NewPojoServiceWizard_MainPage_desc);
         pojoServiceSelectPage.init(getSelection());
-        pojoServiceSelectPage.setCreateSerivce(true, serviceOptional);
+      
         
         contentPage = new NewEJPojoServiceContentPage(pojoServiceSelectPage);
+        contentPage.setCreateSerivce(true, serviceOptional);
         contentPage.init(getSelection());
         addPage(contentPage);
         
@@ -88,7 +89,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         if ( page == contentPage)
             return false;
 
-        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!pojoServiceSelectPage.isCreateSerivce() || servicePage.isPageComplete()));
+        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!contentPage.isCreateSerivce() || servicePage.isPageComplete()));
     }
 
     @Override
@@ -116,7 +117,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         if (page == pojoServiceSelectPage)
         {
             servicePage.setProjectProvider(contentPage);
-            if (!pojoServiceSelectPage.isCreateSerivce())
+            if (!contentPage.isCreateSerivce())
                 return getNextPage(servicePage);
             else
                 return servicePage;
@@ -153,7 +154,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         if (page == contentPage.getOptinalStartingPage())
         {
             pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
-            if (pojoServiceSelectPage.isCreateSerivce())
+            if (contentPage.isCreateSerivce())
                 return servicePage;
             else
                 return pojoServiceSelectPage;
