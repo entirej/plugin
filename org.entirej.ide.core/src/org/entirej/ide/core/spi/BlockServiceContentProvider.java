@@ -68,6 +68,9 @@ public interface BlockServiceContentProvider
         String getPogoGenerator();
         String getServiceGenerator();
         
+        String getReportPogoGenerator();
+        String getReportServiceGenerator();
+        
         //TODO : report
         
         

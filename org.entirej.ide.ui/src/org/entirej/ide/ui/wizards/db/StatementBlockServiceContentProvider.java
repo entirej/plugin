@@ -28,7 +28,9 @@ import org.entirej.framework.core.service.EJFormPojoGenerator;
 import org.entirej.framework.core.service.EJFormServiceGenerator;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.report.service.EJReportPojoGenerator;
 import org.entirej.framework.report.service.EJReportPojoGeneratorType;
+import org.entirej.framework.report.service.EJReportServiceGenerator;
 import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
 
@@ -108,6 +110,19 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
 
                 return EJFormServiceGenerator.class.getName();
 
+            }
+            
+            
+            public String getReportPogoGenerator()
+            {
+                return EJReportPojoGenerator.class.getName();
+            }
+            
+            public String getReportServiceGenerator()
+            {
+                
+                return EJReportServiceGenerator.class.getName();
+                
             }
             
             public String getPojoSuggest()

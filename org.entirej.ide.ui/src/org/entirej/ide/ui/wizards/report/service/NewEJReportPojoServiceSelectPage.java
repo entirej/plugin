@@ -28,6 +28,7 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -50,22 +51,21 @@ import org.entirej.ide.ui.utils.TypeAssistProvider;
 
 public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implements IJavaProjectProvider
 {
-    private String               pojoGeneratorClass;
-    private Text                 pojoGenText;
-    private boolean              createSerivce   = true;
-    private boolean              serviceOptional = true;
 
-    private static final IStatus S_DEFAULT_OK    = new Status(IStatus.OK, EJUIPlugin.getID(), null);
-    private IStatus              pojoGenStatus   = S_DEFAULT_OK;
+    private boolean createSerivce   = true;
+    private boolean serviceOptional = true;
+    private boolean needPojo        = true;
 
     public NewEJReportPojoServiceSelectPage()
     {
         super(true, "ejr.pojo.service");
     }
 
-    public String getPojoGeneratorClass()
+    public void setPojoNeed(boolean needPojo)
     {
-        return pojoGeneratorClass;
+        this.needPojo = needPojo;
+
+        setTypeName(getTypeName(), needPojo);
     }
 
     public boolean isCreateSerivce()
@@ -105,7 +105,7 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
     private void doStatusUpdate()
     {
         // status of all used components
-        IStatus[] status = new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus, pojoGenStatus };
+        IStatus[] status = needPojo ? new IStatus[] { fContainerStatus, fPackageStatus, fTypeNameStatus } : new IStatus[] { fContainerStatus, fPackageStatus, };
 
         // the mode severe status will be displayed and the OK button
         // enabled/disabled.
@@ -136,13 +136,45 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
         createContainerControls(composite, nColumns);
         createPackageControls(composite, nColumns);
         createSeparator(composite, nColumns);
-        createPojoGeneratorControls(composite, nColumns);
         createTypeNameControls(composite, nColumns);
         createEmptySpace(composite, 1);
         if (serviceOptional)
             createServiceOptionControls(composite, 3);
         setControl(composite);
         Dialog.applyDialogFont(composite);
+    }
+
+    void setProjectProvider(NewEJReportPojoServiceContentPage project)
+    {
+
+        init(new StructuredSelection(project.getJavaProject()));
+        setPackageFragmentRoot(project.getPackageFragmentRoot(), false);
+        if (getPackageText().isEmpty())
+        {
+            setPackageFragment(project.getPackageFragment(), true);
+        }
+        if (getTypeName().isEmpty())
+        {
+            setTypeName(project.getWizardProvider().getPojoSuggest(), needPojo);
+        }
+        validate();
+    }
+    
+    
+
+    public void setVisible(boolean visible)
+    {
+ 
+        super.setVisible(visible);
+        validate();
+    }
+
+    public void validate()
+    {
+        fTypeNameStatus = typeNameChanged();
+        fPackageStatus = packageChanged();
+        doStatusUpdate();
+
     }
 
     @Override
@@ -155,7 +187,7 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
     protected IStatus containerChanged()
     {
         IStatus containerChanged = super.containerChanged();
-        if (containerChanged.isOK() && pojoGenText != null)
+        if (containerChanged.isOK())
         {
             _initProjectPref();
             _updateUI();
@@ -168,13 +200,11 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
     {
         if (getJavaProject() == null)
             return;
-        pojoGeneratorClass = "";
     }
 
     private void _updateUI()
     {
-        if (pojoGenText != null)
-            pojoGenText.setText(pojoGeneratorClass != null ? pojoGeneratorClass : "");
+
     }
 
     private void createServiceOptionControls(Composite composite, int nColumns)
@@ -204,96 +234,6 @@ public class NewEJReportPojoServiceSelectPage extends NewTypeWizardPage implemen
         gd.horizontalSpan = nColumns;
 
         btnCreateService.setLayoutData(gd);
-    }
-
-    private void createPojoGeneratorControls(Composite composite, int nColumns)
-    {
-        Label pojoGenLabel = new Label(composite, SWT.NULL);
-        pojoGenLabel.setText("Pojo Generator:");
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = 1;
-        pojoGenLabel.setLayoutData(gd);
-        pojoGenText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-
-        gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = false;
-        gd.horizontalSpan = 2;
-        pojoGenText.setLayoutData(gd);
-        if (pojoGeneratorClass != null)
-            pojoGenText.setText(pojoGeneratorClass);
-        pojoGenText.addModifyListener(new ModifyListener()
-        {
-
-            public void modifyText(ModifyEvent e)
-            {
-                pojoGeneratorClass = pojoGenText.getText().trim();
-                pojoGenStatus = pojoGeneratorChanged();
-                doStatusUpdate();
-            }
-        });
-        pojoGenText.setText(pojoGeneratorClass = EJReportPojoGenerator.class.getName());
-        TypeAssistProvider.createTypeAssist(pojoGenText, this, IJavaElementSearchConstants.CONSIDER_CLASSES,
-                org.entirej.framework.report.service.EJReportPojoContentGenerator.class.getName());
-        final Button browse = new Button(composite, SWT.PUSH);
-        browse.setText("Browse...");
-        browse.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent e)
-            {
-                String value = pojoGenText.getText();
-                IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), getJavaProject().getResource(),
-                        IJavaElementSearchConstants.CONSIDER_CLASSES, value == null ? "" : value,
-                        org.entirej.framework.report.service.EJReportPojoContentGenerator.class.getName());
-                if (type != null)
-                {
-                    pojoGenText.setText(type.getFullyQualifiedName('$'));
-                }
-            }
-
-        });
-        gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = false;
-        gd.horizontalSpan = 1;
-        browse.setLayoutData(gd);
-    }
-
-    protected IStatus pojoGeneratorChanged()
-    {
-        IJavaProject javaProject = getJavaProject();
-        if (javaProject != null)
-        {
-            // Pojo Generator
-            if (pojoGeneratorClass == null)
-            {
-                return new Status(IStatus.ERROR, EJUIPlugin.getID(), "Pojo Generator can't be empty.");
-            }
-
-            try
-            {
-                IType findType = javaProject.findType(pojoGeneratorClass);
-                if (findType == null)
-                {
-                    return new Status(IStatus.ERROR, EJUIPlugin.getID(), String.format("%s can't find in project build path.", pojoGeneratorClass));
-                }
-                else
-                {
-
-                    if (!JavaAccessUtils.isSubTypeOfInterface(findType, org.entirej.framework.report.service.EJReportPojoContentGenerator.class))
-                    {
-                        return new Status(IStatus.ERROR, EJUIPlugin.getID(), String.format("%s is not a sub type of %s.", pojoGeneratorClass,
-                                org.entirej.framework.core.service.EJPojoContentGenerator.class.getName()));
-                    }
-                }
-            }
-            catch (CoreException e)
-            {
-                return new Status(IStatus.ERROR, EJUIPlugin.getID(), e.getMessage());
-            }
-        }
-
-        return S_DEFAULT_OK;
     }
 
     public static Control createEmptySpace(Composite parent, int span)

@@ -59,13 +59,16 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
         pojoServiceSelectPage.setDescription("Create a new report block pojo");
         pojoServiceSelectPage.init(getSelection());
         pojoServiceSelectPage.setCreateSerivce(true, serviceOptional);
+        contentPage = new NewEJReportPojoServiceContentPage(pojoServiceSelectPage);
+        contentPage.init(getSelection());
+        addPage(contentPage);
+        
         addPage(pojoServiceSelectPage);
 
         servicePage = new NewEJReportGenServicePage(pojoServiceSelectPage);
         addPage(servicePage);
 
-        contentPage = new NewEJReportPojoServiceContentPage(pojoServiceSelectPage);
-        addPage(contentPage);
+        
         super.addPages();
     }
 
@@ -80,49 +83,91 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
     public boolean canFinish()
     {
         IWizardPage page = getContainer().getCurrentPage();
-        if (page == pojoServiceSelectPage || page == servicePage || page == contentPage)
+        if ( page == contentPage)
             return false;
 
-        return contentPage.canFinish();
+        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!pojoServiceSelectPage.isCreateSerivce() || servicePage.isPageComplete()));
     }
 
     @Override
     public IWizardPage getNextPage(IWizardPage page)
     {
+        
+        if (page == contentPage)
+            return contentPage.getStartingPage();
+        
+        IWizardPage nextPage = contentPage.getNextPage(page);
+        
+        if(nextPage!=null)
+        {
+            return nextPage;
+        }
+        
+        if(contentPage.pageOfMain(page))
+        {
+            pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
+            pojoServiceSelectPage.setProjectProvider(contentPage);
+            return pojoServiceSelectPage;
+        }
+        
+        
         if (page == pojoServiceSelectPage)
         {
+            servicePage.setProjectProvider(contentPage);
             if (!pojoServiceSelectPage.isCreateSerivce())
                 return getNextPage(servicePage);
             else
                 return servicePage;
         }
-        if (page == servicePage)
-            return contentPage;
+       
 
-        if (page == contentPage)
-            return contentPage.getStartingPage();
+        
 
-        return contentPage.getNextPage(page);
+       
+        return contentPage.getOptionalNextPage(page);
     }
 
     @Override
     public IWizardPage getPreviousPage(IWizardPage page)
     {
-        if (page == pojoServiceSelectPage)
+        if (page == contentPage)
         {
             return null;
         }
-        if (page == servicePage)
-            return pojoServiceSelectPage;
-
-        if (page == contentPage)
+        if (page == contentPage.getStartingPage())
+        {
+            return contentPage;
+        }
+        
+        IWizardPage previousPage = contentPage.getPreviousPage(page);
+        
+        if(previousPage!=null)
+        {
+            return previousPage;
+        }
+        
+        
+        
+        if (page == contentPage.getOptinalStartingPage())
+        {
+            pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
             if (pojoServiceSelectPage.isCreateSerivce())
                 return servicePage;
             else
                 return pojoServiceSelectPage;
+        }
+        
+        if (page == servicePage)
+        {
+            pojoServiceSelectPage.setPojoNeed(!contentPage.getWizardProvider().skipMainPojo());
+            return pojoServiceSelectPage;
+        }
 
-        IWizardPage previousPage = contentPage.getPreviousPage(page);
-        return previousPage == null ? contentPage : previousPage;
+       
+     
+
+        
+        return contentPage.getOptionalPreviousPage(page);
     }
 
     @Override
@@ -130,7 +175,8 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
     {
         int pageCount = super.getPageCount();
 
-        return pageCount + contentPage.getPageCount();
+        int  i = pageCount + contentPage.getPageCount()+contentPage.getOptionalPageCount();
+        return  i;
     }
 
     public boolean isServiceOptional()
