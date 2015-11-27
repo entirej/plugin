@@ -64,6 +64,35 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
         return new BlockServiceWizardProvider()
         {
             
+            
+            public String getPojoSuggest()
+            {
+                String name = columnSelectionPage.getSelectedTable().getName();
+                return toCamelCase(name);
+            }
+            
+            public String getServiceSuggest()
+            {
+                return getPojoSuggest()+"Service";
+            }
+            
+            
+            String toCamelCase(String s)
+            {
+                String[] parts = s.split("_");
+                String camelCaseString = "";
+                for (String part : parts)
+                {
+                    camelCaseString = camelCaseString + toProperCase(part);
+                }
+                return camelCaseString;
+            }
+
+            String toProperCase(String s)
+            {
+                return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+            }
+            
             public boolean skipMainPojo()
             {
                 // TODO Auto-generated method stub

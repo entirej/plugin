@@ -170,6 +170,14 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage
            init(new StructuredSelection(project.getJavaProject()));
            setPackageFragmentRoot(project.getPackageFragmentRoot(), false);
        
+            if(getPackageText().isEmpty())
+            {
+                setPackageFragment(project.getPackageFragment(), true);
+            }
+            if(getTypeName().isEmpty())
+            {
+                setTypeName(project.getWizardProvider().getPojoSuggest(), needPojo);
+            }
        validate();
     }
     
@@ -212,7 +220,14 @@ public class NewEJPojoServiceSelectPage extends NewTypeWizardPage
     }
 
 
+    @Override
+    public void setVisible(boolean visible)
+    {
 
+        super.setVisible(visible);
+        validate();
+    }
+    
     public static Control createEmptySpace(Composite parent, int span)
     {
         Label label = new Label(parent, SWT.LEFT);

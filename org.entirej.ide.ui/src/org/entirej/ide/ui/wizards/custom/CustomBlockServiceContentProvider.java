@@ -76,6 +76,16 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
                 columnSelectionPage.init(context.getProject());
 
             }
+            
+            public String getPojoSuggest()
+            {
+                return "";
+            }
+            
+            public String getServiceSuggest()
+            {
+                return "";
+            }
 
             public void init(ReportGeneratorContext context)
             {

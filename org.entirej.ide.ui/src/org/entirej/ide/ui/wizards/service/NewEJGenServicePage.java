@@ -88,8 +88,9 @@ public class NewEJGenServicePage extends NewTypeWizardPage implements IJavaProje
                 setPackageFragmentRoot(pojoServiceSelectPage.getPackageFragmentRoot(), false);
                 setPackageFragment(pojoServiceSelectPage.getPackageFragment(), true);
             }
-            validate();
+            
         }
+        validate();
     }
     
     
@@ -100,6 +101,11 @@ public class NewEJGenServicePage extends NewTypeWizardPage implements IJavaProje
            init(new StructuredSelection(project.getJavaProject()));
            setPackageFragmentRoot(project.getPackageFragmentRoot(), false);
            setPackageFragment(project.getPackageFragment(), true);
+       }
+       
+       if(getTypeName().isEmpty())
+       {
+          setTypeName(project.getWizardProvider().getServiceSuggest(), true);
        }
        validate();
     }

@@ -57,6 +57,9 @@ public interface BlockServiceContentProvider
         boolean skipPage(IWizardPage page);
         
         boolean skipMainPojo();
+        
+        String getPojoSuggest();
+        String getServiceSuggest();
 
         void createRequiredResources(IProgressMonitor monitor);
 

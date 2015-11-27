@@ -110,6 +110,15 @@ public class StatementBlockServiceContentProvider implements BlockServiceContent
 
             }
             
+            public String getPojoSuggest()
+            {
+                return "";
+            }
+            
+            public String getServiceSuggest()
+            {
+                return "";
+            }
             
             
             

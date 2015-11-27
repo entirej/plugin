@@ -23,7 +23,6 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Struct;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,6 +73,44 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
         return new BlockServiceWizardProvider()
         {
 
+            
+            public String getPojoSuggest()
+            {
+                String name = "";
+                
+                Procedure procedure = columnSelectionPage.getProcedure();
+                if (procedure != null)
+                {
+                    ObjectArgument collectionType = procedure.getCollectionType();
+
+                    if (collectionType != null)
+                    {
+                     
+
+                        if (collectionType.tableName != null)
+                        {
+
+                            if (collectionType.getArguments().size() > 0)
+                            {
+                                name =  toCamelCase(((ObjectArgument) collectionType.getArguments().get(0)).objName);
+                            }
+                        }
+                        else
+                        {
+                            name =  toCamelCase(collectionType.objName);
+                        }
+                    }
+                }
+                
+                
+                return name;
+            }
+            
+            public String getServiceSuggest()
+            {
+                return getPojoSuggest()+"Service";
+            }
+            
             public String getPogoGenerator()
             {
                 return "org.entirej.EJFormOraclePojoGenerator";
@@ -236,6 +273,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 return new BlockServiceContent(serviceGeneratorType, pojoGeneratorType);
             }
 
+            
+            
+            
+            
             String toCamelCase(String s)
             {
                 String[] parts = s.split("_");
