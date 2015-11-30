@@ -113,7 +113,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                 Procedure procedure = columnSelectionPage.getProcedure();
                 if (procedure != null)
                 {
-                       name = toCamelCase(procedure.getFullName().toUpperCase()).trim()+"Service" ;
+                       name = toCamelCase(procedure.getFullName().replaceAll("\\.", "_").toUpperCase()).trim()+"Service" ;
                 }
                 return name;
             }
