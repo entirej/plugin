@@ -106,8 +106,8 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
     public NewEJPojoServiceContentPage(NewEJPojoServiceSelectPage pojoServiceSelectPage)
     {
         super(true,"ej.pojo.content");
-        setTitle("Block Service Content");
-        setDescription("Enter the data required to generate the block service.");
+        setTitle("Block Service/Pojo Content");
+        setDescription("Enter the data required to generate the block service/pojo.");
 
         this.pojoPage = pojoServiceSelectPage;
     }
@@ -263,7 +263,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             cleanSubPages();
             blockServiceContentProvider = null;
             wizardProvider = null;
-            setDescription("Enter the data required to generate the block service.");
+            setDescription("Enter the data required to generate the block service/pojo.");
             return;
         }
         if (blockServiceContentProvider != null)
@@ -478,7 +478,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         if (blockServiceContentProvider == null)
         {
-            setMessage("Please select block service content provider.");
+            setMessage("Please select block service/pojo content provider.");
             return false;
         }
 

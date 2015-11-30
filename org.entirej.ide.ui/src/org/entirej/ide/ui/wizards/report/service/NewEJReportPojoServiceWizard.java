@@ -43,7 +43,7 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
     {
         setDefaultPageImageDescriptor(EJUIImages.DESC_NEWEJPOJO_SERV_WIZ);
         setDialogSettings(EJUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle("New Report Block Service");
+        setWindowTitle("New Report Block Service/Pojo");
     }
 
     public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException

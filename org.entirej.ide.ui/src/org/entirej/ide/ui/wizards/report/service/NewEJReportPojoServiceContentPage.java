@@ -111,8 +111,8 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     public NewEJReportPojoServiceContentPage(NewEJReportPojoServiceSelectPage pojoServiceSelectPage)
     {
         super(true,"ejr.pojo.content");
-        setTitle("Report Block Service Content");
-        setDescription("Enter the data required to generate the report block service.");
+        setTitle("Report Block Service/Pojo Content");
+        setDescription("Enter the data required to generate the report block service/pojo.");
         
         this.pojoPage = pojoServiceSelectPage;
     }
@@ -220,7 +220,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             cleanSubPages();
             blockServiceContentProvider = null;
             wizardProvider = null;
-            setDescription("Enter the data required to generate the block service.");
+            setDescription("Enter the data required to generate the block service/pojo.");
             return;
         }
         if (blockServiceContentProvider != null)
@@ -488,7 +488,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
         if (blockServiceContentProvider == null)
         {
-            setMessage("Please select block service content provider.");
+            setMessage("Please select block service/pojo content provider.");
             return false;
         }
 
