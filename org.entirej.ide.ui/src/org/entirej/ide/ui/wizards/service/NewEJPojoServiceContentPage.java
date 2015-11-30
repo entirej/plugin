@@ -188,6 +188,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         createContainerControls(composite, nColumns);
         if (serviceOptional)
         {
+            createSeparator(composite, nColumns);
             createServiceOptionControls(composite, 3);
             createDescComponent(composite).setText("If you choose not to generate the Block Service then only the Pojo will be generated");
         }
@@ -198,6 +199,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         createEmptySpace(composite, 4);
         
         createEmptySpace(composite, 4);
+        createSeparator(composite, nColumns);
         createProviderGroup(composite);
         
        
