@@ -186,13 +186,22 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         layout.numColumns = nColumns;
         composite.setLayout(layout);
         createContainerControls(composite, nColumns);
+        if (serviceOptional)
+        {
+            createServiceOptionControls(composite, 3);
+            createDescComponent(composite).setText("If you choose not to generate the Block Service then only the Pojo will be generated");
+        }
+        
+        
         createEmptySpace(composite, 1);
+        createEmptySpace(composite, 4);
+        createEmptySpace(composite, 4);
+        
         createEmptySpace(composite, 4);
         createProviderGroup(composite);
         
        
-        if (serviceOptional)
-            createServiceOptionControls(composite, 3);
+        
         setControl(composite);
         Dialog.applyDialogFont(composite);
     }
