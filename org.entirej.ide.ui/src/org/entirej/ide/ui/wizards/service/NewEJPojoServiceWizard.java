@@ -88,8 +88,21 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
         IWizardPage page = getContainer().getCurrentPage();
         if ( page == contentPage)
             return false;
+        
+        if(contentPage.canFinish())
+        {
+            if(!contentPage.isCreateSerivce() && page== pojoServiceSelectPage)
+            {
+                return pojoServiceSelectPage.isPageComplete();
+            }
+            else if(servicePage==page)
+            {
+                return servicePage.isPageComplete();
+            }
+        }
 
-        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!contentPage.isCreateSerivce() || servicePage.isPageComplete()));
+        return false;
+
     }
 
     @Override

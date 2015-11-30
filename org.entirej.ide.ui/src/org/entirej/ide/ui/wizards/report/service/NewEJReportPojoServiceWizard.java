@@ -87,8 +87,20 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
         IWizardPage page = getContainer().getCurrentPage();
         if ( page == contentPage)
             return false;
+        
+        if(contentPage.canFinish())
+        {
+            if(!contentPage.isCreateSerivce() && page== pojoServiceSelectPage)
+            {
+                return pojoServiceSelectPage.isPageComplete();
+            }
+            else if(servicePage==page)
+            {
+                return servicePage.isPageComplete();
+            }
+        }
 
-        return contentPage.canFinish() && (pojoServiceSelectPage.isPageComplete() && (!contentPage.isCreateSerivce() || servicePage.isPageComplete()));
+        return false;
     }
 
     @Override
