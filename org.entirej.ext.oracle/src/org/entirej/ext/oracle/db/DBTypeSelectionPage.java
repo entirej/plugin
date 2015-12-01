@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -87,6 +88,10 @@ public class DBTypeSelectionPage extends WizardPage
     {
         this.context = context;
     }
+    
+    
+    
+
     
 
     public ITreeContentProvider getContentProvider()
@@ -248,6 +253,18 @@ public class DBTypeSelectionPage extends WizardPage
             if (dbfilteredTree != null)
                 dbfilteredTree.getViewer().setInput(getDBInput());
             doUpdateStatus();
+            
+            if(context.skipService())
+            {
+                setTitle("Oracle Types Selection");
+                setDescription("Select columns from Type/Funtion/Procedure.");
+            }
+            
+            else
+            {
+                setTitle("Oracle Funtion/Procedure Selection");
+                setDescription("Select the type to use to create your pojo.");
+            }
         }
 
     }
@@ -482,7 +499,7 @@ public class DBTypeSelectionPage extends WizardPage
                 String name = argument._name != null ? argument._name : argument.objName;
                 if(name.isEmpty())
                 {
-                    name = argument.getObjName();
+                    return argument.getObjName();
                 }
                 String typeDef = argument.tableName != null ? String.format("%s [ %s ]", argument.tableName, name) : name;
                 return argument.type != Type.IN_OUT ? String.format("%s --> %s", typeDef, argument.type.name()) : typeDef;
