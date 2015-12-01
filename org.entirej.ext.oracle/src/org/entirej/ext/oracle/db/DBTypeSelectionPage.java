@@ -943,10 +943,14 @@ public class DBTypeSelectionPage extends WizardPage
         public ObjectArgument createObjectArgumentFromTableType(Connection con, String TableType, String argName) throws SQLException
         {
             
-            String key = argName==null ? TableType : (TableType+"_"+argName);
-            ObjectArgument tab = types.get(key);
+            
+            ObjectArgument tab = types.get(TableType);
             if(tab!=null)
-                return tab;
+            {
+                ObjectArgument  argument = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
+                argument.getArguments().addAll(tab.getArguments());
+                return argument;
+            }
             
            
             
@@ -954,7 +958,7 @@ public class DBTypeSelectionPage extends WizardPage
             
             
              tab = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
-            types.put(key, tab);
+            types.put(TableType, tab);
             
             
             Statement statement = con.createStatement();
@@ -985,13 +989,17 @@ public class DBTypeSelectionPage extends WizardPage
 
         public ObjectArgument createObjectArgument(Connection con, String objectName, String argName) throws SQLException
         {
-            String key = argName==null ? objectName : (objectName+"_"+argName);
-            ObjectArgument objectArgument = types.get(key);
+           
+            ObjectArgument objectArgument = types.get(objectName);
             if(objectArgument!=null)
-                return objectArgument;
+            {
+                ObjectArgument argument = new ObjectArgument(null, objectName, argName, "OBJECT",Types.STRUCT);
+                argument.getArguments().addAll(objectArgument.getArguments());
+                return argument;
+            }
             
             objectArgument = createObjectArgument(con, null, objectName, argName);
-            types.put(key, objectArgument);
+            types.put(objectName, objectArgument);
             return objectArgument;
         }
 
