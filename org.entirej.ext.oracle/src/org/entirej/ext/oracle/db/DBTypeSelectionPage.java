@@ -55,6 +55,7 @@ import org.entirej.ext.oracle.db.Argument.Type;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage;
 import org.entirej.ide.core.EJCoreLog;
+import org.entirej.ide.core.spi.BlockServiceContentProvider.GeneratorContext;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.utils.ProjectConnectionFactory;
@@ -66,11 +67,14 @@ public class DBTypeSelectionPage extends WizardPage
     private CheckboxTableViewer  listViewer;
 
     private Procedure            selectedProcedure;
+    private ObjectArgument       selectedObjectArgument;
 
     private String               dbError;
     private Connection           conn;
     private DBContentProvider    contentProvider;
     private LabelProvider        labelProvider;
+    
+    private GeneratorContext context;
 
     public DBTypeSelectionPage()
     {
@@ -78,6 +82,12 @@ public class DBTypeSelectionPage extends WizardPage
         setTitle("Oracle Funtion/Procedure Selection");
         setDescription("Select columns from Type/Funtion/Procedure.");
     }
+    
+    void setGeneratorContext(GeneratorContext context)
+    {
+        this.context = context;
+    }
+    
 
     public ITreeContentProvider getContentProvider()
     {
@@ -260,10 +270,7 @@ public class DBTypeSelectionPage extends WizardPage
         super.dispose();
     }
 
-    public Procedure getProcedure()
-    {
-        return selectedProcedure;
-    }
+  
 
     public void createControl(Composite parent)
     {
@@ -365,6 +372,7 @@ public class DBTypeSelectionPage extends WizardPage
                     node = strutruredSelection.getFirstElement();
                 }
                 selectedProcedure = null;
+                selectedObjectArgument = null;
                 if (listViewer != null)
                 {
                     listViewer.setInput(node);
@@ -373,6 +381,11 @@ public class DBTypeSelectionPage extends WizardPage
                 {
                     selectedProcedure = (Procedure) node;
 
+                }
+                if (node instanceof ObjectArgument)
+                {
+                    selectedObjectArgument = (ObjectArgument) node;
+                    
                 }
                 doUpdateStatus();
             }
@@ -384,6 +397,21 @@ public class DBTypeSelectionPage extends WizardPage
         setPageComplete(validatePage());
     }
 
+    
+    ObjectArgument getObjectArgument()
+    {
+        if(context.skipService())
+        {
+            return selectedObjectArgument;
+        }
+       
+        if (selectedProcedure != null)
+        {
+            return selectedProcedure.getCollectionType();
+        }
+        return  null;
+    }
+    
     protected boolean validatePage()
     {
         if (dbError != null)
@@ -391,20 +419,36 @@ public class DBTypeSelectionPage extends WizardPage
             setErrorMessage(dbError);
             return false;
         }
-        if (selectedProcedure == null)
+        if(context.skipService())
         {
-            setErrorMessage("Function/Procedure not selected.");
-            return false;
+             if (selectedObjectArgument == null)
+            {
+                setErrorMessage("Type not selected.");
+                return false;
+            }
+             
         }
         else
         {
-            boolean foundCollectionType = selectedProcedure.getCollectionType() != null;
-            if (!foundCollectionType)
+            if (selectedProcedure == null)
             {
-                setErrorMessage("Selected Function/Procedure not provide collection type.");
+                setErrorMessage("Function/Procedure not selected.");
                 return false;
             }
+            
+            else
+            {
+                boolean foundCollectionType = selectedProcedure.getCollectionType() != null;
+                if (!foundCollectionType)
+                {
+                    setErrorMessage("Selected Function/Procedure not provide collection type.");
+                    return false;
+                }
+            }
         }
+        
+       
+       
 
         setErrorMessage(null);
         setMessage(null);
@@ -490,6 +534,7 @@ public class DBTypeSelectionPage extends WizardPage
     private class DBContentProvider extends AbstractFilteredTree.FilteredContentProvider
     {
         private Object[] objects;
+        private boolean checkForTypes = false;
 
         public void dispose()
         {
@@ -501,6 +546,50 @@ public class DBTypeSelectionPage extends WizardPage
         {
 
         }
+        
+        
+        
+        public List<ObjectArgument> getTypes(Connection con) throws SQLException
+        {
+            List<ObjectArgument> packages = new ArrayList<ObjectArgument>();
+
+            Statement statement = con.createStatement();
+            ResultSet rset = statement.executeQuery("SELECT TYPE_NAME, TYPECODE FROM ALL_TYPES WHERE OWNER = USER");
+            try
+            {
+                while (rset.next())
+                {
+                    
+                    String typeName =  rset.getString("TYPE_NAME");
+                   String dataType =  rset.getString("TYPECODE");
+                    
+                    
+                   ObjectArgument argument = null;
+                    if ("TABLE".equals(dataType))
+                    {
+                        argument = createObjectArgumentFromTableType(con, typeName, "");
+
+                    }
+                    else if ("OBJECT".equals(dataType))
+                    {
+                        argument = createObjectArgument(con, typeName, "");
+                    }
+                    packages.add(argument);
+                    
+                }
+
+                return packages;
+            }
+            finally
+            {
+                rset.close();
+                statement.close();
+            }
+        }
+        
+        
+        
+        
 
         public List<Group> getPackages(Connection con) throws SQLException
         {
@@ -974,9 +1063,81 @@ public class DBTypeSelectionPage extends WizardPage
 
         public Object[] getElements(Object inputElement)
         {
-            if (objects != null)
+            if (objects != null && checkForTypes == (context!=null && context.skipService()))
                 return objects;
+            checkForTypes = context!=null && context.skipService();
+            if(checkForTypes)
+            {
+                Group packages = new Group("Types")
+                {
+                    private Object[] subObjects;
 
+                    @Override
+                    public Object[] getItems()
+                    {
+                        if (subObjects != null)
+                            return filterItem(subObjects);
+                        final List<ObjectArgument> schemas = new ArrayList<ObjectArgument>();
+
+                        IRunnableWithProgress loadSchemas = new IRunnableWithProgress()
+                        {
+                            public void run(IProgressMonitor monitor)
+
+                            {
+                                try
+                                {
+
+                                    monitor.beginTask("Loading database types...", 3);
+
+                                    if (conn != null && !conn.isClosed())
+                                    {
+
+                                        monitor.worked(1);
+                                        schemas.addAll(getTypes(conn));
+                                        monitor.worked(1);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    dbError = e.getMessage();
+
+                                }
+                                finally
+                                {
+                                    monitor.done();
+                                    doUpdateStatus();
+                                }
+                            }
+                        };
+
+                        setPageComplete(false);
+                        try
+                        {
+                            getContainer().run(false, false, loadSchemas);
+                        }
+                        catch (Exception e)
+                        {
+                            dbError = e.getMessage();
+
+                        }
+                        finally
+                        {
+                            doUpdateStatus();
+                        }
+
+                        return filterItem(subObjects = schemas.toArray());
+                    }
+
+                    @Override
+                    public Image getImage()
+                    {
+                        return EJUIImages.SHARED_CLASS;
+                    }
+                };
+                
+                return objects = new Object[] { packages };
+            }
+            
             Group packages = new Group("Packages")
             {
                 private Object[] subObjects;
@@ -1265,5 +1426,10 @@ public class DBTypeSelectionPage extends WizardPage
             return false;
         }
 
+    }
+
+    public Procedure getProcedure()
+    {
+        return selectedProcedure;
     }
 }

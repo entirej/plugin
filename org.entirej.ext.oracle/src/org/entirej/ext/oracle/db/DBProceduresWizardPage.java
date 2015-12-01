@@ -89,6 +89,8 @@ public class DBProceduresWizardPage extends WizardPage
         setErrorMessage(null);
         setMessage(null);
 
+       
+        
         if (typeSelectionPage.getProcedure() == null)
         {
             setErrorMessage("Select Function/Procedure not selected.");

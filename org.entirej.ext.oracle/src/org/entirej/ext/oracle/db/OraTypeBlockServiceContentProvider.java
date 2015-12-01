@@ -78,10 +78,8 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 String name = "";
                 
-                Procedure procedure = columnSelectionPage.getProcedure();
-                if (procedure != null)
-                {
-                    ObjectArgument collectionType = procedure.getCollectionType();
+               
+                    ObjectArgument collectionType = columnSelectionPage.getObjectArgument(); 
 
                     if (collectionType != null)
                     {
@@ -100,7 +98,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                             name =  toCamelCase(collectionType.objName);
                         }
                     }
-                }
+                
                 
                 
                 return name;
@@ -153,6 +151,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             public void init(final GeneratorContext context)
             {
                 columnSelectionPage.init(context.getProject());
+                columnSelectionPage.setGeneratorContext(context);
                 this.context = context;
                 innerTypePage = new DBInnerTypePage()
                 {
@@ -190,7 +189,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 if (page == innerTypePage)
                 {
-                    innerTypePage.init(columnSelectionPage.getProcedure());
+                    if(context.skipService())
+                        innerTypePage.init(columnSelectionPage.getObjectArgument());
+                    else    
+                        innerTypePage.init(columnSelectionPage.getProcedure());
                     return innerTypePage.skipPage();
                 }
                 return false;
@@ -696,9 +698,9 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 List<String> addedInner = new ArrayList<String>();
 
-                Procedure procedure = columnSelectionPage.getProcedure();
+              
 
-                ObjectArgument collectionType = procedure.getCollectionType();
+                ObjectArgument collectionType = columnSelectionPage.getObjectArgument();
 
                 if (collectionType != null)
                 {
@@ -735,7 +737,8 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
                 }
 
-                for (Argument argument : procedure.getArguments())
+                if(!context.skipService())
+                for (Argument argument : columnSelectionPage.getProcedure().getArguments())
                 {
                     List<EJPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJPojoGeneratorType>();
                     EJReportTableColumn tableColumn = new EJReportTableColumn();
@@ -895,9 +898,9 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             {
                 List<String> addedInner = new ArrayList<String>();
 
-                Procedure procedure = columnSelectionPage.getProcedure();
+                
 
-                ObjectArgument collectionType = procedure.getCollectionType();
+                ObjectArgument collectionType = columnSelectionPage.getObjectArgument();
                 if (collectionType != null)
                 {
                     for (Argument argument : collectionType.getArguments())
@@ -932,7 +935,8 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
                 }
 
-                for (Argument argument : procedure.getArguments())
+                if(!context.skipService())
+                for (Argument argument : columnSelectionPage.getProcedure().getArguments())
                 {
 
                     List<EJReportPojoGeneratorType> innerPojoGeneratorTypes = new ArrayList<EJReportPojoGeneratorType>();

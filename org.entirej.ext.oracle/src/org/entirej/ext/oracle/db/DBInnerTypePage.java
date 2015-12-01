@@ -130,6 +130,29 @@ public abstract class DBInnerTypePage extends WizardPage
         }
 
     }
+    protected void init( ObjectArgument collectionType)
+    {
+        List<String> addedInner = new ArrayList<String>();
+        typeMappers.clear();
+        if (collectionType != null)
+        {
+            
+            for (Argument argument : collectionType.getArguments())
+            {
+                
+                
+                if (argument instanceof ObjectArgument)
+                {
+                    ObjectArgument objectArgument = (ObjectArgument) argument;
+                    
+                    collectTypes(objectArgument,addedInner);
+                }
+            }
+            
+        }
+       
+        
+    }
 
     boolean skipPage()
     {
