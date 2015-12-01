@@ -1396,7 +1396,7 @@ public class DBTypeSelectionPage extends WizardPage
                         }
                         continue;
                     }
-                    if (object instanceof ObjectArgument)
+                    if (context.skipService() && object instanceof ObjectArgument)
                     {
                         if (((ObjectArgument) object).getObjName().toLowerCase().contains(filter.toLowerCase()))
                         {
