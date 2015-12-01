@@ -1375,6 +1375,14 @@ public class DBTypeSelectionPage extends WizardPage
                         }
                         continue;
                     }
+                    if (object instanceof ObjectArgument)
+                    {
+                        if (((ObjectArgument) object).getObjName().toLowerCase().contains(filter.toLowerCase()))
+                        {
+                            fitems.add(object);
+                        }
+                        continue;
+                    }
                 }
 
                 return fitems.toArray();
