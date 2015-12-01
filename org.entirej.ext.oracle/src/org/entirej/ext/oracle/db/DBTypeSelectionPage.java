@@ -77,6 +77,7 @@ public class DBTypeSelectionPage extends WizardPage
     private DBContentProvider    contentProvider;
     private LabelProvider        labelProvider;
     private Map<String,ObjectArgument>  types = new HashMap<String, ObjectArgument>();
+    private Map<String, String>  typesCodes = new HashMap<String, String>();
     
     private GeneratorContext context;
 
@@ -111,6 +112,10 @@ public class DBTypeSelectionPage extends WizardPage
     public static int getDataTypeIntForOraType(String jdbcType)
     {
         
+       if("VARCHAR".equals(jdbcType))
+       {
+           return Types.VARCHAR;
+       }
        if("BINARY_INTEGER".equals(jdbcType))
        {
            return Types.BINARY;
@@ -1030,21 +1035,36 @@ public class DBTypeSelectionPage extends WizardPage
         public Argument createAttributeArgument(Connection con, String attrName, String attrTypeName) throws SQLException
         {
 
-            Statement statement = con.createStatement();
-            ResultSet rset = statement.executeQuery("SELECT TYPECODE FROM ALL_TYPES WHERE TYPE_NAME = '" + attrTypeName + "' ");
-            String type = null;
-            try
+            int code = getDataTypeIntForOraType(attrTypeName);
+            
+            if(!(code==Types.VARCHAR && !"VARCHAR".equals(attrTypeName)))
             {
-                while (rset.next())
-                {
-                    type = rset.getString("TYPECODE");
-                    break;
-                }
+                return new Argument(attrName, attrTypeName,code);
             }
-            finally
+            
+            
+            
+           
+            String type = typesCodes.get(attrTypeName) ;
+            
+            if(type==null)
             {
-                rset.close();
-                statement.close();
+                Statement statement = con.createStatement();
+                ResultSet rset = statement.executeQuery("SELECT TYPECODE FROM ALL_TYPES WHERE TYPE_NAME = '" + attrTypeName + "' ");
+                try
+                {
+                    while (rset.next())
+                    {
+                        type = rset.getString("TYPECODE");
+                        typesCodes.put(attrTypeName, type);
+                        break;
+                    }
+                }
+                finally
+                {
+                    rset.close();
+                    statement.close();
+                }
             }
             if ("OBJECT".equals(type))
             {
