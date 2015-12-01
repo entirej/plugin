@@ -24,7 +24,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -74,6 +76,7 @@ public class DBTypeSelectionPage extends WizardPage
     private Connection           conn;
     private DBContentProvider    contentProvider;
     private LabelProvider        labelProvider;
+    private Map<String,ObjectArgument>  types = new HashMap<String, ObjectArgument>();
     
     private GeneratorContext context;
 
@@ -214,6 +217,7 @@ public class DBTypeSelectionPage extends WizardPage
     
     protected void init(IJavaProject javaProject)
     {
+        types.clear();
         try
         {
             if (conn != null && !conn.isClosed())
@@ -272,6 +276,7 @@ public class DBTypeSelectionPage extends WizardPage
     @Override
     public void dispose()
     {
+        types.clear();
         try
         {
             if (conn != null && !conn.isClosed())
@@ -938,8 +943,18 @@ public class DBTypeSelectionPage extends WizardPage
         public ObjectArgument createObjectArgumentFromTableType(Connection con, String TableType, String argName) throws SQLException
         {
             
-            ObjectArgument tab = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
+            String key = argName==null ? TableType : (TableType+"_"+argName);
+            ObjectArgument tab = types.get(key);
+            if(tab!=null)
+                return tab;
             
+           
+            
+            
+            
+            
+             tab = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
+            types.put(key, tab);
             
             
             Statement statement = con.createStatement();
@@ -956,7 +971,7 @@ public class DBTypeSelectionPage extends WizardPage
 
                 if (objectType != null)
                 {
-                    tab.addArgument(createObjectArgument(con, null, objectType, objectType));
+                    tab.addArgument(createObjectArgument(con, objectType, objectType));
                 }
             }
             finally
@@ -970,7 +985,14 @@ public class DBTypeSelectionPage extends WizardPage
 
         public ObjectArgument createObjectArgument(Connection con, String objectName, String argName) throws SQLException
         {
-            return createObjectArgument(con, null, objectName, argName);
+            String key = argName==null ? objectName : (objectName+"_"+argName);
+            ObjectArgument objectArgument = types.get(key);
+            if(objectArgument!=null)
+                return objectArgument;
+            
+            objectArgument = createObjectArgument(con, null, objectName, argName);
+            types.put(key, objectArgument);
+            return objectArgument;
         }
 
         public ObjectArgument createObjectArgument(Connection con, String tableName, String objectName, String argName) throws SQLException
