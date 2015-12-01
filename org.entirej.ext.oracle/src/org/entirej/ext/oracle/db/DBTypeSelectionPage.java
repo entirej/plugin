@@ -565,7 +565,7 @@ public class DBTypeSelectionPage extends WizardPage
                     
                     
                    ObjectArgument argument = null;
-                    if ("TABLE".equals(dataType))
+                    if ("COLLECTION".equals(dataType))
                     {
                         argument = createObjectArgumentFromTableType(con, typeName, "");
 
