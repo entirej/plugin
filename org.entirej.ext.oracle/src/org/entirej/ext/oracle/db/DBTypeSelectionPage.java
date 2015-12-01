@@ -480,6 +480,10 @@ public class DBTypeSelectionPage extends WizardPage
             {
                 ObjectArgument argument = (ObjectArgument) element;
                 String name = argument._name != null ? argument._name : argument.objName;
+                if(name.isEmpty())
+                {
+                    name = argument.getObjName();
+                }
                 String typeDef = argument.tableName != null ? String.format("%s [ %s ]", argument.tableName, name) : name;
                 return argument.type != Type.IN_OUT ? String.format("%s --> %s", typeDef, argument.type.name()) : typeDef;
             }
