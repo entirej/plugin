@@ -87,7 +87,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
 
                     if (collectionType != null)
                     {
-                        toCamelCase(collectionType.objName);
+                       return toCamelCase(collectionType.objName);
                     }
                     return name; 
                 }
@@ -207,6 +207,10 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                     else    
                         innerTypePage.init(columnSelectionPage.getProcedure());
                     return innerTypePage.skipPage();
+                }
+                if(context.skipService() && page == proceduresWizardPage)
+                {
+                    return true;
                 }
                 return false;
             }
