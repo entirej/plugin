@@ -127,13 +127,15 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             public void widgetSelected(SelectionEvent e)
             {
                 createSerivce = btnCreateService.getSelection();
-            
+                wizardProvider = null;
+                initServiceContentProvider();
             }
 
             public void widgetDefaultSelected(SelectionEvent e)
             {
                 createSerivce = btnCreateService.getSelection();
-               
+                wizardProvider = null;
+                initServiceContentProvider();
             }
         });
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -560,7 +562,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
     }
     public int getOptionalPageCount()
     {
-        return opPages.size();
+        return  opPages.size();
     }
 
     public IWizardPage getPreviousPage(IWizardPage page)

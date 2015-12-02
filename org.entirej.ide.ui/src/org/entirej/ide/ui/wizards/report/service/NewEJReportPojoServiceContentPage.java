@@ -834,13 +834,15 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             public void widgetSelected(SelectionEvent e)
             {
                 createSerivce = btnCreateService.getSelection();
-             
+                wizardProvider = null;
+                initServiceContentProvider();
             }
 
             public void widgetDefaultSelected(SelectionEvent e)
             {
                 createSerivce = btnCreateService.getSelection();
-               
+                wizardProvider = null;
+                initServiceContentProvider();
             }
         });
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
