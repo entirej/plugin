@@ -131,21 +131,21 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
             
             public String getPogoGenerator()
             {
-                return "org.entirej.EJFormOraclePojoGenerator";
+                return "org.entirej.gen.EJFormOraclePojoGenerator";
             }
 
             public String getServiceGenerator()
             {
-                return "org.entirej.OracleCollectionTypeServiceGenerator";
+                return "org.entirej.gen.EJFormOracleServiceGenerator";
             }
             public String getReportPogoGenerator()
             {
-                return "org.entirej.EJFormOraclePojoGenerator";
+                return "org.entirej.EJReportOraclePojoGenerator";
             }
             
             public String getReportServiceGenerator()
             {
-                return "org.entirej.OracleCollectionTypeServiceGenerator";
+                return "org.entirej.EJFormOracleServiceGenerator";
             }
 
             public boolean skipMainPojo()

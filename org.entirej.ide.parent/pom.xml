@@ -15,6 +15,7 @@
 	<packaging>pom</packaging>
 	<name>Entirej Development Tool</name>
 	<modules>
+	    <module>../org.entirej.ora.gen</module>
 		<module>../org.entirej.core.runtime</module>
 		<module>../org.entirej.ide.core</module>
 		<module>../org.entirej.ide.compatibility</module>
@@ -30,6 +31,7 @@
 		<module>../org.entirej.ide.feature</module>
 		<module>../org.entirej.fx.feature</module>
 		<module>../org.entirej.ide.site</module>
+		
 	</modules>
 
 	<properties>
