@@ -16,6 +16,14 @@
 			<artifactId>entirej-report</artifactId>
 			<version>DEVELOPMENT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>oracle.sql</groupId>
+			<artifactId>oracle.sql</artifactId>
+			<version>ojdbc</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/ext/ojdbc6.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>
