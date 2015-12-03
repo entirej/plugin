@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 
 import org.entirej.EJOraCollectionType;
-import org.entirej.applicationframework.rwt.application.launcher.EJRWTContext;
 import org.entirej.framework.core.EJApplicationException;
 import org.entirej.framework.core.EJFieldName;
 import org.entirej.framework.core.EJManagedFrameworkConnection;
@@ -71,7 +70,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedFrameworkConnection con = EJRWTContext.getEJRWTApplicationManager().getFrameworkManager().getConnection();
+            EJManagedFrameworkConnection con = org.entirej.framework.core.EJConnectionHelper.getConnection();
             try
             {
                 return _array.toDatum((OracleConnection) con.getConnectionObject(), _SQL_NAME);

@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 
 import org.entirej.EJOraCollectionType;
-import org.entirej.applicationframework.rwt.application.launcher.EJRWTContext;
 import org.entirej.framework.report.EJReportRuntimeException;
 import org.entirej.framework.report.EJReportFieldName;
 import org.entirej.framework.report.EJManagedReportFrameworkConnection;
@@ -71,7 +70,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedReportFrameworkConnection con = EJRWTContext.getEJRWTApplicationManager().getFrameworkManager().getConnection();
+            EJManagedReportFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
             try
             {
                 return _array.toDatum((OracleConnection) con.getConnectionObject(), _SQL_NAME);
