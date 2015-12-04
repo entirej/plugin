@@ -187,7 +187,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedReportFrameworkConnection con = EJRWTContext.getEJRWTApplicationManager().getFrameworkManager().getConnection();
+            EJManagedReportFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
             try
             {
                 return _struct.toDatum((OracleConnection) con.getConnectionObject(), _SQL_NAME);
