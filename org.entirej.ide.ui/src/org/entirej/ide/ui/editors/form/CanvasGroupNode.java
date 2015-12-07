@@ -675,7 +675,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     source.setExpandHorizontally(value == EJCanvasSplitOrientation.HORIZONTAL);
 
                     editor.setDirty(true);
-
+                 treeSection.getDescriptorViewer().showDetails(node);
+                    treeSection.refreshPreview();
                     treeSection.refresh(node);
                 }
 
