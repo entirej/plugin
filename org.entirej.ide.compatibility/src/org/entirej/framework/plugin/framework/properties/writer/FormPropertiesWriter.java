@@ -499,7 +499,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                         writeBooleanTAG(buffer, "displayGroupFrame", canvasProps.getDisplayGroupFrame());
                         writeStringTAG(buffer, "groupFrameTitle", canvasProps.getGroupFrameTitle());
                     }
-                    else if (canvasProps.getType() == EJCanvasType.SPLIT)
+                    else if (canvasProps.getType() == EJCanvasType.SPLIT || canvasProps.getType() == EJCanvasType.SEPARATOR)
                     {
                         writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
                     }
