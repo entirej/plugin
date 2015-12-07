@@ -108,6 +108,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                 case STACKED:
                     createStackLayout(layoutBody, canvas);
                     break;
+                case SEPARATOR:
+                    createSeparator(layoutBody, canvas);
+                    break;
                 default:
                     createComponent(layoutBody, canvas);
                     break;
@@ -178,6 +181,28 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
         setPreviewBackground(layoutBody, COLOR_LIGHT_RED);
 
     }
+    protected void createSeparator(Composite parent, EJPluginCanvasProperties component)
+    {
+        
+        int style = SWT.SEPARATOR;
+        
+        if(component.getSplitOrientation()==EJCanvasSplitOrientation.HORIZONTAL)
+        {
+            style = style| SWT.HORIZONTAL;
+        }
+        else
+        {
+            style = style| SWT.VERTICAL;
+        }
+                    
+        
+        Label layoutBody = new Label(parent, style);
+        layoutBody.setLayoutData(createGridData(component));
+      
+      
+        
+        
+    }
 
     protected void createSplitLayout(Composite parent, EJPluginCanvasProperties group)
     {
@@ -217,6 +242,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         break;
                     case STACKED:
                         createStackLayout(layoutBody, canvas);
+                        break;
+                    case SEPARATOR:
+                        createSeparator(layoutBody, canvas);  
                         break;
                     default:
                         createComponent(layoutBody, canvas);
@@ -280,6 +308,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     case STACKED:
                         createStackLayout(layoutBody, canvas);
                         break;
+                    case SEPARATOR:
+                        createSeparator(layoutBody, canvas);
+                        break;
                     default:
                         createComponent(layoutBody, canvas);
                         break;
@@ -335,6 +366,10 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     case STACKED:
                         createStackLayout(composite, canvas);
                         break;
+                    case SEPARATOR:
+                        createSeparator(layoutBody, canvas);  
+                        break;    
+                        
                     default:
                         createComponent(composite, canvas);
                         break;
@@ -387,6 +422,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         break;
                     case STACKED:
                         createStackLayout(composite, canvas);
+                        break;
+                    case SEPARATOR:
+                        createSeparator(layoutBody, canvas);
                         break;
                     default:
                         createComponent(composite, canvas);
