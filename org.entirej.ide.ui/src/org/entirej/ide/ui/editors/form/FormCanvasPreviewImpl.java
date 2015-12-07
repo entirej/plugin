@@ -367,7 +367,7 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         createStackLayout(composite, canvas);
                         break;
                     case SEPARATOR:
-                        createSeparator(layoutBody, canvas);  
+                        createSeparator(composite, canvas);  
                         break;    
                         
                     default:
@@ -424,7 +424,7 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         createStackLayout(composite, canvas);
                         break;
                     case SEPARATOR:
-                        createSeparator(layoutBody, canvas);
+                        createSeparator(composite, canvas);
                         break;
                     default:
                         createComponent(composite, canvas);
