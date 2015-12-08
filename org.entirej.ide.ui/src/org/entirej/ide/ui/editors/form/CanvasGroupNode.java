@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.core.enumerations.EJCanvasLineStyle;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
@@ -692,6 +693,40 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
 
                 }
             };
+            AbstractDropDownDescriptor<EJCanvasLineStyle> styleDecriptor = new AbstractDropDownDescriptor<EJCanvasLineStyle>("Line Style")
+            {
+                
+                public EJCanvasLineStyle[] getOptions()
+                {
+                    
+                    return EJCanvasLineStyle.values();
+                }
+                
+                public String getOptionText(EJCanvasLineStyle t)
+                {
+                    return t.toString();
+                }
+                
+                public void setValue(EJCanvasLineStyle value)
+                {
+                    source.setLineStyle(value);
+                    
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+                
+                public EJCanvasLineStyle getValue()
+                {
+                    return source.getLineStyle();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+            };
 
             AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, this);
             if (source.isObjectGroupRoot())
@@ -700,7 +735,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-            return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+            return new AbstractDescriptor<?>[] { orientationDescriptor,styleDecriptor, layoutGroupDescriptor };
 
         }
     }

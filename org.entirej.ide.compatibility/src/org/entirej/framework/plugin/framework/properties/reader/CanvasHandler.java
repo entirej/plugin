@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
+import org.entirej.framework.core.enumerations.EJCanvasLineStyle;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
@@ -51,6 +52,7 @@ public class CanvasHandler extends EntireJTagHandler
     private static final String      ELEMENT_POPUP_PAGE_TITLE       = "popupPageTitle";
     private static final String      ELEMENT_TAB_POSITION           = "tabPosition";
     private static final String      ELEMENT_SPLIT_ORIENTATION      = "splitOrientation";
+    private static final String      ELEMENT_LINE_STYLE             = "lineStyle";
     private static final String      ELEMENT_BUTTON_ONE_TEXT        = "buttonOneText";
     private static final String      ELEMENT_BUTTON_TWO_TEXT        = "buttonTwoText";
     private static final String      ELEMENT_BUTTON_THREE_TEXT      = "buttonThreeText";
@@ -220,6 +222,11 @@ public class CanvasHandler extends EntireJTagHandler
         {
             _canvasProperties.setSplitOrientation(EJCanvasSplitOrientation.valueOf(value));
         }
+        else if (name.equals(ELEMENT_LINE_STYLE))
+        {
+            _canvasProperties.setLineStyle(EJCanvasLineStyle.valueOf(value));
+        }
+        
         else if (name.equals(ELEMENT_BUTTON_ONE_TEXT))
         {
             _canvasProperties.setButtonOneText(value);
