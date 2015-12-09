@@ -17,11 +17,11 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
-import org.entirej.framework.core.enumerations.EJCanvasLineStyle;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
@@ -224,7 +224,7 @@ public class CanvasHandler extends EntireJTagHandler
         }
         else if (name.equals(ELEMENT_LINE_STYLE))
         {
-            _canvasProperties.setLineStyle(EJCanvasLineStyle.valueOf(value));
+            _canvasProperties.setLineStyle(EJLineStyle.valueOf(value));
         }
         
         else if (name.equals(ELEMENT_BUTTON_ONE_TEXT))

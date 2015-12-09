@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.interfaces;
 
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
@@ -167,5 +169,11 @@ public interface EJPluginScreenItemProperties extends EJScreenItemProperties, EJ
     public void setHint(String hint);
     
     public EJFrameworkExtensionProperties getBlockRendererRequiredProperties();
+
+    public void setSeparatorLineStyle(EJLineStyle value);
+
+    public void setSeparatorOrientation(EJSeparatorOrientation value);
+
+    public void setSeparator(boolean value);
     
 }

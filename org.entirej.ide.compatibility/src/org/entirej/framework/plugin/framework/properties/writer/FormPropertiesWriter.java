@@ -964,6 +964,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         writeBooleanTAG(buffer, "expandVertically", itemGroup.canExpandVertically());
         writeStringTAG(buffer, "verticalAlignment", itemGroup.getVerticalAlignment().name());
         writeStringTAG(buffer, "horizontalAlignment", itemGroup.getHorizontalAlignment().name());
+       
         if (itemGroup.getRendererProperties() != null)
         {
             
@@ -987,6 +988,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1002,6 +1009,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1013,7 +1026,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the Block Renderer required
                                 // properties
                                 if (!itemProps.getBlockProperties().isUsedInLovDefinition())
@@ -1065,6 +1078,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1080,6 +1099,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1091,7 +1116,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the Query Screen Renderer Item
                                 // properties
                                 startTAG(buffer, "queryScreenRendererItemProperties");
@@ -1127,6 +1152,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1142,6 +1173,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1153,7 +1190,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the insert Screen Renderer Item
                                 // properties
                                 startTAG(buffer, "insertScreenRendererItemProperties");
@@ -1188,6 +1225,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1203,6 +1246,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1214,7 +1263,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the UpdateScreen Renderer Item
                                 // properties
                                 startTAG(buffer, "updateScreenRendererItemProperties");

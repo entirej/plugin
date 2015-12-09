@@ -19,11 +19,11 @@ package org.entirej.framework.plugin.framework.properties;
 
 import java.util.Iterator;
 
-import org.entirej.framework.core.enumerations.EJCanvasLineStyle;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
@@ -101,7 +101,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     
     private EJCanvasMessagePosition _messagePosition = EJCanvasMessagePosition.RIGHT;
     
-    private EJCanvasLineStyle _lineStyle = EJCanvasLineStyle.SOLID;
+    private EJLineStyle _lineStyle = EJLineStyle.SOLID;
     
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
@@ -851,12 +851,12 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     }
     
     @Override
-    public EJCanvasLineStyle getLineStyle()
+    public EJLineStyle getLineStyle()
     {
         return _lineStyle;
     }
     
-    public void setLineStyle(EJCanvasLineStyle lineStyle)
+    public void setLineStyle(EJLineStyle lineStyle)
     {
         this._lineStyle = lineStyle;
     }

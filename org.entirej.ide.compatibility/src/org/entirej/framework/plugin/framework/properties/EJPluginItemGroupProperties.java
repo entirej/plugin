@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
@@ -60,6 +62,9 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
     private List<EJPluginScreenItemProperties> _itemProperties;
     
     private EJFrameworkExtensionProperties     _rendererProperties;
+    private boolean                         _isSeparator           = false;
+    private EJLineStyle                     _separatorLineStyle    = EJLineStyle.SOLID;
+    private EJSeparatorOrientation          _separatorOrientation  = EJSeparatorOrientation.HORIZONTAL;
     
     public EJPluginItemGroupProperties(String name, EJPluginItemGroupContainer itemGroupContainer)
     {
@@ -531,6 +536,41 @@ public class EJPluginItemGroupProperties implements EJItemGroupProperties, EJDev
     public void setRendererProperties(EJFrameworkExtensionProperties properties)
     {
         _rendererProperties = properties;
+    }
+    
+    
+    
+    @Override
+    public EJLineStyle getSeparatorLineStyle()
+    {
+        return _separatorLineStyle;
+    }
+
+    @Override
+    public EJSeparatorOrientation getSeparatorOrientation()
+    {
+        return _separatorOrientation;
+    }
+
+    @Override
+    public boolean isSeparator()
+    {
+        return _isSeparator;
+    }
+
+    public void setSeparatorLineStyle(EJLineStyle separatorLineStyle)
+    {
+        _separatorLineStyle = separatorLineStyle;
+    }
+
+    public void setSeparatorOrientation(EJSeparatorOrientation separatorOrientation)
+    {
+        _separatorOrientation = separatorOrientation;
+    }
+
+    public void setSeparator(boolean isSeparator)
+    {
+        _isSeparator = isSeparator;
     }
     
 }

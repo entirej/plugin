@@ -18,6 +18,8 @@
 package org.entirej.framework.plugin.framework.properties.reader;
 
 import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginItemGroupContainer;
 import org.xml.sax.Attributes;
@@ -70,6 +72,23 @@ public abstract class ItemGroupHandler extends EntireJTagHandler
         else if (name.equals(ITEM_GROUP))
         {
             _itemGroupProperties = new EJPluginItemGroupProperties(attributes.getValue("name"), _itemGroupContainer);
+            
+            String isSeparator = attributes.getValue("isSeparator");
+            if (isSeparator != null && Boolean.parseBoolean(isSeparator))
+            {
+                _itemGroupProperties.setSeparator(true); 
+            }
+            
+            String linestyle = attributes.getValue("separatorLineStyle");
+            if (linestyle != null )
+            {
+                _itemGroupProperties.setSeparatorLineStyle(EJLineStyle.valueOf(linestyle));
+            }
+            String separatorOrientation = attributes.getValue("separatorOrientation");
+            if (separatorOrientation != null )
+            {
+                _itemGroupProperties.setSeparatorOrientation(EJSeparatorOrientation.valueOf(separatorOrientation));
+            }
         }
         else if (name.equals(ITEM))
         {

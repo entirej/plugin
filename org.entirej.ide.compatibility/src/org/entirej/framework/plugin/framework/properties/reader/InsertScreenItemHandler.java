@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginInsertScreenItemProperties;
@@ -71,6 +73,22 @@ public class InsertScreenItemHandler extends EntireJTagHandler
             {
                 _itemProperties = new EJPluginInsertScreenSpacerItemProperties(_itemGroupProperties, false);
                 _itemProperties.setReferencedItemName(referencedItemName);
+                String isSeparator = attributes.getValue("isSeparator");
+                if (isSeparator != null && Boolean.parseBoolean(isSeparator))
+                {
+                    _itemProperties.setSeparator(true); 
+                }
+                
+                String linestyle = attributes.getValue("separatorLineStyle");
+                if (linestyle != null )
+                {
+                    _itemProperties.setSeparatorLineStyle(EJLineStyle.valueOf(linestyle));
+                }
+                String separatorOrientation = attributes.getValue("separatorOrientation");
+                if (separatorOrientation != null )
+                {
+                    _itemProperties.setSeparatorOrientation(EJSeparatorOrientation.valueOf(separatorOrientation));
+                }
             }
             else
             {

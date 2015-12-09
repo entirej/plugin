@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.core.enumerations.EJCanvasLineStyle;
+import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
@@ -693,21 +693,21 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
 
                 }
             };
-            AbstractDropDownDescriptor<EJCanvasLineStyle> styleDecriptor = new AbstractDropDownDescriptor<EJCanvasLineStyle>("Line Style")
+            AbstractDropDownDescriptor<EJLineStyle> styleDecriptor = new AbstractDropDownDescriptor<EJLineStyle>("Line Style")
             {
                 
-                public EJCanvasLineStyle[] getOptions()
+                public EJLineStyle[] getOptions()
                 {
                     
-                    return EJCanvasLineStyle.values();
+                    return EJLineStyle.values();
                 }
                 
-                public String getOptionText(EJCanvasLineStyle t)
+                public String getOptionText(EJLineStyle t)
                 {
                     return t.toString();
                 }
                 
-                public void setValue(EJCanvasLineStyle value)
+                public void setValue(EJLineStyle value)
                 {
                     source.setLineStyle(value);
                     
@@ -715,7 +715,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     treeSection.refresh(node);
                 }
                 
-                public EJCanvasLineStyle getValue()
+                public EJLineStyle getValue()
                 {
                     return source.getLineStyle();
                 }
