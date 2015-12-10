@@ -21,6 +21,8 @@ package org.entirej.framework.dev.properties.interfaces;
 import java.util.Collection;
 
 import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 
 public interface EJDevItemGroupDisplayProperties
@@ -73,6 +75,30 @@ public interface EJDevItemGroupDisplayProperties
     
     public EJItemGroupAlignment getVerticalAlignment();
     
+    
+    
+    /**
+     * Returns the orientation of the Separator
+     * 
+     * @return The separator orientation
+     */
+    public EJSeparatorOrientation getSeparatorOrientation();
+    
+    /**
+     * Returns the style of the line
+     * 
+     * @return The line style
+     * 
+     */
+    public EJLineStyle getSeparatorLineStyle();
+    
+    /**
+     * Indicates if this spacer screen item renderer as separator
+     * 
+     * @return <code>true</code> if this spacer item is a separator, otherwise
+     *         <code>false</code>
+     */
+    public boolean isSeparator();
     /**
      * Returns the name of this item group
      * 
