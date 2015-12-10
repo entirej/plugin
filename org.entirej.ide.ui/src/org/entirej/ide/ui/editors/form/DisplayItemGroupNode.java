@@ -33,7 +33,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
+import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJScreenType;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
@@ -369,10 +371,10 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                 types.add(type);
             }
             if (types.isEmpty())
-                return new Action[] { createNewItemGroupAction(treeSection, patentNode, container) };
+                return new Action[] { createNewItemGroupAction(treeSection, patentNode, container,false) ,null,createNewItemGroupAction(treeSection, patentNode, container,true)};
 
             // create copy actions.
-            return new Action[] { createNewItemGroupAction(treeSection, patentNode, container), null,
+            return new Action[] { createNewItemGroupAction(treeSection, patentNode, container,false), null,createNewItemGroupAction(treeSection, patentNode, container,true),null,
                     createCopyScreenAction(treeSection, container, types.toArray(new EJScreenType[0])) };
         }
 
@@ -539,7 +541,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public boolean isLeaf()
         {
-            return container.isEmpty();
+            return container.isEmpty() ;
         }
 
         @Override
@@ -585,14 +587,12 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public Action[] getActions(FormDesignTreeSection treeSection, AbstractNode<?> patentNode)
         {
-            if (container.count() == 0)
-            {
-                return new Action[] { createNewItemGroupAction(treeSection, patentNode, container) };
-            }
+            
+           
 
             EJDevBlockRendererDefinition blockRendererDefinition = properties.getBlockProperties().getBlockRendererDefinition();
             if (blockRendererDefinition != null && (blockRendererDefinition.allowMultipleItemGroupsOnMainScreen()))
-                return new Action[] { createNewItemGroupAction(treeSection, patentNode, container) };
+                return new Action[] { createNewItemGroupAction(treeSection, patentNode, container,false),null, createNewItemGroupAction(treeSection, patentNode, container,true)  };
 
             return new Action[0];
         }
@@ -1096,13 +1096,13 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public boolean isLeaf()
         {
-            return properties.isEmpty();
+            return properties.isSeparator() || properties.isEmpty();
         }
 
         @Override
         public Image getImage()
         {
-            return GROUP_ITEM;
+            return properties.isSeparator() ?EJUIImages.getImage(EJUIImages.DESC_MENU_SEPARATOR): GROUP_ITEM;
         }
 
         String toLable(String item)
@@ -1137,12 +1137,16 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public Action[] getActions(FormDesignTreeSection treeSection, AbstractNode<?> patentNode)
         {
+            if(properties.isSeparator())
+            {
+                return new Action[0];
+            }
             EJDevBlockRendererDefinition blockRendererDefinition = properties.getParentItemGroupContainer().getContainerType() == EJPluginItemGroupContainer.MAIN_SCREEN ? properties
                     .getBlockProperties().getBlockRendererDefinition() : null;
 
             if (blockRendererDefinition == null || blockRendererDefinition.allowMultipleItemGroupsOnMainScreen())
                 return new Action[] { createaddDisplayItemAction(blockRendererDefinition, treeSection, patentNode, -1),
-                        createNewItemGroupAction(treeSection, patentNode, properties.getChildItemGroupContainer()) };
+                        createNewItemGroupAction(treeSection, patentNode, properties.getChildItemGroupContainer(),false),null,createNewItemGroupAction(treeSection, patentNode, properties.getChildItemGroupContainer(),true) };
 
             return new Action[] { createaddDisplayItemAction(blockRendererDefinition, treeSection, patentNode, -1) };
         }
@@ -1451,6 +1455,9 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public boolean canMove(Neighbor relation, Object source)
         {
+            if(properties.isSeparator())
+                return false;
+            
             return ((relation == null || relation.getNeighborSource() instanceof ItemGroup) && source instanceof ItemGroup && !isAncestor(source))
                     || ((relation == null || relation.getNeighborSource() instanceof EJPluginScreenItemProperties) && source instanceof EJPluginScreenItemProperties);
         }
@@ -2188,6 +2195,93 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     break;
             }
 
+            
+            
+           
+               
+                
+                
+                AbstractDropDownDescriptor<EJSeparatorOrientation> orientationDescriptor = new AbstractDropDownDescriptor<EJSeparatorOrientation>("Separator Orientation")
+                {
+
+                    public EJSeparatorOrientation[] getOptions()
+                    {
+
+                        return EJSeparatorOrientation.values();
+                    }
+
+                    public String getOptionText(EJSeparatorOrientation t)
+                    {
+                        return t.toString();
+                    }
+
+                    public void setValue(EJSeparatorOrientation value)
+                    {
+                        properties.setSeparatorOrientation(value);
+
+                      
+
+                        editor.setDirty(true);
+                        properties.setExpandVertically(value != EJSeparatorOrientation.HORIZONTAL);
+                        properties.setExpandHorizontally(value == EJSeparatorOrientation.HORIZONTAL);
+                     treeSection.getDescriptorViewer().showDetails(node);
+                        treeSection.refreshPreview();
+                        treeSection.refresh(node);
+                    }
+
+                    public EJSeparatorOrientation getValue()
+                    {
+                        return properties.getSeparatorOrientation();
+                    }
+
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+
+                    }
+                };
+                AbstractDropDownDescriptor<EJLineStyle> styleDecriptor = new AbstractDropDownDescriptor<EJLineStyle>("Separator Line Style")
+                {
+                    
+                    public EJLineStyle[] getOptions()
+                    {
+                        
+                        return EJLineStyle.values();
+                    }
+                    
+                    public String getOptionText(EJLineStyle t)
+                    {
+                        return t.toString();
+                    }
+                    
+                    public void setValue(EJLineStyle value)
+                    {
+                        properties.setSeparatorLineStyle(value);
+                        
+                        editor.setDirty(true);
+                    }
+                    
+                    public EJLineStyle getValue()
+                    {
+                        return properties.getSeparatorLineStyle();
+                    }
+                    
+                    @Override
+                    public void runOperation(AbstractOperation operation)
+                    {
+                        editor.execute(operation);
+                        
+                    }
+                };
+                
+                
+            if(properties.isSeparator())
+            {
+                return new AbstractDescriptor<?>[] { orientationDescriptor, styleDecriptor, layoutGroupDescriptor };
+            }
+            
+            
             if (definitionGroup != null)
             {
                 EJFrameworkExtensionProperties rendererProperties = properties.getRendererProperties();
@@ -2218,6 +2312,8 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
                         }
                     };
+                    
+                    
                     return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, colDescriptor, layoutGroupDescriptor, rendererGroupDescriptor };
 
                 }
@@ -2239,10 +2335,10 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
     }
 
     public static Action createNewItemGroupAction(final FormDesignTreeSection treeSection, final AbstractNode<?> patentNode,
-            final EJPluginItemGroupContainer itemGroupContainer)
+            final EJPluginItemGroupContainer itemGroupContainer ,final boolean separator)
     {
 
-        return new Action("New Item Group")
+        return new Action(separator?"Add Separator" :"New Item Group")
         {
 
             @Override
@@ -2260,11 +2356,22 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                     {
 
                         final EJPluginItemGroupProperties itemProperties = new EJPluginItemGroupProperties(groupName, itemGroupContainer);
-                        itemProperties.setDisplayGroupFrame(showFrame);
-                        itemProperties.setFrameTitle(title);
-                        itemProperties.setNumCols(numCols);
-                        itemProperties.setExpandHorizontally(true);
-                        itemProperties.setExpandVertically(true);
+                        if(separator)
+                        {
+                            itemProperties.setSeparator(separator);
+                           
+                            itemProperties.setExpandHorizontally(true);
+                            itemProperties.setExpandVertically(false); 
+                        }
+                        else
+                            
+                        {
+                            itemProperties.setDisplayGroupFrame(showFrame);
+                            itemProperties.setFrameTitle(title);
+                            itemProperties.setNumCols(numCols);
+                            itemProperties.setExpandHorizontally(true);
+                            itemProperties.setExpandVertically(true);
+                        }
                         itemProperties.setXspan(1);
                         itemProperties.setYspan(1);
 
@@ -2287,6 +2394,11 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
                     }
                 };
+                if(separator)
+                {
+                    context.addGroup("Separator", "", false, 1);
+                    return;
+                }
                 ItemGroupWizard wizard = new ItemGroupWizard(context);
                 wizard.open();
             }

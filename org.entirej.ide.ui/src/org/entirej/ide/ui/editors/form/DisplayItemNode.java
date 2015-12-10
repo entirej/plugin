@@ -19,6 +19,7 @@
 package org.entirej.ide.ui.editors.form;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -31,6 +32,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
@@ -48,9 +52,11 @@ import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingPrope
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginItemGroupContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginScreenItemProperties;
+import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
@@ -65,7 +71,7 @@ import org.entirej.ide.ui.nodes.NodeOverview;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Movable;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider.Neighbor;
 
-public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> implements Neighbor, Movable, NodeOverview
+public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>implements Neighbor, Movable, NodeOverview
 {
 
     private final FormDesignTreeSection treeSection;
@@ -87,7 +93,7 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
     public String getName()
     {
         if (source.isSpacerItem())
-            return "<spacer>";
+            return source.isSeparator()? "<separator>" :"<spacer>";
         return source.getName();
     }
 
@@ -108,13 +114,13 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
         if (source.isMandatory())
         {
             styledString.append(" [ * ] ", StyledString.DECORATIONS_STYLER);
-            
+
         }
-        
-        if(source.getReferencedItemName()!=null)
+
+        if (source.getReferencedItemName() != null)
         {
             EJItemProperties itemProperties = source.getBlockProperties().getItemProperties(source.getReferencedItemName());
-            if(itemProperties!=null)
+            if (itemProperties != null)
             {
                 styledString.append(" : ", StyledString.QUALIFIER_STYLER);
                 styledString.append(itemProperties.getItemRendererName(), StyledString.DECORATIONS_STYLER);
@@ -125,13 +131,13 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
     @Override
     public Action[] getActions()
     {
-        EJDevBlockRendererDefinition blockRendererDefinition = group.properties.getParentItemGroupContainer().getContainerType() == EJPluginItemGroupContainer.MAIN_SCREEN ? group.properties
-                .getBlockProperties().getBlockRendererDefinition() : null;
+        EJDevBlockRendererDefinition blockRendererDefinition = group.properties.getParentItemGroupContainer()
+                .getContainerType() == EJPluginItemGroupContainer.MAIN_SCREEN ? group.properties.getBlockProperties().getBlockRendererDefinition() : null;
 
         int index = group.properties.getItemProperties().indexOf(source);
         if (blockRendererDefinition == null || blockRendererDefinition.allowMultipleItemGroupsOnMainScreen())
             return new Action[] { group.createaddDisplayItemAction(blockRendererDefinition, treeSection, parent.getParent(), ++index),
-                    DisplayItemGroupNode.createNewItemGroupAction(treeSection, parent.getParent(), group.properties.getChildItemGroupContainer()), null,
+                    DisplayItemGroupNode.createNewItemGroupAction(treeSection, parent.getParent(), group.properties.getChildItemGroupContainer(),false), null,DisplayItemGroupNode.createNewItemGroupAction(treeSection, parent.getParent(), group.properties.getChildItemGroupContainer(),true),null,
                     createCopySINameAction() };
 
         return new Action[] { group.createaddDisplayItemAction(blockRendererDefinition, treeSection, parent.getParent(), ++index), null,
@@ -142,7 +148,7 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
     public Image getImage()
     {
         if (source.isSpacerItem())
-            return DisplayItemGroupNode.ITEMS_SPACE;
+            return EJUIImages.getImage(EJUIImages.DESC_MENU_SEPARATOR);
         EJItemProperties itemProperties = source.getBlockProperties().getItemProperties(source.getReferencedItemName());
         return (itemProperties != null && itemProperties.isBlockServiceItem()) ? BlockItemsGroupNode.BLOCK : BlockItemsGroupNode.BLOCK_ND;
     }
@@ -175,11 +181,10 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
                 treeSection.getEditor().setDirty(true);
                 treeSection.refresh(getParent());
             }
-            
-            
+
             public AbstractOperation deleteOperation(boolean cleanup)
             {
-                return new DisplayItemRemoveOperation(treeSection,  group.properties, source);
+                return new DisplayItemRemoveOperation(treeSection, group.properties, source);
             }
         };
     }
@@ -364,7 +369,112 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties> 
         }
         if (source.isSpacerItem())
         {
-            return screenRendererDefDescriptors;
+            
+            final AbstractBooleanDescriptor separtor = new AbstractBooleanDescriptor("As a Separator")
+            {
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setSeparator(value);
+                    editor.setDirty(true);
+                    treeSection.getDescriptorViewer().showDetails(DisplayItemNode.this);
+                    treeSection.refreshPreview();
+                    treeSection.refresh(DisplayItemNode.this);
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return source.isSeparator();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+            };
+            
+            
+            AbstractDropDownDescriptor<EJSeparatorOrientation> orientationDescriptor = new AbstractDropDownDescriptor<EJSeparatorOrientation>("Separator Orientation")
+            {
+
+                public EJSeparatorOrientation[] getOptions()
+                {
+
+                    return EJSeparatorOrientation.values();
+                }
+
+                public String getOptionText(EJSeparatorOrientation t)
+                {
+                    return t.toString();
+                }
+
+                public void setValue(EJSeparatorOrientation value)
+                {
+                    source.setSeparatorOrientation(value);
+
+                  
+
+                    editor.setDirty(true);
+                 treeSection.getDescriptorViewer().showDetails(DisplayItemNode.this);
+                    treeSection.refreshPreview();
+                    treeSection.refresh(DisplayItemNode.this);
+                }
+
+                public EJSeparatorOrientation getValue()
+                {
+                    return source.getSeparatorOrientation();
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+            };
+            AbstractDropDownDescriptor<EJLineStyle> styleDecriptor = new AbstractDropDownDescriptor<EJLineStyle>("Separator Line Style")
+            {
+                
+                public EJLineStyle[] getOptions()
+                {
+                    
+                    return EJLineStyle.values();
+                }
+                
+                public String getOptionText(EJLineStyle t)
+                {
+                    return t.toString();
+                }
+                
+                public void setValue(EJLineStyle value)
+                {
+                    source.setSeparatorLineStyle(value);
+                    
+                    editor.setDirty(true);
+                }
+                
+                public EJLineStyle getValue()
+                {
+                    return source.getSeparatorLineStyle();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+            };
+            
+            List<AbstractDescriptor<?>> list =new ArrayList<AbstractDescriptor<?>>( Arrays.asList(screenRendererDefDescriptors));
+            list.add(separtor);
+            list.add(styleDecriptor);
+            list.add(orientationDescriptor);
+            return list.toArray(new AbstractDescriptor[0]);
         }
         List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
