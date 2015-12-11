@@ -587,7 +587,10 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public Action[] getActions(FormDesignTreeSection treeSection, AbstractNode<?> patentNode)
         {
-            
+            if (container.count() == 0)
+            {
+                return new Action[] { createNewItemGroupAction(treeSection, patentNode, container,false) };
+            }
            
 
             EJDevBlockRendererDefinition blockRendererDefinition = properties.getBlockProperties().getBlockRendererDefinition();
