@@ -4,10 +4,10 @@ import java.util.List;
 
 import java.util.List;
 
-import org.entirej.EJStatementParameterOraStruct;
-import org.entirej.EJStatementParameterOraArray;
-import org.entirej.OracleStatementExecutor;
-import org.entirej.framework.report.EJForm;
+import org.entirej.report.EJStatementParameterOraStruct;
+import org.entirej.report.EJStatementParameterOraArray;
+import org.entirej.report.OracleStatementExecutor;
+import org.entirej.framework.report.EJReport;
 import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportQueryCriteria;
@@ -28,7 +28,7 @@ public class ${service_name} implements EJReportBlockService<${JAVA_REC_NAME}>
     }
 
     @Override
-    public List<${JAVA_REC_NAME}> executeQuery(EJForm form, EJReportQueryCriteria queryCriteria)
+    public List<${JAVA_REC_NAME}> executeQuery(EJReport report, EJReportQueryCriteria queryCriteria)
     {
     
  <#if query_procedure != "">  
@@ -52,7 +52,7 @@ public class ${service_name} implements EJReportBlockService<${JAVA_REC_NAME}>
         </#list>
         
       
-        _statementExecutor.executePLSQLStoredProcedure(form, stmt.toString(),${query_returntype.var_name}, <#list query_parameters as column>${column.var_name} <#if column?has_next >, </#if></#list>);
+        _statementExecutor.executePLSQLStoredProcedure(report, stmt.toString(),${query_returntype.var_name}, <#list query_parameters as column>${column.var_name} <#if column?has_next >, </#if></#list>);
 
 		<#list query_parameters as column>
 		    <#if column.param_type=="INOUT" && column.data_type == JAVA_OBJECT_NAME>
@@ -80,7 +80,7 @@ public class ${service_name} implements EJReportBlockService<${JAVA_REC_NAME}>
         </#list>
         
       
-        _statementExecutor.executePLSQLStoredProcedure(form, stmt.toString(), <#list query_parameters as column>${column.var_name} <#if column?has_next >, </#if></#list>);
+        _statementExecutor.executePLSQLStoredProcedure(report, stmt.toString(), <#list query_parameters as column>${column.var_name} <#if column?has_next >, </#if></#list>);
 
 		<#list query_parameters as column>
 		    <#if column.param_type=="INOUT" && column.data_type == JAVA_OBJECT_NAME>

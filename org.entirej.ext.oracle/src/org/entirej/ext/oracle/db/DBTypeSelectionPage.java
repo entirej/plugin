@@ -79,7 +79,7 @@ public class DBTypeSelectionPage extends WizardPage
     private Map<String,ObjectArgument>  types = new HashMap<String, ObjectArgument>();
     private Map<String, String>  typesCodes = new HashMap<String, String>();
     
-    private GeneratorContext context;
+    private DBTypeSelectionPageContext context;
 
     public DBTypeSelectionPage()
     {
@@ -88,7 +88,12 @@ public class DBTypeSelectionPage extends WizardPage
         setDescription("Select columns from Type/Funtion/Procedure.");
     }
     
-    void setGeneratorContext(GeneratorContext context)
+    static interface DBTypeSelectionPageContext
+    {
+        boolean skipService();
+    }
+    
+    void setGeneratorContext(DBTypeSelectionPageContext context)
     {
         this.context = context;
     }

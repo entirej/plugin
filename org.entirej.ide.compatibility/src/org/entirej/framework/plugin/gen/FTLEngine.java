@@ -330,8 +330,11 @@ public class FTLEngine
     {
         // Build the data-model
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("pojo_name_full", serviceGeneratorType.getPojo().getName());
-        data.put("pojo_name", serviceGeneratorType.getPojo().getSimpleName());
+        if (serviceGeneratorType.getPojo() != null)
+        {
+            data.put("pojo_name_full",serviceGeneratorType.getPojo().getName());
+            data.put("pojo_name", serviceGeneratorType.getPojo().getSimpleName());
+        }
         data.put("service_name", serviceGeneratorType.getServiceName());
         data.put("package_name", serviceGeneratorType.getPackageName());
         data.put("table_name", serviceGeneratorType.getTableName()==null?"":serviceGeneratorType.getTableName());

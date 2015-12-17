@@ -11,7 +11,7 @@ public class EJReportOracleServiceGenerator implements EJReportServiceContentGen
     
     public String getTemplate()
     {
-        return asString("EJFormOracleServiceGenerator.ftl");
+        return asString("EJReportOracleServiceGenerator.ftl");
     }
 
     public static String asString(String resourceNmae)

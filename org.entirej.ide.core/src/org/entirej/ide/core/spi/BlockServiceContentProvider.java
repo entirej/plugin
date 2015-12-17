@@ -77,6 +77,8 @@ public interface BlockServiceContentProvider
         ReportBlockServiceContent getReportContent();
     }
 
+    
+    
     public interface GeneratorContext
     {
         IPackageFragmentRoot getPackageFragmentRoot();
