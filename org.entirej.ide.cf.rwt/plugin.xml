@@ -97,6 +97,11 @@
           name="EntireJ RWT/Spring Security Extension"
           class="org.entirej.ide.cf.rwt.lib.spring.RWTSpringRuntimeContainerPage"/>
    </extension>
+<extension
+      point="org.entirej.ide.core.spi.clientframework.exportProvider">
+   <provider
+         class="org.entirej.ide.cf.rwt.RWTSpringClientFrameworkProvider"></provider>
+</extension>
 
         
 </plugin>
