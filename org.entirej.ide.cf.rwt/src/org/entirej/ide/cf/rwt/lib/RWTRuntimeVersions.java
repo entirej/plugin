@@ -27,6 +27,7 @@ public class RWTRuntimeVersions
 
     public static Version CF_V_2_3     = new Version("3.2.0", RWTCFRuntimeClasspathContainer.ID);
     public static Version CF_RAP_V_2_3 = new Version("3.2.0", RWTRapRuntimeClasspathContainer.ID);
+    public static Version CF_SPRING_V_4 = new Version("4.0.3", RWTRapRuntimeClasspathContainer.ID);
     public static Version CF_TMT_V_2_3 = new Version("3.2.0", RWTCFRuntimeClasspathContainer.ID);
 
     public static class Version
