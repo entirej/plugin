@@ -58,6 +58,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionList;
 import org.entirej.framework.core.properties.interfaces.EJItemProperties;
+import org.entirej.framework.dev.properties.EJDevPropertyDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuProperties;
@@ -734,7 +735,9 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
         }
         else if (dataType == EJPropertyDefinitionType.PROJECT_CLASS_FILE)
         {
-            descriptor = new AbstractTypeDescriptor(editor, label, description)
+            
+            
+            AbstractTypeDescriptor type  = new AbstractTypeDescriptor(editor, label, description)
             {
 
                 @Override
@@ -750,6 +753,12 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
                     return extensionProperties.getStringProperty(groupName);
                 }
             };
+            descriptor = type;
+            if(definition instanceof EJDevPropertyDefinition)
+            {
+                type.setBaseClass(((EJDevPropertyDefinition)definition).getClassParent());
+            }
+           
 
         }
         else if (dataType == EJPropertyDefinitionType.PROJECT_FILE)

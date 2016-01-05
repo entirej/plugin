@@ -45,6 +45,7 @@ public class EJDevPropertyDefinition implements EJPropertyDefinition
     private boolean                       _multilingual            = false;
     private boolean                       _canBeSetProgramatically = false;
     private String                        _defaultValue;
+    private String                        _classParent;
     private boolean                       _loadValidValuesDynamically;
     private boolean                       _notifyWhenChanged       = false;
     private LinkedHashMap<String, String> _validValues;
@@ -281,6 +282,16 @@ public class EJDevPropertyDefinition implements EJPropertyDefinition
     public void setGrabExcessVerticalSpace()
     {
         _grabExcessVerticalSpace = true;
+    }
+
+    public void setClassParent(String classParent)
+    {
+        this._classParent = classParent;
+    }
+
+    public String getClassParent()
+    {
+        return _classParent;
     }
 
 }
