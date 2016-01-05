@@ -49,7 +49,7 @@ import org.entirej.ide.core.spi.ClientFrameworkProvider;
 public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
 {
 
-    private static final String RWT_PROJECT_PROPERTIES_FILE = "/templates/rwt/application.ejprop";
+    private static final String RWT_PROJECT_PROPERTIES_FILE = "/templates/rwt/application-spring.ejprop";
     private static final String RWT_PROJECT_RENDERER_FILE   = "/templates/rwt/renderers.ejprop";
     private static final String RWT_APP_LAUNCHER            = "/templates/rwt/ApplicationLauncher.java";
     private static final String RWT_APP_AUTH           = "/templates/rwt/EJAuthenticationProvider.java";
@@ -61,7 +61,7 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
-            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_PROPERTIES_FILE, "src/application-spring.ejprop");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_PROPERTIES_FILE, "src/application.ejprop");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_RENDERER_FILE, "src/renderers.ejprop");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LAUNCHER, "src/org/entirej/ApplicationLauncher.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH, "src/org/entirej/EJAuthenticationProvider.java");
