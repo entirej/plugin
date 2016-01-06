@@ -870,6 +870,8 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
 
                     if (treeSection.getDescriptorViewer() != null)
                         treeSection.getDescriptorViewer().showDetails(ItemNode.this);
+                    
+                    treeSection.refreshPreview();
                 }
 
                 @Override
