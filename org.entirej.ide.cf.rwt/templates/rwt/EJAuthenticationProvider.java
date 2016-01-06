@@ -1,7 +1,15 @@
 package org.entirej;
 
+
+
 import org.entirej.applicationframework.rwt.spring.ext.EJSpringSecurityAuthenticationProvider;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 
 public class EJAuthenticationProvider implements EJSpringSecurityAuthenticationProvider
 {
@@ -23,15 +31,55 @@ public class EJAuthenticationProvider implements EJSpringSecurityAuthenticationP
                         .withUser("admin").password("password").roles("USER", "ADMIN");
          */
             
-        //for LDAP
+        //for LDAP 
         /**
-          auth.ldapAuthentication()
-                        .userDnPatterns("uid={0},ou=people")
-                        .groupSearchBase("ou=groups");
-         */ 
+         * All user passwords are password.
+            see test LDAP server info at http://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/
+			#mathematicians
+			riemann
+			gauss
+			euler
+			euclid
+			
+			#scientists
+			einstein
+			newton
+			galieleo
+			tesla        
+ 
+        */
+        //auth.authenticationProvider(createLdapAuthenticationProvider());
+         
         
         
         //more information at http://docs.spring.io/spring-security/site/docs/current/reference/html/jc.html#jc-authentication-jdbc
+    }
+    
+    
+    private LdapAuthenticationProvider createLdapAuthenticationProvider() throws Exception
+    {
+        DefaultSpringSecurityContextSource context = new DefaultSpringSecurityContextSource("ldap://ldap.forumsys.com:389");
+        context.setUserDn("cn=read-only-admin,dc=example,dc=com");
+        context.setPassword("password");
+        context.afterPropertiesSet();
+        
+
+        
+        BindAuthenticator bindAuthenticator = new BindAuthenticator(context);
+        bindAuthenticator.setUserDnPatterns(new String []{"uid={0},dc=example,dc=com"});
+        bindAuthenticator.afterPropertiesSet();
+        LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(bindAuthenticator, new LdapAuthoritiesPopulator()
+        {
+            
+            @Override
+            public Collection<? extends GrantedAuthority> getGrantedAuthorities( DirContextOperations userData,
+                    String username)
+            {
+                // TODO build GrantedAuthority
+                return Collections.emptyList();
+            }
+        });
+        return ldapAuthenticationProvider;
     }
 
 }
