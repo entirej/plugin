@@ -226,10 +226,11 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
         {
             o = new ${JAVA_OBJECT_NAME}();
         }
-
-        o._struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
+        
+        MutableStruct struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
+        
         <#list columns as column>
-        o.set${column.method_name}((${column.data_type})o._struct.getAttribute(${column?index}));
+        o.set${column.method_name}((${column.data_type}) struct.getAttribute(${column?index}));
         </#list>
 
         return o;
