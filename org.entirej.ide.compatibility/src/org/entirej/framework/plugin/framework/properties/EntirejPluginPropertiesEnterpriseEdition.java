@@ -84,7 +84,7 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         FormHandler formHandler = new FormHandler(getJavaProject(), blockName);
         
         EntireJFormReader reader = new EntireJFormReader();
-        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(), inStream);
+        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(),file, inStream);
         
         EJPluginBlockProperties blockProperties = formProperties.getBlockContainer().getBlockProperties(blockName);
         if (blockProperties == null && !formProperties.getBlockContainer().isEmpty())
@@ -150,7 +150,7 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         
         FormHandler formHandler = new FormHandler(getJavaProject(), definitionName);
         EntireJFormReader reader = new EntireJFormReader();
-        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(), inStream);
+        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(),file, inStream);
         
         try
         {
@@ -211,7 +211,7 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         EJPluginObjectGroupProperties formProperties = new EJPluginObjectGroupProperties(definitionName, getJavaProject());
         FormHandler formHandler = new FormHandler(formProperties);
         EntireJFormReader reader = new EntireJFormReader();
-        reader.readForm(formHandler, getJavaProject(), inStream);
+        reader.readForm(formHandler, getJavaProject(),file, inStream);
         formProperties.setInitialized(true);
         try
         {

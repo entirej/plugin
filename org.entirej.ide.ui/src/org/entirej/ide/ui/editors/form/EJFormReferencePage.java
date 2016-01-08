@@ -730,7 +730,7 @@ public class EJFormReferencePage extends AbstractEditorPage implements PageActio
             EntireJFormReader reader = new EntireJFormReader();
             String fileName = file.getName();
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
-            formProperties = reader.readForm(new FormHandler(project, fileName), project, inStream);
+            formProperties = reader.readForm(new FormHandler(project, fileName), project,file, inStream);
             formProperties.initialisationCompleted();
         }
         catch (Exception exception)

@@ -115,7 +115,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                 EntireJFormReader reader = new EntireJFormReader();
                 String fileName = file.getName();
                 fileName = fileName.substring(0, fileName.lastIndexOf("."));
-                formProperties = reader.readForm(new FormHandler(new EJPluginObjectGroupProperties(fileName, project)), project, inStream);
+                formProperties = reader.readForm(new FormHandler(new EJPluginObjectGroupProperties(fileName, project)), project,file, inStream);
                 formProperties.initialisationCompleted();
             }
             catch (Exception exception)

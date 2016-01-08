@@ -326,7 +326,9 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         EJPluginEntireJReportProperties entireJProperties = EJPluginEntireJReportPropertiesLoader.getEntireJProperties(project);
 
         if (entireJProperties != null)
+        {
             buildPropertiesConstant(project, entireJProperties, file, subProgressMonitor);
+        }
 
         subProgressMonitor.done();
         monitor.subTask("Constants Updating ...");
@@ -363,6 +365,8 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
 
     static void buildPropertiesConstant(IJavaProject project, EJPluginEntireJReportProperties entireJProperties, IFile file, IProgressMonitor monitor)
     {
+        
+        
         String propID = "EJ_REPORT_PROPERTIES";
 
         try

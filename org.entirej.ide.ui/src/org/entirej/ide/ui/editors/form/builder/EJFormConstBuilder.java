@@ -369,7 +369,14 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         IJavaProject project = JavaCore.create(_project);
         EJPluginFormProperties formProperties = getFormProperties(file, project);
         if (formProperties != null)
+        {
+            if(isRefFormFile(propFile))
+            {
+                
+            }
+            
             buildFormConstant(project, formProperties, file, subProgressMonitor);
+        }
 
         subProgressMonitor.done();
         monitor.subTask("Constants Updating ...");
@@ -437,6 +444,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     {
         return EJPluginConstants.FORM_PROPERTIES_FILE_SUFFIX.equalsIgnoreCase(file.getFileExtension()) || isRefFormFile(file);
     }
+   
 
     private boolean isEJProperties(IFile file)
     {
@@ -1189,7 +1197,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             EntireJFormReader reader = new EntireJFormReader();
             String fileName = file.getName();
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
-            formProperties = reader.readForm(new FormHandler(project, fileName), project, inStream);
+            formProperties = reader.readForm(new FormHandler(project, fileName), project,file, inStream);
             formProperties.initialisationCompleted();
 
             String fileExtension = file.getFileExtension();

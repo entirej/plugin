@@ -29,19 +29,33 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
+import org.entirej.framework.plugin.EJPluginConstants;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
+import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
 import org.entirej.ide.core.EJCoreLog;
 
 public class EntireJFormReader
 {
-    public EJPluginFormProperties readForm(FormHandler formHandler, IJavaProject project, InputStream inStream) throws EJDevFrameworkException
+    public EJPluginFormProperties readForm(FormHandler formHandler, IJavaProject project,IFile file, InputStream inStream) throws EJDevFrameworkException
     {
         try
         {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxPArser = factory.newSAXParser();
             saxPArser.parse(inStream, formHandler);
-            return formHandler.getFormProperties();
+            EJPluginFormProperties formProperties = formHandler.getFormProperties();
+            String fileExtension = file.getFileExtension();
+            if((fileExtension.equals(EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX) ||fileExtension.equals(EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX)) &&
+                    !formProperties.getName().equals(formProperties.getBlockContainer().getAllBlockProperties().get(0).getName()))
+            {
+                formProperties.getBlockContainer().getAllBlockProperties().get(0).internalSetName(formProperties.getName());
+                FormPropertiesWriter formPropertiesWriter = new FormPropertiesWriter(); 
+                formPropertiesWriter.saveForm(formProperties, file, new NullProgressMonitor());
+            }
+           
+           
+            
+            return formProperties;
         }
         
         catch (Throwable e)
