@@ -45,10 +45,17 @@ public class EntireJFormReader
             saxPArser.parse(inStream, formHandler);
             EJPluginFormProperties formProperties = formHandler.getFormProperties();
             String fileExtension = file.getFileExtension();
-            if((fileExtension.equals(EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX) ||fileExtension.equals(EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX)) &&
+            if((fileExtension.equals(EJPluginConstants.REFERENCED_BLOCK_PROPERTIES_FILE_SUFFIX) ) &&
                     !formProperties.getName().equals(formProperties.getBlockContainer().getAllBlockProperties().get(0).getName()))
             {
                 formProperties.getBlockContainer().getAllBlockProperties().get(0).internalSetName(formProperties.getName());
+                FormPropertiesWriter formPropertiesWriter = new FormPropertiesWriter(); 
+                formPropertiesWriter.saveForm(formProperties, file, new NullProgressMonitor());
+            }
+            if((fileExtension.equals(EJPluginConstants.REFERENCED_LOVDEF_PROPERTIES_FILE_SUFFIX)) &&
+                    !formProperties.getName().equals(formProperties.getLovDefinitionContainer().getAllLovDefinitionProperties().get(0).getName()))
+            {
+                formProperties.getLovDefinitionContainer().getAllLovDefinitionProperties().get(0).internalSetName(formProperties.getName());
                 FormPropertiesWriter formPropertiesWriter = new FormPropertiesWriter(); 
                 formPropertiesWriter.saveForm(formProperties, file, new NullProgressMonitor());
             }
