@@ -304,6 +304,23 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     
 </#list>
 
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        
+        
+        
+        
+        <#list columns as column>
+        builder.append("${column.name}").append(" : ").append(getValue(FieldNames.${column.name})).append(" : ").append(getInitialValue(FieldNames.${column.name})).append("\n");
+        </#list>
+        
+        
+        return builder.toString();
+    }
+
 /***********************************************************************************************/
 
     public static class FieldNames<T>
