@@ -434,7 +434,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                     public List<EJCanvasProperties> getCanvas()
                     {
-                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever.retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
+                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever
+                                .retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
                         return new ArrayList<EJCanvasProperties>(canvasCollection);
                     }
 
@@ -520,7 +521,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                     public List<EJCanvasProperties> getCanvas()
                     {
-                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever.retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
+                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever
+                                .retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
                         return new ArrayList<EJCanvasProperties>(canvasCollection);
                     }
 
@@ -582,8 +584,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 else
                     reusableBlockNames = null;
 
-                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Generate Referenced Block using [%s]",
-                        properties.getName()), "Block Name", properties.getName(), new IInputValidator()
+                InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(),
+                        String.format("Generate Referenced Block using [%s]", properties.getName()), "Block Name", properties.getName(), new IInputValidator()
                 {
 
                     public String isValid(String newText)
@@ -731,28 +733,42 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                         }
                         blockProperties.setIsReferenced(!copyRefBlock);
+                        ReversibleOperation operation = new ReversibleOperation("Add Block");
+                        if (copyRefBlock)
+                        {
+                            List<EJPluginLovDefinitionProperties> lovDefinitionProperties = reusableEJPluginBlockProperties.getLovDefinitionContainer()
+                                    .getAllLovDefinitionProperties();
 
+                            for (EJPluginLovDefinitionProperties lovdef : lovDefinitionProperties)
+                            {
+                               
+                                operation.add(new LovAddOperation(FormDesignTreeSection.this, blockProperties.getFormProperties().getLovDefinitionContainer(), lovdef.makeCopy(String.format("%s.%s", blockName, lovdef.getName()), blockProperties.getFormProperties()), -1));
+                            }
+                        }
+                        
                         if (createCanvas)
                         {
 
                             EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
-                            ReversibleOperation operation = new ReversibleOperation("Add Block");
+                           
                             operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
                             operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
-                            editor.execute(operation);
+                            
                         }
                         else
                         {
                             BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
                                     blockProperties, -1);
-                            editor.execute(addOperation);
+                            operation.add(addOperation);;
                         }
+                        editor.execute(operation);
 
                     }
 
                     public List<EJCanvasProperties> getCanvas()
                     {
-                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever.retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
+                        Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever
+                                .retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
                         return new ArrayList<EJCanvasProperties>(canvasCollection);
                     }
 
@@ -901,8 +917,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         final EJPluginFormProperties formProperties = editor.getFormProperties();
                         try
                         {
-                            EJPluginObjectGroupProperties objectGroupProperties = formProperties.getEntireJProperties().getObjectGroupDefinitionProperties(
-                                    objName);
+                            EJPluginObjectGroupProperties objectGroupProperties = formProperties.getEntireJProperties()
+                                    .getObjectGroupDefinitionProperties(objName);
 
                             List<EJPluginBlockProperties> allBlockProperties = objectGroupProperties.getBlockContainer().getAllBlockProperties();
                             for (EJPluginBlockProperties blockProperties : allBlockProperties)
@@ -1111,7 +1127,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                                               IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
                                                               for (IMarker marker : markers)
                                                               {
-                                                                  if ((marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE) & FormNodeTag.FORM) != 0)
+                                                                  if ((marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE)
+                                                                          & FormNodeTag.FORM) != 0)
                                                                   {
                                                                       fmarkers.add(marker);
                                                                   }
@@ -1213,8 +1230,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
         {
             final List<IMarker> fmarkers = validator.getMarkers();
 
-            final AbstractTextDescriptor formDisplayNameDescriptor = new AbstractTextDescriptor(
-                    "Display Name",
+            final AbstractTextDescriptor formDisplayNameDescriptor = new AbstractTextDescriptor("Display Name",
                     "If you are using more cryptic names for your forms i.e. FRM001, FRM002 etc, then you may want to have a different name displayed in your project tree so you can find your form easier")
             {
                 @Override
@@ -1264,14 +1280,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             AbstractTextDescriptor titleDescriptor = new AbstractTextDescriptor("Title")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.TITLE) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.TITLE) != 0;
+                    }
+                };
 
                 @Override
                 public void runOperation(AbstractOperation operation)
@@ -1321,14 +1337,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             {
 
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.RENDERER) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.RENDERER) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1392,14 +1408,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1448,14 +1464,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.WIDTH) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.WIDTH) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1526,14 +1542,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             final AbstractTextDescriptor heightDescriptor = new AbstractTextDescriptor("Height")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.HEIGHT) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.HEIGHT) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1604,14 +1620,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             final AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.COL) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.COL) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1710,8 +1726,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             if (rendereProperties != null)
             {
 
-                final EJDevFormRendererDefinition formRendererDefinition = ExtensionsPropertiesFactory.loadFormRendererDefinition(
-                        source.getEntireJProperties(), source.getFormRendererName());
+                final EJDevFormRendererDefinition formRendererDefinition = ExtensionsPropertiesFactory.loadFormRendererDefinition(source.getEntireJProperties(),
+                        source.getFormRendererName());
                 if (formRendererDefinition != null)
                 {
                     final EJPropertyDefinitionGroup definitionGroup = formRendererDefinition.getFormPropertyDefinitionGroup();
@@ -1731,22 +1747,22 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             {
                                 return PropertyDefinitionGroupPart.createGroupDescriptors(editor, source.getEntireJProperties(), definitionGroup,
                                         source.getFormRendererProperties(), new IExtensionValues()
-                                        {
+                                {
 
-                                            public void loadValidValuesFromExtension(EJFrameworkExtensionProperties frameworkExtensionProperties,
-                                                    EJPropertyDefinition propertyDefinition)
-                                            {
-                                                propertyDefinition.clearValidValues();
-                                                EJFormRendererDefinition rendererDef = ExtensionsPropertiesFactory.loadFormRendererDefinition(
-                                                        source.getEntireJProperties(), source.getFormRendererName());
-                                                rendererDef.loadValidValuesForProperty(frameworkExtensionProperties, propertyDefinition);
-                                            }
+                                    public void loadValidValuesFromExtension(EJFrameworkExtensionProperties frameworkExtensionProperties,
+                                            EJPropertyDefinition propertyDefinition)
+                                    {
+                                        propertyDefinition.clearValidValues();
+                                        EJFormRendererDefinition rendererDef = ExtensionsPropertiesFactory
+                                                .loadFormRendererDefinition(source.getEntireJProperties(), source.getFormRendererName());
+                                        rendererDef.loadValidValuesForProperty(frameworkExtensionProperties, propertyDefinition);
+                                    }
 
-                                            public EJPluginBlockProperties getBlockProperties()
-                                            {
-                                                return null;
-                                            }
-                                        });
+                                    public EJPluginBlockProperties getBlockProperties()
+                                    {
+                                        return null;
+                                    }
+                                });
                             }
                         };
 
