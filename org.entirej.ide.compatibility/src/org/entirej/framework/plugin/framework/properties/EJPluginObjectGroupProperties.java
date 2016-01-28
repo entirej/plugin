@@ -107,7 +107,25 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         return null;
     }
 
-    
+    public boolean  updateBlocks(EJPluginFormProperties form)
+    {
+        boolean updated= false;
+        //clean obsolete dummy ref-Blocks
+        {
+            List<EJPluginBlockProperties> allBlockProperties2 = form.getBlockContainer().getAllBlockProperties();
+            for (EJPluginBlockProperties blockProperties : allBlockProperties2)
+            {
+                if(blockProperties.isImportFromObjectGroup() && blockProperties.getReferencedObjectGroupName().equals(getName()) && form.getBlockContainer().contains(blockProperties.getName()))
+                {
+                    
+                    form.getBlockContainer().removeBlockProperties(blockProperties,false); 
+                    updated = true;
+                }
+            }
+        }
+        
+        return updated;
+    }
     
     public boolean  updateCanvasSettings(EJPluginFormProperties form)
     {
@@ -122,53 +140,57 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
                         
             {
                 EJCanvasProperties canvasProperties = getCanvasProperties(canvas.getName());
-                if(canvas.getWidth() == canvas.getWidthOG() && canvas.getWidth()!= canvasProperties.getWidth())
+                if(canvasProperties!=null)
                 {
-                    canvas.setWidth(canvasProperties.getWidth());
-                    canvas.setWidthOG(canvasProperties.getWidth());
-                    updated = true;
-                }
-                if(canvas.getHeight() == canvas.getHeightOG()  && canvas.getHeight()!= canvasProperties.getHeight())
-                {
-                    canvas.setHeight(canvasProperties.getHeight());
-                    canvas.setHeightOG(canvasProperties.getHeight());
-                    updated = true;
-                }
-                if(canvas.getNumColsOG() == canvas.getNumCols() && canvas.getNumCols()!= canvasProperties.getNumCols())
-                {
-                    canvas.setNumCols(canvasProperties.getNumCols());
-                    canvas.setNumColsOG(canvasProperties.getNumCols());
-                    updated = true;
-                }
-                if(canvas.canExpandHorizontally() == canvas.canExpandHorizontally()  && canvas.canExpandHorizontally()!= canvasProperties.canExpandHorizontally())
-                {
-                    canvas.setExpandHorizontally(canvasProperties.canExpandHorizontally());
-                    canvas.setExpandHorizontallyOG(canvasProperties.canExpandHorizontally());
-                    updated = true;
-                }
-                if(canvas.canExpandVertically() == canvas.canExpandVertically()  && canvas.canExpandVertically()!= canvasProperties.canExpandVertically())
-                {
-                    canvas.setExpandVertically(canvasProperties.canExpandVertically());
-                    canvas.setExpandVerticallyOG(canvasProperties.canExpandVertically());
-                    updated = true;
+                    if(canvas.getWidth() == canvas.getWidthOG() && canvas.getWidth()!= canvasProperties.getWidth())
+                    {
+                        canvas.setWidth(canvasProperties.getWidth());
+                        canvas.setWidthOG(canvasProperties.getWidth());
+                        updated = true;
+                    }
+                    if(canvas.getHeight() == canvas.getHeightOG()  && canvas.getHeight()!= canvasProperties.getHeight())
+                    {
+                        canvas.setHeight(canvasProperties.getHeight());
+                        canvas.setHeightOG(canvasProperties.getHeight());
+                        updated = true;
+                    }
+                    if(canvas.getNumColsOG() == canvas.getNumCols() && canvas.getNumCols()!= canvasProperties.getNumCols())
+                    {
+                        canvas.setNumCols(canvasProperties.getNumCols());
+                        canvas.setNumColsOG(canvasProperties.getNumCols());
+                        updated = true;
+                    }
+                    if(canvas.canExpandHorizontally() == canvas.canExpandHorizontally()  && canvas.canExpandHorizontally()!= canvasProperties.canExpandHorizontally())
+                    {
+                        canvas.setExpandHorizontally(canvasProperties.canExpandHorizontally());
+                        canvas.setExpandHorizontallyOG(canvasProperties.canExpandHorizontally());
+                        updated = true;
+                    }
+                    if(canvas.canExpandVertically() == canvas.canExpandVertically()  && canvas.canExpandVertically()!= canvasProperties.canExpandVertically())
+                    {
+                        canvas.setExpandVertically(canvasProperties.canExpandVertically());
+                        canvas.setExpandVerticallyOG(canvasProperties.canExpandVertically());
+                        updated = true;
+                    }
+                    
+                    
+                    
+                    if(canvas.getHorizontalSpan() == canvas.getHorizontalSpanOG()  && canvas.getHorizontalSpan()!= canvasProperties.getHorizontalSpan())
+                    {
+                        canvas.setHorizontalSpan(canvasProperties.getHorizontalSpan());
+                        canvas.setHorizontalSpanOG(canvasProperties.getHorizontalSpan());
+                        updated = true;
+                    }
+                    
+                    
+                    if(canvas.getVerticalSpan() == canvas.getVerticalSpanOG()  && canvas.getVerticalSpan()!= canvasProperties.getVerticalSpan())
+                    {
+                        canvas.setVerticalSpan(canvasProperties.getVerticalSpan());
+                        canvas.setVerticalSpanOG(canvasProperties.getVerticalSpan());
+                        updated = true;
+                    }
                 }
                 
-                
-                
-                if(canvas.getHorizontalSpan() == canvas.getHorizontalSpanOG()  && canvas.getHorizontalSpan()!= canvasProperties.getHorizontalSpan())
-                {
-                    canvas.setHorizontalSpan(canvasProperties.getHorizontalSpan());
-                    canvas.setHorizontalSpanOG(canvasProperties.getHorizontalSpan());
-                    updated = true;
-                }
-                
-                
-                if(canvas.getVerticalSpan() == canvas.getVerticalSpanOG()  && canvas.getVerticalSpan()!= canvasProperties.getVerticalSpan())
-                {
-                    canvas.setVerticalSpan(canvasProperties.getVerticalSpan());
-                    canvas.setVerticalSpanOG(canvasProperties.getVerticalSpan());
-                    updated = true;
-                }
                 
                 
             }

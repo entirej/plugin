@@ -300,8 +300,12 @@ public class EJFormReferencePage extends AbstractEditorPage implements PageActio
                 EJPluginFormProperties formProperties = getFormProperties(file, editor.getJavaProject());
                 if (formProperties != null)
                 {
+                    boolean updateBlocks = properties.updateBlocks(formProperties);
                     boolean updateCanvasSettings = properties.updateCanvasSettings(formProperties);
-                    if (updateCanvasSettings)
+                    
+                    
+                    
+                    if (updateCanvasSettings || updateBlocks)
 
                     {
                         FormPropertiesWriter write = new FormPropertiesWriter();
