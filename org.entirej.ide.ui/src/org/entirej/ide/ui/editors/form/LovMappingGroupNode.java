@@ -651,10 +651,55 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
             return new INodeDeleteProvider()
             {
 
+                private void removeMappingOnBlock(String oldName,EJItemGroupPropertiesContainer container, EJScreenType EJScreenType)
+                {
+                    for (EJItemGroupProperties itemGroupProperties : container.getAllItemGroupProperties())
+                    {
+                        removeMappingOnBlock(oldName, itemGroupProperties, EJScreenType);
+                    }
+                }
+
+                private void removeMappingOnBlock(String oldName, EJItemGroupProperties itemGroupProperties, EJScreenType EJScreenType)
+                {
+                    for (EJScreenItemProperties screenItemProperties : itemGroupProperties.getAllItemProperties())
+                    {
+                        if (screenItemProperties.getLovMappingName() != null && screenItemProperties.getLovMappingName().equals(oldName))
+                        {
+                            switch (EJScreenType)
+                            {
+                                case MAIN:
+                                    ((EJPluginMainScreenItemProperties) screenItemProperties).setLovMappingName(null);
+                                    break;
+                                case INSERT:
+                                    ((EJPluginInsertScreenItemProperties) screenItemProperties).setLovMappingName(null);
+                                    break;
+                                case QUERY:
+                                    ((EJPluginQueryScreenItemProperties) screenItemProperties).setLovMappingName(null);
+                                    break;
+                                case UPDATE:
+                                    ((EJPluginUpdateScreenItemProperties) screenItemProperties).setLovMappingName(null);
+                                    break;
+                            }
+
+                        }
+                    }
+
+                    removeMappingOnBlock(oldName,  itemGroupProperties.getChildItemGroupContainer(), EJScreenType);
+                }
+                
+                
                 public void delete(boolean cleanup)
                 {
 
                     LovMappingGroupNode.this.source.removeLovMappingProperties(source);
+                    if(cleanup)
+                    {
+                        
+                        removeMappingOnBlock(source.getName(), source.getMappedBlock().getScreenItemGroupContainer(EJScreenType.MAIN), EJScreenType.MAIN);
+                        removeMappingOnBlock(source.getName(), source.getMappedBlock().getScreenItemGroupContainer(EJScreenType.INSERT), EJScreenType.INSERT);
+                        removeMappingOnBlock(source.getName(), source.getMappedBlock().getScreenItemGroupContainer(EJScreenType.UPDATE), EJScreenType.UPDATE);
+                        removeMappingOnBlock(source.getName(), source.getMappedBlock().getScreenItemGroupContainer(EJScreenType.QUERY), EJScreenType.QUERY);
+                    }
                     editor.setDirty(true);
                     treeSection.refresh(LovMappingGroupNode.this);
 
@@ -662,7 +707,7 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
 
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
-                    return new LovMappingRemoveOperation(treeSection, LovMappingGroupNode.this.source, source);
+                    return new LovMappingRemoveOperation(treeSection, LovMappingGroupNode.this.source, source,cleanup);
                 }
             };
         }
