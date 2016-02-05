@@ -306,18 +306,7 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
         EJPluginBlockContainer blockContainer = getBlockContainer();
         List<EJPluginBlockProperties> allBlockProperties = blockContainer.getAllBlockProperties();
         
-        //clean obsolete dummy ref-Blocks
-        {
-            List<EJPluginBlockProperties> allBlockProperties2 = form.getBlockContainer().getAllBlockProperties();
-            for (EJPluginBlockProperties blockProperties : allBlockProperties2)
-            {
-                if(blockProperties.isImportFromObjectGroup() && form.getBlockContainer().contains(blockProperties.getName()))
-                {
-                    
-                    form.getBlockContainer().removeBlockProperties(blockProperties,false);    
-                }
-            }
-        }
+       
         
         //import all blocks to form
         for (EJPluginBlockProperties block : allBlockProperties)
@@ -336,6 +325,20 @@ public class EJPluginObjectGroupProperties extends EJPluginFormProperties
             
             
         }
+        
+        //clean obsolete dummy ref-Blocks
+        {
+            List<EJPluginBlockProperties> allBlockProperties2 = form.getBlockContainer().getAllBlockProperties();
+            for (EJPluginBlockProperties blockProperties : allBlockProperties2)
+            {
+                if(blockProperties.isImportFromObjectGroup() && !form.getBlockContainer().contains(blockProperties.getName()))
+                {
+                    
+                    form.getBlockContainer().removeBlockProperties(blockProperties,false);    
+                }
+            }
+        }
+        
         
         EJPluginRelationContainer relationContainer = getRelationContainer();
         List<EJPluginRelationProperties> relationProperties = relationContainer.getAllRelationProperties();
