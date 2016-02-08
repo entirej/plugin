@@ -1,6 +1,7 @@
 package org.entirej;
 
-
+import java.util.Collection;
+import java.util.Collections;
 
 import org.entirej.applicationframework.rwt.spring.ext.EJSpringSecurityAuthenticationProvider;
 import org.springframework.ldap.core.DirContextOperations;
