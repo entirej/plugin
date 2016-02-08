@@ -45,7 +45,7 @@
             <property name="KEY_INSERT" multilingual="false" propertyType="STRING"><![CDATA[CTRL+SHIFT+I]]></property>
         </propertyGroup>
          <propertyGroup name="SPRING_SECURITY">
-            <property name="SPRING_SECURITY_CONFIG" multilingual="false" propertyType="PROJECT_CLASS_FILE"></property>
+            <property name="SPRING_SECURITY_CONFIG" multilingual="false" propertyType="PROJECT_CLASS_FILE">org.entirej.EJSecurityConfig</property>
             <property name="SPRING_SECURITY_AUTH" multilingual="false" propertyType="PROJECT_CLASS_FILE"><![CDATA[org.entirej.EJAuthenticationProvider]]></property>
         </propertyGroup>
     </applicationDefinedProperties>

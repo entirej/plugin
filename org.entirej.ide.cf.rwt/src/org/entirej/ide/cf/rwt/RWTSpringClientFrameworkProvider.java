@@ -53,8 +53,10 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
     private static final String RWT_PROJECT_RENDERER_FILE   = "/templates/rwt/renderers.ejprop";
     private static final String RWT_APP_LAUNCHER            = "/templates/rwt/ApplicationLauncher.java";
     private static final String RWT_APP_AUTH           = "/templates/rwt/EJAuthenticationProvider.java";
+    private static final String RWT_APP_AUTH_CONFIG           = "/templates/rwt/EJSecurityConfig.java";
     private static final String RWT_WEB_DD                  = "/templates/rwt/web.xml";
     private static final String RWT_WEB_INDEX               = "/templates/rwt/index.html";
+    private static final String RWT_WEB_LOGIN              = "/templates/rwt/login.html";
 
     public void addEntireJNature(IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
     {
@@ -65,8 +67,10 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_RENDERER_FILE, "src/renderers.ejprop");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LAUNCHER, "src/org/entirej/ApplicationLauncher.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH, "src/org/entirej/EJAuthenticationProvider.java");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG, "src/org/entirej/EJSecurityConfig.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_DD, "WebContent/WEB-INF/web.xml");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_INDEX, "WebContent/index.html");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_LOGIN, "WebContent/login.html");
 
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), getComponentSource(project), ".settings/org.eclipse.wst.common.component");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), getFactesSource(project),
