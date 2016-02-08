@@ -20,7 +20,9 @@ package org.entirej.ide.cf.rwt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProjectDescription;
@@ -70,7 +72,9 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG, "src/org/entirej/EJSecurityConfig.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_DD, "WebContent/WEB-INF/web.xml");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_INDEX, "WebContent/index.html");
-            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_LOGIN, "WebContent/login.html");
+            Map<String,String> params = new HashMap<String,String>();
+            params.put("%WEB_CONTEXT%", project.getElementName());
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_LOGIN, "WebContent/login.html",params);
 
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), getComponentSource(project), ".settings/org.eclipse.wst.common.component");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), getFactesSource(project),
