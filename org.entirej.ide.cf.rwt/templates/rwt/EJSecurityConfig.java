@@ -13,7 +13,7 @@ public class EJSecurityConfig extends EJDefaultSpringSecurityConfigProvider
         super.configure(http);
         
         http.authorizeRequests().antMatchers("/resources/**", "/login.html/**").
-        permitAll().anyRequest()./*hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login.html").usernameParameter("username").passwordParameter("password")
+        permitAll().anyRequest()/*.hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login.html").usernameParameter("username").passwordParameter("password")
         .permitAll()
         .and()
         .logout()
