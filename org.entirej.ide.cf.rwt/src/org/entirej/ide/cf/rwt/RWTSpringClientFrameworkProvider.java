@@ -59,6 +59,7 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
     private static final String RWT_WEB_DD                  = "/templates/rwt/web.xml";
     private static final String RWT_WEB_INDEX               = "/templates/rwt/index.html";
     private static final String RWT_WEB_LOGIN              = "/templates/rwt/login.html";
+    private static final String RWT_WEB_BANNER              = "/templates/rwt/banner.png";
 
     public void addEntireJNature(IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
     {
@@ -71,6 +72,7 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH, "src/org/entirej/EJAuthenticationProvider.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG, "src/org/entirej/EJSecurityConfig.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_DD, "WebContent/WEB-INF/web.xml");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_BANNER, "WebContent/WEB-INF/resources/banner.png");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_INDEX, "WebContent/index.html");
             Map<String,String> params = new HashMap<String,String>();
             params.put("%WEB_CONTEXT%", project.getElementName());

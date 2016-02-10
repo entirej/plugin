@@ -1,74 +1,6 @@
 <html>
 <head>
 <title>EJ Login Page</title>
-</head>
-<body onload='document.f.username.focus();'>
-
-
-
-	
-	<form name='f' action='/%WEB_CONTEXT%/login.html' method='POST'>
-	   <div class="outer-container">
-        <div class="inner-container"  >
-                <p class="header">EntireJ</p>
-                
-				<table>
-				    <tr/>
-				    <tr/>
-				    <tr/>
-				    <tr/>
-					<tr>
-						
-						<td><input placeholder="User"  class="field" type='text' name='username' value=''></td>
-					</tr>
-					<tr>
-						
-						<td><input placeholder="Password"  class="field"  type='password' name='password' /></td>
-					</tr>
-					<tr/>
-					<tr/>
-					<tr>
-						<td colspan='2'><input class="login" name="submit" type="submit"
-							value="Log in" /></td>
-					</tr>
-				</table>
-		        <div class="" id="container"></div>
-			
-		   </div>
-		  </div>
-	</form>
-	
-
-
-
-	<script>
-		var queryDict = {}
-		location.search.substr(1).split("&").forEach(function(item) {
-			queryDict[item.split("=")[0]] = item.split("=")[1]
-		})
-
-		if (location.search.indexOf('error') > -1) {
-			document.getElementById('container').innerHTML = '<p>Invalid username and password.</p>';
-			document.getElementById('container').style.visibility = 'visible'
-				document.getElementById('container').className = 'alert alert-danger'
-		}
-		else if (location.search.indexOf('logout') > -1) {
-            document.getElementById('container').innerHTML = '<p>You have been logged out successfully.</p>';
-            document.getElementById('container').style.visibility = 'visible'
-            document.getElementById('container').className = 'alert alert-info'
-        }
-		else
-			
-		{
-			document.getElementById('container').innerHTML = '';
-			document.getElementById('container').style.visibility = 'hidden'
-		}
-		
-		
-		
-	</script>
-</body>
-
 <style type="text/css">
 		body {
 			margin: 0;
@@ -203,5 +135,75 @@
 	    
 
 </style>
+</head>
+<body onload='document.f.username.focus();'>
+
+
+
+	
+	<form name='f' action='/%WEB_CONTEXT%/login.html' method='POST'>
+	   <div class="outer-container">
+        <div class="inner-container"  >
+                <p><img   src="/%WEB_CONTEXT%/resources/banner.png" style="width: 200px; height: 56px;" /></p>
+                <p class="header">EntireJ</p>
+                
+				<table>
+				    <tr/>
+				    <tr/>
+				    <tr/>
+				    <tr/>
+					<tr>
+						
+						<td><input placeholder="User"  class="field" type='text' name='username' value=''></td>
+					</tr>
+					<tr>
+						
+						<td><input placeholder="Password"  class="field"  type='password' name='password' /></td>
+					</tr>
+					<tr/>
+					<tr/>
+					<tr>
+						<td colspan='2'><input class="login" name="submit" type="submit"
+							value="Log in" /></td>
+					</tr>
+				</table>
+		        <div class="" id="container"></div>
+			
+		   </div>
+		  </div>
+	</form>
+	
+
+
+
+	<script>
+		var queryDict = {}
+		location.search.substr(1).split("&").forEach(function(item) {
+			queryDict[item.split("=")[0]] = item.split("=")[1]
+		})
+
+		if (location.search.indexOf('error') > -1) {
+			document.getElementById('container').innerHTML = '<p>Invalid username and password.</p>';
+			document.getElementById('container').style.visibility = 'visible'
+				document.getElementById('container').className = 'alert alert-danger'
+		}
+		else if (location.search.indexOf('logout') > -1) {
+            document.getElementById('container').innerHTML = '<p>You have been logged out successfully.</p>';
+            document.getElementById('container').style.visibility = 'visible'
+            document.getElementById('container').className = 'alert alert-info'
+        }
+		else
+			
+		{
+			document.getElementById('container').innerHTML = '';
+			document.getElementById('container').style.visibility = 'hidden'
+		}
+		
+		
+		
+	</script>
+</body>
+
+
 
 </html>
