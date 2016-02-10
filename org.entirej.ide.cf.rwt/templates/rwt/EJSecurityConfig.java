@@ -21,6 +21,8 @@ public class EJSecurityConfig extends EJDefaultSpringSecurityConfigProvider
         .permitAll()
         .logoutUrl("/logout")
         .logoutSuccessUrl("/login.html?logout")
+        .and()
+        .exceptionHandling().accessDeniedPage("/403.html")
         /*for remember me option note:  InMemoryTokenRepositoryImpl use only for testing, On production replace with PersistentTokenRepository*/
         .and().rememberMe().rememberMeParameter("rememberme").tokenRepository(new InMemoryTokenRepositoryImpl()).useSecureCookie(true).tokenValiditySeconds(60*60*24);
 

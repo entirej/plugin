@@ -59,6 +59,7 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
     private static final String RWT_WEB_DD                  = "/templates/rwt/web.xml";
     private static final String RWT_WEB_INDEX               = "/templates/rwt/index.html";
     private static final String RWT_WEB_LOGIN              = "/templates/rwt/login.html";
+    private static final String RWT_WEB_403              = "/templates/rwt/403.html";
     private static final String RWT_WEB_BANNER              = "/templates/rwt/banner.png";
 
     public void addEntireJNature(IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
@@ -77,6 +78,7 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
             Map<String,String> params = new HashMap<String,String>();
             params.put("%WEB_CONTEXT%", project.getElementName());
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_LOGIN, "WebContent/login.html",params);
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_403, "WebContent/403.html",params);
 
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), getComponentSource(project), ".settings/org.eclipse.wst.common.component");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), getFactesSource(project),
