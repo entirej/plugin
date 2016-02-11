@@ -73,7 +73,7 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH, "src/org/entirej/EJAuthenticationProvider.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG, "src/org/entirej/EJSecurityConfig.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_DD, "WebContent/WEB-INF/web.xml");
-            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_BANNER, "WebContent/WEB-INF/resources/banner.png");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_BANNER, "WebContent/resources/banner.png");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_INDEX, "WebContent/index.html");
             Map<String,String> params = new HashMap<String,String>();
             params.put("%WEB_CONTEXT%", project.getElementName());
