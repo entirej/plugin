@@ -12,7 +12,7 @@ public class EJSecurityConfig extends EJDefaultSpringSecurityConfigProvider
     public void configure(HttpSecurity http,EJSpringSecurityContext context) throws Exception
     {
        
-        super.configure(http);
+        super.configure(http,context);
         
         http.authorizeRequests().antMatchers("/resources/**", "/login.html/**").
         permitAll().anyRequest()/*.hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login.html").usernameParameter("username").passwordParameter("password")
