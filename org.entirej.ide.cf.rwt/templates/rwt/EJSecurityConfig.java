@@ -1,6 +1,7 @@
 package org.entirej;
 
 import org.entirej.applicationframework.rwt.spring.ext.EJDefaultSpringSecurityConfigProvider;
+import org.entirej.applicationframework.rwt.spring.ext.EJSpringSecurityContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 
@@ -8,7 +9,7 @@ public class EJSecurityConfig extends EJDefaultSpringSecurityConfigProvider
 {
 
     @Override
-    public void configure(HttpSecurity http) throws Exception
+    public void configure(HttpSecurity http,EJSpringSecurityContext context) throws Exception
     {
        
         super.configure(http);
