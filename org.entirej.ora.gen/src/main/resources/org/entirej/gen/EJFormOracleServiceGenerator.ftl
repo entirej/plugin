@@ -47,7 +47,7 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list query_parameters as column>
             <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		<#if column.is_struct =="true" >
+       		<#elseif column.is_struct =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
        		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
@@ -77,7 +77,7 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list query_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		<#if column.is_struct =="true" >
+       		<#elseif column.is_struct =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
        		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
@@ -119,9 +119,11 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list insert_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#elseif column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		</#if>  
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		</#if>   
         </#list>
         
       
@@ -143,8 +145,10 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list insert_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#elseif column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
        		</#if>  
         </#list>
         
@@ -174,9 +178,11 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list update_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#elseif column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		</#if>  
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		</#if>   
         </#list>
         
       
@@ -198,9 +204,11 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list update_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#elseif column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		</#if>  
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		</#if>   
         </#list>
         
       
@@ -253,9 +261,11 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list delete_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#elseif column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		</#if>  
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		</#if>   
         </#list>
         
       
