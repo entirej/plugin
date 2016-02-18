@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.entirej.EJStatementParameterOraStruct;
 import org.entirej.EJStatementParameterOraArray;
+import org.entirej.framework.core.service.EJStoredProcedureStatementParameter;
 import org.entirej.OracleStatementExecutor;
 import org.entirej.framework.core.EJForm;
 import org.entirej.framework.core.service.EJBlockService;
@@ -46,9 +47,11 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list query_parameters as column>
             <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#if column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
-       		</#if>  
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		</#if>   
         </#list>
         
       
@@ -74,8 +77,10 @@ public class ${service_name} implements EJBlockService<${JAVA_REC_NAME}>
         <#list query_parameters as column>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		<#if column.is_struct =="true" >
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
        		<#else>
-       		EJStatementParameterOraStruct<${column.data_type}> ${column.var_name} = new EJStatementParameterOraStruct<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		EJStoredProcedureStatementParameter ${column.var_name} = new EJStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
        		</#if>  
         </#list>
         
