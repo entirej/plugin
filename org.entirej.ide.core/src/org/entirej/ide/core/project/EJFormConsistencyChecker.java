@@ -94,7 +94,7 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
                         try
                         {
                             clean(monitor);
-                            validateFormsIn(getProject(), getValidateProviders(), monitor);
+                            validateFormsIn(getProject(), getValidateProviders(), monitor,new ArrayList<IFile>());
                         }
                         catch (CoreException e)
                         {
@@ -149,10 +149,11 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
                 EJPluginEntireJClassLoader.reload(project);
                 IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
 
+                List<IFile> forms = new ArrayList<IFile>();
                 for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
                 {
                     if (iPackageFragmentRoot.getResource() instanceof IContainer)
-                        validateFormsIn((IContainer) iPackageFragmentRoot.getResource(), getValidateProviders(), monitor);
+                        validateFormsIn((IContainer) iPackageFragmentRoot.getResource(), getValidateProviders(), monitor,forms);
                 }
             }
         }
@@ -241,7 +242,7 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
         monitor.done();
     }
 
-    private void validateFormsIn(IContainer container, List<EJFormValidateProvider> providers, IProgressMonitor monitor) throws CoreException
+    private void validateFormsIn(IContainer container, List<EJFormValidateProvider> providers, IProgressMonitor monitor,List<IFile> forms) throws CoreException
     {
         if (providers.isEmpty())
             return;
@@ -251,10 +252,16 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
         {
             IResource member = members[i];
             if (member instanceof IContainer)
-                validateFormsIn((IContainer) member, providers, monitor);
+                validateFormsIn((IContainer) member, providers, monitor,forms);
             else if (member instanceof IFile && isFormFile((IFile) member))
             {
-                validateFile((IFile) member, providers, monitor);
+                if(!forms.contains(member))
+                {
+                    IFile file = (IFile) member;
+                    validateFile(file, providers, monitor);
+                    forms.add(file);
+                }
+               
             }
         }
         monitor.done();

@@ -136,11 +136,11 @@ public class EJReportConsistencyChecker extends IncrementalProjectBuilder
                 // make sure it is refresh before build again
                 EJPluginEntireJClassLoader.reload(project);
                 IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
-
+                List<IFile> forms = new ArrayList<IFile>();
                 for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
                 {
                     if (iPackageFragmentRoot.getResource() instanceof IContainer)
-                        validateReportsIn((IContainer) iPackageFragmentRoot.getResource(), getValidateProviders(), monitor);
+                        validateReportsIn((IContainer) iPackageFragmentRoot.getResource(), getValidateProviders(), monitor,forms);
                 }
             }
         }
@@ -229,7 +229,7 @@ public class EJReportConsistencyChecker extends IncrementalProjectBuilder
         monitor.done();
     }
 
-    private void validateReportsIn(IContainer container, List<EJReportValidateProvider> providers, IProgressMonitor monitor) throws CoreException
+    private void validateReportsIn(IContainer container, List<EJReportValidateProvider> providers, IProgressMonitor monitor,List<IFile> reports) throws CoreException
     {
         if (providers.isEmpty())
             return;
@@ -239,10 +239,16 @@ public class EJReportConsistencyChecker extends IncrementalProjectBuilder
         {
             IResource member = members[i];
             if (member instanceof IContainer)
-                validateReportsIn((IContainer) member, providers, monitor);
+                validateReportsIn((IContainer) member, providers, monitor,reports);
             else if (member instanceof IFile && isReportFile((IFile) member))
             {
-                validateFile((IFile) member, providers, monitor);
+                if(!reports.contains(member))
+                {
+                    IFile file = (IFile) member;
+                    validateFile(file, providers, monitor);
+                    reports.add(file);
+                }
+               
             }
         }
         monitor.done();
