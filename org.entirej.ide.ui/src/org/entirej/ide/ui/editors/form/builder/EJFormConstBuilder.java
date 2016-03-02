@@ -152,15 +152,17 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     }
                     else if (isRefFormFile(candidate))
                     {
-                        try
-                        {
-                            clean(monitor);
-                            genFormConstantsIn(getProject(), monitor);
-                        }
-                        catch (CoreException e)
-                        {
-                            EJCoreLog.logException(e);
-                        }
+//                        try
+//                        {
+////                            List<IFile> forms = new ArrayList<IFile>();
+////                            clean(monitor);
+////                            genFormConstantsIn(getProject(), monitor,forms);
+//                        }
+//                        catch (CoreException e)
+//                        {
+//                            EJCoreLog.logException(e);
+//                        }
+                        genConstantFile(candidate, monitor);
                     }
                 }
                 else if (isEJProperties(candidate))
@@ -194,10 +196,11 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 genPropertiesConstantFile(EJProject.getPropertiesFile(p), monitor);
                 IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
 
+                List<IFile> forms = new ArrayList<IFile>();
                 for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
                 {
                     if (iPackageFragmentRoot.getResource() instanceof IContainer)
-                        genFormConstantsIn((IContainer) iPackageFragmentRoot.getResource(), monitor);
+                        genFormConstantsIn((IContainer) iPackageFragmentRoot.getResource(), monitor,forms);
                 }
                 p.refreshLocal(IResource.DEPTH_INFINITE, monitor);
             }
@@ -422,7 +425,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         monitor.done();
     }
 
-    private void genFormConstantsIn(IContainer container, IProgressMonitor monitor) throws CoreException
+    private void genFormConstantsIn(IContainer container, IProgressMonitor monitor,List<IFile> forms) throws CoreException
     {
 
         monitor.subTask("Compiling EJ Form Constants...");
@@ -431,10 +434,15 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         {
             IResource member = members[i];
             if (member instanceof IContainer)
-                genFormConstantsIn((IContainer) member, monitor);
+                genFormConstantsIn((IContainer) member, monitor,forms);
             else if (member instanceof IFile && isFormFile((IFile) member))
             {
-                genConstantFile((IFile) member, monitor);
+                if(!forms.contains(member))
+                {
+                    genConstantFile((IFile) member, monitor);
+                    forms.add((IFile) member);
+                }
+               
             }
         }
         monitor.done();

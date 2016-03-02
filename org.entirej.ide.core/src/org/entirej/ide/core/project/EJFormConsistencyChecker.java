@@ -91,15 +91,24 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
                     }
                     else if (isRefFormFile(candidate))
                     {
+//                        try
+//                        {
+//                            clean(monitor);
+//                            validateFormsIn(getProject(), getValidateProviders(), monitor,new ArrayList<IFile>());
+//                        }
+//                        catch (CoreException e)
+//                        {
+//                            EJCoreLog.logException(e);
+//                        }
                         try
                         {
-                            clean(monitor);
-                            validateFormsIn(getProject(), getValidateProviders(), monitor,new ArrayList<IFile>());
+                            candidate.deleteMarkers(EJMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
                         }
                         catch (CoreException e)
                         {
-                            EJCoreLog.logException(e);
+                            EJCoreLog.log(e);
                         }
+                        validateFile(candidate, getValidateProviders(), monitor);
                     }
                 }
             }
