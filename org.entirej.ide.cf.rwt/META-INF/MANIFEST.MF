@@ -14,7 +14,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.ui,
  org.eclipse.ui.forms,
  org.entirej.ide.core,
- org.entirej.ide.ui
+ org.entirej.ide.ui,
+ org.entirej.ide.compatibility;bundle-version="3.2.0",
+ org.entirej.core.runtime
 Bundle-ClassPath: .
 Bundle-Activator: org.entirej.ide.cf.rwt.EJCFRwtPlugin
 Bundle-Localization: plugin

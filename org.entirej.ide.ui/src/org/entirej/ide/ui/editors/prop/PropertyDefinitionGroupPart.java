@@ -126,6 +126,7 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
             }
 
         };
+      
         refreshAction.setImageDescriptor(EJUIImages.DESC_REFRESH);
         return new Action[] { refreshAction };
     }

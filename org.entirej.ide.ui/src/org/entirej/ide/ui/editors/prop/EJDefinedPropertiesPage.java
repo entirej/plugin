@@ -18,9 +18,12 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.prop;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.editors.AbstractEditorPage;
 import org.entirej.ide.ui.editors.EditorLayoutFactory;
@@ -41,7 +44,10 @@ public class EJDefinedPropertiesPage extends AbstractEditorPage
     {
         Composite body = managedForm.getForm().getBody();
         body.setLayout(EditorLayoutFactory.createFormGridLayout(true, 2));
-        managedForm.addPart(new PropertyDefinitionGroupPart(editor, this, body));
+        managedForm.addPart(new PropertyDefinitionGroupPart(editor, this, body){
+          
+            
+        });
     }
 
     @Override

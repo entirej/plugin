@@ -74,6 +74,8 @@ import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
 
 public abstract class AbstractDescriptorPart extends SectionPart
 {
+    protected static ToolBar toolbar;
+
     protected Composite   body;
 
     protected FormToolkit toolkit;
@@ -81,6 +83,8 @@ public abstract class AbstractDescriptorPart extends SectionPart
     private boolean       activeForcus = false;
 
     private final boolean enableScroll;
+    
+    
 
     public AbstractDescriptorPart(FormToolkit toolkit, Composite parent, boolean enableScroll)
     {
@@ -318,7 +322,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
     private static void createSectionToolbar(Section section, FormToolkit toolkit, Action[] toolbarActions)
     {
         ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-        final ToolBar toolbar = toolBarManager.createControl(section);
+        toolbar = toolBarManager.createControl(section);
         final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
         toolbar.setCursor(handCursor);
         // Cursor needs to be explicitly disposed
