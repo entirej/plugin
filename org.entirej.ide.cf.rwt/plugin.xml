@@ -107,6 +107,8 @@
    <provider
          class="org.entirej.ide.cf.rwt.SpringFeatureConfigProvider">
    </provider>
+   <provider
+         class="org.entirej.ide.cf.rwt.SpringKerberosFeatureConfigProvider"></provider>
 </extension>
 
         
