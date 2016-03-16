@@ -24,22 +24,22 @@ public class SpringKerberosFeatureConfigProvider implements FeatureConfigProvide
 	public SpringKerberosFeatureConfigProvider() {
 	}
 
-	@Override
+	
 	public String getProviderName() {
 		return "Add Spring Security With Kerberos Configuration";
 	}
 
-	@Override
+	
 	public String getDescription() {
 		return "Configure project with Spring Security and Kerberos auth.";
 	}
 
-	@Override
+	
 	public String getProviderId() {
 		return "org.entirej.ide.cf.rwt.SpringKerberosFeatureConfig";
 	}
 
-	@Override
+	
 	public boolean isSupport(IJavaProject project) {
 
 		try {
@@ -55,7 +55,7 @@ public class SpringKerberosFeatureConfigProvider implements FeatureConfigProvide
 		return false;
 	}
 
-	@Override
+	
 	public void config(IJavaProject project, IProgressMonitor monitor) {
 
 		try {

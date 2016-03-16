@@ -24,22 +24,22 @@ public class SpringFeatureConfigProvider implements FeatureConfigProvider {
 	public SpringFeatureConfigProvider() {
 	}
 
-	@Override
+	
 	public String getProviderName() {
 		return "Add Spring Security Configuration";
 	}
 
-	@Override
+	
 	public String getDescription() {
 		return "Configure project with Spring Security.";
 	}
 
-	@Override
+	
 	public String getProviderId() {
 		return "org.entirej.ide.cf.rwt.SpringFeatureConfig";
 	}
 
-	@Override
+	
 	public boolean isSupport(IJavaProject project) {
 
 		try {
@@ -55,7 +55,7 @@ public class SpringFeatureConfigProvider implements FeatureConfigProvider {
 		return false;
 	}
 
-	@Override
+
 	public void config(IJavaProject project, IProgressMonitor monitor) {
 
 		try {
