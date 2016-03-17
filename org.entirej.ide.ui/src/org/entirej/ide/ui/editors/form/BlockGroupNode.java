@@ -359,6 +359,16 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             };
         }
 
+        
+        @Override
+        public Action[] getActions()
+        {
+
+            return new Action[] { treeSection.createNewBlockAction(false,source), treeSection.createNewBlockAction(true,source), treeSection.createNewMirrorBlockAction(null,source),
+                    treeSection.createNewRefBlockAction(true,source),  };
+        }
+        
+        
         @Override
         public INodeRenameProvider getRenameProvider()
         {

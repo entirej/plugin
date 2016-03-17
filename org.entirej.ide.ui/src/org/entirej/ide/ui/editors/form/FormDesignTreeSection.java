@@ -117,6 +117,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.EJPluginReusableBlockProperties;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
 import org.entirej.framework.plugin.framework.properties.writer.FormPropertiesWriter;
@@ -384,6 +385,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
     public Action createNewBlockAction(final boolean controlBlock)
     {
+        return createNewBlockAction(controlBlock,null);
+    }
+    
+    public Action createNewBlockAction(final boolean controlBlock,final  BlockGroup group)
+    {
 
         return new Action(controlBlock ? "New Control Block" : "New Service Block")
         {
@@ -418,8 +424,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                         else
                         {
-                            BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
-                                    blockProperties, -1);
+                            BlockAddOperation addOperation = group==null ? new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
+                                    blockProperties, -1) : new BlockAddOperation(FormDesignTreeSection.this, group,
+                                            blockProperties, -1);
                             editor.execute(addOperation);
                         }
 
@@ -469,6 +476,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
     public Action createNewMirrorBlockAction(final String defaultBlock)
     {
+        return createNewMirrorBlockAction(defaultBlock,null);
+    }
+    public Action createNewMirrorBlockAction(final String defaultBlock,final BlockGroup group)
+    {
 
         return new Action("New Mirror Block")
         {
@@ -505,8 +516,9 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         }
                         else
                         {
-                            BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
-                                    blockProperties, -1);
+                            BlockAddOperation addOperation =(group==null) ? new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
+                                    blockProperties, -1):new BlockAddOperation(FormDesignTreeSection.this, group,
+                                            blockProperties, -1);;
                             editor.execute(addOperation);
                         }
 
@@ -694,6 +706,10 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     }
 
     public Action createNewRefBlockAction(final boolean copyOption)
+    {
+        return createNewRefBlockAction(copyOption, null);
+    }
+    public Action createNewRefBlockAction(final boolean copyOption,final BlockGroup group)
     {
 
         return new Action("Add Referenced Block")
