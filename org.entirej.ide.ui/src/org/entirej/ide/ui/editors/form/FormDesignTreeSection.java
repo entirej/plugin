@@ -418,7 +418,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                             EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
                             ReversibleOperation operation = new ReversibleOperation("Add Block");
-                            operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
+                            operation.add(group==null ? new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1) : new BlockAddOperation(FormDesignTreeSection.this, group, blockProperties, -1));
                             operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
                             editor.execute(operation);
                         }
@@ -510,7 +510,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                             EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
                             ReversibleOperation operation = new ReversibleOperation("Add Block");
-                            operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
+                            operation.add((group==null) ?new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1):new BlockAddOperation(FormDesignTreeSection.this, group, blockProperties, -1));
                             operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
                             editor.execute(operation);
                         }
@@ -767,14 +767,15 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
                             EJPluginCanvasProperties canvasProp = new EJPluginCanvasProperties(formProperties, canvas);
                            
-                            operation.add(new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1));
+                            operation.add(group == null ? new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(), blockProperties, -1):new BlockAddOperation(FormDesignTreeSection.this, group, blockProperties, -1));
                             operation.add(new CanvasAddOperation(FormDesignTreeSection.this, formProperties.getCanvasContainer(), canvasProp, -1));
                             
                         }
                         else
                         {
-                            BlockAddOperation addOperation = new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
-                                    blockProperties, -1);
+                            BlockAddOperation addOperation = group==null ? new BlockAddOperation(FormDesignTreeSection.this, formProperties.getBlockContainer(),
+                                    blockProperties, -1):new BlockAddOperation(FormDesignTreeSection.this, group,
+                                            blockProperties, -1);
                             operation.add(addOperation);;
                         }
                         editor.execute(operation);
