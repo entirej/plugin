@@ -73,7 +73,7 @@ public class BlockAddOperation extends AbstractOperation
                     treeSection.refresh(treeSection.findNode(container), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 1);
+                    //treeSection.expand(abstractNode, 1);
 
                 }
             });
@@ -96,7 +96,7 @@ public class BlockAddOperation extends AbstractOperation
                     treeSection.refresh(treeSection.findNode(group), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 1);
+                   // treeSection.expand(abstractNode, 1);
 
                 }
             });

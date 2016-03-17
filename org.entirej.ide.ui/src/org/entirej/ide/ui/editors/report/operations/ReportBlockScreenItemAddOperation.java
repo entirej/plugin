@@ -67,7 +67,7 @@ public class ReportBlockScreenItemAddOperation extends AbstractOperation
                     treeSection.refresh(treeSection.findNode(container), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(item, true);
                     treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 2);
+                    //treeSection.expand(abstractNode, 2);
 
                 }
             });

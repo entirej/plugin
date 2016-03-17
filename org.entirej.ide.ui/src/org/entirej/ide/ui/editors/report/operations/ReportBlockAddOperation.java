@@ -64,7 +64,7 @@ public class ReportBlockAddOperation extends AbstractOperation
                     treeSection.refresh(treeSection.findNode(group), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
-                    treeSection.expand(abstractNode, 2);
+                   // treeSection.expand(abstractNode, 2);
 
                 }
             });
