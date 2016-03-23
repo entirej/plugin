@@ -21,6 +21,9 @@ package org.entirej.ide.ui.editors.descriptors;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -1052,7 +1055,20 @@ public abstract class AbstractDescriptorPart extends SectionPart
             {
                 @SuppressWarnings("unchecked")
                 final ISelectionValueProvider<Object> provider = (ISelectionValueProvider<Object>) descriptor;
-                for (Object item : provider.getOptions())
+                List<Object> options = Arrays.asList(provider.getOptions());
+                Collections.sort(options, new Comparator<Object>()
+                {
+
+                    public int compare(Object o1, Object o2)
+                    {
+                        String key1 = provider.getOptionText(o1);
+                        String key2 = provider.getOptionText(o2);
+                        return key1.compareTo(key2);
+                    }
+                });
+                
+                
+                for (Object item : options)
                 {
                     String key = provider.getOptionText(item);
                     combo.add(key);
