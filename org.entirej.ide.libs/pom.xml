@@ -68,7 +68,7 @@
 							<outputDirectory>../org.entirej.ext.jasper/extlibs</outputDirectory>
 							<destFileName>entirej-report-jasper.jar</destFileName>
 						</artifactItem>
-						<artifactItem>
+						<!--  <artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-core</artifactId>
 							<version>${VERSION.CORE}</version>
@@ -78,6 +78,7 @@
 							<outputDirectory>../org.entirej.core.runtime/extlibs</outputDirectory>
 							<destFileName>entirej-core-javadoc.jar</destFileName>
 						</artifactItem>
+						-->
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-core</artifactId>
