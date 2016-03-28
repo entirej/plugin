@@ -19,6 +19,8 @@
 package org.entirej.ide.ui.editors.form.wizards;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -187,7 +189,7 @@ public class RefBlockSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<String> renderers = wizardContext.getReferencedBlockNames();
-
+                Collections.sort(renderers);
                 return renderers.toArray();
             }
         });
@@ -287,7 +289,15 @@ public class RefBlockSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<EJCanvasProperties> cances = wizardContext.getCanvas();
+                Collections.sort(cances,new Comparator<EJCanvasProperties>()
+                {
 
+                    public int compare(EJCanvasProperties o1, EJCanvasProperties o2)
+                    {
+                     
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
                 List<String> list = new ArrayList<String>(cances.size());
                 list.add(NONE_CANVAS);
                 list.add(NEW_CANVAS);

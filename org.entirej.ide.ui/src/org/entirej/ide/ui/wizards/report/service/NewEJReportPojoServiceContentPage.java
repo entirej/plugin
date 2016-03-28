@@ -20,6 +20,8 @@ package org.entirej.ide.ui.wizards.report.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -426,6 +428,16 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
                 {
                     EJCoreLog.log(ex);
                 }
+               Collections.sort(exportProviders, new Comparator<BlockServiceContentProvider>(){
+
+                public int compare(BlockServiceContentProvider o1, BlockServiceContentProvider o2)
+                {
+                    return o1.getProviderName().compareTo(o2.getProviderName());
+                }
+                   
+                   
+                   
+               });
                 return exportProviders.toArray();
             }
         });

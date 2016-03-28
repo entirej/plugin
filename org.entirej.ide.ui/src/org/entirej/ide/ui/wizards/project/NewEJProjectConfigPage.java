@@ -20,6 +20,8 @@ package org.entirej.ide.ui.wizards.project;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProjectDescription;
@@ -155,6 +157,14 @@ public class NewEJProjectConfigPage extends WizardPage
                 {
                     EJCoreLog.log(ex);
                 }
+                Collections.sort(exportProviders,new Comparator<ClientFrameworkProvider>()
+                {
+
+                    public int compare(ClientFrameworkProvider o1, ClientFrameworkProvider o2)
+                    {
+                        return o1.getProviderName().compareTo(o2.getProviderName());
+                    }
+                });
                 return exportProviders.toArray();
             }
         });

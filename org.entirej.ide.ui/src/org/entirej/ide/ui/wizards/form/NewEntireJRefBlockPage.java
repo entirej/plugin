@@ -20,6 +20,8 @@ package org.entirej.ide.ui.wizards.form;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
@@ -283,7 +285,15 @@ public class NewEntireJRefBlockPage extends NewTypeWizardPage implements IJavaPr
                         doStatusUpdate();
                     }
                 }
+                Collections.sort(renderers,new Comparator<EJPluginRenderer>()
+                {
 
+                    public int compare(EJPluginRenderer o1, EJPluginRenderer o2)
+                    {
+                     
+                        return o1.getAssignedName().compareTo(o2.getAssignedName());
+                    }
+                });
                 return renderers.toArray();
             }
         });

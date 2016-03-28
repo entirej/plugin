@@ -20,6 +20,8 @@ package org.entirej.ide.ui.editors.form;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -1348,7 +1350,9 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                     public Object[] getElements(Object inputElement)
                                     {
 
-                                        return formProp.getBlockNames().toArray();
+                                        List<String> blockNames = formProp.getBlockNames();
+                                        Collections.sort(blockNames);
+                                        return blockNames.toArray();
                                     }
                                 });
                                 itemViewer.setContentProvider(new IStructuredContentProvider()
@@ -1568,7 +1572,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                                 // ignore
                                             }
                                         }
-
+                                        Collections.sort(itemNames);
                                         return itemNames.toArray();
 
                                     }

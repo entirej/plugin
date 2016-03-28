@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.form.wizards;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -198,7 +200,15 @@ public class LovMappingSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<String> renderers = wizardContext.getLovDefinitionNames();
+                Collections.sort(renderers,new Comparator<String>()
+                {
 
+                    public int compare(String o1, String o2)
+                    {
+                     
+                        return o1.compareTo(o2);
+                    }
+                });
                 return renderers.toArray();
             }
         });

@@ -1,6 +1,8 @@
 package org.entirej.ide.ui.editors.prop;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.spi.FeatureConfigProvider;
 import org.entirej.ide.ui.EJUIMessages;
@@ -189,6 +192,16 @@ public class FeatureConfigDialog extends TitleAreaDialog
                 {
                     exportProviders.add(EMPTY);
                 }
+                
+                Collections.sort(exportProviders,new Comparator<FeatureConfigProvider>()
+                {
+
+                    public int compare(FeatureConfigProvider o1, FeatureConfigProvider o2)
+                    {
+                     
+                        return o1.getProviderName().compareTo(o2.getProviderName());
+                    }
+                });
                 return exportProviders.toArray();
             }
         });

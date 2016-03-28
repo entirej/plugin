@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.form.wizards;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +49,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.ide.core.spi.FeatureConfigProvider;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
@@ -189,6 +192,17 @@ public class BlockItemSelectionPage extends WizardPage
             {
                 List<EJPluginRenderer> renderers = wizardContext.getBlockItemRenderer();
 
+                
+                Collections.sort(renderers,new Comparator<EJPluginRenderer>()
+                {
+
+                    public int compare(EJPluginRenderer o1, EJPluginRenderer o2)
+                    {
+                     
+                        return o1.getAssignedName().compareTo(o2.getAssignedName());
+                    }
+                });
+                
                 return renderers.toArray();
             }
         });

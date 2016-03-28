@@ -19,6 +19,8 @@
 package org.entirej.ide.ui.editors.form.wizards;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -184,7 +186,15 @@ public class MirrorBlockSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<EJPluginRenderer> renderers = wizardContext.getBlockRenderer();
+                Collections.sort(renderers,new Comparator<EJPluginRenderer>()
+                {
 
+                    public int compare(EJPluginRenderer o1, EJPluginRenderer o2)
+                    {
+                     
+                        return o1.getAssignedName().compareTo(o2.getAssignedName());
+                    }
+                });
                 return renderers.toArray();
             }
         });
@@ -263,7 +273,7 @@ public class MirrorBlockSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<String> names = wizardContext.getBlockNames();
-
+                Collections.sort(names);
                 return names.toArray();
             }
         });
@@ -339,6 +349,16 @@ public class MirrorBlockSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<EJCanvasProperties> cances = wizardContext.getCanvas();
+                
+                Collections.sort(cances,new Comparator<EJCanvasProperties>()
+                {
+
+                    public int compare(EJCanvasProperties o1, EJCanvasProperties o2)
+                    {
+                     
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
 
                 List<String> list = new ArrayList<String>(cances.size());
                 list.add(NONE_CANVAS);

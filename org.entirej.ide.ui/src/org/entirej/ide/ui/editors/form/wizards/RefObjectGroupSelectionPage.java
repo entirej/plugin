@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.form.wizards;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -136,7 +138,7 @@ public class RefObjectGroupSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<String> renderers = wizardContext.getReferencedObjectGroupNames();
-
+                Collections.sort(renderers);
                 return renderers.toArray();
             }
         });

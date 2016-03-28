@@ -20,6 +20,8 @@ package org.entirej.ide.ui.wizards.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -80,7 +82,6 @@ import org.entirej.ide.core.project.EJPluginEntireJClassLoader;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
 import org.entirej.ide.core.spi.BlockServiceContentProvider.BlockServiceContent;
 import org.entirej.ide.core.spi.BlockServiceContentProvider.BlockServiceWizardProvider;
-import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.wizards.NewWizard;
 
 public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements BlockServiceContentProvider.GeneratorContext
@@ -418,6 +419,15 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 {
                     EJCoreLog.log(ex);
                 }
+                Collections.sort(exportProviders, new Comparator<BlockServiceContentProvider>()
+                {
+
+                    public int compare(BlockServiceContentProvider o1, BlockServiceContentProvider o2)
+                    {
+                      
+                        return o1.getProviderName().compareTo(o2.getProviderName());
+                    }
+                });
                 return exportProviders.toArray();
             }
         });

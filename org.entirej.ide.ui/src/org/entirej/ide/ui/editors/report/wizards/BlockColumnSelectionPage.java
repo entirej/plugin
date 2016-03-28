@@ -19,6 +19,8 @@
 package org.entirej.ide.ui.editors.report.wizards;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -190,7 +192,15 @@ public class BlockColumnSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<EJReportScreenItemType> renderers = wizardContext.getBlockItemTypes();
+                Collections.sort(renderers,new Comparator<EJReportScreenItemType>()
+                {
 
+                    public int compare(EJReportScreenItemType o1, EJReportScreenItemType o2)
+                    {
+                     
+                        return o1.toString().compareTo(o2.toString());
+                    }
+                });
                 return renderers.toArray();
             }
         });
