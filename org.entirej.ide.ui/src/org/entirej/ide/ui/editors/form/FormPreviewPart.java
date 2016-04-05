@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.form;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -50,6 +51,8 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
     // private AbstractNode<?> selectedNode;
     private ScrolledComposite          previewComposite;
 
+    private AtomicBoolean              autoRefrsh = new AtomicBoolean(true);
+    
     private IFormPreviewProvider       previewProvider;
     private final IFormPreviewProvider defaultPreviewProvider = new IFormPreviewProvider()
                                                               {
@@ -122,12 +125,34 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
             @Override
             public void run()
             {
-                previewLayout();
+                boolean state = autoRefrsh.get();
+                try
+                {
+                    autoRefrsh.set(true);
+                    previewLayout();
+                }
+                finally
+                {
+                    autoRefrsh.set(state);
+                }
+                
             }
 
         };
         refreshAction.setImageDescriptor(EJUIImages.DESC_REFRESH);
-        return new Action[] { refreshAction };
+        final Action autoRefresh = new Action("Auto Refresh", IAction.AS_CHECK_BOX)
+        {
+            
+            @Override
+            public void run()
+            {
+                autoRefrsh.set(isChecked());
+            }
+            
+        };
+        autoRefresh.setChecked(true);
+      
+        return new Action[] { autoRefresh,refreshAction };
     }
 
     @Override
@@ -169,6 +194,9 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
     private void previewLayout()
     {
+        if(!autoRefrsh.get())
+            return;
+        
         getSection().setRedraw(false);
         if (previewComposite != null)
         {
