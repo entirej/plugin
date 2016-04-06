@@ -91,6 +91,7 @@ public class EJUIImages
     public static final ImageDescriptor DESC_DELETE_ITEM             = create(PATH_ETOOLS16, "delete_item.gif");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_DELETE_ITEM_DISABLED    = create(PATH_DTOOLS16, "delete_item.gif");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_REFRESH                 = create(PATH_ETOOLS16, "refresh.gif");                                           //$NON-NLS-1$
+    public static final ImageDescriptor DESC_AUTO_REFRESH            = create(PATH_ETOOLS16, "auto-refresh.gif");                                           //$NON-NLS-1$
     public static final ImageDescriptor DESC_ALPHAB_SORT_CO          = create(PATH_ETOOLS16, "alphab_sort_co.gif");                                    //$NON-NLS-1$
     public static final ImageDescriptor DESC_ERROR_CO                = create(PATH_ETOOLS16, "error_co.gif");                                          //$NON-NLS-1$
     public static final ImageDescriptor DESC_WARNING_CO              = create(PATH_ETOOLS16, "warning_co.gif");                                        //$NON-NLS-1$

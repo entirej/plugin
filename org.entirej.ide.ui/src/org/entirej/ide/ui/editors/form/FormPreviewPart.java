@@ -140,7 +140,8 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
         };
         refreshAction.setImageDescriptor(EJUIImages.DESC_REFRESH);
-        final Action autoRefresh = new Action("Auto Refresh", IAction.AS_CHECK_BOX)
+       
+        final Action autoRefresh = new Action("Toggle Auto Refresh", IAction.AS_CHECK_BOX)
         {
             
             @Override
@@ -150,6 +151,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
             }
             
         };
+        autoRefresh.setImageDescriptor(EJUIImages.DESC_AUTO_REFRESH);
         autoRefresh.setChecked(true);
       
         return new Action[] { autoRefresh,refreshAction };
