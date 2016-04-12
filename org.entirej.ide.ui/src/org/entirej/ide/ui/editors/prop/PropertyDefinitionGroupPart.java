@@ -59,6 +59,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionList;
 import org.entirej.framework.core.properties.interfaces.EJItemProperties;
 import org.entirej.framework.dev.properties.EJDevPropertyDefinition;
+import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuProperties;
@@ -815,6 +816,48 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
                 }
             };
 
+        }
+        else if (dataType == EJPropertyDefinitionType.APPLICATION_PARAMETER)
+        {
+            descriptor = new AbstractDropDownDescriptor<String>(label, description)
+            {
+                public String[] getOptions()
+                {
+                    Collection<EJPluginApplicationParameter> allApplicationLevelParameters = entireJProperties.getAllApplicationLevelParameters();
+                    
+                   
+                    List<String> names = new ArrayList<String>();
+                    
+                    for (EJPluginApplicationParameter ejPluginApplicationParameter : allApplicationLevelParameters)
+                    {
+                       
+                            names.add(ejPluginApplicationParameter.getName());
+                        
+                        
+                    } 
+                    
+                    return names.toArray(new String[0]);
+                }
+                
+                public String getOptionText(String t)
+                {
+                    return t;
+                }
+                
+                @Override
+                public void setValue(String value)
+                {
+                    extensionProperties.setPropertyValue(groupName, value);
+                    editor.setDirty(true);
+                }
+                
+                @Override
+                public String getValue()
+                {
+                    return extensionProperties.getStringProperty(groupName);
+                }
+            };
+            
         }
         else if (dataType == EJPropertyDefinitionType.VISUAL_ATTRIBUTE)
         {
