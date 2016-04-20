@@ -541,7 +541,11 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             if(opPages.isEmpty())
               return null;
             
-            opPages.get(0);
+           return opPages.get(0);
+        }
+        if(opPages.size()>=(index + 1))
+        {
+            return null;
         }
         IWizardPage iWizardPage = opPages.get(index + 1);
         if (wizardProvider.skipPage(iWizardPage))
@@ -583,6 +587,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             // first page or page not found
             return null;
         }
+        
         IWizardPage iWizardPage = pages.get(index - 1);
         if (wizardProvider.skipPage(iWizardPage))
             return getPreviousPage(iWizardPage);
