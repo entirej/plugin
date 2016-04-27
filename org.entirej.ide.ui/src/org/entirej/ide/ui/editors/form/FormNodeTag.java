@@ -54,5 +54,6 @@ public interface FormNodeTag
     public static final int    UPDATE           = 1 << 22;
     public static final int    QUERY            = 1 << 23;
     public static final int    OBJGROUP         = 1 << 24;
+    public static final int    FIRST_BLOCK         = 1 << 25;
 
 }

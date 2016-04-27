@@ -96,6 +96,7 @@ import org.entirej.framework.core.actionprocessor.interfaces.EJFormActionProcess
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
+import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.renderers.definitions.interfaces.EJFormRendererDefinition;
 import org.entirej.framework.dev.EJDevConstants;
@@ -1349,8 +1350,8 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             };
             titleDescriptor.setRequired(true);
 
-            AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer",
-                    "The form renderer defined for the client framework you are using")
+            AbstractTextDropDownDescriptor firstFormDescriptor = new AbstractTextDropDownDescriptor("First Navigable Block",
+                    "")
             {
 
                 Filter vfilter = new Filter()
@@ -1359,7 +1360,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     public boolean match(int tag, IMarker marker)
                     {
 
-                        return (tag & FormNodeTag.RENDERER) != 0;
+                        return (tag & FormNodeTag.FIRST_BLOCK) != 0;
                     }
                 };
 
@@ -1386,11 +1387,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 public String[] getOptions()
                 {
                     List<String> options = new ArrayList<String>();
-                    EJPluginAssignedRendererContainer rendererContainer = source.getEntireJProperties().getFormRendererContainer();
-                    Collection<EJPluginRenderer> allRenderers = rendererContainer.getAllRenderers();
-                    for (EJPluginRenderer renderer : allRenderers)
+                    Collection<EJCanvasProperties> retriveAllCanvasesOnMainScreen = EJPluginCanvasRetriever.retriveAllCanvasesOnMainScreen(source);
+                    for (EJCanvasProperties canvas : retriveAllCanvasesOnMainScreen)
                     {
-                        options.add(renderer.getAssignedName());
+                        EJBlockProperties block = canvas.getBlockProperties();
+                        if (block != null)
+                        {
+                            options.add(block.getName());
+                        }
                     }
 
                     return options.toArray(new String[0]);
@@ -1405,6 +1409,95 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 @Override
                 public void setValue(String value)
                 {
+                    source.setFirstNavigableBlock(value);
+                    editor.setDirty(true);
+                    refresh(FormNode.this);
+                    if (descriptorViewer != null)
+                        descriptorViewer.showDetails(FormNode.this);
+                }
+                
+                
+                @Override
+                public boolean hasLableLink()
+                {
+                    return source.getFirstNavigableBlock()!=null && !source.getFirstNavigableBlock().isEmpty();
+                }
+
+                @Override
+                public String lableLinkActivator()
+                {
+
+                    EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockProperties(source.getFirstNavigableBlock());
+                    if (blockProperties != null)
+                    {
+                       
+                        selectNodes(false, findNode(blockProperties,true));
+                    }
+                    return null;
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return source.getFirstNavigableBlock();
+                }
+            };
+            AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer",
+                    "The form renderer defined for the client framework you are using")
+            {
+                
+                Filter vfilter = new Filter()
+                {
+                    
+                    public boolean match(int tag, IMarker marker)
+                    {
+                        
+                        return (tag & FormNodeTag.RENDERER) != 0;
+                    }
+                };
+                
+                @Override
+                public String getErrors()
+                {
+                    
+                    return validator.getErrorMarkerMsg(fmarkers, vfilter);
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public String getWarnings()
+                {
+                    return validator.getWarningMarkerMsg(fmarkers, vfilter);
+                }
+                
+                public String[] getOptions()
+                {
+                    List<String> options = new ArrayList<String>();
+                    EJPluginAssignedRendererContainer rendererContainer = source.getEntireJProperties().getFormRendererContainer();
+                    Collection<EJPluginRenderer> allRenderers = rendererContainer.getAllRenderers();
+                    for (EJPluginRenderer renderer : allRenderers)
+                    {
+                        options.add(renderer.getAssignedName());
+                    }
+                    
+                    return options.toArray(new String[0]);
+                }
+                
+                public String getOptionText(String t)
+                {
+                    
+                    return t;
+                }
+                
+                @Override
+                public void setValue(String value)
+                {
                     source.setFormRendererName(value);
                     EJFrameworkExtensionProperties extensionProperties = ExtensionsPropertiesFactory.createFormRendererProperties(source, true);
                     source.setFormRendererProperties(extensionProperties);
@@ -1413,7 +1506,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     if (descriptorViewer != null)
                         descriptorViewer.showDetails(FormNode.this);
                 }
-
+                
                 @Override
                 public String getValue()
                 {
@@ -1783,7 +1876,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             }
                         };
 
-                        return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor, layoutGroupDescriptor,
+                        return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor,firstFormDescriptor, layoutGroupDescriptor,
                                 rendererGroupDescriptor, metadataGroupDescriptor };
                     }
                 }
@@ -2285,7 +2378,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
             };
 
-            return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor, layoutGroupDescriptor, parametersDes,
+            return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor,firstFormDescriptor, layoutGroupDescriptor, parametersDes,
                     metadataGroupDescriptor };
         }
 

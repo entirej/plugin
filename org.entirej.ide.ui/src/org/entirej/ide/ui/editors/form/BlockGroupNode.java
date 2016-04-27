@@ -23,9 +23,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -1143,6 +1148,12 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
                     {
                         allBlockProperties.add(lovDefinitionProperties.getBlockProperties());
+                    }
+                    if (source.getFormProperties().getFirstNavigableBlock().equals(oldName))
+                    {
+                        
+                        source.getFormProperties().setFirstNavigableBlock(newName);
+                            
                     }
                     for (EJPluginBlockProperties properties : allBlockProperties)
                     {

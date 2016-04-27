@@ -85,6 +85,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 writeIntTAG(buffer, "formHeight", form.getFormHeight());
                 writeIntTAG(buffer, "numCols", form.getNumCols());
                 writeStringTAG(buffer, "actionProcessorClassName", form.getActionProcessorClassName());
+                writeStringTAG(buffer, "firstNavigableBlock", form.getFirstNavigableBlock());
                 writeStringTAG(buffer, "formRendererName", form.getFormRendererName());
                 
                 // Now add the forms parameters

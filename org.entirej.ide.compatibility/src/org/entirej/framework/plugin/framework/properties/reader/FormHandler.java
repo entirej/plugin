@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 public class FormHandler extends EntireJTagHandler
 {
     private EJPluginFormProperties _formProperties;
-    
+                                   
     private static final String    ELEMENT_FORM_TITLE             = "formTitle";
     private static final String    ELEMENT_FORM_DISPLAY_NAME      = "formDisplayName";
     private static final String    ELEMENT_FORM_WIDTH             = "formWidth";
@@ -37,10 +37,11 @@ public class FormHandler extends EntireJTagHandler
     private static final String    ELEMENT_ACTION_PROCESSOR       = "actionProcessorClassName";
     private static final String    ELEMENT_RENDERER_NAME          = "formRendererName";
     private static final String    ELEMENT_RENDERER_PROPERTIES    = "formRendererProperties";
-    
+                                                                  
     private static final String    ELEMENT_FORM_PARAMETER         = "formParameter";
     private static final String    ELEMENT_APPLICATION_PROPERTIES = "applicationProperties";
-    
+    private static final String    ELEMENT_FIRST_NAVIGABLE_BLOCK  = "firstNavigableBlock";
+                                                                  
     private static final String    ELEMENT_CANVAS                 = "canvas";
     private static final String    ELEMENT_BLOCK                  = "block";
     private static final String    ELEMENT_BLOCK_GROUP            = "blockGroup";
@@ -48,10 +49,10 @@ public class FormHandler extends EntireJTagHandler
     private static final String    ELEMENT_LOV_DEFINITION         = "lovDefinition";
     private static final String    ELEMENT_OBJGROUP_DEFINITION    = "objGroupDefinition";
     private static final String    ELEMENT_PROPERTY               = "property";
-    
+                                                                  
     private boolean                _gettingApplicationProperties  = false;
     private String                 _lastApplicationPropertyName   = "";
-    
+                                                                  
     public FormHandler(IJavaProject javaProject, String formName)
     {
         _formProperties = new EJPluginFormProperties(formName, javaProject);
@@ -71,6 +72,7 @@ public class FormHandler extends EntireJTagHandler
     {
         return new BlockHandler(formProperties, lovDefinitionProperties);
     }
+    
     public EntireJTagHandler getBlockGroupHandler(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties lovDefinitionProperties)
     {
         return new BlockGroupHandler(formProperties);
@@ -138,7 +140,7 @@ public class FormHandler extends EntireJTagHandler
             String dataTypeName = attributes.getValue("dataType");
             String defaultValue = attributes.getValue("defaultValue");
             
-            _formProperties.addFormParameter(new EJPluginApplicationParameter(paramName, dataTypeName,defaultValue));
+            _formProperties.addFormParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
         }
     }
     
@@ -202,6 +204,10 @@ public class FormHandler extends EntireJTagHandler
         {
             _formProperties.setActionProcessorClassName(value);
         }
+        else if (name.equals(ELEMENT_FIRST_NAVIGABLE_BLOCK))
+        {
+            _formProperties.setFirstNavigableBlock(value);
+        }
         else if (name.equals(ELEMENT_RENDERER_NAME))
         {
             _formProperties.setFormRendererName(value);
@@ -240,7 +246,7 @@ public class FormHandler extends EntireJTagHandler
             EJPluginObjectGroupProperties objectGroupDefinitionProperties = ((ObjGroupDefinitionHandler) currentDelegate).getObjectGroupDefinitionProperties();
             _formProperties.getObjectGroupContainer().addObjectGroupProperties(objectGroupDefinitionProperties);
             objectGroupDefinitionProperties.importObjectsToForm(_formProperties);
-
+            
             return;
         }
         else if (name.equals(ELEMENT_RENDERER_PROPERTIES))
@@ -250,8 +256,8 @@ public class FormHandler extends EntireJTagHandler
                 
                 if (_formProperties.getFormRendererDefinition() != null)
                 {
-                    _formProperties.setFormRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate).getMainPropertiesGroup(_formProperties
-                            .getFormRendererDefinition().getFormPropertyDefinitionGroup()));
+                    _formProperties.setFormRendererProperties(((FrameworkExtensionPropertiesHandler) currentDelegate)
+                            .getMainPropertiesGroup(_formProperties.getFormRendererDefinition().getFormPropertyDefinitionGroup()));
                 }
                 else
                 {

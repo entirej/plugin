@@ -83,8 +83,8 @@ public class BlockRemoveOperation extends AbstractOperation
             operation.add(createCleanupOperation(treeSection, container, mirroredBlock));
         }
 
-        List<EJPluginBlockProperties> allBlockProperties = new ArrayList<EJPluginBlockProperties>(props.getFormProperties().getBlockContainer()
-                .getAllBlockProperties());
+        List<EJPluginBlockProperties> allBlockProperties = new ArrayList<EJPluginBlockProperties>(
+                props.getFormProperties().getBlockContainer().getAllBlockProperties());
         List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = props.getFormProperties().getLovDefinitionContainer()
                 .getAllLovDefinitionProperties();
         for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
@@ -185,6 +185,33 @@ public class BlockRemoveOperation extends AbstractOperation
             }
         }
 
+        if (props.getFormProperties().getFirstNavigableBlock().equals(props.getName()))
+        {
+            operation.add(new AbstractOperation("First Navigable Block")
+            {
+
+                @Override
+                public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                {
+                    props.getFormProperties().setFirstNavigableBlock(props.getName());
+                    return Status.OK_STATUS;
+                }
+
+                @Override
+                public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                {
+                    return execute(monitor, info);
+                }
+
+                @Override
+                public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                {
+                    props.getFormProperties().setFirstNavigableBlock("");
+                    return Status.OK_STATUS;
+                }
+            });
+        }
+
         operation.add(new BlockRemoveOperation(treeSection, container, props));
 
         return operation;
@@ -258,7 +285,7 @@ public class BlockRemoveOperation extends AbstractOperation
                     treeSection.refresh(treeSection.findNode(container), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
-                    //treeSection.expand(abstractNode, 2);
+                    // treeSection.expand(abstractNode, 2);
 
                 }
             });
@@ -283,7 +310,7 @@ public class BlockRemoveOperation extends AbstractOperation
                     treeSection.refresh(treeSection.findNode(group), true);
                     AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
                     treeSection.selectNodes(true, abstractNode);
-                    //treeSection.expand(abstractNode, 2);
+                    // treeSection.expand(abstractNode, 2);
 
                 }
             });

@@ -808,7 +808,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                             AbstractNode<?> findNode = treeSection.findNode(editor.getFormProperties().getBlockContainer(),true);
                             treeSection.selectNodes(false, findNode);
                             treeSection.expand(findNode);
-                            treeSection.selectNodes(false, treeSection.findNode(blockProperties));
+                            treeSection.selectNodes(false, treeSection.findNode(blockProperties,true));
                         }
                         return null;
                     }

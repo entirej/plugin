@@ -72,6 +72,8 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     private List<EJPluginApplicationParameter> _formParameters;
     private HashMap<String, String>            _applicationProperties;
     
+    private String                                 _firstNavigableBlock      = "";
+    
     // Display Properties
     private int                                _formWidth;
     private int                                _formHeight;
@@ -775,5 +777,16 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         }
         
         return buffer.toString();
+    }
+    
+    @Override
+    public String getFirstNavigableBlock()
+    {
+        return _firstNavigableBlock;
+    }
+    
+    public void setFirstNavigableBlock(String firstNavigableBlock)
+    {
+        _firstNavigableBlock = firstNavigableBlock;
     }
 }

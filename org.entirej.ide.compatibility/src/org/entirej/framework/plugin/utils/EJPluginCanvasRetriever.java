@@ -70,6 +70,47 @@ public class EJPluginCanvasRetriever
         
         return canvasList;
     }
+    public static Collection<EJCanvasProperties> retriveAllCanvasesOnMainScreen(EJPluginFormProperties formProperties)
+    {
+        ArrayList<EJCanvasProperties> canvasList = new ArrayList<EJCanvasProperties>();
+        
+        Iterator<EJCanvasProperties> allCanvases = formProperties.getCanvasContainer().getAllCanvasProperties().iterator();
+        while (allCanvases.hasNext())
+        {
+            EJCanvasProperties canvas = allCanvases.next();
+            canvasList.add(canvas);
+            if (canvas.getType() == EJCanvasType.POPUP)
+            {
+                continue;
+            }
+            else if (canvas.getType() == EJCanvasType.TAB)
+            {
+                Iterator<EJTabPageProperties> allTabPages = canvas.getTabPageContainer().getAllTabPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    addCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.STACKED)
+            {
+                Iterator<EJStackedPageProperties> allStackedPages = canvas.getStackedPageContainer().getAllStackedPageProperties().iterator();
+                while (allStackedPages.hasNext())
+                {
+                    addCanvasesFromContainer(formProperties, allStackedPages.next().getContainedCanvases(), canvasList);
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.GROUP)
+            {
+                addCanvasesFromContainer(formProperties, canvas.getGroupCanvasContainer(), canvasList);
+            }
+            else if (canvas.getType() == EJCanvasType.SPLIT)
+            {
+                addCanvasesFromContainer(formProperties, canvas.getSplitCanvasContainer(), canvasList);
+            }
+        }
+        
+        return canvasList;
+    }
     
     public static Collection<EJCanvasProperties> retriveAllBlockCanvasesAssignedTabPage(EJPluginFormProperties formProperties, EJPluginTabPageProperties page)
     {
