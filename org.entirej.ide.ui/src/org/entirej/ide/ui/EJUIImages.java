@@ -83,6 +83,7 @@ public class EJUIImages
 
     public static final ImageDescriptor DESC_HELP                    = create(PATH_ETOOLS16, "help.gif");                                              //$NON-NLS-1$
 
+    public static final ImageDescriptor DESC_FEATURE                 = create(PATH_ETOOLS16, "feature.gif");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_COLLAPSE_ALL            = create(PATH_ETOOLS16, "collapseall.gif");                                       //$NON-NLS-1$
     public static final ImageDescriptor DESC_EXPAND_ALL              = create(PATH_ETOOLS16, "expandall.gif");                                         //$NON-NLS-1$
     public static final ImageDescriptor DESC_UP                      = create(PATH_ETOOLS16, "up.gif");                                                //$NON-NLS-1$

@@ -88,6 +88,7 @@ public class EJPropertiesPage extends AbstractEditorPage
                     }
 
                 };
+                addFeatureAction.setImageDescriptor(EJUIImages.DESC_FEATURE);
 
                 refreshAction.setImageDescriptor(EJUIImages.DESC_REFRESH);
                 return new Action[] { addFeatureAction, refreshAction };
