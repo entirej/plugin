@@ -302,6 +302,18 @@
             %new.entirejForm.description
          </description>
       </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.features.NewEntireJFeatureWizard"
+            finalPerspective="org.entirej.ide.ui.perspective"
+            icon="icons/etools16/newfeature_wiz.gif"
+            id="org.entirej.ide.ui.wizards.NewEntireJFeatureWizard"
+            name="EntireJ Feature"
+            project="false">
+         <description>
+            Add a feature to EntireJ project.
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -347,6 +359,14 @@
                label="%new.entirejbservice.name"
                toolbarPath="entirejGroup"
                tooltip="%new.entirejbservice.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.features.NewFeatureAction"
+               icon="icons/etools16/newfeature_wiz.gif"
+               id="org.entirej.ide.ui.wizards.features.NewFeatureAction"
+               label="Add EntireJ Feature"
+               toolbarPath="entirejGroup"
+               tooltip="Add a feature to EntireJ project.">
          </action>
       </actionSet>
       <actionSet
