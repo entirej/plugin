@@ -827,6 +827,7 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
                     
                    
                     List<String> names = new ArrayList<String>();
+                    names.add("");
                     
                     for (EJPluginApplicationParameter ejPluginApplicationParameter : allApplicationLevelParameters)
                     {
