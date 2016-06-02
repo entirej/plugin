@@ -51,7 +51,7 @@ public class EJStatementParameterOraStruct<T extends EJOraCollectionType> extend
         }
     }
 
-    public T getColelctionType()
+    public T getCollectionType()
     {
         return _tableType;
     }

@@ -73,7 +73,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
             EJManagedReportFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
             try
             {
-                return _array.toDatum((OracleConnection) con.getConnectionObject(), _SQL_NAME);
+                return _array.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
             }
             finally
             {
@@ -190,7 +190,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
             EJManagedReportFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
             try
             {
-                return _struct.toDatum((OracleConnection) con.getConnectionObject(), _SQL_NAME);
+                return _struct.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
             }
             finally
             {
