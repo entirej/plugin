@@ -13,7 +13,7 @@ import java.util.HashMap;
 import org.entirej.EJOraCollectionType;
 import org.entirej.framework.report.EJReportRuntimeException;
 import org.entirej.framework.report.EJReportFieldName;
-import org.entirej.framework.report.EJManagedReportFrameworkConnection;
+import org.entirej.framework.report.EJReportManagedFrameworkConnection;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 import oracle.jpub.runtime.MutableStruct;
@@ -70,7 +70,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedReportFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
+            EJReportManagedFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
             try
             {
                 return _array.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
@@ -187,7 +187,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedReportFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
+            EJReportManagedFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
             try
             {
                 return _struct.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
