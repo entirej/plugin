@@ -65,6 +65,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
 import org.entirej.framework.plugin.reports.reader.EntireJReportReader;
 import org.entirej.framework.plugin.reports.reader.ReportHandler;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
@@ -530,6 +531,17 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                 {
                     createBlockCode(blockProp, builder);
 
+                }
+                //build sub blocks
+                BlockGroup subBlocks = blockProp.getLayoutScreenProperties().getSubBlocks();
+                for (EJPluginReportBlockProperties ejPluginReportBlockProperties : subBlocks.getAllBlockProperties())
+                {
+                    if (ejPluginReportBlockProperties.getName() != null && ejPluginReportBlockProperties.getName().length() > 0)
+                    {
+                        createBlockCode(ejPluginReportBlockProperties, builder);
+
+                    }
+                    
                 }
 
             }

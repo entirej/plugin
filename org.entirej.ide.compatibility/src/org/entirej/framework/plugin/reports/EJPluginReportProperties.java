@@ -43,20 +43,20 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private boolean                            _isReusableBlock          = false;
     private boolean                            _isObjectGroup            = false;
     private IJavaProject                       _reportProject;
-    
+                                               
     private String                             _name                     = "";
     private String                             _reportTitle              = "";
     private String                             _reportDisplayName        = "";
-    
+                                                                         
     private String                             _actionProcessorClassName = "";
-    
+                                                                         
     private String                             _visualAttributeName;
-    
+                                               
     private List<EJPluginApplicationParameter> _reportParameters;
     private HashMap<String, String>            _applicationProperties;
-    
+                                               
     private boolean                            _ignorePagination;
-    
+                                               
     // Display Properties
     private int                                _reportWidth;
     private int                                _reportHeight;
@@ -65,15 +65,15 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     private int                                _marginLeft;
     private int                                _marginRight;
     private int                                _headerSectionHeight      = 30;                    // plugin
-                                                                                                   // default
+                                                                                                  // default
     private int                                _footerSectionHeight      = 20;                    // plugin
-                                                                                                   // default
+                                                                                                  // default
     private EJReportProperties.ORIENTATION     _orientation              = ORIENTATION.PORTRAIT;
-    
+                                                                         
     private EJReportExportType                 exportType                = EJReportExportType.PDF;
-    
+                                                                         
     private EJReportBlockContainer             blockContainer;
-    
+                                               
     public EJPluginReportProperties(String reportName, IJavaProject javaProject)
     {
         _name = reportName;
@@ -411,7 +411,7 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     
     public void initialisationCompleted()
     {
-        
+    
     }
     
     public List<String> getBlockNames()
@@ -430,6 +430,22 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     public List<String> getBlockNamesWithParents(EJPluginReportBlockProperties sub)
     {
         List<String> blockNames = new ArrayList<String>();
+        
+        //read same lavel blocks
+        for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
+        {
+            EJPluginReportBlockProperties parent = findParent(sub.getName(), properties);
+            if (parent != null)
+            {
+                BlockGroup subBlocks = parent.getLayoutScreenProperties().getSubBlocks();
+                List<EJPluginReportBlockProperties> allBlockProperties = subBlocks.getAllBlockProperties();
+                for (EJPluginReportBlockProperties ejPluginReportBlockProperties : allBlockProperties)
+                {
+                    blockNames.add(ejPluginReportBlockProperties.getName());
+                }
+                break;
+            }
+        }
         
         for (EJPluginReportBlockProperties properties : blockContainer.getAllBlockProperties())
         {
@@ -466,6 +482,26 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
         }
         
         return false;
+    }
+    
+    private EJPluginReportBlockProperties findParent(String child, EJPluginReportBlockProperties blockProperties)
+    {
+        List<EJPluginReportBlockProperties> allBlockProperties = blockProperties.getLayoutScreenProperties().getSubBlocks().getAllBlockProperties();
+        for (EJPluginReportBlockProperties properties : allBlockProperties)
+        {
+            if (child.equals(properties.getName()))
+            {
+                return blockProperties;
+            }
+            EJPluginReportBlockProperties findParent = findParent(child, properties);
+            if (findParent != null)
+            {
+                
+                return findParent;
+            }
+        }
+        
+        return null;
     }
     
     public EJReportBlockItemContainer getBlockProperties(String blockName)
@@ -512,11 +548,12 @@ public class EJPluginReportProperties implements EJReportProperties, Comparable<
     {
         return null;
     }
+    
     public String getVisualAttributeName()
     {
         return _visualAttributeName;
     }
-
+    
     public void setVisualAttributeName(String _visualAttributeName)
     {
         this._visualAttributeName = _visualAttributeName;
