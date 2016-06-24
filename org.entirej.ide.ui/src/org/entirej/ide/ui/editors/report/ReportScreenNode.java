@@ -1127,6 +1127,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         else if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
         {
             nodes.add(new ReportBlockColumnGroupNode(treeSection, this));
+            if (blockGroupNode != null)
+                nodes.add(blockGroupNode.createScreenGroupNode(this, source.getSubBlocks()));
         }
         return nodes.toArray(new AbstractNode<?>[0]);
     }

@@ -355,6 +355,29 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     endTAG(buffer, "columnitem");
                 }
                 endTAG(buffer, "screenColumnList");
+                
+                BlockGroup group = layoutScreenProperties.getSubBlocks();
+                startOpenTAG(buffer, "blockGroup");
+                {
+                    
+                    closeOpenTAG(buffer);
+                    List<EJPluginReportBlockProperties> allBlockProperties = group.getAllBlockProperties();
+                    for (EJPluginReportBlockProperties blockProps : allBlockProperties)
+                    {
+                        
+                        if (blockProps.isReferenceBlock())
+                        {
+                            // FIXME
+                            // addReferencedBlockProperties(blockProps, buffer);
+                        }
+                        else
+                        {
+                            addBlockProperties(blockProps, buffer);
+                        }
+                        continue;
+                    }
+                }
+                endTAG(buffer, "blockGroup");
             }
             else if (layoutScreenProperties.getScreenType() == EJReportScreenType.CHART_LAYOUT)
             {
