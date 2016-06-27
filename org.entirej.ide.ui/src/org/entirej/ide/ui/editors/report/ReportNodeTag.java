@@ -25,7 +25,7 @@ public interface ReportNodeTag
     public static final String ITEM_ID          = "i_id";
 
     public static final int    NONE             = 0;
-    public static final int    REPORT             = 1 << 1;
+    public static final int    REPORT           = 1 << 1;
     public static final int    GROUP            = 1 << 2;
     public static final int    BLOCK            = 1 << 3;
     public static final int    RENDERER         = 1 << 4;

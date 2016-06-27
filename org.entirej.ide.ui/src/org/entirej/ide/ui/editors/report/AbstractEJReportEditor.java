@@ -39,13 +39,11 @@ import org.entirej.ide.ui.nodes.AbstractNode;
 public abstract class AbstractEJReportEditor extends AbstractEditor implements IJavaProjectProvider
 {
 
-    protected final Object                    MODEL_LOCK = new Object();
+    protected final Object                      MODEL_LOCK = new Object();
     protected volatile EJPluginReportProperties reportProperties;
-    protected volatile IJavaProject           project;
+    protected volatile IJavaProject             project;
     protected EJReportBasePage                  formBasePage;
 
-    
-    
     @Override
     protected void addPages()
     {
@@ -62,46 +60,44 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
     }
 
     protected final IPartListener partListener = new IPartListener()
-                                               {
-                                                   AtomicBoolean active = new AtomicBoolean(false);
+    {
+        AtomicBoolean active = new AtomicBoolean(false);
 
-                                                   public void partOpened(IWorkbenchPart part)
-                                                   {
-                                                   }
+        public void partOpened(IWorkbenchPart part)
+        {
+        }
 
-                                                   public void partDeactivated(IWorkbenchPart part)
-                                                   {
-                                                       active.set(false);
-                                                   }
+        public void partDeactivated(IWorkbenchPart part)
+        {
+            active.set(false);
+        }
 
-                                                   public void partClosed(IWorkbenchPart part)
-                                                   {
-                                                       active.set(false);
-                                                   }
+        public void partClosed(IWorkbenchPart part)
+        {
+            active.set(false);
+        }
 
-                                                   public void partBroughtToTop(IWorkbenchPart part)
-                                                   {
-                                                   }
+        public void partBroughtToTop(IWorkbenchPart part)
+        {
+        }
 
-                                                   public void partActivated(IWorkbenchPart part)
-                                                   {
-                                                       if (!active.get() && part == AbstractEJReportEditor.this)
-                                                       {
+        public void partActivated(IWorkbenchPart part)
+        {
+            if (!active.get() && part == AbstractEJReportEditor.this)
+            {
 
-                                                           active.set(true);
-                                                           autoPerspectiveSwitch(
-                                                                   "org.entirej.ide.ui.report.perspective",
-                                                                   EJUIPlugin.getDefault().getPreferenceStore(),
-                                                                   "AbstractEJReportEditor.autoPerspectiveSwitch",
-                                                                   "This Editor is associated with the EntireJ Report Perspective.\n\nIt is highly recommended to switch to that perspective when editing EntireJ Reports.\n\nDo you want to switch to the EntireJ Report Perspective now?");
-                                                       }
-                                                       else
-                                                       {
-                                                           active.set(true);
-                                                       }
-                                                   }
-                                               };
-    
+                active.set(true);
+                autoPerspectiveSwitch("org.entirej.ide.ui.report.perspective", EJUIPlugin.getDefault().getPreferenceStore(),
+                        "AbstractEJReportEditor.autoPerspectiveSwitch",
+                        "This Editor is associated with the EntireJ Report Perspective.\n\nIt is highly recommended to switch to that perspective when editing EntireJ Reports.\n\nDo you want to switch to the EntireJ Report Perspective now?");
+            }
+            else
+            {
+                active.set(true);
+            }
+        }
+    };
+
     @Override
     public AbstractEditorPage[] getAbstractEditorPages()
     {
@@ -134,7 +130,6 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
 
     }
 
-
     public EJPluginReportProperties getReportProperties()
     {
         synchronized (MODEL_LOCK)
@@ -157,11 +152,10 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
             return project;
         }
     }
-    
-    
-    public void select(Object objects )
+
+    public void select(Object objects)
     {
-        if(formBasePage!=null )
+        if (formBasePage != null)
         {
             formBasePage.select(objects);
         }
@@ -169,45 +163,48 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
 
     public void expand(Object objects)
     {
-        if(formBasePage!=null )
+        if (formBasePage != null)
         {
             formBasePage.expand(objects);
         }
-        
+
     }
+
     public void refresh(Object objects)
     {
-        if(formBasePage!=null )
+        if (formBasePage != null)
         {
             formBasePage.refresh(objects);
         }
-        
+
     }
-    public AbstractNode<?>  findNode(Object object)
+
+    public AbstractNode<?> findNode(Object object)
     {
-        if(formBasePage!=null )
+        if (formBasePage != null)
         {
             return formBasePage.treeSection.findNode(object);
         }
-        
+
         return null;
     }
+
     public void refreshProperties()
     {
-        if(formBasePage!=null )
+        if (formBasePage != null)
         {
             formBasePage.refreshProperties();
         }
-        
+
     }
 
     public void refreshPreview()
     {
-        if(formBasePage!=null )
+        if (formBasePage != null)
         {
-             formBasePage.treeSection.refreshPreview();
+            formBasePage.treeSection.refreshPreview();
         }
-        
+
     }
 
 }

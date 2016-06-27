@@ -180,38 +180,35 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
     class ScreenColumnNode extends AbstractNode<EJPluginReportColumnProperties> implements Neighbor, Movable, NodeOverview
     {
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
-                                                      {
+        {
 
-                                                          public void refreshNode()
-                                                          {
-                                                              treeSection.refresh(ScreenColumnNode.this);
-                                                          }
+            public void refreshNode()
+            {
+                treeSection.refresh(ScreenColumnNode.this);
+            }
 
-                                                          @Override
-                                                          public List<IMarker> getMarkers()
-                                                          {
-                                                              List<IMarker> fmarkers = new ArrayList<IMarker>();
+            @Override
+            public List<IMarker> getMarkers()
+            {
+                List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                              IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
-                                                              for (IMarker marker : markers)
-                                                              {
-                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
-                                                                  if ((tag & ReportNodeTag.BLOCK) != 0
-                                                                          && source.getBlockProperties().getName() != null
-                                                                          && source.getBlockProperties().getName()
-                                                                                  .equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null))
-                                                                          && source.getName() != null
-                                                                          && source.getName().equals(marker.getAttribute(ReportNodeTag.ITEM_ID, null)))
-                                                                  {
+                IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
+                for (IMarker marker : markers)
+                {
+                    int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                    if ((tag & ReportNodeTag.BLOCK) != 0 && source.getBlockProperties().getName() != null
+                            && source.getBlockProperties().getName().equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null)) && source.getName() != null
+                            && source.getName().equals(marker.getAttribute(ReportNodeTag.ITEM_ID, null)))
+                    {
 
-                                                                      fmarkers.add(marker);
-                                                                  }
+                        fmarkers.add(marker);
+                    }
 
-                                                              }
+                }
 
-                                                              return fmarkers;
-                                                          }
-                                                      };
+                return fmarkers;
+            }
+        };
 
         public ScreenColumnNode(AbstractNode<?> parent, EJPluginReportColumnProperties source)
         {
@@ -321,8 +318,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                         return false;
                     }
-                    
-                    
+
                     public <S> S getAdapter(Class<S> adapter)
                     {
 
@@ -331,17 +327,17 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                             if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                                 return adapter.cast(new ReportScreenPreviewImpl(source)
                                 {
-                                    
+
                                     @Override
                                     protected int getHeight()
                                     {
-                                        if(source.getHeight()==0)
-                                            return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getHeaderColumnHeight();
+                                        if (source.getHeight() == 0)
+                                            return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties()
+                                                    .getHeaderColumnHeight();
                                         return super.getHeight();
                                     }
                                 });
 
-                           
                         }
                         return null;
                     }
@@ -369,7 +365,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
                     return false;
                 }
-                
+
                 public <S> S getAdapter(Class<S> adapter)
                 {
 
@@ -378,17 +374,16 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                         if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                             return adapter.cast(new ReportScreenPreviewImpl(source)
                             {
-                                
+
                                 @Override
                                 protected int getHeight()
                                 {
-                                    if(source.getHeight()==0)
+                                    if (source.getHeight() == 0)
                                         return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getDetailColumnHeight();
                                     return super.getHeight();
                                 }
                             });
 
-                       
                     }
                     return null;
                 }
@@ -426,22 +421,22 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                             if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
                                 return adapter.cast(new ReportScreenPreviewImpl(source)
                                 {
-                                    
+
                                     @Override
                                     protected int getHeight()
                                     {
-                                        
-                                        if(source.getHeight()==0)
-                                            return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getFooterColumnHeight();
+
+                                        if (source.getHeight() == 0)
+                                            return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties()
+                                                    .getFooterColumnHeight();
                                         return super.getHeight();
                                     }
                                 });
 
-                           
                         }
                         return null;
                     }
-                    
+
                     @Override
                     public AbstractDescriptor<?>[] getNodeDescriptors()
                     {
@@ -584,8 +579,8 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
 
             AbstractTextDropDownDescriptor vaDescriptor = new AbstractTextDropDownDescriptor("Border Visual Attributes", "")
             {
-                List<String> visualAttributeNames = new ArrayList<String>(editor.getReportProperties().getEntireJProperties().getVisualAttributesContainer()
-                                                          .getVisualAttributeNames());
+                List<String> visualAttributeNames = new ArrayList<String>(
+                        editor.getReportProperties().getEntireJProperties().getVisualAttributesContainer().getVisualAttributeNames());
 
                 @Override
                 public void setValue(String value)
@@ -747,21 +742,21 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 {
                     InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Rename Column [%s]", source.getName()),
                             "Column Name", source.getName(), new IInputValidator()
-                            {
+                    {
 
-                                public String isValid(String newText)
-                                {
-                                    if (newText == null || newText.trim().length() == 0)
-                                        return "Column name can't be empty.";
-                                    if (source.getName().equals(newText.trim()))
-                                        return "";
-                                    if (source.getName().equalsIgnoreCase(newText.trim()))
-                                        return null;
-                                    if (ReportBlockColumnGroupNode.this.source.contains(newText.trim()))
-                                        return "Column with this name already exists.";
-                                    return null;
-                                }
-                            });
+                        public String isValid(String newText)
+                        {
+                            if (newText == null || newText.trim().length() == 0)
+                                return "Column name can't be empty.";
+                            if (source.getName().equals(newText.trim()))
+                                return "";
+                            if (source.getName().equalsIgnoreCase(newText.trim()))
+                                return null;
+                            if (ReportBlockColumnGroupNode.this.source.contains(newText.trim()))
+                                return "Column with this name already exists.";
+                            return null;
+                        }
+                    });
                     if (dlg.open() == Window.OK)
                     {
                         String oldName = source.getName();
@@ -791,14 +786,14 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
             final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & ReportNodeTag.WIDTH) != 0;
-                                   }
-                               };
+                        return (tag & ReportNodeTag.WIDTH) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -935,8 +930,8 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
     public boolean canMove(Neighbor relation, Object source)
     {
         // only allow to DnD with in the same block
-        return (source instanceof EJPluginReportColumnProperties && ((EJPluginReportColumnProperties) source).getBlockProperties().equals(
-                this.source.getBlockProperties()));
+        return (source instanceof EJPluginReportColumnProperties
+                && ((EJPluginReportColumnProperties) source).getBlockProperties().equals(this.source.getBlockProperties()));
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)

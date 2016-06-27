@@ -192,38 +192,35 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
     class ItemNode extends AbstractNode<EJPluginReportItemProperties> implements Neighbor, Movable, NodeOverview
     {
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
-                                                      {
+        {
 
-                                                          public void refreshNode()
-                                                          {
-                                                              treeSection.refresh(ItemNode.this);
-                                                          }
+            public void refreshNode()
+            {
+                treeSection.refresh(ItemNode.this);
+            }
 
-                                                          @Override
-                                                          public List<IMarker> getMarkers()
-                                                          {
-                                                              List<IMarker> fmarkers = new ArrayList<IMarker>();
+            @Override
+            public List<IMarker> getMarkers()
+            {
+                List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                              IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
-                                                              for (IMarker marker : markers)
-                                                              {
-                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
-                                                                  if ((tag & ReportNodeTag.BLOCK) != 0
-                                                                          && source.getBlockProperties().getName() != null
-                                                                          && source.getBlockProperties().getName()
-                                                                                  .equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null))
-                                                                          && source.getName() != null
-                                                                          && source.getName().equals(marker.getAttribute(ReportNodeTag.ITEM_ID, null)))
-                                                                  {
+                IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
+                for (IMarker marker : markers)
+                {
+                    int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                    if ((tag & ReportNodeTag.BLOCK) != 0 && source.getBlockProperties().getName() != null
+                            && source.getBlockProperties().getName().equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null)) && source.getName() != null
+                            && source.getName().equals(marker.getAttribute(ReportNodeTag.ITEM_ID, null)))
+                    {
 
-                                                                      fmarkers.add(marker);
-                                                                  }
+                        fmarkers.add(marker);
+                    }
 
-                                                              }
+                }
 
-                                                              return fmarkers;
-                                                          }
-                                                      };
+                return fmarkers;
+            }
+        };
 
         public ItemNode(AbstractNode<?> parent, EJPluginReportItemProperties source)
         {
@@ -343,21 +340,21 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                 {
                     InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Rename Item [%s]", source.getName()), "Item Name",
                             source.getName(), new IInputValidator()
-                            {
+                    {
 
-                                public String isValid(String newText)
-                                {
-                                    if (newText == null || newText.trim().length() == 0)
-                                        return "Item name can't be empty.";
-                                    if (source.getName().equals(newText.trim()))
-                                        return "";
-                                    if (source.getName().equalsIgnoreCase(newText.trim()))
-                                        return null;
-                                    if (ReportBlockItemsGroupNode.this.source.contains(newText.trim()))
-                                        return "Item with this name already exists.";
-                                    return null;
-                                }
-                            });
+                        public String isValid(String newText)
+                        {
+                            if (newText == null || newText.trim().length() == 0)
+                                return "Item name can't be empty.";
+                            if (source.getName().equals(newText.trim()))
+                                return "";
+                            if (source.getName().equalsIgnoreCase(newText.trim()))
+                                return null;
+                            if (ReportBlockItemsGroupNode.this.source.contains(newText.trim()))
+                                return "Item with this name already exists.";
+                            return null;
+                        }
+                    });
                     if (dlg.open() == Window.OK)
                     {
                         String oldName = source.getName();
@@ -386,8 +383,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         {
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
-            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(editor,source.getBlockProperties().getReportProperties(), source.getBlockProperties(),
-                    "Default Query Value")
+            ItemDefaultValue queryItemDefaultValue = new ItemDefaultValue(editor, source.getBlockProperties().getReportProperties(),
+                    source.getBlockProperties(), "Default Query Value")
             {
                 @Override
                 public String getValue()
@@ -421,14 +418,14 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                 AbstractTypeDescriptor dataTypeDescriptor = new AbstractTypeDescriptor(editor, "Data Type")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & ReportNodeTag.TYPE) != 0;
-                                       }
-                                   };
+                            return (tag & ReportNodeTag.TYPE) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -442,12 +439,14 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -484,12 +483,13 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             editor.setDirty(true);
                             treeSection.refresh(ItemNode.this);
 
-                        } 
+                        }
+
                         @Override
                         public void runOperation(AbstractOperation operation)
                         {
                             editor.execute(operation);
-                            
+
                         }
 
                         @Override
@@ -526,8 +526,8 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
     public boolean canMove(Neighbor relation, Object source)
     {
         // only allow to DnD with in the same block
-        return (source instanceof EJPluginReportItemProperties && ((EJPluginReportItemProperties) source).getBlockProperties().equals(
-                this.source.getBlockProperties()));
+        return (source instanceof EJPluginReportItemProperties
+                && ((EJPluginReportItemProperties) source).getBlockProperties().equals(this.source.getBlockProperties()));
     }
 
     public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -627,10 +627,11 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
         {
             return true;
         }
+
         @Override
         public void runOperation(AbstractOperation operation)
         {
-            if(editor!=null)
+            if (editor != null)
                 editor.execute(operation);
             else
             {
@@ -644,11 +645,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                     e.printStackTrace();
                 }
             }
-            
+
         }
+
         enum TYPE
         {
-            EMPTY, BLOCK_ITEM, REPORT_PARAMETER, APP_PARAMETER, CLASS_FIELD,VARIABLE;
+            EMPTY, BLOCK_ITEM, REPORT_PARAMETER, APP_PARAMETER, CLASS_FIELD, VARIABLE;
 
             public String toString()
             {
@@ -672,15 +674,17 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
             }
         }
 
-        TYPE entry;
-        final AbstractEJReportEditor  editor;
-        public ItemDefaultValue(AbstractEJReportEditor  editor,EJPluginReportProperties formProp, EJPluginReportBlockProperties blockProperties, String lable)
+        TYPE                         entry;
+        final AbstractEJReportEditor editor;
+
+        public ItemDefaultValue(AbstractEJReportEditor editor, EJPluginReportProperties formProp, EJPluginReportBlockProperties blockProperties, String lable)
         {
             super(lable);
             this.formProp = formProp;
             this.editor = editor;
             this.blockProperties = blockProperties;
         }
+
         public ItemDefaultValue(EJPluginReportProperties formProp, EJPluginReportBlockProperties blockProperties, String lable)
         {
             super(lable);
@@ -776,8 +780,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             public void runOperation(AbstractOperation operation)
                             {
                                 editor.execute(operation);
-                                
+
                             }
+
                             public String[] getOptions()
                             {
                                 List<String> list = new ArrayList<String>();
@@ -831,7 +836,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 return "";
                             }
                         } };
-                        
+
                     case VARIABLE:
                         return new AbstractDescriptor<?>[] { new AbstractTextDropDownDescriptor("Variable")
                         {
@@ -839,8 +844,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             public void runOperation(AbstractOperation operation)
                             {
                                 editor.execute(operation);
-                                
+
                             }
+
                             public String[] getOptions()
                             {
                                 List<String> list = new ArrayList<String>();
@@ -850,7 +856,6 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 list.add("CURRENT_DATE");
                                 list.add("PAGE_NUMBER_OF_TOTAL_PAGES");
                                 list.add("");
-                                
 
                                 return list.toArray(new String[0]);
                             }
@@ -882,12 +887,12 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 }
                                 return "";
                             }
-                        } };    
+                        } };
                     case BLOCK_ITEM:
                         return new AbstractDescriptor<?>[] { new AbstractCustomDescriptor<String>("Block Item", "")
                         {
-                            ComboViewer blockViewer;
-                            ComboViewer itemViewer;
+                            ComboViewer         blockViewer;
+                            ComboViewer         itemViewer;
 
                             @Override
                             public void setValue(String value)
@@ -899,12 +904,14 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                 else
                                     ItemDefaultValue.this.setValue("");
                             }
+
                             @Override
                             public void runOperation(AbstractOperation operation)
                             {
                                 editor.execute(operation);
-                                
+
                             }
+
                             @Override
                             public String getValue()
                             {
@@ -1036,10 +1043,9 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                                         blockViewer.setSelection(new StructuredSelection(split[0]));
 
                                         EJReportBlockItemContainer blockProperties2 = formProp.getBlockProperties(split[0]);
-                                        if(blockProperties2!=null)
+                                        if (blockProperties2 != null)
                                         {
-                                            Collection<EJPluginReportItemProperties> allItemProperties = blockProperties2
-                                                    .getAllItemProperties();
+                                            Collection<EJPluginReportItemProperties> allItemProperties = blockProperties2.getAllItemProperties();
                                             for (EJPluginReportItemProperties ejItemProperties : allItemProperties)
                                             {
                                                 if (ejItemProperties.getName().equals(split[1]))

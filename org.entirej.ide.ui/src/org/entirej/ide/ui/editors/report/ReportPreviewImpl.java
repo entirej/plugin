@@ -154,11 +154,10 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             reportBody.setLayout(null);
             setPreviewBackground(reportBody, COLOR_WHITE);
 
-            reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(), (width - (formProperties
-                    .getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()
-                    + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+            reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
+                    (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
+                            + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
 
-           
             buildPage(page, editor, previewComposite, width, height, blockContainer, reportBody);
         }
 
@@ -183,7 +182,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
-            int x,y;
+            int x, y;
+
             @Override
             public void dragOver(DropTargetEvent event)
             {
@@ -193,7 +193,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
-                    droppedObj.indicate(x=event.x, y=event.y);
+                    droppedObj.indicate(x = event.x, y = event.y);
                 }
             }
 
@@ -208,15 +208,16 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                     droppedObj.setBond(event.x, event.y);
                 }
             }
+
             @Override
             public void dragLeave(DropTargetEvent event)
             {
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
-                
+
                 if (droppedObj != null)
                 {
-                    droppedObj.setBond(x,y);
+                    droppedObj.setBond(x, y);
                 }
             }
         };
@@ -246,7 +247,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
 
-            int x,y;
+            int x, y;
+
             @Override
             public void dragOver(DropTargetEvent event)
             {
@@ -256,7 +258,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
-                    droppedObj.indicate(x=event.x, y=event.y);
+                    droppedObj.indicate(x = event.x, y = event.y);
                 }
             }
 
@@ -271,12 +273,13 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                     droppedObj.setBond(event.x, event.y);
                 }
             }
+
             @Override
             public void dragLeave(DropTargetEvent event)
             {
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
-                
+
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(x, y);
@@ -296,9 +299,9 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
-        reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(), (width - (formProperties
-                .getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom() + formProperties.getMarginTop()
-                + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+        reportBody.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
+                        + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
 
         BlockGroup firstPage = blockContainer.getFirstPage();
         buildPage(firstPage, editor, previewComposite, width, height, blockContainer, reportBody);
@@ -320,7 +323,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         final DropTargetAdapter dragAdapter = new DropTargetAdapter()
         {
 
-            int x,y;
+            int x, y;
+
             @Override
             public void dragOver(DropTargetEvent event)
             {
@@ -330,7 +334,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
                 if (droppedObj != null)
                 {
-                    droppedObj.indicate(x=event.x, y=event.y);
+                    droppedObj.indicate(x = event.x, y = event.y);
                 }
             }
 
@@ -345,13 +349,13 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                     droppedObj.setBond(event.x, event.y);
                 }
             }
-           
+
             @Override
             public void dragLeave(DropTargetEvent event)
             {
                 final DragObject droppedObj = transfer.getSelection() != null ? ((DragObject) ((StructuredSelection) transfer.getSelection()).getFirstElement())
                         : null;
-                
+
                 if (droppedObj != null)
                 {
                     droppedObj.setBond(x, y);

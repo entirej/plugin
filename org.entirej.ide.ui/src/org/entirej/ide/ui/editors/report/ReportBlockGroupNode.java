@@ -83,7 +83,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     private final ReportDesignTreeSection       treeSection;
     private final AbstractEJReportEditor        editor;
     private final static Image                  GROUP            = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
-    private final static Image                  REPORT_PAGE            = EJUIImages.getImage(EJUIImages.DESC_REPORT_PAGE);
+    private final static Image                  REPORT_PAGE      = EJUIImages.getImage(EJUIImages.DESC_REPORT_PAGE);
     private final static Image                  BLOCK            = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
     private final static Image                  BLOCK_MIRROR     = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
     private final static Image                  BLOCK_MIRROR_REF = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
@@ -189,7 +189,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     {
 
         BlockGroup firstPage = source.getFirstPage();
-        return new Action[] { treeSection.createNewBlockAction(firstPage,false), treeSection.createNewBlockAction(firstPage,true), null, createNewBlockGroupAction() };
+        return new Action[] { treeSection.createNewBlockAction(firstPage, false), treeSection.createNewBlockAction(firstPage, true), null,
+                createNewBlockGroupAction() };
     }
 
     public Action createNewBlockGroupAction()
@@ -257,9 +258,9 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
             if (IReportPreviewProvider.class.isAssignableFrom(adapter))
             {
-                  return adapter.cast(new ReportPreviewImpl(source));
+                return adapter.cast(new ReportPreviewImpl(source));
             }
-            
+
             return ReportBlockGroupNode.this.getAdapter(adapter);
         }
 
@@ -326,19 +327,19 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 {
                     InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Rename Block Group [%s]", source.getName()),
                             "Group Name", source.getName(), new IInputValidator()
-                            {
+                    {
 
-                                public String isValid(String newText)
-                                {
-                                    if (newText == null || newText.trim().length() == 0)
-                                        return "Canvas name can't be empty.";
-                                    if (source.getName().equals(newText.trim()))
-                                        return "";
-                                    if (source.getName().equalsIgnoreCase(newText.trim()))
-                                        return null;
-                                    return null;
-                                }
-                            });
+                        public String isValid(String newText)
+                        {
+                            if (newText == null || newText.trim().length() == 0)
+                                return "Canvas name can't be empty.";
+                            if (source.getName().equals(newText.trim()))
+                                return "";
+                            if (source.getName().equalsIgnoreCase(newText.trim()))
+                                return null;
+                            return null;
+                        }
+                    });
                     if (dlg.open() == Window.OK)
                     {
                         // String oldName = source.getName();
@@ -385,11 +386,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
             return source instanceof EJPluginReportBlockProperties;
         }
-        
+
         @Override
         public Action[] getActions()
         {
-            return new Action[] { treeSection.createNewBlockAction(source,false), treeSection.createNewBlockAction(source,true) };
+            return new Action[] { treeSection.createNewBlockAction(source, false), treeSection.createNewBlockAction(source, true) };
 
         }
 
@@ -485,11 +486,9 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
             for (BlockGroup item : blockContainerItems)
             {
-               
-              
 
-                    nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
-                
+                nodes.add(new BlockSubGroupNode(this, (BlockGroup) item));
+
             }
 
             return nodes.toArray(new AbstractNode<?>[0]);
@@ -531,13 +530,13 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     int index = items.indexOf(methodNeighbor);
                     if (!before)
                         index++;
-                    
+
                     return new ReportBlockGroupAddOperation(treeSection, source.source, (BlockGroup) dSource, index);
-                    
+
                 }
             }
-            return new ReportBlockGroupAddOperation(treeSection, source.source, (BlockGroup) dSource,-1);
-            
+            return new ReportBlockGroupAddOperation(treeSection, source.source, (BlockGroup) dSource, -1);
+
         }
     }
 
@@ -609,9 +608,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                 return formProperties.getFooterSectionHeight();
                             }
 
-                            int dtlHeight = formProperties.getReportHeight()
-                                    - (formProperties.getMarginTop() + formProperties.getMarginBottom() + formProperties.getHeaderSectionHeight() + formProperties
-                                            .getFooterSectionHeight());
+                            int dtlHeight = formProperties.getReportHeight() - (formProperties.getMarginTop() + formProperties.getMarginBottom()
+                                    + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight());
                             return dtlHeight > 40 ? 40 : dtlHeight;
                         }
 
@@ -733,7 +731,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     if (!before)
                         index++;
 
-                   
                     return new ReportBlockAddOperation(treeSection, source, (EJPluginReportBlockProperties) dSource, index);
                 }
             }
@@ -746,33 +743,33 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     {
 
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
-                                                      {
+        {
 
-                                                          public void refreshNode()
-                                                          {
-                                                              treeSection.refresh(ReportBlockGroupNode.this);
-                                                          }
+            public void refreshNode()
+            {
+                treeSection.refresh(ReportBlockGroupNode.this);
+            }
 
-                                                          @Override
-                                                          public List<IMarker> getMarkers()
-                                                          {
-                                                              List<IMarker> fmarkers = new ArrayList<IMarker>();
+            @Override
+            public List<IMarker> getMarkers()
+            {
+                List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                              IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
-                                                              for (IMarker marker : markers)
-                                                              {
-                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
-                                                                  if ((tag & ReportNodeTag.BLOCK) != 0 && source.getName() != null
-                                                                          && source.getName().equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null)))
-                                                                  {
+                IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
+                for (IMarker marker : markers)
+                {
+                    int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE);
+                    if ((tag & ReportNodeTag.BLOCK) != 0 && source.getName() != null
+                            && source.getName().equals(marker.getAttribute(ReportNodeTag.BLOCK_ID, null)))
+                    {
 
-                                                                      fmarkers.add(marker);
-                                                                  }
-                                                              }
+                        fmarkers.add(marker);
+                    }
+                }
 
-                                                              return fmarkers;
-                                                          }
-                                                      };
+                return fmarkers;
+            }
+        };
 
         public BlockNode(AbstractNode<?> parent, EJPluginReportBlockProperties source)
         {
@@ -797,7 +794,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
 
             BlockGroup groupByBlock = ReportBlockGroupNode.this.source.getBlockGroupByBlock(source);
-            return new Action[] { treeSection.createNewBlockAction(groupByBlock,false), treeSection.createNewBlockAction(groupByBlock,true), null, createCopyNameAction() };
+            return new Action[] { treeSection.createNewBlockAction(groupByBlock, false), treeSection.createNewBlockAction(groupByBlock, true), null,
+                    createCopyNameAction() };
 
         }
 
@@ -828,7 +826,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 return adapter.cast(validator);
             }
 
-            return parent==null ?null:parent.getAdapter(adapter);
+            return parent == null ? null : parent.getAdapter(adapter);
         }
 
         @Override
@@ -890,8 +888,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
                         BlockGroup groupByBlock = ReportBlockGroupNode.this.source.getBlockGroupByBlock(source);
-                        assert groupByBlock !=null;
-                        return  new ReportBlockRemoveOperation(treeSection, groupByBlock, source);
+                        assert groupByBlock != null;
+                        return new ReportBlockRemoveOperation(treeSection, groupByBlock, source);
                     }
                 };
             return super.getDeleteProvider();
@@ -917,21 +915,21 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 {
                     InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Rename Block [%s]", source.getName()), "Block Name",
                             source.getName(), new IInputValidator()
-                            {
+                    {
 
-                                public String isValid(String newText)
-                                {
-                                    if (newText == null || newText.trim().length() == 0)
-                                        return "Block name can't be empty.";
-                                    if (source.getName().equals(newText.trim()))
-                                        return "";
-                                    if (source.getName().equalsIgnoreCase(newText.trim()))
-                                        return null;
-                                    if (ReportBlockGroupNode.this.source.contains(newText.trim()))
-                                        return "Block with this name already exists.";
-                                    return null;
-                                }
-                            });
+                        public String isValid(String newText)
+                        {
+                            if (newText == null || newText.trim().length() == 0)
+                                return "Block name can't be empty.";
+                            if (source.getName().equals(newText.trim()))
+                                return "";
+                            if (source.getName().equalsIgnoreCase(newText.trim()))
+                                return null;
+                            if (ReportBlockGroupNode.this.source.contains(newText.trim()))
+                                return "Block with this name already exists.";
+                            return null;
+                        }
+                    });
                     if (dlg.open() == Window.OK)
                     {
                         String oldName = source.getName();
@@ -963,14 +961,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & ReportNodeTag.WIDTH) != 0;
-                                   }
-                               };
+                        return (tag & ReportNodeTag.WIDTH) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -991,12 +989,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 {
                     return validator.getWarningMarkerMsg(fmarkers, vfilter);
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1039,14 +1039,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             final AbstractTextDescriptor heightDescriptor = new AbstractTextDescriptor("Height")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & ReportNodeTag.HEIGHT) != 0;
-                                   }
-                               };
+                        return (tag & ReportNodeTag.HEIGHT) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1067,12 +1067,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                     return "The height <b>(in pixels)</b> of the report within it's Page.";
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1121,12 +1123,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                     return "The X <b>(in pixels)</b> of the report within it's Page.";
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1176,12 +1180,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                     return "The Y <b>(in pixels)</b> of the report within it's Page.";
                 }
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
+
                 @Override
                 public void setValue(String value)
                 {
@@ -1224,20 +1230,18 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
             if (source.isControlBlock())
             {
-                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
-                        editor,
-                        "Action Processor",
+                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor",
                         "If you are creating a very large report, then your Report Level Action Processor may be getting a little too large, if this is the case you can split action to each block. EntireJ will always send events to the block level action processor instead of the report level one if it exists. Any block not having its own action processor will be managed by the the report level action processor")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
-                                       }
-                                   };
+                            return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1251,12 +1255,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -1287,14 +1293,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 AbstractTypeDescriptor serivceDescriptor = new AbstractTypeDescriptor(editor, "Block Service")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & ReportNodeTag.SERVICE) != 0;
-                                       }
-                                   };
+                            return (tag & ReportNodeTag.SERVICE) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1308,12 +1314,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -1348,20 +1356,18 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
                 };
                 serivceDescriptor.setBaseClass(EJReportBlockService.class.getName());
-                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
-                        editor,
-                        "Action Processor",
+                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor",
                         "If you are creating a very large report, then your Block Level Action Processor may be getting a little too large, if this is the case you can split action to each block. EntireJ will always send events to the block level action processor instead of the report level one if it exists. Any block not having its own action processor will be managed by the the report level action processor")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
-                                       }
-                                   };
+                            return (tag & ReportNodeTag.ACTION_PROCESSOR) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1375,12 +1381,14 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                     {
                         return validator.getWarningMarkerMsg(fmarkers, vfilter);
                     }
+
                     @Override
                     public void runOperation(AbstractOperation operation)
                     {
                         editor.execute(operation);
-                        
+
                     }
+
                     @Override
                     public void setValue(String value)
                     {
@@ -1497,9 +1505,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                 return formProperties.getFooterSectionHeight();
                             }
 
-                            int dtlHeight = formProperties.getReportHeight()
-                                    - (formProperties.getMarginTop() + formProperties.getMarginBottom() + formProperties.getHeaderSectionHeight() + formProperties
-                                            .getFooterSectionHeight());
+                            int dtlHeight = formProperties.getReportHeight() - (formProperties.getMarginTop() + formProperties.getMarginBottom()
+                                    + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight());
                             return dtlHeight > 40 ? 40 : dtlHeight;
                         }
 

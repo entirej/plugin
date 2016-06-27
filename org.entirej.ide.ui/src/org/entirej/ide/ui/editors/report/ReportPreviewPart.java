@@ -47,31 +47,31 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 {
     private final AbstractEJReportEditor editor;
     // private AbstractNode<?> selectedNode;
-    private ScrolledComposite          previewComposite;
+    private ScrolledComposite            previewComposite;
 
     private IReportPreviewProvider       previewProvider;
     private final IReportPreviewProvider defaultPreviewProvider = new IReportPreviewProvider()
-                                                              {
+                                                                {
 
-                                                                  public void dispose()
-                                                                  {
-                                                                      // ignore
+                                                                    public void dispose()
+                                                                    {
+                                                                        // ignore
 
-                                                                  }
+                                                                    }
 
-                                                                  public void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite)
-                                                                  {
-                                                                      previewComposite.setBackground(body.getBackground());
-                                                                      // ignore
-                                                                  }
+                                                                    public void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite)
+                                                                    {
+                                                                        previewComposite.setBackground(body.getBackground());
+                                                                        // ignore
+                                                                    }
 
-                                                                  public String getDescription()
-                                                                  {
-                                                                      return "select ui element to preview.";
-                                                                  }
-                                                              };
+                                                                    public String getDescription()
+                                                                    {
+                                                                        return "select ui element to preview.";
+                                                                    }
+                                                                };
 
-    private AbstractNode<?>            selectedNode;
+    private AbstractNode<?>              selectedNode;
 
     public ReportPreviewPart(AbstractEJReportEditor editor, FormPage page, Composite parent)
     {
@@ -155,14 +155,13 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
         previewLayout();
 
     }
-    
-    
+
     @Override
     public void setFocus()
     {
-        if(getSection().isDisposed() || getSection().getClient()==null || getSection().getClient().isDisposed())
+        if (getSection().isDisposed() || getSection().getClient() == null || getSection().getClient().isDisposed())
             return;
-        
+
         super.setFocus();
     }
 
@@ -192,7 +191,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
         {
             previewProvider = selectedNode.getAdapter(IReportPreviewProvider.class);
         }
-        if(previewProvider==null)
+        if (previewProvider == null)
         {
             previewProvider = new ReportPreviewImpl();
         }

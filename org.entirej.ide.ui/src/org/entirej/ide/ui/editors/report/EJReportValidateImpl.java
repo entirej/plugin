@@ -83,7 +83,6 @@ public class EJReportValidateImpl implements EJReportValidateProvider
                 validateReportLayoutSettings(file, reportProperties, project);
 
             }
-            
 
             // validate blocks
             validateBlocks(file, reportProperties, project);
@@ -92,11 +91,10 @@ public class EJReportValidateImpl implements EJReportValidateProvider
         monitor.done();
     }
 
-
     private void validateBlocks(IFile file, EJPluginReportProperties reportProperties, IJavaProject project)
     {
         List<EJPluginReportBlockProperties> allBlockProperties = reportProperties.getBlockContainer().getAllBlockProperties();
-        
+
         allBlockProperties.addAll(reportProperties.getBlockContainer().getHeaderSection().getAllBlockProperties());
         allBlockProperties.addAll(reportProperties.getBlockContainer().getFooterSection().getAllBlockProperties());
         for (EJPluginReportBlockProperties blockProp : allBlockProperties)
@@ -104,18 +102,21 @@ public class EJReportValidateImpl implements EJReportValidateProvider
 
             if (blockProp.isReferenceBlock())
             {
-//                if (!reportProperties.getEntireJProperties().containsReusableBlockProperties(blockProp.getReferencedBlockName()))
-//                {
-//                    IMarker marker = addMarker(
-//                            file,
-//                            new Problem(Problem.TYPE.ERROR, String.format("'%s' referenced block definition is misssing.", blockProp.getReferencedBlockName())),
-//                            GROUP | BLOCK | REF);
-//                    if (marker != null)
-//                    {
-//                        addMarkerAttribute(marker, BLOCK_ID, blockProp.getName());
-//                    }
-//                }
-//                continue;
+                // if
+                // (!reportProperties.getEntireJProperties().containsReusableBlockProperties(blockProp.getReferencedBlockName()))
+                // {
+                // IMarker marker = addMarker(
+                // file,
+                // new Problem(Problem.TYPE.ERROR, String.format("'%s'
+                // referenced block definition is misssing.",
+                // blockProp.getReferencedBlockName())),
+                // GROUP | BLOCK | REF);
+                // if (marker != null)
+                // {
+                // addMarkerAttribute(marker, BLOCK_ID, blockProp.getName());
+                // }
+                // }
+                // continue;
             }
 
             // validate base block service
@@ -143,7 +144,7 @@ public class EJReportValidateImpl implements EJReportValidateProvider
     {
         List<EJPluginReportItemProperties> itemProperties = blockProp.getItemContainer().getAllItemProperties();
 
-        if (!blockProp.isControlBlock()  && !blockProp.isReferenceBlock())
+        if (!blockProp.isControlBlock() && !blockProp.isReferenceBlock())
         {
             List<EJPluginReportItemProperties> serviceItems = blockProp.getServiceItems();
 
@@ -162,10 +163,10 @@ public class EJReportValidateImpl implements EJReportValidateProvider
                     }
                     if (!found)
                     {
-                        IMarker marker = addMarker(
-                                file,
+                        IMarker marker = addMarker(file,
                                 new Problem(Problem.TYPE.ERROR, String.format("['%s' block] item: '%s' is not specified in Service '%s'.", blockProp.getName(),
-                                        itemProp.getName(), blockProp.getServiceClassName())), GROUP | BLOCK | ITEM | TYPE);
+                                        itemProp.getName(), blockProp.getServiceClassName())),
+                                GROUP | BLOCK | ITEM | TYPE);
                         if (marker != null)
                         {
                             addMarkerAttribute(marker, BLOCK_ID, blockProp.getName());
@@ -221,7 +222,7 @@ public class EJReportValidateImpl implements EJReportValidateProvider
     private Problem validateBlockService(IFile file, EJPluginReportProperties formProperties, EJPluginReportBlockProperties blockProp, IJavaProject project)
     {
 
-        if (blockProp.isControlBlock() || blockProp.isReferenceBlock() )
+        if (blockProp.isControlBlock() || blockProp.isReferenceBlock())
             return null;
         String defClassName = blockProp.getServiceClassName();
         if (defClassName == null || defClassName.trim().length() == 0)
@@ -234,8 +235,8 @@ public class EJReportValidateImpl implements EJReportValidateProvider
             IType findType = project.findType(defClassName);
             if (findType == null)
             {
-                return new Problem(Problem.TYPE.ERROR, String.format("'%s' block service: '%s' can't find in project build path.", blockProp.getName(),
-                        defClassName));
+                return new Problem(Problem.TYPE.ERROR,
+                        String.format("'%s' block service: '%s' can't find in project build path.", blockProp.getName(), defClassName));
             }
 
             if (!JavaAccessUtils.isSubTypeOfInterface(findType, EJReportBlockService.class))
@@ -251,7 +252,8 @@ public class EJReportValidateImpl implements EJReportValidateProvider
         return null;
     }
 
-    private Problem validateBlockActionProcessor(IFile file, EJPluginReportProperties formProperties, EJPluginReportBlockProperties blockProp, IJavaProject project)
+    private Problem validateBlockActionProcessor(IFile file, EJPluginReportProperties formProperties, EJPluginReportBlockProperties blockProp,
+            IJavaProject project)
     {
 
         String defClassName = blockProp.getActionProcessorClassName();
@@ -265,8 +267,8 @@ public class EJReportValidateImpl implements EJReportValidateProvider
             IType findType = project.findType(defClassName);
             if (findType == null)
             {
-                return new Problem(Problem.TYPE.ERROR, String.format("'%s' block action processor: '%s' can't find in project build path.",
-                        blockProp.getName(), defClassName));
+                return new Problem(Problem.TYPE.ERROR,
+                        String.format("'%s' block action processor: '%s' can't find in project build path.", blockProp.getName(), defClassName));
             }
 
             if (!JavaAccessUtils.isSubTypeOfInterface(findType, EJReportBlockActionProcessor.class))
@@ -323,7 +325,6 @@ public class EJReportValidateImpl implements EJReportValidateProvider
 
     private void validateReportLayoutSettings(IFile file, EJPluginReportProperties reportProperties, IJavaProject project)
     {
-       
 
         boolean hasWidth = reportProperties.getReportWidth() > 0;
         boolean hasHeight = reportProperties.getReportHeight() > 0;

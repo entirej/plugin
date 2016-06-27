@@ -46,7 +46,6 @@ public class EJReportEditor extends AbstractEJReportEditor
             try
             {
 
-                
                 try
                 {
                     inStream = file.getContents();

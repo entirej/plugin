@@ -73,7 +73,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                                                               IMarker[] markers = treeSection.getEditor().getMarkers(EJMarkerFactory.MARKER_ID);
                                                               for (IMarker marker : markers)
                                                               {
-                                                                  if ((marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE) & ReportNodeTag.REPORT) != 0)
+                                                                  if ((marker.getAttribute(NodeValidateProvider.NODE_TAG, ReportNodeTag.NONE)
+                                                                          & ReportNodeTag.REPORT) != 0)
                                                                   {
                                                                       fmarkers.add(marker);
                                                                   }
@@ -145,14 +146,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
         {
             Filter vfilter = new Filter()
-                           {
+            {
 
-                               public boolean match(int tag, IMarker marker)
-                               {
+                public boolean match(int tag, IMarker marker)
+                {
 
-                                   return (tag & ReportNodeTag.WIDTH) != 0;
-                               }
-                           };
+                    return (tag & ReportNodeTag.WIDTH) != 0;
+                }
+            };
 
             @Override
             public String getErrors()
@@ -225,14 +226,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         final AbstractTextDescriptor heightDescriptor = new AbstractTextDescriptor("Height")
         {
             Filter vfilter = new Filter()
-                           {
+            {
 
-                               public boolean match(int tag, IMarker marker)
-                               {
+                public boolean match(int tag, IMarker marker)
+                {
 
-                                   return (tag & ReportNodeTag.HEIGHT) != 0;
-                               }
-                           };
+                    return (tag & ReportNodeTag.HEIGHT) != 0;
+                }
+            };
 
             @Override
             public String getErrors()
@@ -421,14 +422,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Layout", "The renderer you have chosen for your block")
         {
             Filter vfilter = new Filter()
-                           {
+            {
 
-                               public boolean match(int tag, IMarker marker)
-                               {
+                public boolean match(int tag, IMarker marker)
+                {
 
-                                   return (tag & ReportNodeTag.RENDERER) != 0;
-                               }
-                           };
+                    return (tag & ReportNodeTag.RENDERER) != 0;
+                }
+            };
 
             @Override
             public String getErrors()
@@ -519,14 +520,14 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Type", "The chart type need to renderer")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & ReportNodeTag.CHART_TYPE) != 0;
-                                   }
-                               };
+                        return (tag & ReportNodeTag.CHART_TYPE) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -610,8 +611,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
             // value 1 as basic value provider
 
-            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
-                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value")
+            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(),
+                    source.getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value")
             {
                 @Override
                 public String getValue()
@@ -635,8 +636,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             };
             // value 2 as basic value provider
 
-            ReportBlockItemsGroupNode.ItemDefaultValue value2Provider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
-                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value2")
+            ReportBlockItemsGroupNode.ItemDefaultValue value2Provider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(),
+                    source.getBlockProperties().getReportProperties(), source.getBlockProperties(), "Value2")
             {
                 @Override
                 public String getValue()
@@ -659,8 +660,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
             };
 
-            ReportBlockItemsGroupNode.ItemDefaultValue labelProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
-                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Label")
+            ReportBlockItemsGroupNode.ItemDefaultValue labelProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(),
+                    source.getBlockProperties().getReportProperties(), source.getBlockProperties(), "Label")
             {
                 @Override
                 public String getValue()
@@ -683,8 +684,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
             };
 
-            ReportBlockItemsGroupNode.ItemDefaultValue seriesProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
-                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Series")
+            ReportBlockItemsGroupNode.ItemDefaultValue seriesProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(),
+                    source.getBlockProperties().getReportProperties(), source.getBlockProperties(), "Series")
             {
                 @Override
                 public String getValue()
@@ -707,8 +708,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
 
             };
 
-            ReportBlockItemsGroupNode.ItemDefaultValue categoryProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(), source
-                    .getBlockProperties().getReportProperties(), source.getBlockProperties(), "Category")
+            ReportBlockItemsGroupNode.ItemDefaultValue categoryProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(treeSection.getEditor(),
+                    source.getBlockProperties().getReportProperties(), source.getBlockProperties(), "Category")
             {
                 @Override
                 public String getValue()
@@ -978,8 +979,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             };
             AbstractTextDropDownDescriptor vaOddDescriptor = new AbstractTextDropDownDescriptor("Odd Record VA", "")
             {
-                List<String> visualAttributeNames = new ArrayList<String>(treeSection.getEditor().getReportProperties().getEntireJProperties()
-                                                          .getVisualAttributesContainer().getVisualAttributeNames());
+                List<String> visualAttributeNames = new ArrayList<String>(
+                        treeSection.getEditor().getReportProperties().getEntireJProperties().getVisualAttributesContainer().getVisualAttributeNames());
 
                 @Override
                 public void setValue(String value)
@@ -1028,8 +1029,8 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             };
             AbstractTextDropDownDescriptor vaEvenDescriptor = new AbstractTextDropDownDescriptor("Even Record VA", "")
             {
-                List<String> visualAttributeNames = new ArrayList<String>(treeSection.getEditor().getReportProperties().getEntireJProperties()
-                                                          .getVisualAttributesContainer().getVisualAttributeNames());
+                List<String> visualAttributeNames = new ArrayList<String>(
+                        treeSection.getEditor().getReportProperties().getEntireJProperties().getVisualAttributesContainer().getVisualAttributeNames());
 
                 @Override
                 public void setValue(String value)
