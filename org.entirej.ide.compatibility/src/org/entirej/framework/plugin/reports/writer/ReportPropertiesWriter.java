@@ -24,7 +24,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
@@ -44,7 +43,6 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.Bl
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
@@ -147,7 +145,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
         }
         catch (Exception e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save report: " + form.getName());
+            e.printStackTrace();
         }
     }
     
@@ -387,7 +385,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "config");
                 {
                     writePROPERTY(buffer, "type", properties.getChartType().name());
-                    writePROPERTY(buffer, "use3dView", properties.isUse3dView()+"");
+                    writePROPERTY(buffer, "use3dView", properties.isUse3dView() + "");
                     writePROPERTY(buffer, "categoryItem", properties.getCategoryItem());
                     writePROPERTY(buffer, "labelItem", properties.getLabelItem());
                     writePROPERTY(buffer, "seriesItem", properties.getSeriesItem());

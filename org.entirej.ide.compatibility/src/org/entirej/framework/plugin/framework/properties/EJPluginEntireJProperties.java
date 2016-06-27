@@ -317,7 +317,7 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
      */
     public void logInfoMessage(String message)
     {
-        EntireJFrameworkPlugin.logInfo(message);
+        System.out.println(message);
     }
     
     /**
@@ -331,7 +331,8 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
      */
     public void logErrorMessage(String message, Exception ex)
     {
-        EntireJFrameworkPlugin.logError(message, ex);
+        System.err.println(message);
+        ex.printStackTrace();
     }
     
     public EJCoreVisualAttributeContainer getVisualAttributesContainer()

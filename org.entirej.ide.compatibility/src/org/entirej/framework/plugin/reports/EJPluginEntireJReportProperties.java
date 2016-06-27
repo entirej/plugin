@@ -126,7 +126,7 @@ public class EJPluginEntireJReportProperties implements EJEntireJReportPropertie
      */
     public void logInfoMessage(String message)
     {
-        EntireJFrameworkPlugin.logInfo(message);
+        System.out.println(message);
     }
     
     /**
@@ -140,7 +140,8 @@ public class EJPluginEntireJReportProperties implements EJEntireJReportPropertie
      */
     public void logErrorMessage(String message, Exception ex)
     {
-        EntireJFrameworkPlugin.logError(message, ex);
+       System.err.println(message);
+       ex.printStackTrace();
     }
     
     public EJReportVisualAttributeContainer getVisualAttributesContainer()

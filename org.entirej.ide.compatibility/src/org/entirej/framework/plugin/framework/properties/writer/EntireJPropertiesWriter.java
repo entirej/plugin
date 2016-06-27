@@ -48,7 +48,6 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkE
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.plugin.EJPluginParameterChecker;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafActionProperties;
@@ -59,7 +58,6 @@ import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafPropert
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafSpacerProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 
 public class EntireJPropertiesWriter extends AbstractXmlWriter
 {
@@ -284,11 +282,11 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
         }
         catch (CoreException e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save EntireJ Properties");
+           e.printStackTrace();
         }
         catch (UnsupportedEncodingException e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save EntireJ Properties");
+            e.printStackTrace();
         }
     }
     

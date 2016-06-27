@@ -32,11 +32,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.entirej.framework.plugin.EJPluginParameterChecker;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginEntireJReportProperties;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 import org.entirej.framework.report.properties.EJCoreReportVisualAttributeProperties;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
@@ -51,7 +49,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
         
         startTAG(buffer, "entirejFramework");
         {
-          
+            
             writeStringTAG(buffer, "version", properties.getVersion() != null ? properties.getVersion() : "1.0");
             writeStringTAG(buffer, "connectionFactoryClassName", properties.getConnectionFactoryClassName());
             writeStringTAG(buffer, "translatorClassName", properties.getTranslatorClassName());
@@ -64,7 +62,6 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
             }
             endTAG(buffer, "applicationLevelParameterList");
             
-           
             startTAG(buffer, "packages");
             {
                 // Retrieve the forms package names
@@ -84,9 +81,6 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
             }
             endTAG(buffer, "packages");
             
-           
-            
-            
             startTAG(buffer, "visualAttributes");
             {
                 // Now add the Visual Attribute definitions
@@ -101,15 +95,14 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
         {
             file.setContents(new ByteArrayInputStream(buffer.toString().getBytes("UTF-8")), IResource.KEEP_HISTORY, monitor);
             
-         
         }
         catch (CoreException e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save EntireJ Properties");
+            e.printStackTrace();
         }
         catch (UnsupportedEncodingException e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save EntireJ Properties");
+            e.printStackTrace();
         }
     }
     
@@ -138,7 +131,7 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
                 writeStringTAG(buffer, "vAlignment", visAttr.getVAlignment().name());
                 writeStringTAG(buffer, "localeFormat", visAttr.getLocalePattern().name());
                 writeStringTAG(buffer, "manualFormat", visAttr.getManualPattern());
-                writeStringTAG(buffer, "decimalDigits", ""+visAttr.getMaximumDecimalDigits());
+                writeStringTAG(buffer, "decimalDigits", "" + visAttr.getMaximumDecimalDigits());
             }
             endTAG(buffer, "visualAttribute");
         }
@@ -153,7 +146,6 @@ public class EntireJReportPropertiesWriter extends AbstractXmlWriter
         
         return "r" + color.getRed() + "g" + color.getGreen() + "b" + color.getBlue();
     }
-    
     
     private void addApplicationLevelParameters(EJPluginEntireJReportProperties entireJProperties, StringBuffer buffer)
     {

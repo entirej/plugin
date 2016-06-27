@@ -41,7 +41,6 @@ import org.entirej.framework.core.properties.interfaces.EJLovDefinitionPropertie
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
@@ -66,7 +65,6 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginBloc
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginScreenItemProperties;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 
 public class FormPropertiesWriter extends AbstractXmlWriter
 {
@@ -207,7 +205,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         }
         catch (Exception e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save form: " + form.getName());
+            e.printStackTrace();
         }
     }
     
@@ -256,14 +254,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         catch (CoreException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable block: "
-                    + blockProperties.getBlockProperties().getName());
+            
         }
         catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable block: "
-                    + blockProperties.getBlockProperties().getName());
+            
         }
     }
     
@@ -302,14 +298,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         catch (CoreException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable lov definition: "
-                    + lovDefinitionProperties.getLovDefinitionProperties().getName());
         }
         catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable lov definition: "
-                    + lovDefinitionProperties.getLovDefinitionProperties().getName());
         }
     }
     
