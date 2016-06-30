@@ -48,9 +48,9 @@ public class ${service_name} implements EJReportBlockService<${JAVA_REC_NAME}>
             <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJReportParameterType.${column.param_type});
        		<#elseif column.is_struct =="true" >
-       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJReportParameterType.${column.param_type});
        		<#else>
-       		EJReportStoredProcedureStatementParameter ${column.var_name} = new EJReportStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		EJReportStoredProcedureStatementParameter ${column.var_name} = new EJReportStoredProcedureStatementParameter(${column.data_type}.class, EJReportParameterType.${column.param_type});
        		</#if>  
         </#list>
         
@@ -78,9 +78,9 @@ public class ${service_name} implements EJReportBlockService<${JAVA_REC_NAME}>
        		 <#if column.is_array =="true" >
        		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJReportParameterType.${column.param_type});
        		<#elseif column.is_struct =="true" >
-       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJParameterType.${column.param_type});
+       		EJStatementParameterOraArray<${column.data_type}> ${column.var_name} = new EJStatementParameterOraArray<${column.data_type}>(${column.data_type}.class, EJReportParameterType.${column.param_type});
        		<#else>
-       		EJReportStoredProcedureStatementParameter ${column.var_name} = new EJReportStoredProcedureStatementParameter(${column.data_type}.class, EJParameterType.${column.param_type});
+       		EJReportStoredProcedureStatementParameter ${column.var_name} = new EJReportStoredProcedureStatementParameter(${column.data_type}.class, EJReportParameterType.${column.param_type});
        		</#if>  
         </#list>
         
