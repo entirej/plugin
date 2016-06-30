@@ -255,7 +255,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
         }
         else
         {
-            return null;
+            return getValue(fieldName);
         }
     }
 
