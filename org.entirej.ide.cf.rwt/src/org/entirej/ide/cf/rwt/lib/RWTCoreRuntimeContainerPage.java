@@ -57,7 +57,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
     public void createControl(Composite parent)
     {
         setTitle("EntireJ Bundled RWT/RAP Core Runtime");
-        setDescription("Add bundled rwt/rap core 3.2.0 libraries to project path.");
+        setDescription("Add bundled rwt/rap core 4.0.0 libraries to project path.");
 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());

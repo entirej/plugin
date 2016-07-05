@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.entirej.ide.cf.rwt;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Category: %Bundle-Category
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.entirej.ide.core,
  org.entirej.ide.ui,
- org.entirej.ide.compatibility;bundle-version="3.2.0",
+ org.entirej.ide.compatibility;bundle-version="4.0.0",
  org.entirej.core.runtime
 Bundle-ClassPath: .
 Bundle-Activator: org.entirej.ide.cf.rwt.EJCFRwtPlugin
