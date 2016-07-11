@@ -89,6 +89,16 @@
 							<outputDirectory>../org.entirej.core.runtime/extlibs</outputDirectory>
 							<destFileName>entirej-core-src.jar</destFileName>
 						</artifactItem>
+						<artifactItem>
+							<groupId>org.entirej</groupId>
+							<artifactId>entirej-report</artifactId>
+							<version>${VERSION.REPORT}</version>
+							<type>jar</type>
+							<classifier>sources</classifier>
+							 
+							<outputDirectory>../org.entirej.core.runtime/extlibs-report</outputDirectory>
+							<destFileName>entirej-report-src.jar</destFileName>
+						</artifactItem>
 						<!-- CORE-DEV -->
 						<artifactItem>
 							<groupId>org.entirej</groupId>
