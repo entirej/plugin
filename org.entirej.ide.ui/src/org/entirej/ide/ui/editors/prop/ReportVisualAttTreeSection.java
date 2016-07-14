@@ -78,6 +78,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
+import org.entirej.ide.ui.editors.report.ReportBlockScreenItemsGroupNode.ScreenItemNode;
 import org.entirej.ide.ui.nodes.AbstractNode;
 import org.entirej.ide.ui.nodes.AbstractNodeContentProvider;
 import org.entirej.ide.ui.nodes.AbstractNodeTreeSection;
@@ -627,9 +628,33 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                             super.addEditorAssist(control);
                         }
                     };
-                    
+                    AbstractBooleanDescriptor expandToFit = new AbstractBooleanDescriptor("Expand To Fit")
+                    {
 
-                    return new AbstractDescriptor<?>[] { fontGroupDescriptor, colorGroupDescriptor, markup, hAlignment, vAlignment, lformat, mformatDescriptor,sizeDescriptor };
+                        @Override
+                        public void setValue(Boolean value)
+                        {
+                            source.setExpandToFit(value);
+                            editor.setDirty(true);
+
+                        }
+
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+
+                        }
+
+                        @Override
+                        public Boolean getValue()
+                        {
+                            return source.isExpandToFit();
+                        }
+                    };
+
+
+                    return new AbstractDescriptor<?>[] { fontGroupDescriptor, colorGroupDescriptor, markup, hAlignment, vAlignment, lformat, mformatDescriptor,sizeDescriptor,expandToFit };
 
                 }
 
