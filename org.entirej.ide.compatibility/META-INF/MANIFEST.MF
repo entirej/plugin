@@ -35,4 +35,4 @@ Export-Package: org.entirej.framework.plugin,
  org.entirej.framework.plugin.utils
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- ext/freemarker-2.4.03.jar
+ ext/freemarker-2.3.23.jar
