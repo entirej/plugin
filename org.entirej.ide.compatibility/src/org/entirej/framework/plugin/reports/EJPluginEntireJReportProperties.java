@@ -44,7 +44,7 @@ public class EJPluginEntireJReportProperties implements EJEntireJReportPropertie
     private ArrayList<String>                  _reportPackageNames;
     private String                             _connectionFactoryClassName;
     private String                             _translatorClassName;
-    private String                             _reportRunnerClassName= "org.entirej.report.jasper.EJJasperReportRunner";
+    private String                             _reportRunnerClassName= "org.entirej.report.EJReportDefaultRunner";
     private EJReportVisualAttributeContainer   _visualAttributeContainer;
     
     private List<EJPluginApplicationParameter> _applicationLevelParameters;
