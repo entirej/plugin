@@ -532,17 +532,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                     createBlockCode(blockProp, builder);
 
                 }
-                //build sub blocks
-                BlockGroup subBlocks = blockProp.getLayoutScreenProperties().getSubBlocks();
-                for (EJPluginReportBlockProperties ejPluginReportBlockProperties : subBlocks.getAllBlockProperties())
-                {
-                    if (ejPluginReportBlockProperties.getName() != null && ejPluginReportBlockProperties.getName().length() > 0)
-                    {
-                        createBlockCode(ejPluginReportBlockProperties, builder);
-
-                    }
-                    
-                }
+                
 
             }
 
@@ -913,6 +903,19 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         builder.append("\n");
         builder.append("}");
         builder.append("\n");
+        
+        
+      //build sub blocks
+        BlockGroup subBlocks = blockProperties.getLayoutScreenProperties().getSubBlocks();
+        for (EJPluginReportBlockProperties ejPluginReportBlockProperties : subBlocks.getAllBlockProperties())
+        {
+            if (ejPluginReportBlockProperties.getName() != null && ejPluginReportBlockProperties.getName().length() > 0)
+            {
+                createBlockCode(ejPluginReportBlockProperties, builder);
+
+            }
+            
+        }
     }
 
     static String toVAR(String item)
