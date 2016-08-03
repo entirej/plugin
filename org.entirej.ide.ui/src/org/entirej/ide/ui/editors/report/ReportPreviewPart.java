@@ -21,6 +21,7 @@ package org.entirej.ide.ui.editors.report;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -31,6 +32,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -48,7 +50,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
     private final AbstractEJReportEditor editor;
     // private AbstractNode<?> selectedNode;
     private ScrolledComposite            previewComposite;
-
+    private AtomicBoolean              autoRefrsh = new AtomicBoolean(true);
     private IReportPreviewProvider       previewProvider;
     private final IReportPreviewProvider defaultPreviewProvider = new IReportPreviewProvider()
                                                                 {
@@ -121,12 +123,36 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
             @Override
             public void run()
             {
-                previewLayout();
+                boolean state = autoRefrsh.get();
+                try
+                {
+                    autoRefrsh.set(true);
+                    previewLayout();
+                }
+                finally
+                {
+                    autoRefrsh.set(state);
+                }
+                
             }
 
         };
         refreshAction.setImageDescriptor(EJUIImages.DESC_REFRESH);
-        return new Action[] { refreshAction };
+       
+        final Action autoRefresh = new Action("Toggle Auto Refresh", IAction.AS_CHECK_BOX)
+        {
+            
+            @Override
+            public void run()
+            {
+                autoRefrsh.set(isChecked());
+            }
+            
+        };
+        autoRefresh.setImageDescriptor(EJUIImages.DESC_AUTO_REFRESH);
+        autoRefresh.setChecked(true);
+      
+        return new Action[] { autoRefresh,refreshAction };
     }
 
     @Override
@@ -167,9 +193,21 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 
     private void previewLayout()
     {
+        if(!autoRefrsh.get())
+            return;
         getSection().setRedraw(false);
         if (previewComposite != null)
         {
+            final Composite drop = previewComposite;
+            final Shell shell = new Shell();
+            drop.setParent(shell);
+            // Defer disposal so that the effect of refresh in cleaning resources happens.
+            drop. getDisplay().asyncExec(new Runnable() {
+              public void run() {
+                  drop.dispose();
+                shell.dispose();
+              }
+            });
             previewComposite.dispose();
             previewComposite = null;
             if (previewProvider != null)
