@@ -1,34 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.6"?>
-
-<target name="entirej-e37" sequenceNumber="3">
+<?pde version="3.8"?><target name="entirej-e37" sequenceNumber="5">
 <locations>
-<location includeAllPlatforms="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.platform.ide" version="3.7.1.M20110909-1335"/>
 <repository location="http://download.eclipse.org/releases/indigo"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.gef.sdk.feature.group" version="3.10.1.201508170204"/>
+<repository location="http://www.eclipse.org/modeling/amalgam/downloads/package/modeling/mars/"/>
+</location>
 </locations>
-<includeBundles>
-<plugin id="org.eclipse.ui.intro"/>
-<plugin id="org.eclipse.ui.net"/>
-<plugin id="org.eclipse.ui.console"/>
-<plugin id="org.eclipse.ui.browser"/>
-<plugin id="org.eclipse.ui.views"/>
-<plugin id="org.eclipse.ui.forms"/>
-<plugin id="org.eclipse.ui"/>
-<plugin id="org.eclipse.ui.cheatsheets"/>
-<plugin id="org.eclipse.ui.ide"/>
-<plugin id="org.eclipse.ui.editors"/>
-<plugin id="org.eclipse.ui.navigator"/>
-<plugin id="org.eclipse.ui.workbench"/>
-<plugin id="org.eclipse.core.runtime"/>
-<plugin id="org.eclipse.ui.ide.application"/>
-<plugin id="org.eclipse.core.resources"/>
-<plugin id="org.eclipse.ui.intro.universal"/>
-<plugin id="org.eclipse.ui.navigator.resources"/>
-<plugin id="org.eclipse.ui.workbench.texteditor"/>
-<plugin id="org.eclipse.ui.externaltools"/>
-<plugin id="org.eclipse.ui.views.properties.tabbed"/>
-<plugin id="org.eclipse.ui.presentations.r21"/>
-</includeBundles>
 </target>
