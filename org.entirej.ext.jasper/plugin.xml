@@ -12,7 +12,7 @@
        point="org.eclipse.jdt.ui.classpathContainerPage">
       <classpathContainerPage
           id="org.eclipse.jasper.runtime.EJ_REPORT_JASPER_CONTAINER"
-          name="EntireJ Report Jasper 6.0.4 Runtime"
+          name="EntireJ Report Runner Runtime"
           class="org.entirej.ext.jasper.lib.ReportRuntimeContainerPage"/>
    </extension>
 </plugin>

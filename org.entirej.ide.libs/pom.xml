@@ -61,12 +61,12 @@
 						</artifactItem>
 						<artifactItem>
 							<groupId>org.entirej</groupId>
-							<artifactId>entirej-reports-jasper</artifactId>
+							<artifactId>entirej-report-runners</artifactId>
 							<version>${VERSION.REPORT}</version>
 							<type>jar</type>
 							 
 							<outputDirectory>../org.entirej.ext.jasper/extlibs</outputDirectory>
-							<destFileName>entirej-report-jasper.jar</destFileName>
+							<destFileName>entirej-report-runners.jar</destFileName>
 						</artifactItem>
 						<!--  <artifactItem>
 							<groupId>org.entirej</groupId>

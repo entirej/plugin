@@ -38,7 +38,7 @@ public class EJCorePlugin extends AbstractUIPlugin implements IStartup
 {
     private BundleContext       bundleContext;
     public static final String  ID = "org.entirej.ide.core";
-    private static final String UPDATE_SITE_URL = "http://entirej.org/entirej/plugin/updatesite/releases/r3.x";
+    private static final String UPDATE_SITE_URL = "http://entirej.org/entirej/plugin/updatesite/releases/r4.x";
 
     private static EJCorePlugin plugin;
 

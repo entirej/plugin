@@ -87,7 +87,7 @@ public class ReportRuntimeClasspathContainer implements IClasspathContainer
 
     public String getDescription()
     {
-        return "EntireJ Report Jasper 6.0.4 Runtime Libraries.";
+        return "EntireJ Report Runners Runtime Libraries.";
     }
 
     public int getKind()

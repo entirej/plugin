@@ -37,7 +37,7 @@ public class ReportRuntimeContainerPage extends WizardPage implements IClasspath
 
     public ReportRuntimeContainerPage()
     {
-        super("EntireJ Report Jasper  6.0.4  Runtime");
+        super("EntireJ Report Runners  4  Runtime");
     }
 
     public void initialize(IJavaProject javaProject, IClasspathEntry[] currentEntries)
@@ -56,8 +56,8 @@ public class ReportRuntimeContainerPage extends WizardPage implements IClasspath
 
     public void createControl(Composite parent)
     {
-        setTitle("EntireJ Report Jasper 6.0.4 Runtime");
-        setDescription("Add entirej Report Jasper  6.0.4  libraries to project path.");
+        setTitle("EntireJ Report Runners 4 Runtime");
+        setDescription("Add entirej Report Runners  4  libraries to project path.");
 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
@@ -65,7 +65,7 @@ public class ReportRuntimeContainerPage extends WizardPage implements IClasspath
 
         Link link = new Link(composite, SWT.NONE);
         link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        link.setText("EntireJ Report Jasper  6.0.4  runtime classpath container.");
+        link.setText("EntireJ Report Report Runners 4  runtime classpath container.");
         // TODO add link ???
     }
 
