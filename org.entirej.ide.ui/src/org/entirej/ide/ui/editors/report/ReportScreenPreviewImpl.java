@@ -64,6 +64,7 @@ import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContain
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
+import org.entirej.ide.ui.editors.report.gef.ReportPreviewEditControl;
 import org.entirej.ide.ui.nodes.AbstractNode;
 
 public class ReportScreenPreviewImpl implements IReportPreviewProvider
@@ -133,6 +134,22 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
     {
+        final EJPluginReportScreenProperties layoutScreenProperties = properties;
+
+        
+        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(previewComposite);
+        previewComposite.setContent(previewEditControl);
+        setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
+        previewComposite.setExpandHorizontal(true);
+        previewComposite.setExpandVertical(true);
+        previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
+        // offset
+        if(previewEditControl!=null)
+        {
+            return;
+        }
+        
+        
         // layout canvas preview
         Composite pContent = new Composite(previewComposite, SWT.NONE);
 
@@ -150,7 +167,6 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
 
-        final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
         reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), getHeight());
 
