@@ -10,28 +10,27 @@ import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.framework.report.properties.EJCoreReportChartProperties;
 import org.entirej.framework.report.properties.EJReportVisualAttributeProperties;
 
-public class EJPluginReportScreenProperties 
+public class EJPluginReportScreenProperties
 {
     
-    private EJPluginReportBlockProperties blockProperties;
-    
-    private int                           x, y, width, height;
-    
-    private int                           headerColumnHeight = 20;
-    private int                           detailColumnHeight = 20;
-    private int                           footerColumnHeight = 20;
-    private EJReportScreenType            screenType         = EJReportScreenType.NONE;
-    
-    private final BlockGroup              subBlocks          = new BlockGroup("Sub Blocks");
-    
-    private EJReportScreenItemContainer   _screenItemContainer;
-    private EJReportColumnContainer       _columnContainer;
-    
-    private String                        oddRowVAName;
-    private String                        evenRowVAName;
-    
-    private final EJPluginReportChartProperties chartProperties; 
-    
+    private EJPluginReportBlockProperties       blockProperties;
+                                                
+    private int                                 x, y, width, height;
+    private int                                 headerColumnHeight = 20;
+    private int                                 detailColumnHeight = 20;
+    private int                                 footerColumnHeight = 20;
+    private EJReportScreenType                  screenType         = EJReportScreenType.NONE;
+                                                                   
+    private final BlockGroup                    subBlocks          = new BlockGroup("Sub Blocks");
+                                                                   
+    private EJReportScreenItemContainer         _screenItemContainer;
+    private EJReportColumnContainer             _columnContainer;
+                                                
+    private String                              oddRowVAName;
+    private String                              evenRowVAName;
+                                                
+    private final EJPluginReportChartProperties chartProperties;
+                                                
     public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
         this.blockProperties = blockProperties;
@@ -40,19 +39,16 @@ public class EJPluginReportScreenProperties
         chartProperties = new EJPluginReportChartProperties(this);
     }
     
-   
     public EJPluginReportBlockProperties getBlockProperties()
     {
         return blockProperties;
     }
-    
     
     public EJPluginReportChartProperties getChartProperties()
     {
         return chartProperties;
     }
     
-   
     public int getWidth()
     {
         return width;
@@ -62,11 +58,10 @@ public class EJPluginReportScreenProperties
     {
         this.width = width;
     }
+    
+    
  
-    
-   
-    
-   
+
     public int getHeight()
     {
         return height;
@@ -77,7 +72,6 @@ public class EJPluginReportScreenProperties
         this.height = height;
     }
     
-    
     public int getX()
     {
         return x;
@@ -87,7 +81,6 @@ public class EJPluginReportScreenProperties
     {
         this.x = x;
     }
-    
     
     public int getY()
     {
@@ -100,7 +93,6 @@ public class EJPluginReportScreenProperties
         this.y = y;
     }
     
-    
     public EJReportScreenType getScreenType()
     {
         return screenType;
@@ -111,7 +103,6 @@ public class EJPluginReportScreenProperties
         this.screenType = screenType;
     }
     
-  
     public List<EJPluginReportBlockProperties> getAllSubBlocks()
     {
         return subBlocks.getAllBlockProperties();
@@ -121,7 +112,6 @@ public class EJPluginReportScreenProperties
     {
         return subBlocks;
     }
-    
     
     public Collection<EJPluginReportScreenItemProperties> getScreenItems()
     {
@@ -137,8 +127,6 @@ public class EJPluginReportScreenProperties
     {
         return _columnContainer;
     }
-    
-    
     
     public String getOddRowVAName()
     {
@@ -190,13 +178,11 @@ public class EJPluginReportScreenProperties
         this.footerColumnHeight = footerColumnHeight;
     }
     
-    
     public EJReportVisualAttributeProperties getOddVAProperties()
     {
         return null;
     }
     
-   
     public EJReportVisualAttributeProperties getEvenVAProperties()
     {
         return null;
