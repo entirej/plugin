@@ -461,7 +461,6 @@ the developer guide provided by EntireJ.
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed"/>
