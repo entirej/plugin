@@ -419,6 +419,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 closeOpenTAG(buffer);
                 writeStringTAG(buffer, "x", itemProps.getX() + "");
                 writeStringTAG(buffer, "y", itemProps.getY() + "");
+                if (itemProps.getLeftPadding() > -1) writeStringTAG(buffer, "leftPadding", itemProps.getLeftPadding() + "");
+                if (itemProps.getRightPadding() > -1) writeStringTAG(buffer, "rightPadding", itemProps.getRightPadding() + "");
                 writeStringTAG(buffer, "width", itemProps.getWidth() + "");
                 writeStringTAG(buffer, "height", itemProps.getHeight() + "");
                 writeStringTAG(buffer, "widthAsPercentage", String.valueOf(itemProps.isWidthAsPercentage()));
@@ -485,7 +487,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "localeFormat", number.getLocaleFormat().name());
                     }
                         break;
-                    
+                        
                     case DATE:
                     {
                         final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) itemProps;
@@ -499,7 +501,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "defaultImage", number.getDefaultImage());
                     }
                         break;
-                    
+                        
                     default:
                         break;
                 }

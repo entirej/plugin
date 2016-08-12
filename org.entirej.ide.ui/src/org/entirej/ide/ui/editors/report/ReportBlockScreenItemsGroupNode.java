@@ -628,10 +628,132 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
                 }
             };
 
+            
+            final AbstractTextDescriptor leftPaddingDescriptor = new AbstractTextDescriptor("Left Padding")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The left padding <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setLeftPadding(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setLeftPadding(-1);
+                        if (text != null)
+                        {
+                            text.setText("");
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public String getValue()
+                {
+                    if(source.getLeftPadding()==-1)
+                    {
+                        return "";
+                    }
+                    return String.valueOf(source.getLeftPadding());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+            
+            final AbstractTextDescriptor rightPaddingDescriptor = new AbstractTextDescriptor("Right Padding")
+            {
+
+                @Override
+                public String getTooltip()
+                {
+
+                    return "The right padding <b>(in pixels)</b> of the report within it's Page.";
+                }
+
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setRightPadding(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setRightPadding(-1);
+                        if (text != null)
+                        {
+                            text.setText("");
+                            text.selectAll();
+                        }
+                    }
+                    treeSection.getEditor().setDirty(true);
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                @Override
+                public String getValue()
+                {
+                    if(source.getRightPadding()==-1)
+                    {
+                        return "";
+                    }
+                    return String.valueOf(source.getRightPadding());
+                }
+
+                Text text;
+
+                @Override
+                public void addEditorAssist(Control control)
+                {
+
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+
+                    super.addEditorAssist(control);
+                }
+            };
+
+            
             descriptors.add(xDescriptor);
             descriptors.add(yDescriptor);
             descriptors.add(widthDescriptor);
             descriptors.add(heightDescriptor);
+            descriptors.add(leftPaddingDescriptor);
+            descriptors.add(rightPaddingDescriptor);
 
             final AbstractBooleanDescriptor widthAsPercentage = new AbstractBooleanDescriptor("Width As Percentage", " ")
             {

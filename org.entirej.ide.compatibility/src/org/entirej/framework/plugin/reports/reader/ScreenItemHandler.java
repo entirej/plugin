@@ -66,6 +66,10 @@ public class ScreenItemHandler extends EntireJTagHandler
     
     private static final String                ELEMENT_SCREEN_DEFAULT_IMAGE        = "defaultImage";
     
+    private static final String              ELEMENT_SCREEN_PADDING_LEFT         = "leftPadding";
+    private static final String              ELEMENT_SCREEN_PADDING_RIGHT        = "rightPadding";
+   
+    
     public ScreenItemHandler(EJPluginReportScreenProperties blockProperties)
     {
         _blockProperties = blockProperties;
@@ -116,7 +120,14 @@ public class ScreenItemHandler extends EntireJTagHandler
         {
             _itemProperties.setHeight(Integer.parseInt(value));
         }
-        
+        else if (name.equals(ELEMENT_SCREEN_PADDING_LEFT))
+        {
+            _itemProperties.setLeftPadding(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_SCREEN_PADDING_RIGHT))
+        {
+            _itemProperties.setRightPadding(Integer.parseInt(value));
+        }
         else if (name.equals(ELEMENT_SCREEN_WIDTH_AS_PERCENTAGE))
         {
             _itemProperties.setWidthAsPercentage(Boolean.parseBoolean(value));
