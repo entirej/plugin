@@ -10,6 +10,7 @@ import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
@@ -52,6 +53,8 @@ public class ReportPreviewEditControl extends Composite
 
         viewer.setEditPartFactory(new ReportEditPartFactory());
 
+        
+                    
     }
 
     /**

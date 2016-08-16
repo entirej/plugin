@@ -65,15 +65,16 @@ import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.editors.report.gef.ReportPreviewEditControl;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart.ReportFormScreenCanvas;
 import org.entirej.ide.ui.nodes.AbstractNode;
 
 public class ReportScreenPreviewImpl implements IReportPreviewProvider
 {
-    protected final Color                          COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
-    protected final Color                          COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
-    protected final Color                          COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    protected final Color                          COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-    protected final Color                          COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+    protected static final Color                   COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
+    protected static final Color                   COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
+    protected static final Color                   COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+    protected static final Color                   COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+    protected static final Color                   COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
     protected final Cursor                         RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
     protected final Cursor                         MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
     protected final EJPluginReportScreenProperties properties;
@@ -87,8 +88,6 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
     public void dispose()
     {
-        COLOR_BLOCK_ITEM.dispose();
-        COLOR_BLOCK.dispose();
         RESIZE.dispose();
         MOVE.dispose();
     }
@@ -136,20 +135,22 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
-        
         ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(previewComposite);
         previewComposite.setContent(previewEditControl);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
         previewComposite.setExpandHorizontal(true);
         previewComposite.setExpandVertical(true);
         previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
+        previewEditControl.setModel(new ReportFormScreenCanvas(layoutScreenProperties,1000,1000));
+        
+        
         // offset
-        if(previewEditControl!=null)
+        if (previewEditControl != null)
         {
+            
             return;
         }
-        
-        
+
         // layout canvas preview
         Composite pContent = new Composite(previewComposite, SWT.NONE);
 
@@ -166,7 +167,6 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         final Composite reportBody = new Composite(pContent, SWT.BORDER);
         reportBody.setLayout(null);
         setPreviewBackground(reportBody, COLOR_WHITE);
-
 
         reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), getHeight());
 
