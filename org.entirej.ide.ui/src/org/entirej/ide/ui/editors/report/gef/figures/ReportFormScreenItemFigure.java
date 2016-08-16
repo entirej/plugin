@@ -4,8 +4,6 @@ import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 
 public class ReportFormScreenItemFigure extends RectangleFigure
@@ -21,6 +19,7 @@ public class ReportFormScreenItemFigure extends RectangleFigure
         setLayoutManager(manager);
         Label figure = new Label(model.getName());
         add(figure);
+       setAlpha(150);
        // setOutline(false);
        // setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
         getLayoutManager().setConstraint(figure, new GridData(
