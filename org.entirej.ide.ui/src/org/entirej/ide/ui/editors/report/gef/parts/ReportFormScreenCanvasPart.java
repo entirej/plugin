@@ -69,7 +69,7 @@ public class ReportFormScreenCanvasPart extends AbstractGraphicalEditPart
         ZoomManager zoomManager = (ZoomManager) getViewer().getProperty(ZoomManager.class.toString());
         if(zoomManager!=null)
         {
-            zoomManager.setZoom(5);
+            //zoomManager.setZoom(1);
         }
     }
 
