@@ -2,9 +2,11 @@ package org.entirej.ide.ui.editors.report.gef.parts;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenItemFigure;
+import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenItemResizableEditPolicy;
 
 public class ReportFormScreenItemPart extends AbstractGraphicalEditPart
 {
@@ -18,7 +20,8 @@ public class ReportFormScreenItemPart extends AbstractGraphicalEditPart
     @Override
     protected void createEditPolicies()
     {
-        // TODO Auto-generated method stub
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+                new ScreenItemResizableEditPolicy());
 
     }
 
