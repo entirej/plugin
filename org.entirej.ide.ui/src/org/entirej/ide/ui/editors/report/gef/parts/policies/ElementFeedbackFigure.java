@@ -35,15 +35,11 @@ public class ElementFeedbackFigure extends RectangleFigure
         if (clientArea.width < 20 || clientArea.height < 20 || text.isEmpty())
             return;
 
-        gr.setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_GRAY));
         FontMetrics fm = gr.getFontMetrics();
         int textWidth = fm.getAverageCharWidth() * text.length();
         int textHeight = fm.getHeight();
         Rectangle textBgBounds = new Rectangle(clientArea.x - 30 + (clientArea.width + 60) / 2 - (int) textWidth / 2 - 10,
                 clientArea.y - 30 + (clientArea.height + 60) / 2 - (int) textHeight / 2 - 2, (int) textWidth + 20, (int) textHeight + 4);
-
-        gr.setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_GRAY));
-        gr.fillRoundRectangle(textBgBounds, 20, 20);
 
         gr.drawLine(clientArea.x - 30, // X
                 clientArea.y - 30 + (clientArea.height + 60) / 2, // Half Y
@@ -94,7 +90,7 @@ public class ElementFeedbackFigure extends RectangleFigure
                                                              // height...
 
         gr.setForegroundColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
-        gr.drawString(text, textBgBounds.x + 10, textBgBounds.y +5);
+        gr.drawString(text, textBgBounds.x + 10, textBgBounds.y + 5);
 
     }
 }

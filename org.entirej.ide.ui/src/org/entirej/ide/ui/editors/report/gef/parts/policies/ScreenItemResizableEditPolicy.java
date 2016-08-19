@@ -82,16 +82,11 @@ public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
 		int scaleH = 0;
 		int scaleW = 0;
 		if (getHost().getModel()  instanceof EJPluginReportScreenItemProperties) {
-		    EJPluginReportScreenItemProperties jrElement = (EJPluginReportScreenItemProperties) getHost().getModel();
-			Rectangle oldBounds = new Rectangle(jrElement.getX(), jrElement.getY(), jrElement.getWidth(),
-					jrElement.getHeight());
+		    EJPluginReportScreenItemProperties model = (EJPluginReportScreenItemProperties) getHost().getModel();
+            Rectangle oldBounds = new Rectangle(model.getX() + request.getMoveDelta().x, model.getY() + request.getMoveDelta().y,
+                    model.getWidth() + request.getSizeDelta().width, model.getHeight() + request.getSizeDelta().height);
 
-			PrecisionRectangle rect2 = new PrecisionRectangle(new Rectangle(request.getMoveDelta().x,
-					request.getMoveDelta().y, request.getSizeDelta().width, request.getSizeDelta().height));
-			getHostFigure().translateToRelative(rect2);
-
-			oldBounds.translate(rect2.x, rect2.y);
-			oldBounds.resize(rect2.width, rect2.height);
+			
 
 			s += oldBounds.x + ", " + oldBounds.y + ", " + oldBounds.width + ", " + oldBounds.height;
 			if (oldBounds.width != 0)
