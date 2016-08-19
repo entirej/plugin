@@ -2,8 +2,12 @@ package org.entirej.ide.ui.editors.report.gef.parts;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.DragTracker;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenItemFigure;
 import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenItemResizableEditPolicy;
@@ -47,6 +51,13 @@ public class ReportFormScreenItemPart extends AbstractReportGraphicalEditPart
         parent.setLayoutConstraint(this, figure, layout);
     }
     
-    
+    public DragTracker getDragTracker(Request request) {
+        
+        return new DragEditPartsTracker(this){@Override
+        protected EditPart getTargetEditPart()
+        {
+            return getParent();
+        }};
+    }
 
 }

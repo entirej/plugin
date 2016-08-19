@@ -3,6 +3,12 @@ package org.entirej.ide.ui.editors.report.gef.parts.policies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Graphics;
@@ -11,15 +17,21 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.DragTracker;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.SharedCursors;
+import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.handles.NonResizableHandleKit;
 import org.eclipse.gef.handles.ResizableHandleKit;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
+import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.ide.ui.editors.report.gef.ReportEditorContext;
+import org.entirej.ide.ui.editors.report.gef.commands.OperationCommand;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenItemPart;
 
 
 public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
@@ -188,6 +200,8 @@ public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
 	protected SelectEditPartTracker getSelectTracker() {
 		return new SelectEditPartTracker(getHost());
 	}
+	
+	
 
 //	/**
 //	 * Returns a resize tracker for the given direction to be used by a resize handle.
@@ -206,4 +220,145 @@ public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
 	public List<?> getHandles() {
 		return handles;
 	}
+	
+	
+	
+	@Override
+	protected Command getMoveCommand(ChangeBoundsRequest request)
+	{
+	    if (getHost().getModel() instanceof EJPluginReportScreenItemProperties)
+            {
+                ReportFormScreenItemPart part = (ReportFormScreenItemPart) getHost();
+                final EJPluginReportScreenItemProperties model = part.getModel();
+                final ReportEditorContext editorContext = part.getReportEditorContext();
+                final int                            x = model.getX() + request.getMoveDelta().x;
+                ;
+                final int                            y = model.getY() + request.getMoveDelta().y;
+                final int                            oldX =model.getX();
+                final int                            oldY = model.getY();
+                
+                AbstractOperation operation = new AbstractOperation("Move Screen Item")
+                {
+
+                    @Override
+                    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                    {
+                        model.setX(oldX);
+                        model.setY(oldY);
+                        editorContext.setDirty(true);
+                        editorContext.refresh(model);
+                        editorContext.refreshProperties();
+                        editorContext.refreshPreview();
+
+                        getHost().refresh();
+                        return Status.OK_STATUS;
+                    }
+
+                    @Override
+                    public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                    {
+                        model.setX(x);
+                        model.setY(y);
+                        editorContext.setDirty(true);
+                        editorContext.refresh(model);
+                        editorContext.refreshProperties();
+                        editorContext.refreshPreview();
+
+                        getHost().refresh();
+                        return Status.OK_STATUS;
+                    }
+
+                    @Override
+                    public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                    {
+
+                        model.setX(x);
+                        model.setY(y);
+                        
+                        editorContext.setDirty(true);
+                        editorContext.refresh(model);
+                        editorContext.refreshProperties();
+
+                        getHost().refresh();
+                        return Status.OK_STATUS;
+                    }
+                };
+
+                
+
+                return new OperationCommand(editorContext, operation);
+            }
+	    return null;
+	}
+	/**
+	     * Resize command used when the band is drag and dropped
+	     */
+	    @Override
+	    protected Command getResizeCommand(ChangeBoundsRequest request)
+	    {
+	        if (getHost().getModel() instanceof EJPluginReportScreenItemProperties)
+	        {
+	            ReportFormScreenItemPart part = (ReportFormScreenItemPart) getHost();
+	            final EJPluginReportScreenItemProperties model = part.getModel();
+	            final ReportEditorContext editorContext = part.getReportEditorContext();
+	            final int                            width = model.getWidth() + request.getSizeDelta().width;
+	            ;
+	            final int                            height = model.getHeight() + request.getSizeDelta().height;
+	            final int                            oldWidth =model.getWidth();
+	            final int                            oldHeight = model.getHeight();
+	            
+	            AbstractOperation operation = new AbstractOperation("Resize Screen Item")
+	            {
+
+	                @Override
+	                public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+	                {
+	                    model.setWidth(oldWidth);
+	                    model.setHeight(oldHeight);
+	                    editorContext.setDirty(true);
+	                    editorContext.refresh(model);
+	                    editorContext.refreshProperties();
+	                    editorContext.refreshPreview();
+
+	                    getHost().refresh();
+	                    return Status.OK_STATUS;
+	                }
+
+	                @Override
+	                public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+	                {
+	                    model.setWidth(width);
+	                    model.setHeight(height);
+	                    editorContext.setDirty(true);
+	                    editorContext.refresh(model);
+	                    editorContext.refreshProperties();
+	                    editorContext.refreshPreview();
+
+	                    getHost().refresh();
+	                    return Status.OK_STATUS;
+	                }
+
+	                @Override
+	                public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+	                {
+
+	                    model.setWidth(width);
+	                    model.setHeight(height);
+	                    
+	                    editorContext.setDirty(true);
+	                    editorContext.refresh(model);
+	                    editorContext.refreshProperties();
+
+	                    getHost().refresh();
+	                    return Status.OK_STATUS;
+	                }
+	            };
+
+	            
+
+	            return new OperationCommand(editorContext, operation);
+	        }
+
+	        return null;
+	    }
 }
