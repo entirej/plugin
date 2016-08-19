@@ -8,9 +8,13 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenItemFigure;
 import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenItemResizableEditPolicy;
 
-public class ReportFormScreenItemPart extends AbstractGraphicalEditPart
+public class ReportFormScreenItemPart extends AbstractReportGraphicalEditPart
 {
 
+    public ReportFormScreenItemPart()
+    {
+        // TODO Auto-generated constructor stub
+    }
     @Override
     protected IFigure createFigure()
     {

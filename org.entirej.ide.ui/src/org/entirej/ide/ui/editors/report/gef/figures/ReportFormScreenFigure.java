@@ -13,9 +13,7 @@ import org.eclipse.draw2d.LineBorder;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.editparts.GridLayer;
 import org.eclipse.gef.editparts.GuideLayer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 
 public class ReportFormScreenFigure extends FreeformViewport

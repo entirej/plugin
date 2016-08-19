@@ -7,12 +7,11 @@ import java.util.List;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenFigure;
 import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenResizableEditPolicy;
 
-public class ReportFormScreenPart extends AbstractGraphicalEditPart
+public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
 {
     private ReportFormScreenFigure  base;
     @Override

@@ -9,7 +9,7 @@ import org.eclipse.gef.editparts.ZoomManager;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenCanvasFigure;
 
-public class ReportFormScreenCanvasPart extends AbstractGraphicalEditPart
+public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
 {
 
     public static class ReportFormScreenCanvas

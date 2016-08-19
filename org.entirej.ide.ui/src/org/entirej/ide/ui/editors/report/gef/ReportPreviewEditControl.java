@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
@@ -23,17 +24,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
+import org.entirej.ide.ui.editors.report.AbstractEJReportEditor;
 
 public class ReportPreviewEditControl extends Composite
 {
 
-    private final EditDomain      editDomain;
-    private final GraphicalViewer viewer;
+    private final EditDomain             editDomain;
+    private final GraphicalViewer        viewer;
 
-    public ReportPreviewEditControl(Composite parent)
+    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent)
     {
         super(parent, SWT.NONE);
-
         setLayout(new FillLayout());
 
         editDomain = new EditDomain();
@@ -51,10 +52,39 @@ public class ReportPreviewEditControl extends Composite
 
         viewer.getControl().setBackground(ColorConstants.listBackground);
 
-        viewer.setEditPartFactory(new ReportEditPartFactory());
+        viewer.setEditPartFactory(new ReportEditPartFactory(new ReportEditorContext()
+        {
 
-        
-                    
+            public void execute(AbstractOperation operation)
+            {
+                editor.execute(operation);
+                
+            }
+
+            public void setDirty(boolean b)
+            {
+                editor.setDirty(b);
+                
+            }
+
+            public void refresh(Object model)
+            {
+                editor.refresh(model);
+                
+            }
+
+            public void refreshPreview()
+            {
+                editor.refreshPreview();
+                
+            }
+            public void refreshProperties()
+            {
+                editor.refreshProperties();
+                
+            }
+        }));
+
     }
 
     /**

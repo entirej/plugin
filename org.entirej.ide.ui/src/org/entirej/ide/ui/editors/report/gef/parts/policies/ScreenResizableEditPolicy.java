@@ -3,6 +3,12 @@ package org.entirej.ide.ui.editors.report.gef.parts.policies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Graphics;
@@ -21,7 +27,9 @@ import org.eclipse.gef.handles.ResizableHandleKit;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.ide.ui.editors.report.gef.commands.ResizeScreenCommand;
+import org.entirej.ide.ui.editors.report.gef.ReportEditorContext;
+import org.entirej.ide.ui.editors.report.gef.commands.OperationCommand;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenPart;
 
 public class ScreenResizableEditPolicy extends ResizableEditPolicy
 {
@@ -244,28 +252,65 @@ public class ScreenResizableEditPolicy extends ResizableEditPolicy
     {
         if (getHost().getModel() instanceof EJPluginReportScreenProperties)
         {
-            EJPluginReportScreenProperties model = (EJPluginReportScreenProperties) getHost().getModel();
-
-            ResizeScreenCommand resizeCommand = new ResizeScreenCommand(model, model.getWidth() + request.getSizeDelta().width,
-                    model.getHeight() + request.getSizeDelta().height)
+            ReportFormScreenPart part = (ReportFormScreenPart) getHost();
+            final EJPluginReportScreenProperties model = part.getModel();
+            final ReportEditorContext editorContext = part.getReportEditorContext();
+            final int                            width = model.getWidth() + request.getSizeDelta().width;
+            ;
+            final int                            height = model.getHeight() + request.getSizeDelta().height;
+            final int                            oldWidth =model.getWidth();
+            final int                            oldHeight = model.getHeight();
+            
+            AbstractOperation operation = new AbstractOperation("Resize Screen")
             {
+
                 @Override
-                public void execute()
+                public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
                 {
-                    super.execute();
+                    model.setWidth(oldWidth);
+                    model.setHeight(oldHeight);
+                    editorContext.setDirty(true);
+                    editorContext.refresh(model);
+                    editorContext.refreshProperties();
+                    editorContext.refreshPreview();
+
                     getHost().refresh();
+                    return Status.OK_STATUS;
                 }
 
                 @Override
-                public void undo()
+                public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
                 {
-                    super.undo();
+                    model.setWidth(width);
+                    model.setHeight(height);
+                    editorContext.setDirty(true);
+                    editorContext.refresh(model);
+                    editorContext.refreshProperties();
+                    editorContext.refreshPreview();
+
                     getHost().refresh();
+                    return Status.OK_STATUS;
                 }
 
+                @Override
+                public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+                {
+
+                    model.setWidth(width);
+                    model.setHeight(height);
+                    
+                    editorContext.setDirty(true);
+                    editorContext.refresh(model);
+                    editorContext.refreshProperties();
+
+                    getHost().refresh();
+                    return Status.OK_STATUS;
+                }
             };
 
-            return resizeCommand;
+            
+
+            return new OperationCommand(editorContext, operation);
         }
 
         return null;
