@@ -52,7 +52,18 @@ public class ReportPreviewEditControl extends Composite
 
         viewer.getControl().setBackground(ColorConstants.listBackground);
 
-        viewer.setEditPartFactory(new ReportEditPartFactory(new ReportEditorContext()
+        viewer.setEditPartFactory(createPartFactory(editor));
+
+    }
+
+    protected ReportEditPartFactory createPartFactory(final AbstractEJReportEditor editor)
+    {
+        return new ReportEditPartFactory(createContext(editor));
+    }
+
+    public ReportEditorContext createContext(final AbstractEJReportEditor editor)
+    {
+        return new ReportEditorContext()
         {
 
             public void execute(AbstractOperation operation)
@@ -83,8 +94,7 @@ public class ReportPreviewEditControl extends Composite
                 editor.refreshProperties();
                 
             }
-        }));
-
+        };
     }
 
     /**

@@ -141,7 +141,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         previewComposite.setExpandHorizontal(true);
         previewComposite.setExpandVertical(true);
         previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
-        previewEditControl.setModel(new ReportFormScreenCanvas(layoutScreenProperties,1000,1000));
+        previewEditControl.setModel(new ReportFormScreenCanvas(layoutScreenProperties,editor.getReportProperties().getReportWidth(),editor.getReportProperties().getReportHeight()));
         
         
         // offset

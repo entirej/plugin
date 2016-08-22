@@ -2,9 +2,13 @@ package org.entirej.ide.ui.editors.report.gef;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.parts.AbstractReportGraphicalEditPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart.BlockSectionCanvas;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart.ReportFormScreenCanvas;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenItemPart;
@@ -22,23 +26,30 @@ public class ReportEditPartFactory implements EditPartFactory
     public EditPart createEditPart(EditPart context, Object model)
     {
         EditPart part = null;
-        if (model instanceof ReportFormScreenCanvas)
+        if (model instanceof BlockSectionCanvas)
+        {
+            part = new ReportBlockSectionCanvasPart();
+        }
+        else if (model instanceof ReportFormScreenCanvas)
         {
             part = new ReportFormScreenCanvasPart();
         }
-        if (model instanceof EJPluginReportScreenProperties)
+        else if (model instanceof EJPluginReportBlockProperties)
         {
-            part = new ReportFormScreenPart();
+            part = new ReportBlockPart();
         }
-        if (model instanceof EJPluginReportScreenItemProperties)
+        else if (model instanceof EJPluginReportScreenProperties)
+        {
+            part = createScreenPart();
+        }
+        else if (model instanceof EJPluginReportScreenItemProperties)
         {
             part = new ReportFormScreenItemPart();
         }
 
-        
         if (part instanceof AbstractReportGraphicalEditPart)
         {
-            ((AbstractReportGraphicalEditPart)part).setReportEditorContext(reportEditorContext);
+            ((AbstractReportGraphicalEditPart) part).setReportEditorContext(reportEditorContext);
         }
         // set model
         if (part != null)
@@ -46,6 +57,11 @@ public class ReportEditPartFactory implements EditPartFactory
             part.setModel(model);
         }
         return part;
+    }
+
+    protected ReportFormScreenPart createScreenPart()
+    {
+        return new ReportFormScreenPart();
     }
 
 }
