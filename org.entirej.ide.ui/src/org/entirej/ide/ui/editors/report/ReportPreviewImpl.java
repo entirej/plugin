@@ -168,7 +168,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             };
             
             previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(page,
-                    width , (height - (formProperties.getMarginBottom()
+                    (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
                             + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight()))));
             previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
                     (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
@@ -192,7 +192,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         };
         
         previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(blockContainer.getHeaderSection(),
-                width, formProperties.getHeaderSectionHeight()));
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getHeaderSectionHeight()));
         previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getHeaderSectionHeight());
 
@@ -215,7 +215,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         };
         
         previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(blockContainer.getFooterSection(),
-                width, formProperties.getFooterSectionHeight()));
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getFooterSectionHeight()));
         previewEditControl.setBounds(formProperties.getMarginLeft(), height - (formProperties.getMarginBottom() + formProperties.getFooterSectionHeight()),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getFooterSectionHeight());
         
@@ -240,7 +240,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         };
         
         previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(firstPage,
-                width, (height - (formProperties.getMarginBottom()
+                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
                         + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight()))));
         previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
