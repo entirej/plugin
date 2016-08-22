@@ -139,7 +139,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         });
         Composite report = new Composite(pContent, SWT.BORDER);
         setPreviewBackground(report, COLOR_LIGHT_SHADOW);
-
+        previewComposite.setMinSize(width+25, height+10);
         report.setBounds(25, 10, width, height);
         report.setLayout(null);
 
