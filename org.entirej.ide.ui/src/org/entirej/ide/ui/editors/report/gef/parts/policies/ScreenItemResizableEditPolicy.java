@@ -29,6 +29,7 @@ import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.ReportEditorContext;
 import org.entirej.ide.ui.editors.report.gef.commands.OperationCommand;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenItemPart;
@@ -296,9 +297,36 @@ public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
 	            ReportFormScreenItemPart part = (ReportFormScreenItemPart) getHost();
 	            final EJPluginReportScreenItemProperties model = part.getModel();
 	            final ReportEditorContext editorContext = part.getReportEditorContext();
-	            final int                            width = model.getWidth() + request.getSizeDelta().width;
+	            
+	            int basewidth = model.getWidth();
+	            int baseheight = model.getHeight();
+	            if (model.isWidthAsPercentage())
+	            {
+	                basewidth = (int) (((double) ((EJPluginReportScreenProperties)part.getParent().getModel()).getWidth() / 100) * model.getWidth());
+	            }
+
+	            
+	            if (model.isHeightAsPercentage())
+	            {
+	                baseheight = (int) (((double) ((EJPluginReportScreenProperties)part.getParent().getModel()).getHeight() / 100) * model.getHeight());
+	            }
+	            
+	            final int                            width ;
 	            ;
-	            final int                            height = model.getHeight() + request.getSizeDelta().height;
+	            final int                            height ;
+	            
+	            
+	            if(model.isWidthAsPercentage())
+	                width = (int) (((double) (basewidth + request.getSizeDelta().width) / ((EJPluginReportScreenProperties)part.getParent().getModel()).getWidth()) * 100);
+	            else
+	                width = model.getWidth() + request.getSizeDelta().width;
+	            if(model.isHeightAsPercentage())
+	                height = (int) (((double) (baseheight + request.getSizeDelta().height) / ((EJPluginReportScreenProperties)part.getParent().getModel()).getHeight()) * 100);
+	            else
+	                height = model.getHeight() + request.getSizeDelta().height;
+	            
+	            
+	            
 	            final int                            oldWidth =model.getWidth();
 	            final int                            oldHeight = model.getHeight();
 	            

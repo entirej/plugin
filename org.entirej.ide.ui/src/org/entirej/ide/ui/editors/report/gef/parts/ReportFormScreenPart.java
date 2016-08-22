@@ -50,7 +50,7 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
         ReportFormScreenCanvasPart parent = (ReportFormScreenCanvasPart) getParent();
         EJPluginReportScreenProperties model = getModel();
 
-        Rectangle layout = new Rectangle(5, 5, model.getWidth() + 2, model.getHeight() + 2);
+        Rectangle layout = new Rectangle(5, 5, model.getWidth() , model.getHeight() );
         parent.setLayoutConstraint(this, figure, layout);
     }
 

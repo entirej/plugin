@@ -9,6 +9,7 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenItemFigure;
 import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenItemResizableEditPolicy;
 
@@ -47,7 +48,19 @@ public class ReportFormScreenItemPart extends AbstractReportGraphicalEditPart
         AbstractGraphicalEditPart parent = (AbstractGraphicalEditPart) getParent();
         EJPluginReportScreenItemProperties model = getModel();
 
-        Rectangle layout = new Rectangle(model.getX(), model.getY(), model.getWidth(), model.getHeight());
+        int width = model.getWidth();
+        int height = model.getHeight();
+        if (model.isWidthAsPercentage())
+        {
+            width = (int) (((double) ((EJPluginReportScreenProperties)getParent().getModel()).getWidth() / 100) * model.getWidth());
+        }
+
+        
+        if (model.isHeightAsPercentage())
+        {
+            height = (int) (((double) ((EJPluginReportScreenProperties)getParent().getModel()).getHeight() / 100) * model.getHeight());
+        }
+        Rectangle layout = new Rectangle(model.getX(), model.getY(), width, height);
         parent.setLayoutConstraint(this, figure, layout);
     }
     
