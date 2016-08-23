@@ -10,6 +10,7 @@ import org.eclipse.gef.DragTracker;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.tools.DragEditPartsTracker;
+import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenFigure;
 import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenResizableEditPolicy;
@@ -47,7 +48,7 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
     {
         IFigure figure = getFigure();
 
-        ReportFormScreenCanvasPart parent = (ReportFormScreenCanvasPart) getParent();
+        AbstractReportGraphicalEditPart parent = (AbstractReportGraphicalEditPart) getParent();
         EJPluginReportScreenProperties model = getModel();
 
         Rectangle layout = new Rectangle(5, 5, model.getWidth() , model.getHeight() );
@@ -57,9 +58,13 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
     @Override
     public List<?> getModelChildren()
     {
+        ArrayList<Object> list= new ArrayList<Object>();
         Collection<?> screenItems = getModel().getScreenItems();
-
-        return new ArrayList<Object>(screenItems);
+        list.addAll(screenItems);
+        
+        List<EJPluginReportBlockProperties> allSubBlocks = getModel().getAllSubBlocks();
+        list.addAll(allSubBlocks);
+        return list;
     }
     @Override
     public IFigure getContentPane()
