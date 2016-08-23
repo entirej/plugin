@@ -47,6 +47,11 @@
 			<layout>p2</layout>
 		</repository>
 		<repository>
+			<id>update37-gef</id>
+			<url>http://www.eclipse.org/modeling/amalgam/downloads/package/modeling/mars/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
 			<id>entirej-mvn-repo</id>
 			<url>https://raw.github.com/entirej/mavenrepo/gh-pages/maven/${MAVEN.REPO.PATH}/</url>
 			<snapshots>
