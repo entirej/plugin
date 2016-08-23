@@ -20,6 +20,7 @@ public class ElementFeedbackFigure extends RectangleFigure
     public void setText(String text)
     {
         this.text = text;
+        setAlpha(150);
     }
 
     @Override
@@ -31,15 +32,20 @@ public class ElementFeedbackFigure extends RectangleFigure
 
         Rectangle clientArea = getClientArea();
         Graphics gr = g;
-
-        if (clientArea.width < 20 || clientArea.height < 20 || text.isEmpty())
-            return;
-
         FontMetrics fm = gr.getFontMetrics();
         int textWidth = fm.getAverageCharWidth() * text.length();
         int textHeight = fm.getHeight();
         Rectangle textBgBounds = new Rectangle(clientArea.x - 30 + (clientArea.width + 60) / 2 - (int) textWidth / 2 - 10,
                 clientArea.y - 30 + (clientArea.height + 60) / 2 - (int) textHeight / 2 - 2, (int) textWidth + 20, (int) textHeight + 4);
+        if (clientArea.width < 20 || clientArea.height < 20 || text.isEmpty())
+        {
+            gr.setForegroundColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
+            gr.drawString(text, textBgBounds.x + 10, textBgBounds.y);
+            return;
+        }
+
+        
+        
 
         gr.drawLine(clientArea.x - 30, // X
                 clientArea.y - 30 + (clientArea.height + 60) / 2, // Half Y
