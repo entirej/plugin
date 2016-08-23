@@ -225,64 +225,7 @@ public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
 	    if (getHost().getModel() instanceof EJPluginReportScreenItemProperties)
             {
                 ReportFormScreenItemPart part = (ReportFormScreenItemPart) getHost();
-                final EJPluginReportScreenItemProperties model = part.getModel();
-                final ReportEditorContext editorContext = part.getReportEditorContext();
-                final int                            x = model.getX() + request.getMoveDelta().x;
-                ;
-                final int                            y = model.getY() + request.getMoveDelta().y;
-                final int                            oldX =model.getX();
-                final int                            oldY = model.getY();
-                
-                AbstractOperation operation = new AbstractOperation("Move Screen Item")
-                {
-
-                    @Override
-                    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
-                    {
-                        model.setX(oldX);
-                        model.setY(oldY);
-                        editorContext.setDirty(true);
-                        editorContext.refresh(model);
-                        editorContext.refreshProperties();
-                        editorContext.refreshPreview();
-
-                        getHost().refresh();
-                        return Status.OK_STATUS;
-                    }
-
-                    @Override
-                    public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
-                    {
-                        model.setX(x);
-                        model.setY(y);
-                        editorContext.setDirty(true);
-                        editorContext.refresh(model);
-                        editorContext.refreshProperties();
-                        editorContext.refreshPreview();
-
-                        getHost().refresh();
-                        return Status.OK_STATUS;
-                    }
-
-                    @Override
-                    public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
-                    {
-
-                        model.setX(x);
-                        model.setY(y);
-                        
-                        editorContext.setDirty(true);
-                        editorContext.refresh(model);
-                        editorContext.refreshProperties();
-
-                        getHost().refresh();
-                        return Status.OK_STATUS;
-                    }
-                };
-
-                
-
-                return new OperationCommand(editorContext, operation);
+                return part.createMoveCommand(request.getMoveDelta().x, request.getMoveDelta().y);
             }
 	    return null;
 	}

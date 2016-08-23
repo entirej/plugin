@@ -53,6 +53,7 @@ public class ReportPreviewEditControl extends Composite
         viewer.getControl().setBackground(ColorConstants.listBackground);
 
         viewer.setEditPartFactory(createPartFactory(editor));
+        viewer.setKeyHandler(new ReportGraphicalViewerKeyHandler(viewer));
 
     }
 
