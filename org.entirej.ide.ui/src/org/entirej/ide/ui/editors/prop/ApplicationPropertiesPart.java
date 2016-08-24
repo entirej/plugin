@@ -75,7 +75,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
                             if (changed)
                             {
                                 if (descriptorPart != null)
-                                    descriptorPart.buildUI();
+                                    descriptorPart.buildUI(true);
                                 changed = false;
                             }
 
@@ -184,7 +184,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
             }
         };
 
-        buildUI();
+        buildUI(true);
     }
 
     @Override
@@ -192,6 +192,12 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
     {
         return new AbstractDescriptor<?>[] { applicationManagerClass, connectionFactoryClass, translatorFactoryClass, reusableBlocksPkg,
                 reusableLovDefinitionsPkg ,objectGroupDefinitionsPkg};
+    }
+    
+    @Override
+    public Object getInput()
+    {
+        return new Object();
     }
 
     @Override
@@ -210,7 +216,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
     public void refresh()
     {
         super.refresh();
-        buildUI();
+        buildUI(true);
     }
 
     protected void buildBody(Section section, FormToolkit toolkit)

@@ -604,46 +604,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
             }
         });
 
-        final DragSourceAdapter resizeMoveAdapter = new DragSourceAdapter()
-        {
-            @Override
-            public void dragSetData(final DragSourceEvent event)
-            {
-
-                transfer.setSelection(new StructuredSelection(dragObjectResize));
-            }
-
-            @Override
-            public void dragFinished(DragSourceEvent event)
-            {
-                editor.refreshProperties();
-            }
-        };
-
-        final DragSource dragSourceResize = new DragSource(resize, DND.DROP_MOVE | DND.DROP_COPY);
-        dragSourceResize.setTransfer(new Transfer[] { transfer });
-        dragSourceResize.addDragListener(resizeMoveAdapter);
-
-        final DragSourceAdapter dragMoveAdapter = new DragSourceAdapter()
-        {
-            @Override
-            public void dragSetData(final DragSourceEvent event)
-            {
-
-                transfer.setSelection(new StructuredSelection(dragObjectMove));
-            }
-
-            @Override
-            public void dragFinished(DragSourceEvent event)
-            {
-                editor.refreshProperties();
-            }
-        };
-
-        final DragSource dragSourceMove = new DragSource(move, DND.DROP_MOVE | DND.DROP_COPY);
-        dragSourceMove.setTransfer(new Transfer[] { transfer });
-        dragSourceMove.addDragListener(dragMoveAdapter);
-
+       
         if (properties.getType() == EJReportScreenItemType.LINE)
         {
             final EJPluginReportScreenItemProperties.Line line = (Line) properties;
@@ -654,7 +615,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
             block.setToolTipText(line.getName());
             dragSourceMoveLine.setTransfer(new Transfer[] { transfer });
-            dragSourceMoveLine.addDragListener(dragMoveAdapter);
+            //dragSourceMoveLine.addDragListener(dragMoveAdapter);
             hint.setVisible(false);
             block.addPaintListener(new PaintListener()
             {
@@ -697,7 +658,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
             block.setToolTipText(line.getName());
             dragSourceMoveLine.setTransfer(new Transfer[] { transfer });
-            dragSourceMoveLine.addDragListener(dragMoveAdapter);
+            //dragSourceMoveLine.addDragListener(dragMoveAdapter);
             hint.setVisible(false);
             block.addPaintListener(new PaintListener()
             {
@@ -975,45 +936,9 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
                 }
             });
 
-            final DragSourceAdapter resizeMoveAdapter = new DragSourceAdapter()
-            {
-                @Override
-                public void dragSetData(final DragSourceEvent event)
-                {
+          
 
-                    transfer.setSelection(new StructuredSelection(dragObjectResize));
-                }
-
-                @Override
-                public void dragFinished(DragSourceEvent event)
-                {
-                    editor.refreshProperties();
-                }
-            };
-
-            final DragSource dragSourceResize = new DragSource(resize, DND.DROP_MOVE | DND.DROP_COPY);
-            dragSourceResize.setTransfer(new Transfer[] { transfer });
-            dragSourceResize.addDragListener(resizeMoveAdapter);
-
-            final DragSourceAdapter dragMoveAdapter = new DragSourceAdapter()
-            {
-                @Override
-                public void dragSetData(final DragSourceEvent event)
-                {
-
-                    transfer.setSelection(new StructuredSelection(dragObjectMove));
-                }
-
-                @Override
-                public void dragFinished(DragSourceEvent event)
-                {
-                    editor.refreshProperties();
-                }
-            };
-
-            final DragSource dragSourceMove = new DragSource(move, DND.DROP_MOVE | DND.DROP_COPY);
-            dragSourceMove.setTransfer(new Transfer[] { transfer });
-            dragSourceMove.addDragListener(dragMoveAdapter);
+          
         }
     }
 

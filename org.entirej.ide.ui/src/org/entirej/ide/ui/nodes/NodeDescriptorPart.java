@@ -65,7 +65,7 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
             @Override
             public void run()
             {
-                buildUI();
+                buildUI(false);
             }
 
         };
@@ -83,6 +83,12 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
         return new AbstractDescriptor<?>[0];
     }
 
+    
+    @Override
+    public Object getInput()
+    {
+        return selectedNode;
+    }
     @Override
     public String getSectionTitle()
     {
@@ -106,7 +112,7 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
     public void showDetails(AbstractNode<?> node)
     {
         selectedNode = node;
-        buildUI();
+        buildUI(false);
 
     }
 

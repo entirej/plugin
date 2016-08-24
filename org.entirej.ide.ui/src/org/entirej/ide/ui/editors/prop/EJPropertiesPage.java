@@ -71,7 +71,7 @@ public class EJPropertiesPage extends AbstractEditorPage
                     @Override
                     public void run()
                     {
-                        buildUI();
+                        buildUI(false);
                     }
 
                 };

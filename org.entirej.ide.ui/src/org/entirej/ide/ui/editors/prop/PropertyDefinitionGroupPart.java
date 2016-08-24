@@ -123,7 +123,7 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
             @Override
             public void run()
             {
-                buildUI();
+                buildUI(false);
             }
 
         };
@@ -132,6 +132,11 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
         return new Action[] { refreshAction };
     }
 
+    @Override
+    public Object getInput()
+    {
+        return new Object();
+    }
     @Override
     public AbstractDescriptor<?>[] getDescriptors()
     {
@@ -1178,7 +1183,7 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
     public void refresh()
     {
         super.refresh();
-        buildUI();
+        buildUI(true);
     }
 
     @Override

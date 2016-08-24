@@ -297,7 +297,7 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
     {
         if (descriptorPart != null)
         {
-            descriptorPart.buildUI();
+            descriptorPart.buildUI(false);
         }
 
     }

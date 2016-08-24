@@ -100,9 +100,14 @@ public class ReportApplicationPropertiesPart extends AbstractDescriptorPart
 
         
 
-        buildUI();
+        buildUI(true);
     }
 
+    @Override
+    public Object getInput()
+    {
+        return new Object();
+    }
     @Override
     public AbstractDescriptor<?>[] getDescriptors()
     {
@@ -125,7 +130,7 @@ public class ReportApplicationPropertiesPart extends AbstractDescriptorPart
     public void refresh()
     {
         super.refresh();
-        buildUI();
+        buildUI(true);
     }
 
     protected void buildBody(Section section, FormToolkit toolkit)

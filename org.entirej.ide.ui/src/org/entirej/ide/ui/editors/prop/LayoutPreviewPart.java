@@ -135,6 +135,12 @@ public class LayoutPreviewPart extends AbstractDescriptorPart implements INodeDe
 
         return new AbstractDescriptor<?>[0];
     }
+    
+    @Override
+    public Object getInput()
+    {
+        return new Object();
+    }
 
     @Override
     public String getSectionTitle()

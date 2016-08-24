@@ -163,6 +163,12 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
         return new AbstractDescriptor<?>[0];
     }
+    
+    @Override
+    public Object getInput()
+    {
+        return new Object();
+    }
 
     @Override
     public String getSectionTitle()

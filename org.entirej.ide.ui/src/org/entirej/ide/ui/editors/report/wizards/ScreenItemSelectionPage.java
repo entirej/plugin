@@ -235,9 +235,14 @@ public class ScreenItemSelectionPage extends WizardPage
 
                                 return wizardContext.getDescriptors(itemProperties);
                             }
+                            @Override
+                            public Object getInput()
+                            {
+                                return new Object();
+                            }
                         };
                         body.setBackground(body.getBackground());
-                        part.buildUI();
+                        part.buildUI(true);
                         composite.layout(true);
                     }
                 }
