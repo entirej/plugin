@@ -67,7 +67,7 @@ public class ReportPreviewEditControl extends Composite
                 if(firstElement instanceof AbstractGraphicalEditPart)
                 {
                     AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) firstElement;
-                    editor.select(part.getModel());
+                    editor.select(part.getModel(),false);
                     
                     if(viewer.getControl()!=null)
                         viewer.getControl().forceFocus();

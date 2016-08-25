@@ -134,14 +134,14 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     }
 
     @Override
-    protected void showNodeDetails(AbstractNode<?> node)
+    protected void showNodeDetails(AbstractNode<?> node,boolean preview)
     {
         // use report node as default node to editor
         if (node == null)
             node = baseNode;
 
-        super.showNodeDetails(node);
-        if (reportPreviewer != null)
+        super.showNodeDetails(node,preview);
+        if (reportPreviewer != null&& preview)
             reportPreviewer.showDetails(node);
     }
 

@@ -130,10 +130,9 @@ public class AbstractNode<T>
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass() && getSource().getClass() != obj.getClass())
+        if (getClass() != obj.getClass() )
             return false;
-        if(obj instanceof AbstractNode)
-        {
+        
             AbstractNode<?> other = (AbstractNode<?>) obj;
             if (source == null)
             {
@@ -142,18 +141,8 @@ public class AbstractNode<T>
             }
             else if (!source.equals(other.source))
                 return false;
-        }
-        else
-        {
-           
-            if (source == null)
-            {
-                if (obj != null)
-                    return false;
-            }
-            else if (!source.equals(obj))
-                return false;
-        }
+        
+       
        
         
         return true;

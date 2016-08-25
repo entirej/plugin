@@ -91,7 +91,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
     private FormPage                page;
     protected FilteredTree          filteredTree;
     protected INodeDescriptorViewer descriptorViewer;
-
+    private boolean refreshDetails;
     private Menu                    addElementMenu;
 
     public AbstractNodeTreeSection(AbstractEditor editor, FormPage page, Composite parent)
@@ -154,7 +154,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         treeview.getControl().setRedraw(true);
         treeview.refresh();
         getManagedForm().fireSelectionChanged(AbstractNodeTreeSection.this, treeview.getSelection());
-        showNodeDetails();
+        showNodeDetails(refreshDetails);
         super.refresh();
     }
 
@@ -196,18 +196,22 @@ public abstract class AbstractNodeTreeSection extends SectionPart
 
     public void refresh(Object node)
     {
+        node = findNode(node,true);
         refresh(node, false);
     }
 
     public void refresh(Object node, boolean expand)
     {
+        
         if (node == null)
         {
             refresh();
             return;
         }
+       
         if (filteredTree != null)
         {
+            node = findNode(node,true);
             TreeViewer treeview = filteredTree.getViewer();
             treeview.refresh(node);
             if (expand)
@@ -216,7 +220,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         }
     }
 
-    public void selectNodes(boolean focusDeatils, Object... nodes)
+    public void selectNodesNoRefresh(boolean focusDeatils, Object... nodes)
     {
         if (filteredTree == null)
             return;
@@ -229,8 +233,16 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         }
         IStructuredSelection selection = new StructuredSelection(nodes);
 
+        try
+        {
+            refreshDetails = false;
+            viewer.setSelection(selection, true);
+        }
+        finally
+        {
+            refreshDetails = true;
+        }
         
-        viewer.setSelection(selection, true);
         if (focusDeatils && descriptorViewer != null)
         {
             EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
@@ -244,6 +256,35 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             });
         }
 
+    }
+    public void selectNodes(boolean focusDeatils, Object... nodes)
+    {
+        if (filteredTree == null)
+            return;
+        TreeViewer viewer = filteredTree.getViewer();
+        for (int i = 0; i < nodes.length; i++)
+        {
+            Object object = nodes[i];
+            nodes[i] = findNode(object,true);
+            
+        }
+        IStructuredSelection selection = new StructuredSelection(nodes);
+        
+        
+        viewer.setSelection(selection, true);
+        if (focusDeatils && descriptorViewer != null)
+        {
+            EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+            {
+                
+                public void run()
+                {
+                    descriptorViewer.setFocus();
+                    
+                }
+            });
+        }
+        
     }
 
     
@@ -376,11 +417,13 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         viewer.addSelectionChangedListener(new ISelectionChangedListener()
         {
 
+           
+
             public void selectionChanged(SelectionChangedEvent event)
             {
-                showNodeDetails();
-
+                showNodeDetails(refreshDetails);
                 editor.getContributor().refreah();
+                
             }
 
         });
@@ -681,14 +724,14 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         section.setTextClient(toolbar);
     }
 
-    private void showNodeDetails()
+    private void showNodeDetails(boolean  preview)
     {
 
-        showNodeDetails(getSelectedNode());
+        showNodeDetails(getSelectedNode(),preview);
 
     }
 
-    protected void showNodeDetails(AbstractNode<?> node)
+    protected void showNodeDetails(AbstractNode<?> node,boolean preview)
     {
         if (descriptorViewer != null)
             descriptorViewer.showDetails(node);

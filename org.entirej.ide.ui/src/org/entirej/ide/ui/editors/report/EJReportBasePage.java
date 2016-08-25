@@ -283,6 +283,17 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
         }
 
     }
+    public void select(Object object,boolean refreshPreview)
+    {
+        if (treeSection != null)
+        {
+            if(refreshPreview)
+                treeSection.selectNodes(false,refreshPreview, (object));
+            else
+                treeSection.selectNodesNoRefresh(false,(object));
+        }
+        
+    }
 
     public void expand(Object objects)
     {

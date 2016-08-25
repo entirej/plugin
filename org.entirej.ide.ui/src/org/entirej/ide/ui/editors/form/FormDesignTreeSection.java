@@ -212,14 +212,14 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     }
 
     @Override
-    protected void showNodeDetails(AbstractNode<?> node)
+    protected void showNodeDetails(AbstractNode<?> node,boolean preview)
     {
         // use form node as default node to editor
         if (node == null)
             node = baseNode;
 
-        super.showNodeDetails(node);
-        if (formPreviewer != null)
+        super.showNodeDetails(node,preview);
+        if (formPreviewer != null &&preview)
             formPreviewer.showDetails(node);
     }
 
