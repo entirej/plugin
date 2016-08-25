@@ -1212,7 +1212,8 @@ public abstract class AbstractDescriptorPart extends SectionPart
             {
                 enable = false;
                 if (!combo.isDisposed())
-                    combo.setText(provider.getOptionText(descriptor.getValue()));
+                    
+                    combo.setText(descriptor.getValue()==null?"":provider.getOptionText(descriptor.getValue()));
 
             }
             finally
