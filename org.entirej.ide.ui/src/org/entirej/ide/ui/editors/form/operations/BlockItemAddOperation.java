@@ -65,9 +65,8 @@ public class BlockItemAddOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(item, true);
-                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.refresh((container), true);
+                    treeSection.selectNodes(true, item);
                    // treeSection.expand(abstractNode, 2);
 
                     updateMirrorItems();
@@ -86,10 +85,10 @@ public class BlockItemAddOperation extends AbstractOperation
         for (EJPluginBlockProperties childProperties : container.getBlockProperties().getMirrorChildren())
         {
             EJPluginBlockItemContainer itemContainer = childProperties.getItemContainer();
-            AbstractNode<?> findNode = treeSection.findNode(itemContainer);
+            Object findNode = (itemContainer);
             if (findNode != null)
             {
-                treeSection.refresh(findNode.getParent());
+                treeSection.refresh(itemContainer.getBlockProperties());
             }
         }
 
@@ -107,7 +106,7 @@ public class BlockItemAddOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
+                    treeSection.refresh((container), true);
                     updateMirrorItems();
                 }
             });

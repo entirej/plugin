@@ -212,7 +212,7 @@ public class ReportVisualAttTreeSection extends AbstractNodeTreeSection
                     attributeContainer.addVisualAttribute(attributeProperties);
                     editor.setDirty(true);
                     refresh();
-                    selectNodes(true, findNode(attributeProperties));
+                    selectNodes(true, (attributeProperties));
                 }
             }
 

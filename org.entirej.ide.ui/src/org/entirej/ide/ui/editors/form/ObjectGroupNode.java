@@ -397,7 +397,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                         public String lableLinkActivator()
                                         {
 
-                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+                                            treeSection.selectNodes(true, (blockProperties));
 
                                             return getValue();
                                         }
@@ -513,7 +513,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                         public String lableLinkActivator()
                                         {
 
-                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+                                            treeSection.selectNodes(true, (blockProperties));
 
                                             return getValue();
                                         }
@@ -619,7 +619,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                         public String lableLinkActivator()
                                         {
 
-                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+                                            treeSection.selectNodes(true, (blockProperties));
 
                                             return getValue();
                                         }
@@ -748,7 +748,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                         public String lableLinkActivator()
                                         {
 
-                                            treeSection.selectNodes(true, treeSection.findNode(blockProperties, true));
+                                            treeSection.selectNodes(true, (blockProperties));
 
                                             return getValue();
                                         }

@@ -166,7 +166,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
         return createNewCanvasAction(treeSection, parentNode, container, isRoot);
     }
 
-    public static AbstractSubActions createNewCanvasAction(final FormDesignTreeSection treeSection, final AbstractNode<?> parentNode,
+    public static AbstractSubActions createNewCanvasAction(final FormDesignTreeSection treeSection, final Object parentNode,
             final EJPluginCanvasContainer container, final boolean isRoot)
     {
         final AbstractEJFormEditor editor = treeSection.getEditor();
@@ -805,10 +805,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
 
                         if (blockProperties != null)
                         {
-                            AbstractNode<?> findNode = treeSection.findNode(editor.getFormProperties().getBlockContainer(),true);
+                            Object findNode = (editor.getFormProperties().getBlockContainer());
                             treeSection.selectNodes(false, findNode);
                             treeSection.expand(findNode);
-                            treeSection.selectNodes(false, treeSection.findNode(blockProperties,true));
+                            treeSection.selectNodes(false, (blockProperties));
                         }
                         return null;
                     }
@@ -1992,7 +1992,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                                 treeSection.refresh(TabCanvasNode.this);
                                 treeSection.selectNodes(false, TabCanvasNode.this);
                                 treeSection.expand(TabCanvasNode.this);
-                                treeSection.selectNodes(true, treeSection.findNode(pageProp));
+                                treeSection.selectNodes(true, (pageProp));
 
                             }
                         });
@@ -2159,7 +2159,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                                 treeSection.refresh(StackedCanvasNode.this);
                                 treeSection.selectNodes(false, StackedCanvasNode.this);
                                 treeSection.expand(StackedCanvasNode.this);
-                                treeSection.selectNodes(true, treeSection.findNode(pageProp));
+                                treeSection.selectNodes(true, (pageProp));
 
                             }
                         });
@@ -3212,14 +3212,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                             EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer().getBlockProperties(getValue());
                             if (blockProperties != null)
                             {
-                                AbstractNode<?> findNode = treeSection.findNode(editor.getFormProperties().getBlockContainer());
-                                treeSection.selectNodes(false, findNode);
-                                treeSection.expand(findNode);
-                                treeSection.selectNodes(false, treeSection.findNode(blockProperties));
+                               
+                                treeSection.selectNodes(false, editor.getFormProperties().getBlockContainer());
+                                treeSection.expand(editor.getFormProperties().getBlockContainer());
+                                treeSection.selectNodes(false, (blockProperties));
                             }
                             return null;
                         }
-
                         public String[] getOptions()
                         {
                             List<String> options = new ArrayList<String>();
@@ -3296,17 +3295,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                                         .getItemProperties(source.getFirstNavigationalItem());
                                 if (itemProperties != null)
                                 {
-                                    AbstractNode<?> findNode = treeSection.findNode(editor.getFormProperties().getBlockContainer());
+                                    Object findNode = (editor.getFormProperties().getBlockContainer());
                                     treeSection.selectNodes(false, findNode);
                                     treeSection.expand(findNode);
-                                    findNode = treeSection.findNode(blockProperties);
+                                    findNode = (blockProperties);
                                     treeSection.selectNodes(false, findNode);
                                     treeSection.expand(findNode);
 
-                                    findNode = treeSection.findNode(blockProperties.getItemContainer());
+                                    findNode = (blockProperties.getItemContainer());
                                     treeSection.selectNodes(false, findNode);
                                     treeSection.expand(findNode);
-                                    treeSection.selectNodes(false, treeSection.findNode(itemProperties));
+                                    treeSection.selectNodes(false, (itemProperties));
                                 }
 
                             }
@@ -3672,10 +3671,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                             EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer().getBlockProperties(getValue());
                             if (blockProperties != null)
                             {
-                                AbstractNode<?> findNode = treeSection.findNode(editor.getFormProperties().getBlockContainer());
+                                Object findNode = (editor.getFormProperties().getBlockContainer());
                                 treeSection.selectNodes(false, findNode);
                                 treeSection.expand(findNode);
-                                treeSection.selectNodes(false, treeSection.findNode(blockProperties));
+                                treeSection.selectNodes(false, (blockProperties));
                             }
                             return null;
                         }
@@ -3756,17 +3755,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                                         .getItemProperties(source.getFirstNavigationalItem());
                                 if (itemProperties != null)
                                 {
-                                    AbstractNode<?> findNode = treeSection.findNode(editor.getFormProperties().getBlockContainer());
+                                    Object findNode = (editor.getFormProperties().getBlockContainer());
                                     treeSection.selectNodes(false, findNode);
                                     treeSection.expand(findNode);
-                                    findNode = treeSection.findNode(blockProperties);
+                                    findNode = (blockProperties);
                                     treeSection.selectNodes(false, findNode);
                                     treeSection.expand(findNode);
 
-                                    findNode = treeSection.findNode(blockProperties.getItemContainer());
+                                    findNode = (blockProperties.getItemContainer());
                                     treeSection.selectNodes(false, findNode);
                                     treeSection.expand(findNode);
-                                    treeSection.selectNodes(false, treeSection.findNode(itemProperties));
+                                    treeSection.selectNodes(false, (itemProperties));
                                 }
 
                             }
@@ -3846,7 +3845,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                         .getObjectGroupProperties(canvas.getReferencedObjectGroupName());
                 if (file != null)
                 {
-                    treeSection.selectNodes(true, treeSection.findNode(file));
+                    treeSection.selectNodes(true, (file));
                 }
 
                 return getValue();

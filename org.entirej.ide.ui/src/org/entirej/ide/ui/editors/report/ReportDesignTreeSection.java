@@ -104,7 +104,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
                                                                          if (arg0 != null)
                                                                          {
 
-                                                                             AbstractNode<?> findNode = findNode(arg0, true);
+                                                                             Object findNode = (arg0);
                                                                              if (findNode != null)
                                                                              {
                                                                                  selectNodes(true, findNode);

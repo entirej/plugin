@@ -60,9 +60,8 @@ public class ReportBlockGroupAddOperation extends AbstractOperation
                 {
                     dirty = treeSection.isDirty();
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(group, true);
-                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.refresh((container), true);
+                    treeSection.selectNodes(true, group);
                     //treeSection.expand(abstractNode, 2);
 
                 }
@@ -85,7 +84,7 @@ public class ReportBlockGroupAddOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
+                    treeSection.refresh((container), true);
                 }
             });
         }

@@ -316,7 +316,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                             {
                                 EJPluginItemGroupContainer sourceContainer = newContainer.getBlockProperties().getScreenItemGroupContainer(type);
                                 sourceContainer.copyGroupForScreen(newContainer, newContainer.getContainerType());
-                                treeSection.refresh(treeSection.findNode(newContainer));
+                                treeSection.refresh((newContainer));
                                 treeSection.getEditor().setDirty(true);
                             }
                         }
@@ -1301,7 +1301,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                                                 public void runWithEvent(Event event)
                                                 {
                                                     item.setItemRendererName(renderer.getAssignedName(), true);
-                                                    AbstractNode<?> findNode = treeSection.findNode(item);
+                                                    Object findNode = (item);
                                                     if (findNode != null)
                                                         treeSection.refresh(findNode);
                                                     addDisplayItem(treeSection, patentNode, item);
@@ -2387,7 +2387,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                             {
                                 treeSection.getEditor().setDirty(true);
                                 treeSection.refresh(patentNode, true);
-                                AbstractNode<?> findNode = treeSection.findNode(new ItemGroup(itemProperties));
+                                Object findNode = (new ItemGroup(itemProperties));
                                 if (findNode != null)
                                     treeSection.selectNodes(true, findNode);
 

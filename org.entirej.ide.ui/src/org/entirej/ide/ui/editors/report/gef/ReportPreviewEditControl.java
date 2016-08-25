@@ -11,12 +11,15 @@ import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
-import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -54,6 +57,23 @@ public class ReportPreviewEditControl extends Composite
 
         viewer.setEditPartFactory(createPartFactory(editor));
         viewer.setKeyHandler(new ReportGraphicalViewerKeyHandler(viewer));
+        viewer.addSelectionChangedListener(new ISelectionChangedListener()
+        {
+            
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                Object firstElement = selection.getFirstElement();
+                if(firstElement instanceof AbstractGraphicalEditPart)
+                {
+                    AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) firstElement;
+                    editor.select(part.getModel());
+                    
+                    if(viewer.getControl()!=null)
+                        viewer.getControl().forceFocus();
+                }
+            }
+        });
 
     }
 

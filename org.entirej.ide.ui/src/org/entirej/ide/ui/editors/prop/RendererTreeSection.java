@@ -175,11 +175,11 @@ public class RendererTreeSection extends AbstractNodeTreeSection
                 {
                     container.addRendererAssignment(def);
                     editor.setDirty(true);
-                    AbstractNode<?> parent = findNode(container);
+                    Object parent = (container);
                     refresh(parent);
                     selectNodes(false, parent);
                     expandNodes();
-                    selectNodes(true, findNode(def));
+                    selectNodes(true, (def));
                 }
             }
 

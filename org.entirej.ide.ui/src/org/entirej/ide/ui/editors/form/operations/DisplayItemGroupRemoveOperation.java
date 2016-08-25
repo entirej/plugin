@@ -54,7 +54,7 @@ public class DisplayItemGroupRemoveOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
+                    treeSection.refresh((container), true);
                 }
             });
         }
@@ -82,9 +82,8 @@ public class DisplayItemGroupRemoveOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(new DisplayItemGroupNode.ItemGroup(blockProperties), true);
-                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.refresh((container), true);
+                    treeSection.selectNodes(true, new DisplayItemGroupNode.ItemGroup(blockProperties));
                    // treeSection.expand(abstractNode, 2);
 
                 }

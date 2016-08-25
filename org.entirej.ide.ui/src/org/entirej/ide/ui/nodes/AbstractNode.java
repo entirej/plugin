@@ -118,10 +118,7 @@ public class AbstractNode<T>
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
-        return result;
+        return getSource().hashCode();
     }
 
     @Override
@@ -129,18 +126,36 @@ public class AbstractNode<T>
     {
         if (this == obj)
             return true;
+        if (this.getSource() == obj)
+            return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != obj.getClass() && getSource().getClass() != obj.getClass())
             return false;
-        AbstractNode<?> other = (AbstractNode<?>) obj;
-        if (source == null)
+        if(obj instanceof AbstractNode)
         {
-            if (other.source != null)
+            AbstractNode<?> other = (AbstractNode<?>) obj;
+            if (source == null)
+            {
+                if (other.source != null)
+                    return false;
+            }
+            else if (!source.equals(other.source))
                 return false;
         }
-        else if (!source.equals(other.source))
-            return false;
+        else
+        {
+           
+            if (source == null)
+            {
+                if (obj != null)
+                    return false;
+            }
+            else if (!source.equals(obj))
+                return false;
+        }
+       
+        
         return true;
     }
 

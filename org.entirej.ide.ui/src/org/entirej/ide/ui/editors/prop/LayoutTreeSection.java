@@ -203,11 +203,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 EJCoreLayoutItem.LayoutGroup group = new LayoutGroup();
                 container.addItem(group);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(group));
+                selectNodes(true, (group));
                 refreshPreview();
             }
 
@@ -227,11 +227,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 EJCoreLayoutItem.SplitGroup group = new SplitGroup();
                 container.addItem(group);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(group));
+                selectNodes(true, (group));
                 refreshPreview();
             }
 
@@ -251,11 +251,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 EJCoreLayoutItem.TabGroup group = new TabGroup();
                 container.addItem(group);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(group));
+                selectNodes(true, (group));
                 refreshPreview();
             }
 
@@ -275,11 +275,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 EJCoreLayoutItem.LayoutSpace group = new LayoutSpace();
                 container.addItem(group);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(group));
+                selectNodes(true, (group));
                 refreshPreview();
             }
 
@@ -299,11 +299,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                 EJCoreLayoutItem.LayoutComponent group = new LayoutComponent();
                 container.addItem(group);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(group));
+                selectNodes(true, (group));
                 refreshPreview();
             }
 

@@ -138,19 +138,17 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                                                                          if (arg0 != null && treeSection != null)
                                                                          {
 
-                                                                             AbstractNode<?> findNode = treeSection.findNode(arg0, true);
-                                                                             if (findNode != null)
-                                                                             {
-                                                                                 treeSection.selectNodes(true, findNode);
-                                                                             }
+                                                                            
+                                                                                 treeSection.selectNodes(true, arg0);
+                                                                             
                                                                          }
 
                                                                      }
                                                                  };
 
-    public BlockGroupNode(FormDesignTreeSection treeSection)
+    public BlockGroupNode(AbstractNode<?> parent,FormDesignTreeSection treeSection)
     {
-        super(null, treeSection.getEditor().getFormProperties().getBlockContainer());
+        super(parent, treeSection.getEditor().getFormProperties().getBlockContainer());
         this.editor = treeSection.getEditor();
         this.treeSection = treeSection;
     }
@@ -1250,11 +1248,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         {
             for (EJPluginBlockProperties childProperties : source.getMirrorChildren())
             {
-                AbstractNode<?> findNode = treeSection.findNode(childProperties);
-                if (findNode != null)
-                {
-                    treeSection.refresh(findNode);
-                }
+                
+                    treeSection.refresh(childProperties);
+                
             }
 
         }
@@ -1280,7 +1276,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                                 .getObjectGroupProperties(source.getReferencedObjectGroupName());
                         if (file != null)
                         {
-                            treeSection.selectNodes(true, treeSection.findNode(file));
+                            treeSection.selectNodes(true, (file));
                         }
 
                         return getValue();
@@ -1483,7 +1479,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                             Collections.reverse(parnets);
                             for (Object o : parnets)
                             {
-                                AbstractNode<?> findNode = treeSection.findNode(o);
+                                Object findNode = (o);
                                 if (findNode != null)
                                 {
                                     treeSection.selectNodes(false, findNode);
@@ -1491,7 +1487,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                                 }
                             }
 
-                            treeSection.selectNodes(false, treeSection.findNode(canvasProperties));
+                            treeSection.selectNodes(false, (canvasProperties));
                         }
                         return super.lableLinkActivator();
                     }
@@ -1509,7 +1505,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         EJCanvasProperties canvasProperties = EJPluginCanvasRetriever.getCanvasProperties(editor.getFormProperties(), oldCanvas);
                         if (canvasProperties != null)
                         {
-                            AbstractNode<?> findNode = treeSection.findNode(canvasProperties);
+                            Object findNode = (canvasProperties);
                             if (findNode != null)
                                 treeSection.refresh(findNode);
                         }
@@ -1518,7 +1514,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         canvasProperties = EJPluginCanvasRetriever.getCanvasProperties(editor.getFormProperties(), value);
                         if (canvasProperties != null)
                         {
-                            AbstractNode<?> findNode = treeSection.findNode(canvasProperties);
+                            Object findNode = (canvasProperties);
                             if (findNode != null)
                                 treeSection.refresh(findNode);
                         }
@@ -1554,7 +1550,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                             if (item != null)
                             {
-                                AbstractNode<?> findNode = treeSection.findNode(item);
+                                Object findNode = (item);
                                 if (findNode != null)
                                 {
                                     treeSection.selectNodes(true, findNode);

@@ -211,10 +211,10 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
         for (EJPluginBlockProperties childProperties : source.getBlockProperties().getMirrorChildren())
         {
             EJPluginBlockItemContainer itemContainer = childProperties.getItemContainer();
-            AbstractNode<?> findNode = treeSection.findNode(itemContainer);
+            Object findNode = (itemContainer);
             if (findNode != null)
             {
-                treeSection.refresh(findNode.getParent());
+                treeSection.refresh(itemContainer.getBlockProperties());
             }
         }
 
@@ -406,7 +406,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                {
                                    provider.undo();
                                }
-                                treeSection.refresh(treeSection.findNode(source.getBlockProperties()));
+                                treeSection.refresh((source.getBlockProperties()));
                                return Status.OK_STATUS;
                            }
                            
@@ -422,7 +422,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                            {
                             
                             deleteItemOnForm = EJPluginItemChanger.deleteItemOnForm(source.getBlockProperties(), name);
-                            treeSection.refresh(treeSection.findNode(source.getBlockProperties()));
+                            treeSection.refresh((source.getBlockProperties()));
                                return Status.OK_STATUS;
                            }
                            
@@ -562,15 +562,15 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                         if (item != null)
                         {
                             System.out.println(item);
-                            AbstractNode<?> findNode = treeSection.findNode(source.getBlockProperties().getMirrorParent());
+                            Object findNode = (source.getBlockProperties().getMirrorParent());
                             if (item != null && findNode != null)
                             {
                                 treeSection.expand(findNode);
-                                findNode = treeSection.findNode(source.getBlockProperties().getMirrorParent().getItemContainer());
+                                findNode = (source.getBlockProperties().getMirrorParent().getItemContainer());
                                 if (findNode != null)
                                 {
                                     treeSection.expand(findNode);
-                                    findNode = treeSection.findNode(item);
+                                    findNode = (item);
                                     if (findNode != null)
                                         treeSection.selectNodes(true, findNode);
                                 }
@@ -630,7 +630,7 @@ public class BlockItemsGroupNode extends AbstractNode<EJPluginBlockItemContainer
                                 .getObjectGroupProperties(source.getBlockProperties().getReferencedObjectGroupName());
                         if (file != null)
                         {
-                            treeSection.selectNodes(true, treeSection.findNode(file));
+                            treeSection.selectNodes(true, (file));
                         }
 
                         return getValue();

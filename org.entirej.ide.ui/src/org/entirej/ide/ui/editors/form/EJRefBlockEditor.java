@@ -148,7 +148,7 @@ public class EJRefBlockEditor extends AbstractEJFormEditor
                     // project build errors
                     if (editor.getFormProperties() == null)
                         return new Object[0];
-                    BlockGroupNode blockGroupNode = new BlockGroupNode(BlockDesignTreeSection.this)
+                    BlockGroupNode blockGroupNode = new BlockGroupNode(null,BlockDesignTreeSection.this)
                     {
                         @Override
                         public Action[] getActions()

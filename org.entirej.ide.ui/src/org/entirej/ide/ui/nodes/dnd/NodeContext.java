@@ -27,8 +27,7 @@ public interface NodeContext
 
     NodeMoveProvider getRootNodeMoveProvider();
 
-    AbstractNode<?> findNode(Object source);
-
+  
     void nodesUpdated();
 
     void refresh(AbstractNode<?> node);

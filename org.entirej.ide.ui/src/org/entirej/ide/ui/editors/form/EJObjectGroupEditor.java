@@ -181,7 +181,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                     // project build errors
                     if (editor.getFormProperties() == null)
                         return new Object[0];
-                    return new Object[] { baseNode = new ObjGroupNode(editor.getFormProperties()), new BlockGroupNode(BlockDesignTreeSection.this)
+                    return new Object[] { baseNode = new ObjGroupNode(editor.getFormProperties()), new BlockGroupNode(null,BlockDesignTreeSection.this)
                     {
                         @Override
                         public Action[] getActions()

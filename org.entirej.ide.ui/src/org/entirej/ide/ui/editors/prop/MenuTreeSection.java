@@ -132,7 +132,7 @@ public class MenuTreeSection extends AbstractNodeTreeSection
                 menuContainer.addMenuProperties(menuProperties);
                 editor.setDirty(true);
                 refresh();
-                selectNodes(true, findNode(menuProperties));
+                selectNodes(true, (menuProperties));
             }
 
         };
@@ -151,11 +151,11 @@ public class MenuTreeSection extends AbstractNodeTreeSection
                 EJPluginMenuLeafBranchProperties menuProperties = new EJPluginMenuLeafBranchProperties(menu, container);
                 container.addLeaf(menuProperties);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(menuProperties));
+                selectNodes(true, (menuProperties));
             }
 
         };
@@ -175,7 +175,7 @@ public class MenuTreeSection extends AbstractNodeTreeSection
 
                 container.addLeaf(spacer);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
@@ -198,11 +198,11 @@ public class MenuTreeSection extends AbstractNodeTreeSection
 
                 container.addLeaf(command);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(command));
+                selectNodes(true, (command));
             }
 
         };
@@ -222,11 +222,11 @@ public class MenuTreeSection extends AbstractNodeTreeSection
 
                 container.addLeaf(form);
                 editor.setDirty(true);
-                AbstractNode<?> parent = findNode(container);
+                Object parent = (container);
                 refresh(parent);
                 selectNodes(false, parent);
                 expandNodes();
-                selectNodes(true, findNode(form));
+                selectNodes(true, (form));
             }
 
         };

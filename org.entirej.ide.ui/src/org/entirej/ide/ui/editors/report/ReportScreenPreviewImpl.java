@@ -244,7 +244,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
             @Override
             public void widgetSelected(SelectionEvent e)
             {
-                AbstractNode<?> findNode = editor.findNode(container);
+                Object findNode = (container);
                 if (findNode instanceof ReportBlockScreenItemsGroupNode)
                 {
                     ReportBlockScreenItemsGroupNode node = (ReportBlockScreenItemsGroupNode) findNode;

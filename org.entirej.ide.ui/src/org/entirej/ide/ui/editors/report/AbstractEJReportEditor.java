@@ -179,15 +179,7 @@ public abstract class AbstractEJReportEditor extends AbstractEditor implements I
 
     }
 
-    public AbstractNode<?> findNode(Object object)
-    {
-        if (formBasePage != null)
-        {
-            return formBasePage.treeSection.findNode(object);
-        }
-
-        return null;
-    }
+   
 
     public void refreshProperties()
     {

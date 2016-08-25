@@ -110,7 +110,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                                                                        if (arg0 != null && treeSection != null)
                                                                        {
 
-                                                                           AbstractNode<?> findNode = treeSection.findNode(arg0, true);
+                                                                           Object findNode = (arg0);
                                                                            if (findNode != null)
                                                                            {
                                                                                treeSection.selectNodes(true, findNode);
@@ -682,7 +682,7 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                                 .getObjectGroupProperties(source.getReferencedObjectGroupName());
                         if (file != null)
                         {
-                            treeSection.selectNodes(true, treeSection.findNode(file));
+                            treeSection.selectNodes(true, (file));
                         }
 
                         return getValue();

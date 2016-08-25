@@ -52,7 +52,7 @@ public class ReportBlockRemoveOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(group), true);
+                    treeSection.refresh((group), true);
 
                 }
             });
@@ -83,9 +83,8 @@ public class ReportBlockRemoveOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(group), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(blockProperties, true);
-                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.refresh((group), true);
+                    treeSection.selectNodes(true, blockProperties);
                    // treeSection.expand(abstractNode, 2);
 
                 }

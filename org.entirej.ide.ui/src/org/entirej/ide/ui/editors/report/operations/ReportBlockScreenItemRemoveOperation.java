@@ -52,7 +52,7 @@ public class ReportBlockScreenItemRemoveOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
+                    treeSection.refresh((container), true);
                 }
             });
         }
@@ -80,9 +80,8 @@ public class ReportBlockScreenItemRemoveOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(item, true);
-                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.refresh((container), true);
+                    treeSection.selectNodes(true, item);
                     //treeSection.expand(abstractNode, 2);
 
                 }

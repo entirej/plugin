@@ -54,12 +54,12 @@ public class BlockItemRemoveOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh(treeSection.findNode(container), true);
+                    treeSection.refresh((container), true);
                     ArrayList<EJPluginBlockProperties> mirrorChildren = container.getBlockProperties().getMirrorChildren();
 
                     for (EJPluginBlockProperties ejPluginBlockProperties : mirrorChildren)
                     {
-                        treeSection.refresh(treeSection.findNode(ejPluginBlockProperties.getItemContainer()), true);
+                        treeSection.refresh((ejPluginBlockProperties.getItemContainer()), true);
                     }
                 }
             });
@@ -88,15 +88,14 @@ public class BlockItemRemoveOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh(treeSection.findNode(container), true);
-                    AbstractNode<?> abstractNode = treeSection.findNode(item, true);
-                    treeSection.selectNodes(true, abstractNode);
+                    treeSection.refresh((container), true);
+                    treeSection.selectNodes(true, item);
                     //treeSection.expand(abstractNode, 2);
                     ArrayList<EJPluginBlockProperties> mirrorChildren = container.getBlockProperties().getMirrorChildren();
 
                     for (EJPluginBlockProperties ejPluginBlockProperties : mirrorChildren)
                     {
-                        treeSection.refresh(treeSection.findNode(ejPluginBlockProperties.getItemContainer()), true);
+                        treeSection.refresh((ejPluginBlockProperties.getItemContainer()), true);
                     }
 
                 }

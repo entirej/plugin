@@ -98,7 +98,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                                                                          if (arg0 != null && treeSection != null)
                                                                          {
 
-                                                                             AbstractNode<?> findNode = treeSection.findNode(arg0, true);
+                                                                             Object findNode = (arg0);
                                                                              if (findNode != null)
                                                                              {
                                                                                  treeSection.selectNodes(true, findNode);

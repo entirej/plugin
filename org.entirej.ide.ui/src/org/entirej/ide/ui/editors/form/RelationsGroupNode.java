@@ -490,7 +490,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                                     editor.setDirty(true);
                                     treeSection.refresh(RelationNode.this);
                                     treeSection.expand(RelationNode.this);
-                                    treeSection.selectNodes(true, treeSection.findNode(joinProperties));
+                                    treeSection.selectNodes(true, (joinProperties));
 
                                 }
                             });
@@ -666,7 +666,7 @@ public class RelationsGroupNode extends AbstractNode<EJPluginRelationContainer> 
                                 .getObjectGroupProperties(source.getReferencedObjectGroupName());
                         if (file != null)
                         {
-                            treeSection.selectNodes(true, treeSection.findNode(file));
+                            treeSection.selectNodes(true, (file));
                         }
 
                         return getValue();

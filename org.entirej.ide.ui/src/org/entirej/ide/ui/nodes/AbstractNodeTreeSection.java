@@ -31,6 +31,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -167,25 +168,21 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         }
     }
 
-    public void expand(AbstractNode<?> node)
+    
+    public void expand(Object node)
     {
+        node = findNode(node,true);
         if (filteredTree != null && node != null)
         {
             TreeViewer treeview = filteredTree.getViewer();
-            treeview.expandToLevel(node, 1);
+
+            treeview.expandToLevel(node,1);
+
         }
-    }
-    public void expand(Object node)
-    {
-        expand(findNode(node,true));
     }
     public void expand(Object node, int level)
     {
-        expand(findNode(node),level);
-    }
-
-    public void expand(AbstractNode<?> node, int level)
-    {
+        node = findNode(node,true);
         if (filteredTree != null && node != null)
         {
             TreeViewer treeview = filteredTree.getViewer();
@@ -195,12 +192,14 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         }
     }
 
-    public void refresh(AbstractNode<?> node)
+    
+
+    public void refresh(Object node)
     {
         refresh(node, false);
     }
 
-    public void refresh(AbstractNode<?> node, boolean expand)
+    public void refresh(Object node, boolean expand)
     {
         if (node == null)
         {
@@ -217,13 +216,20 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         }
     }
 
-    public void selectNodes(boolean focusDeatils, AbstractNode<?>... nodes)
+    public void selectNodes(boolean focusDeatils, Object... nodes)
     {
         if (filteredTree == null)
             return;
         TreeViewer viewer = filteredTree.getViewer();
+        for (int i = 0; i < nodes.length; i++)
+        {
+            Object object = nodes[i];
+            nodes[i] = findNode(object,true);
+            
+        }
         IStructuredSelection selection = new StructuredSelection(nodes);
 
+        
         viewer.setSelection(selection, true);
         if (focusDeatils && descriptorViewer != null)
         {
@@ -240,71 +246,45 @@ public abstract class AbstractNodeTreeSection extends SectionPart
 
     }
 
-    public AbstractNode<?> findNode(Object source)
+    
+
+    public Object findNode(Object source, boolean force)
     {
-        if (source == null)
-            return null;
-        TreeItem[] items = filteredTree.getViewer().getTree().getItems();
-        for (TreeItem treeItem : items)
+        
+        AbstractNodeContentProvider contentProvider = (AbstractNodeContentProvider) filteredTree.getViewer().getContentProvider();
+        
+        Object[] elements = contentProvider.getElements(filteredTree.getViewer().getInput());
+        for (Object parent : elements)
         {
-            AbstractNode<?> findNode = findNode(source, treeItem);
-            if (findNode != null)
-                return findNode;
-        }
-        return null;
-    }
-
-    public AbstractNode<?> findNode(Object source, boolean force)
-    {
-        AbstractNode<?> node = findNode(source);
-        if (node != null || !force)
-        {
-            return node;
-        }
-        if (source == null)
-            return null;
-
-        TreeViewer treeview = filteredTree.getViewer();
-        Object[] expanded = treeview.getExpandedElements();
-
-        treeview.getControl().setRedraw(false);
-        try
-        {
-            filteredTree.getViewer().expandAll();
-            TreeItem[] items = filteredTree.getViewer().getTree().getItems();
-            for (TreeItem treeItem : items)
+            if(parent.equals(source))
             {
-                AbstractNode<?> findNode = findNode(source, treeItem);
-                if (findNode != null)
-                    return findNode;
+                return parent;
+            }
+            Object node = findNode(contentProvider,parent,source);
+            if (node != null )
+            {
+                return node;
             }
         }
-        finally
-        {
-            treeview.collapseAll();
-            treeview.setExpandedElements(expanded);
-            treeview.getControl().setRedraw(true);
-            treeview.refresh();
-
-        }
-        return null;
+        
+        
+        return source;
     }
 
-    private AbstractNode<?> findNode(Object source, TreeItem item)
+    private Object findNode( AbstractNodeContentProvider contentProvider,Object parent,Object source)
     {
-        Object data = item.getData();
-        if (data instanceof AbstractNode)
+        Object[] children = contentProvider.getChildren(parent);
+        for (Object subParent : children)
         {
-            AbstractNode<?> node = (AbstractNode<?>) data;
-            if (source.equals(node.getSource()))
-                return (AbstractNode<?>) data;
-        }
-        TreeItem[] items = item.getItems();
-        for (TreeItem treeItem : items)
-        {
-            AbstractNode<?> findNode = findNode(source, treeItem);
-            if (findNode != null)
-                return findNode;
+            if(subParent.equals(source))
+            {
+                return subParent;
+            }
+            Object node = findNode(contentProvider,subParent,source);
+            if (node != null )
+            {
+                return node;
+            }
         }
         return null;
     }
@@ -329,7 +309,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
         body.setLayout(new GridLayout());
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        filteredTree = new FilteredTree(body, SWT.VIRTUAL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI, new PatternFilter(), true)
+        filteredTree = new FilteredTree(body, SWT.V_SCROLL | SWT.BORDER | SWT.MULTI, new PatternFilter(), true)
         {
 
             ISelection selection;
@@ -489,10 +469,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
                 return rootMoveProvider;
             }
 
-            public AbstractNode<?> findNode(Object source)
-            {
-                return AbstractNodeTreeSection.this.findNode(source);
-            }
+            
 
             public void expand(AbstractNode<?> node)
             {
@@ -965,4 +942,6 @@ public abstract class AbstractNodeTreeSection extends SectionPart
             return comp;
         }
     }
+
+   
 }

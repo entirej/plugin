@@ -568,12 +568,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
                 String ref = source.getReferencedItemName();
                 EJItemProperties item = source.getBlockProperties().getItemProperties(ref);
 
-                AbstractNode<?> findNode = treeSection.findNode(source.getBlockProperties().getItemContainer());
+                Object findNode = (source.getBlockProperties().getItemContainer());
                 if (item != null && findNode != null)
                 {
                     treeSection.selectNodes(false, findNode);
                     treeSection.expand(findNode);
-                    treeSection.selectNodes(true, treeSection.findNode(item));
+                    treeSection.selectNodes(true, (item));
                 }
                 return ref;
             }
@@ -742,12 +742,12 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
                 String ref = source.getLovMappingName();
                 EJPluginLovMappingProperties item = source.getBlockProperties().getLovMappingContainer().getLovMappingProperties(ref);
 
-                AbstractNode<?> findNode = treeSection.findNode(source.getBlockProperties().getLovMappingContainer());
+                Object findNode = (source.getBlockProperties().getLovMappingContainer());
                 if (item != null && findNode != null)
                 {
                     treeSection.selectNodes(false, findNode);
                     treeSection.expandNodes();
-                    treeSection.selectNodes(true, treeSection.findNode(item));
+                    treeSection.selectNodes(true, (item));
                 }
                 return ref;
             }

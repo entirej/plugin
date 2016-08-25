@@ -279,7 +279,7 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
     {
         if (treeSection != null)
         {
-            treeSection.selectNodes(false, treeSection.findNode(object, true));
+            treeSection.selectNodes(false, (object));
         }
 
     }
@@ -288,7 +288,7 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
     {
         if (treeSection != null)
         {
-            treeSection.expand(treeSection.findNode(objects, true));
+            treeSection.expand((objects));
         }
 
     }
@@ -306,7 +306,7 @@ public class EJReportBasePage extends AbstractEditorPage implements PageActionHa
     {
         if (treeSection != null)
         {
-            AbstractNode<?> findNode = treeSection.findNode(objects, false);
+            Object findNode = (objects);
             if (findNode != null)
                 treeSection.refresh(findNode);
         }

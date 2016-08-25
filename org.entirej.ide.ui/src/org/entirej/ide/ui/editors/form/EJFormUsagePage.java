@@ -310,7 +310,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                                     editor.setActivePage(EJFormBasePage.PAGE_ID);
                                     editor.getFormBasePage().getTreeSection().expand(blockProperties);
                                     editor.getFormBasePage().getTreeSection()
-                                            .selectNodes(true, editor.getFormBasePage().getTreeSection().findNode(mapping, true));
+                                            .selectNodes(true,(mapping));
                                 }
 
                                 @Override
@@ -477,7 +477,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                         {
                             editor.setActivePage(EJFormBasePage.PAGE_ID);
 
-                            editor.getFormBasePage().getTreeSection().selectNodes(true, editor.getFormBasePage().getTreeSection().findNode(item, true));
+                            editor.getFormBasePage().getTreeSection().selectNodes(true,(item));
                         }
 
                         @Override
@@ -510,7 +510,7 @@ public class EJFormUsagePage extends AbstractEditorPage implements PageActionHan
                         {
                             editor.setActivePage(EJFormBasePage.PAGE_ID);
 
-                            editor.getFormBasePage().getTreeSection().selectNodes(true, editor.getFormBasePage().getTreeSection().findNode(item, true));
+                            editor.getFormBasePage().getTreeSection().selectNodes(true, (item));
                         }
 
                         @Override

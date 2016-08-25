@@ -182,7 +182,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                                                          if (arg0 != null)
                                                                          {
 
-                                                                             AbstractNode<?> findNode = findNode(arg0, true);
+                                                                             Object findNode = (arg0);
                                                                              if (findNode != null)
                                                                              {
                                                                                  selectNodes(true, findNode);
@@ -225,7 +225,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
 
     protected void showNodeDetails(Object node)
     {
-        AbstractNode<?> findNode = findNode(node, true);
+        Object findNode = (node);
         if (findNode != null)
         {
             showNodeDetails(findNode);
@@ -332,7 +332,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             public void menuAboutToShow(IMenuManager mng)
             {
                 EJPluginCanvasContainer canvasContainer = FormDesignTreeSection.this.getEditor().getFormProperties().getCanvasContainer();
-                AbstractNode<?> findNode = FormDesignTreeSection.this.findNode(canvasContainer);
+                Object findNode = (canvasContainer);
                 AbstractSubActions canvasAction = CanvasGroupNode.createNewCanvasAction(FormDesignTreeSection.this, findNode, canvasContainer, true);
                 addMenuActions(mng, canvasAction.getActions());
                 // if empty, add dummy action item show no actions available
@@ -687,7 +687,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             {
 
                                 editor.setDirty(true);
-                                refresh(findNode(lformProperties.getBlockContainer()), true);
+                                refresh(lformProperties.getBlockContainer(), true);
 
                             }
                         });
@@ -1120,7 +1120,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 if (editor.getFormProperties() == null)
                     return new Object[0];
                 return new Object[] { baseNode = new FormNode(editor.getFormProperties()), new ObjectGroupNode(FormDesignTreeSection.this),
-                        new BlockGroupNode(FormDesignTreeSection.this), new RelationsGroupNode(FormDesignTreeSection.this),
+                        new BlockGroupNode(null,FormDesignTreeSection.this), new RelationsGroupNode(FormDesignTreeSection.this),
                         new LovGroupNode(FormDesignTreeSection.this), new CanvasGroupNode(FormDesignTreeSection.this) };
             }
         };
@@ -1431,7 +1431,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     if (blockProperties != null)
                     {
                        
-                        selectNodes(false, findNode(blockProperties,true));
+                        selectNodes(false, (blockProperties));
                     }
                     return null;
                 }
@@ -2404,4 +2404,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     {
         void refresh();
     }
+
+   
 }
