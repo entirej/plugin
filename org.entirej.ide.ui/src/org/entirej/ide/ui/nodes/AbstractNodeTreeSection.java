@@ -91,7 +91,7 @@ public abstract class AbstractNodeTreeSection extends SectionPart
     private FormPage                page;
     protected FilteredTree          filteredTree;
     protected INodeDescriptorViewer descriptorViewer;
-    private boolean refreshDetails;
+    private boolean refreshDetails = true;
     private Menu                    addElementMenu;
 
     public AbstractNodeTreeSection(AbstractEditor editor, FormPage page, Composite parent)
