@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import java.util.Arrays;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -98,7 +100,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
+    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
     {
         // layout canvas preview
         final Composite pContent = new Composite(previewComposite, SWT.NONE);
@@ -147,9 +149,9 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
         if (page == null)
         {
-            headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
-            detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
-            footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer);
+            headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer,o);
+            detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer,o);
+            footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer,o);
         }
         else
         {
@@ -173,12 +175,13 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
                     (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, (height - (formProperties.getMarginBottom()
                             + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+            previewEditControl.setSelectionToViewer(Arrays.asList(o));
         }
 
     }
 
     private void headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
-            int width, int height, Composite report, EJReportBlockContainer blockContainer)
+            int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
         ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report){
@@ -196,11 +199,11 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, formProperties.getHeaderSectionHeight());
 
-
+        previewEditControl.setSelectionToViewer(Arrays.asList(o));
     }
 
     private void footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
-            int width, int height, Composite report, EJReportBlockContainer blockContainer)
+            int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
         
@@ -218,12 +221,12 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getFooterSectionHeight()));
         previewEditControl.setBounds(formProperties.getMarginLeft(), height - (formProperties.getMarginBottom() + formProperties.getFooterSectionHeight()),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, formProperties.getFooterSectionHeight());
-        
+        previewEditControl.setSelectionToViewer(Arrays.asList(o));
        
     }
 
     private void detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
-            int width, int height, Composite report, EJReportBlockContainer blockContainer)
+            int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
         BlockGroup firstPage = blockContainer.getFirstPage();
@@ -245,6 +248,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, (height - (formProperties.getMarginBottom()
                         + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+        previewEditControl.setSelectionToViewer(Arrays.asList(o));
     }
 
     

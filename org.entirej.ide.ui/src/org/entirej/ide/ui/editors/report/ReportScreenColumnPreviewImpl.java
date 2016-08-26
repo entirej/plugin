@@ -67,7 +67,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
+    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
     {
         // layout canvas preview
         Composite pContent = new Composite(previewComposite, SWT.NONE);

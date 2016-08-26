@@ -95,7 +95,7 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         }
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
+    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o )
     {
         // layout canvas preview
         Composite pContent = new Composite(previewComposite, SWT.NONE);

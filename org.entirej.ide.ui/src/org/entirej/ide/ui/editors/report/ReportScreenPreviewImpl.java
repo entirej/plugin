@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -131,7 +132,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         }
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite)
+    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
@@ -143,7 +144,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
         previewEditControl.setModel(new ReportFormScreenCanvas(layoutScreenProperties,editor.getReportProperties().getReportWidth(),editor.getReportProperties().getReportHeight()));
         
-        
+        previewEditControl.setSelectionToViewer(Arrays.asList(o));
         // offset
         if (previewEditControl != null)
         {

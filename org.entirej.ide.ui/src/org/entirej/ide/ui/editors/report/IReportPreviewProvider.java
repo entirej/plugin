@@ -22,7 +22,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 
 public interface IReportPreviewProvider
 {
-    void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite);
+    void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object selection);
 
     void dispose();
 

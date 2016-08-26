@@ -149,7 +149,15 @@ public class ReportPreviewEditControl extends Composite
 
     public void setSelectionToViewer(Collection<?> collection)
     {
-        final Collection<?> theSelection = collection;
+        final ArrayList<Object> theSelection = new ArrayList<Object>();
+        for (Object object : collection)
+        {
+            Object part = viewer.getEditPartRegistry().get(object);
+            if(part!=null)
+            {
+                theSelection.add(part);
+            }
+        }
 
         if (theSelection != null && !theSelection.isEmpty())
         {

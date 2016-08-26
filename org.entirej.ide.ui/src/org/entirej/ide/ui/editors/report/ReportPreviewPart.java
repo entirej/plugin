@@ -61,7 +61,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 
                                                                     }
 
-                                                                    public void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite)
+                                                                    public void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
                                                                     {
                                                                         previewComposite.setBackground(body.getBackground());
                                                                         // ignore
@@ -243,13 +243,13 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
         {
             if (previewProvider != null)
             {
-                previewProvider.buildPreview(editor, previewComposite);
+                previewProvider.buildPreview(editor, previewComposite,selectedNode.getSource());
                 getSection().setDescription(previewProvider.getDescription());
             }
             else
             {
                 getSection().setDescription(defaultPreviewProvider.getDescription());
-                defaultPreviewProvider.buildPreview(editor, previewComposite);
+                defaultPreviewProvider.buildPreview(editor, previewComposite,selectedNode.getSource());
             }
         }
         catch (Throwable e)
