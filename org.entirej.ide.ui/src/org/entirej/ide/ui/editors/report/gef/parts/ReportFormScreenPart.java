@@ -53,10 +53,7 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
         return super.getAdapter(key);
     }
 
-    public ReportFormScreenFigure getFigureBase()
-    {
-        return base;
-    }
+    
     
     @Override
     public EJPluginReportScreenProperties getModel()
@@ -87,11 +84,7 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
         list.addAll(allSubBlocks);
         return list;
     }
-    @Override
-    public IFigure getContentPane()
-    {
-        return base.getContentPane();
-    }
+    
     
     public DragTracker getDragTracker(Request request) {
         

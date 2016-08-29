@@ -11,13 +11,15 @@ import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenCanvasFigur
 
 public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
 {
+    ReportFormScreenCanvasFigure canvasFigure;
 
     public static class ReportFormScreenCanvas
     {
         final int width;
         final int height;
+        
         final EJPluginReportScreenProperties screenProperties;
-
+       
         public ReportFormScreenCanvas(EJPluginReportScreenProperties screenProperties,int width,int height)
         {
             this.screenProperties = screenProperties;
@@ -45,7 +47,7 @@ public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
     @Override
     protected IFigure createFigure()
     {
-        return new ReportFormScreenCanvasFigure(getModel());
+        return canvasFigure = new ReportFormScreenCanvasFigure(getModel());
     }
 
     @Override
@@ -73,6 +75,12 @@ public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
         }
     }
 
+    
+    @Override
+    public IFigure getContentPane()
+    {
+        return canvasFigure.getContentPane();
+    }
     
     @Override
     public List<?> getModelChildren()
