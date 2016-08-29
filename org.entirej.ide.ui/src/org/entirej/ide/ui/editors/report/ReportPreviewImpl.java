@@ -159,7 +159,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
            
 
-            ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report){
+            ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
                 
                 
                 @Override
@@ -184,7 +184,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
-        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report){
+        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
             
             
             @Override
@@ -207,7 +207,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     {
         
         
-       ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report){
+       ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
             
             
             @Override
@@ -232,7 +232,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         BlockGroup firstPage = blockContainer.getFirstPage();
         
         
-       ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report){
+       ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
             
             
             @Override

@@ -136,7 +136,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
-        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,previewComposite);
+        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
         previewComposite.setContent(previewEditControl);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
         previewComposite.setExpandHorizontal(true);

@@ -12,9 +12,11 @@ import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
+import org.eclipse.gef.ui.rulers.RulerComposite;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -22,23 +24,24 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.entirej.ide.ui.editors.report.AbstractEJReportEditor;
+import org.entirej.ide.ui.editors.report.gef.ruler.ReportRuler;
+import org.entirej.ide.ui.editors.report.gef.ruler.ReportRulerProvider;
 
-public class ReportPreviewEditControl extends Composite
+public class ReportPreviewEditControl extends RulerComposite
 {
 
     private final EditDomain             editDomain;
-    private final GraphicalViewer        viewer;
+    private final ScrollingGraphicalViewer        viewer;
 
-    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent)
+    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent,boolean showRuler)
     {
         super(parent, SWT.NONE);
-        setLayout(new FillLayout());
+        //setLayout(new FillLayout());
 
         editDomain = new EditDomain();
 
@@ -52,7 +55,8 @@ public class ReportPreviewEditControl extends Composite
 
         viewer.createControl(this);
         editDomain.addViewer(viewer);
-
+      
+       
         viewer.getControl().setBackground(ColorConstants.listBackground);
 
         viewer.setEditPartFactory(createPartFactory(editor));
@@ -74,6 +78,18 @@ public class ReportPreviewEditControl extends Composite
                 }
             }
         });
+        viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY, showRuler);
+      
+        ReportRuler hRuler = new ReportRuler(true);
+        viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, new ReportRulerProvider(hRuler));
+       
+        ReportRuler vRuler = new ReportRuler(false);
+       
+        viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER, new ReportRulerProvider(vRuler));
+        setGraphicalViewer(viewer);
+        
+        hRuler.setHoffset(5);
+        vRuler.setVoffset(5);
 
     }
 
