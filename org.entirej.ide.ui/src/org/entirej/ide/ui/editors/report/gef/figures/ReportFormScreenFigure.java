@@ -11,8 +11,6 @@ public class ReportFormScreenFigure extends RectangleFigure
 {
     private static final Color GIRD_COLOR = new Color(null, 224, 224, 224,150);
     final EJPluginReportScreenProperties model;
-    private LayeredPane                  innerLayers;
-    private LayeredPane                  printableLayers;
 
     public ReportFormScreenFigure(EJPluginReportScreenProperties model)
     {

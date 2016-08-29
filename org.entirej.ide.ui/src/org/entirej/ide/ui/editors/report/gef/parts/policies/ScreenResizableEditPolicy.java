@@ -42,6 +42,7 @@ public class ScreenResizableEditPolicy extends ResizableEditPolicy
     @Override
     protected List<?> createSelectionHandles()
     {
+        setDragAllowed(false);
         if (getResizeDirections() == PositionConstants.NONE)
         {
             // non resizable, so delegate to super implementation

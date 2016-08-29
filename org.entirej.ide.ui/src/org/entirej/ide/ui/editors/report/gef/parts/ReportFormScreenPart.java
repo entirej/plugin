@@ -35,6 +35,7 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
                 new ScreenResizableEditPolicy());
 
+      
     }
     
     @Override
