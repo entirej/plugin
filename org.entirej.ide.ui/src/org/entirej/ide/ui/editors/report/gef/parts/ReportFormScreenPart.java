@@ -6,9 +6,14 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.CompoundSnapToHelper;
 import org.eclipse.gef.DragTracker;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
+import org.eclipse.gef.SnapToGeometry;
+import org.eclipse.gef.SnapToGrid;
+import org.eclipse.gef.SnapToGuides;
+import org.eclipse.gef.SnapToHelper;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
@@ -30,6 +35,22 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
                 new ScreenResizableEditPolicy());
 
+    }
+    
+    @Override
+    public Object getAdapter(Class key)
+    {
+        if (key == SnapToHelper.class) {
+            List<SnapToHelper> snapStrategies = new ArrayList<SnapToHelper>();
+            SnapToGuides snapToGuides = new SnapToGuides(this);
+            snapStrategies.add(snapToGuides);
+            //snapStrategies.add(new SnapToGrid(this));
+            SnapToGeometry snapToGeometry = new SnapToGeometry(this);
+           
+            snapStrategies.add(snapToGeometry);
+            return new CompoundSnapToHelper(snapStrategies.toArray(new SnapToHelper[0]));
+        }
+        return super.getAdapter(key);
     }
 
     public ReportFormScreenFigure getFigureBase()
