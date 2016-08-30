@@ -20,46 +20,24 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.Arrays;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetAdapter;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
-import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.BlockGroup;
-import org.entirej.framework.report.enumerations.EJReportScreenType;
-import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.editors.report.gef.ReportEditPartFactory;
 import org.entirej.ide.ui.editors.report.gef.ReportPreviewEditControl;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportCanvasPart.ReportCanvas;
 
 public class ReportPreviewImpl implements IReportPreviewProvider
 {
@@ -102,56 +80,40 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
     {
-        // layout canvas preview
-        final Composite pContent = new Composite(previewComposite, SWT.NONE);
-
+        
         final EJPluginReportProperties formProperties = getReportProperties(editor);
         int width = formProperties.getReportWidth();
         int height = formProperties.getReportHeight();
-        previewComposite.setContent(pContent);
+       
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
         previewComposite.setExpandHorizontal(true);
         previewComposite.setExpandVertical(true);
 
-        pContent.setLayout(null);
-        setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
-
-        pContent.addPaintListener(new PaintListener()
-        {
-
-            public void paintControl(PaintEvent e)
-            {
-                if (formProperties.getHeaderSectionHeight() > 0)
-                {
-                    int y1 = formProperties.getHeaderSectionHeight() + 10 + formProperties.getMarginTop() + 1;
-                    e.gc.drawLine(0, y1, pContent.getBounds().width, y1);
-                    e.gc.drawString("H", 5, y1 > 20 ? y1 - 20 : 2, true);
-                }
-                if (formProperties.getFooterSectionHeight() > 0)
-                {
-
-                    int y1 = pContent.getBounds().height - (formProperties.getFooterSectionHeight() + 10 + formProperties.getMarginBottom());
-                    e.gc.drawLine(0, y1, pContent.getBounds().width, y1);
-
-                    e.gc.drawString("F", 5, y1 > 20 ? y1 - 20 : y1, true);
-
-                }
-
-            }
-        });
-        Composite report = new Composite(pContent, SWT.BORDER);
-        setPreviewBackground(report, COLOR_LIGHT_SHADOW);
-        previewComposite.setMinSize(width+25, height+10);
-        report.setBounds(25, 10, width, height);
-        report.setLayout(null);
-
+       
+        previewComposite.setMinSize(width, height);
+       
         EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
 
+        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true){
+            
+            
+            @Override
+            protected ReportEditPartFactory createPartFactory(AbstractEJReportEditor editor)
+            {
+                return new ReportEditPartFactory(createContext(editor));
+            }
+        };
+        previewComposite.setContent(previewEditControl);
         if (page == null)
         {
-            headerSection(editor, previewComposite, formProperties, width, height, report, blockContainer,o);
-            detailSection(editor, previewComposite, formProperties, width, height, report, blockContainer,o);
-            footerSection(editor, previewComposite, formProperties, width, height, report, blockContainer,o);
+            ReportCanvas canvas = new ReportCanvas(width,height,headerSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o),
+            detailSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o),
+            footerSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o));
+            
+            
+            previewEditControl.setModel(canvas);
+            
+            previewEditControl.setSelectionToViewer(Arrays.asList(o));
         }
         else
         {
@@ -159,96 +121,50 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 
            
 
-            ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
-                
-                
-                @Override
-                protected ReportEditPartFactory createPartFactory(AbstractEJReportEditor editor)
-                {
-                    return new ReportEditPartFactory(createContext(editor));
-                }
-            };
-            
-            previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(page,
+            ReportCanvas canvas = new ReportCanvas(width,height,new ReportBlockSectionCanvasPart.BlockSectionCanvas(page,formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
                     (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
                             + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight()))));
-            previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
-                    (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, (height - (formProperties.getMarginBottom()
-                            + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
+            previewEditControl.setModel(canvas);
+           
             previewEditControl.setSelectionToViewer(Arrays.asList(o));
         }
 
     }
 
-    private void headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+    private ReportBlockSectionCanvasPart.BlockSectionCanvas headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
-        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
-            
-            
-            @Override
-            protected ReportEditPartFactory createPartFactory(AbstractEJReportEditor editor)
-            {
-                return new ReportEditPartFactory(createContext(editor));
-            }
-        };
+      
         
-        previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(blockContainer.getHeaderSection(),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getHeaderSectionHeight()));
-        previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop(),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, formProperties.getHeaderSectionHeight());
-
-        previewEditControl.setSelectionToViewer(Arrays.asList(o));
+       
+        return new ReportBlockSectionCanvasPart.BlockSectionCanvas(blockContainer.getHeaderSection(),
+                formProperties.getMarginLeft(), formProperties.getMarginTop(),  (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getHeaderSectionHeight());
     }
 
-    private void footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+    private ReportBlockSectionCanvasPart.BlockSectionCanvas footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
         
-       ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
-            
-            
-            @Override
-            protected ReportEditPartFactory createPartFactory(AbstractEJReportEditor editor)
-            {
-                return new ReportEditPartFactory(createContext(editor));
-            }
-        };
-        
-        previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(blockContainer.getFooterSection(),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getFooterSectionHeight()));
-        previewEditControl.setBounds(formProperties.getMarginLeft(), height - (formProperties.getMarginBottom() + formProperties.getFooterSectionHeight()),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, formProperties.getFooterSectionHeight());
-        previewEditControl.setSelectionToViewer(Arrays.asList(o));
+      
+      
+        return new ReportBlockSectionCanvasPart.BlockSectionCanvas(blockContainer.getFooterSection(),
+                formProperties.getMarginLeft(), height - (formProperties.getMarginBottom() + formProperties.getFooterSectionHeight()),(width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getFooterSectionHeight());
        
     }
 
-    private void detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+    private ReportBlockSectionCanvasPart.BlockSectionCanvas detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
         BlockGroup firstPage = blockContainer.getFirstPage();
         
         
-       ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,report,false){
-            
-            
-            @Override
-            protected ReportEditPartFactory createPartFactory(AbstractEJReportEditor editor)
-            {
-                return new ReportEditPartFactory(createContext(editor));
-            }
-        };
-        
-        previewEditControl.setModel(new ReportBlockSectionCanvasPart.BlockSectionCanvas(firstPage,
+       
+        return new ReportBlockSectionCanvasPart.BlockSectionCanvas(firstPage,formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
                 (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
-                        + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight()))));
-        previewEditControl.setBounds(formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
-                (width - (formProperties.getMarginRight() + formProperties.getMarginLeft()))+2, (height - (formProperties.getMarginBottom()
                         + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight())));
-        previewEditControl.setSelectionToViewer(Arrays.asList(o));
     }
 
     

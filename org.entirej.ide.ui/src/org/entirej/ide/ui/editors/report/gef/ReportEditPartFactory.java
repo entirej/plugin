@@ -9,6 +9,8 @@ import org.entirej.ide.ui.editors.report.gef.parts.AbstractReportGraphicalEditPa
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart.BlockSectionCanvas;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportCanvasPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportCanvasPart.ReportCanvas;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart.ReportFormScreenCanvas;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenItemPart;
@@ -26,6 +28,10 @@ public class ReportEditPartFactory implements EditPartFactory
     public EditPart createEditPart(EditPart context, Object model)
     {
         EditPart part = null;
+        if (model instanceof ReportCanvas)
+        {
+            part = new ReportCanvasPart();
+        }
         if (model instanceof BlockSectionCanvas)
         {
             part = new ReportBlockSectionCanvasPart();
