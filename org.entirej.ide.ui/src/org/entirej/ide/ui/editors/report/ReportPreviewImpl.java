@@ -22,12 +22,9 @@ import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -53,6 +50,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
     protected final Color  COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
 
     protected BlockGroup   page;
+    private ReportPreviewEditControl previewEditControl;
 
     public void dispose()
     {
@@ -78,6 +76,50 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
 
+    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object o)
+    {
+        
+       if(previewEditControl!=null && !previewEditControl.isDisposed())
+       {
+           final EJPluginReportProperties formProperties = getReportProperties(editor);
+           int width = formProperties.getReportWidth();
+           int height = formProperties.getReportHeight();
+           EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
+
+         
+           if (page == null)
+           {
+               ReportCanvas canvas = new ReportCanvas(width,height,headerSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o),
+               detailSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o),
+               footerSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o));
+               
+               
+               previewEditControl.setModel(canvas);
+               
+               previewEditControl.setSelectionToViewer(Arrays.asList(o));
+           }
+           else
+           {
+              
+
+              
+
+               ReportCanvas canvas = new ReportCanvas(width,height,new ReportBlockSectionCanvasPart.BlockSectionCanvas(page,formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
+                       (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
+                               + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight()))));
+               previewEditControl.setModel(canvas);
+              
+               previewEditControl.setSelectionToViewer(Arrays.asList(o));
+           }
+       }
+       else
+       {
+           buildPreview(editor, previewComposite, o);
+           
+       }
+        
+    }
+    
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
     {
         
@@ -92,9 +134,8 @@ public class ReportPreviewImpl implements IReportPreviewProvider
        
         previewComposite.setMinSize(width, height);
        
-        EJReportBlockContainer blockContainer = formProperties.getBlockContainer();
-
-        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true){
+       
+         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true){
             
             
             @Override
@@ -104,30 +145,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
             }
         };
         previewComposite.setContent(previewEditControl);
-        if (page == null)
-        {
-            ReportCanvas canvas = new ReportCanvas(width,height,headerSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o),
-            detailSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o),
-            footerSection(editor, previewComposite, formProperties, width, height, null, blockContainer,o));
-            
-            
-            previewEditControl.setModel(canvas);
-            
-            previewEditControl.setSelectionToViewer(Arrays.asList(o));
-        }
-        else
-        {
-           
-
-           
-
-            ReportCanvas canvas = new ReportCanvas(width,height,new ReportBlockSectionCanvasPart.BlockSectionCanvas(page,formProperties.getMarginLeft(), formProperties.getMarginTop() + formProperties.getHeaderSectionHeight(),
-                    (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), (height - (formProperties.getMarginBottom()
-                            + formProperties.getMarginTop() + formProperties.getHeaderSectionHeight() + formProperties.getFooterSectionHeight()))));
-            previewEditControl.setModel(canvas);
-           
-            previewEditControl.setSelectionToViewer(Arrays.asList(o));
-        }
+        refresh(editor, previewComposite, o);
 
     }
 

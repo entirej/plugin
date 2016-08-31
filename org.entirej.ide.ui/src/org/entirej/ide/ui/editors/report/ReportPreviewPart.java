@@ -69,11 +69,19 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 
                                                                     public String getDescription()
                                                                     {
-                                                                        return "select ui element to preview.";
+                                                                        return "select ui element to Edit.";
+                                                                    }
+
+                                                                    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite,
+                                                                            Object selection)
+                                                                    {
+                                                                        // TODO Auto-generated method stub
+                                                                        
                                                                     }
                                                                 };
 
     private AbstractNode<?>              selectedNode;
+    private ReportPreviewImpl previewProviderBase;
 
     public ReportPreviewPart(AbstractEJReportEditor editor, FormPage page, Composite parent)
     {
@@ -171,14 +179,14 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
     @Override
     public String getSectionTitle()
     {
-        return "Preview";
+        return "Report Editor";
     }
 
     @Override
     public String getSectionDescription()
     {
 
-        return "preview the defined layout in report.";
+        return "edit the defined layout in report.";
     }
 
     public void showDetails(AbstractNode<?> node)
@@ -201,9 +209,39 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
     {
         if(!autoRefrsh.get())
             return;
-        getSection().setRedraw(false);
+        
+        
+        
+        
         if (previewComposite != null)
         {
+            if (selectedNode != null)
+            {
+                IReportPreviewProvider provider = selectedNode.getAdapter(IReportPreviewProvider.class);
+                if(previewProvider==provider && provider!=null)
+                {
+                    previewProvider.refresh(editor, previewComposite, selectedNode.getSource());
+                    return;
+                }
+               
+                if(provider!=null || previewProvider!=previewProviderBase)
+                    previewProvider = provider;
+            }
+            if(previewProvider==previewProviderBase && previewProviderBase!=null)
+            {
+                previewProvider.refresh(editor, previewComposite, selectedNode.getSource());
+                return;
+            }
+            if (previewProvider == null)
+            {
+                if(previewProviderBase==null)
+                {
+                    previewProviderBase = new ReportPreviewImpl();
+                }
+                previewProvider = previewProviderBase;
+            }
+            
+            getSection().setRedraw(false);
             final Composite drop = previewComposite;
             final Shell shell = new Shell();
             drop.setParent(shell);
@@ -219,7 +257,6 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
             if (previewProvider != null)
             {
                 previewProvider.dispose();
-                previewProvider = null;
             }
             getSection().setDescription(getSectionDescription());
         }
@@ -231,14 +268,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
         layoutData.widthHint = 100;
         layoutData.heightHint = 100;
 
-        if (selectedNode != null)
-        {
-            previewProvider = selectedNode.getAdapter(IReportPreviewProvider.class);
-        }
-        if (previewProvider == null)
-        {
-            previewProvider = new ReportPreviewImpl();
-        }
+        
         try
         {
             if (previewProvider != null)

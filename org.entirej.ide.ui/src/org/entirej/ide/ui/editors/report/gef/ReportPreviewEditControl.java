@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.draw2d.ColorConstants;
@@ -35,13 +36,15 @@ import org.entirej.ide.ui.editors.report.gef.ruler.ReportRulerProvider;
 public class ReportPreviewEditControl extends RulerComposite
 {
 
-    private final EditDomain             editDomain;
-    private final ScrollingGraphicalViewer        viewer;
+    private final EditDomain               editDomain;
+    private final ScrollingGraphicalViewer viewer;
 
-    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent,boolean showRuler)
+    private AtomicBoolean                  evntTrigger = new AtomicBoolean(true);
+
+    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent, boolean showRuler)
     {
         super(parent, SWT.NONE);
-        //setLayout(new FillLayout());
+        // setLayout(new FillLayout());
 
         editDomain = new EditDomain();
 
@@ -55,39 +58,41 @@ public class ReportPreviewEditControl extends RulerComposite
 
         viewer.createControl(this);
         editDomain.addViewer(viewer);
-      
-       
+
         viewer.getControl().setBackground(ColorConstants.listBackground);
 
         viewer.setEditPartFactory(createPartFactory(editor));
         viewer.setKeyHandler(new ReportGraphicalViewerKeyHandler(viewer));
         viewer.addSelectionChangedListener(new ISelectionChangedListener()
         {
-            
+
             public void selectionChanged(SelectionChangedEvent event)
             {
+                if (!evntTrigger.get())
+                    return;
+
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
                 Object firstElement = selection.getFirstElement();
-                if(firstElement instanceof AbstractGraphicalEditPart)
+                if (firstElement instanceof AbstractGraphicalEditPart)
                 {
                     AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) firstElement;
-                    editor.select(part.getModel(),false);
-                    
-                    if(viewer.getControl()!=null)
+                    editor.select(part.getModel(), false);
+
+                    if (viewer.getControl() != null)
                         viewer.getControl().forceFocus();
                 }
             }
         });
         viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY, showRuler);
-      
+
         ReportRuler hRuler = new ReportRuler(true);
         viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, new ReportRulerProvider(hRuler));
-       
+
         ReportRuler vRuler = new ReportRuler(false);
-       
+
         viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER, new ReportRulerProvider(vRuler));
         setGraphicalViewer(viewer);
-        
+
         hRuler.setHoffset(5);
         vRuler.setVoffset(5);
 
@@ -106,30 +111,31 @@ public class ReportPreviewEditControl extends RulerComposite
             public void execute(AbstractOperation operation)
             {
                 editor.execute(operation);
-                
+
             }
 
             public void setDirty(boolean b)
             {
                 editor.setDirty(b);
-                
+
             }
 
             public void refresh(Object model)
             {
                 editor.refresh(model);
-                
+
             }
 
             public void refreshPreview()
             {
                 editor.refreshPreview();
-                
+
             }
+
             public void refreshProperties()
             {
                 editor.refreshProperties();
-                
+
             }
         };
     }
@@ -165,30 +171,39 @@ public class ReportPreviewEditControl extends RulerComposite
 
     public void setSelectionToViewer(Collection<?> collection)
     {
-        final ArrayList<Object> theSelection = new ArrayList<Object>();
-        for (Object object : collection)
+        evntTrigger.set(false);
+        try
         {
-            Object part = viewer.getEditPartRegistry().get(object);
-            if(part!=null)
+
+            final ArrayList<Object> theSelection = new ArrayList<Object>();
+            for (Object object : collection)
             {
-                theSelection.add(part);
+                Object part = viewer.getEditPartRegistry().get(object);
+                if (part != null)
+                {
+                    theSelection.add(part);
+                }
+            }
+
+            if (theSelection != null && !theSelection.isEmpty())
+            {
+                Runnable runnable = new Runnable()
+                {
+                    public void run()
+                    {
+
+                        if (viewer != null)
+                        {
+                            viewer.setSelection(new StructuredSelection(theSelection.toArray()));
+                        }
+                    }
+                };
+                Display.getCurrent().asyncExec(runnable);
             }
         }
-
-        if (theSelection != null && !theSelection.isEmpty())
+        finally
         {
-            Runnable runnable = new Runnable()
-            {
-                public void run()
-                {
-
-                    if (viewer != null)
-                    {
-                        viewer.setSelection(new StructuredSelection(theSelection.toArray()));
-                    }
-                }
-            };
-            Display.getCurrent().asyncExec(runnable);
+            evntTrigger.set(true);
         }
     }
 
@@ -199,7 +214,15 @@ public class ReportPreviewEditControl extends RulerComposite
 
     public void setModel(Object model)
     {
-        viewer.setContents(model);
+        try
+        {
+            evntTrigger.set(false);
+            viewer.setContents(model);
+        }
+        finally
+        {
+            evntTrigger.set(true);
+        }
 
     }
 

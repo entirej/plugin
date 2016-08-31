@@ -83,6 +83,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                                                               return fmarkers;
                                                           }
                                                       };
+    private Object reportScreenPreviewImpl;
 
     public ReportScreenNode(ReportDesignTreeSection treeSection, AbstractNode<?> parent, ReportBlockGroupNode node, EJPluginReportScreenProperties group)
     {
@@ -1090,7 +1091,11 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
         {
             if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
-                return adapter.cast(new ReportScreenPreviewImpl(source));
+            {
+                if(reportScreenPreviewImpl==null)
+                    reportScreenPreviewImpl = new ReportScreenPreviewImpl(source);
+                return adapter.cast(reportScreenPreviewImpl);
+            }
 
             if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
                 return adapter.cast(new ReportScreenColumnPreviewImpl(source));

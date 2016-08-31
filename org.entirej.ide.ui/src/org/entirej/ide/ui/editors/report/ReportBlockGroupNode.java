@@ -247,6 +247,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
 
     class BlockSubGroupNode extends AbstractNode<BlockGroup> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
     {
+        private ReportPreviewImpl reportPreviewImpl;
+
         public BlockSubGroupNode(AbstractNode<?> parent, BlockGroup source)
         {
             super(parent, source);
@@ -258,7 +260,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
             if (IReportPreviewProvider.class.isAssignableFrom(adapter))
             {
-                return adapter.cast(new ReportPreviewImpl(source));
+                if(reportPreviewImpl==null)
+                {
+                    reportPreviewImpl = new ReportPreviewImpl(source);
+                }
+                return adapter.cast(reportPreviewImpl);
             }
 
             return ReportBlockGroupNode.this.getAdapter(adapter);

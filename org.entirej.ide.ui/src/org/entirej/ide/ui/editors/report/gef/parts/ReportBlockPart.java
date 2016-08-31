@@ -1,5 +1,8 @@
 package org.entirej.ide.ui.editors.report.gef.parts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -18,6 +21,7 @@ import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.eclipse.swt.widgets.Control;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.editors.report.gef.ReportEditorContext;
 import org.entirej.ide.ui.editors.report.gef.commands.OperationCommand;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportBlockFigure;
@@ -25,8 +29,6 @@ import org.entirej.ide.ui.editors.report.gef.parts.policies.ReportBlockResizable
 
 public class ReportBlockPart extends AbstractReportGraphicalEditPart implements ReportXYMoveCommandProvider
 {
-
-    
 
     @Override
     protected IFigure createFigure()
@@ -37,7 +39,7 @@ public class ReportBlockPart extends AbstractReportGraphicalEditPart implements 
     @Override
     protected void createEditPolicies()
     {
-       installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new ReportBlockResizableEditPolicy());
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new ReportBlockResizableEditPolicy());
 
     }
 
@@ -78,7 +80,7 @@ public class ReportBlockPart extends AbstractReportGraphicalEditPart implements 
 
     public Command createMoveCommand(Integer xDelta, Integer yDelta)
     {
-        
+
         final EJPluginReportBlockProperties model = getModel();
         final ReportEditorContext editorContext = getReportEditorContext();
         final int x = model.getLayoutScreenProperties().getX() + xDelta;
@@ -130,11 +132,31 @@ public class ReportBlockPart extends AbstractReportGraphicalEditPart implements 
                 editorContext.refreshProperties();
 
                 refresh();
-                
+
                 return Status.OK_STATUS;
             }
         };
 
         return new OperationCommand(editorContext, operation);
+    }
+
+    @Override
+    protected List getModelChildren()
+    {
+        List<Object> objects = new ArrayList<Object>();
+        
+        EJPluginReportBlockProperties reportBlockProperties = getModel();
+        EJPluginReportScreenProperties layoutScreenProperties = reportBlockProperties.getLayoutScreenProperties();
+//        switch (layoutScreenProperties.getScreenType())
+//        {
+//            case FORM_LAYOUT:
+//                objects.add(layoutScreenProperties);
+//                break;
+//
+//            default:
+//                break;
+//        }
+        
+        return objects;
     }
 }

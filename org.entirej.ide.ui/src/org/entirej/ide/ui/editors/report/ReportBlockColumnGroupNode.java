@@ -209,6 +209,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                 return fmarkers;
             }
         };
+        protected ReportScreenPreviewImpl reportScreenPreviewImplH;
+        protected ReportScreenPreviewImpl reportScreenPreviewImplD;
+        protected ReportScreenPreviewImpl reportScreenPreviewImplF;
 
         public ScreenColumnNode(AbstractNode<?> parent, EJPluginReportColumnProperties source)
         {
@@ -325,7 +328,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
                         {
                             if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
-                                return adapter.cast(new ReportScreenPreviewImpl(source)
+                            {
+                                if(reportScreenPreviewImplH==null)
+                                 reportScreenPreviewImplH = new ReportScreenPreviewImpl(source)
                                 {
 
                                     @Override
@@ -336,7 +341,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                                     .getHeaderColumnHeight();
                                         return super.getHeight();
                                     }
-                                });
+                                };
+                                return adapter.cast(reportScreenPreviewImplH);
+                            }
 
                         }
                         return null;
@@ -372,7 +379,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     if (IReportPreviewProvider.class.isAssignableFrom(adapter))
                     {
                         if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
-                            return adapter.cast(new ReportScreenPreviewImpl(source)
+                        {
+                            if(reportScreenPreviewImplD==null)
+                             reportScreenPreviewImplD = new ReportScreenPreviewImpl(source)
                             {
 
                                 @Override
@@ -382,7 +391,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                         return ReportBlockColumnGroupNode.this.source.getBlockProperties().getLayoutScreenProperties().getDetailColumnHeight();
                                     return super.getHeight();
                                 }
-                            });
+                            };
+                            return adapter.cast(reportScreenPreviewImplD);
+                        }
 
                     }
                     return null;
@@ -419,7 +430,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                         if (IReportPreviewProvider.class.isAssignableFrom(adapter))
                         {
                             if (source.getScreenType() == EJReportScreenType.FORM_LAYOUT)
-                                return adapter.cast(new ReportScreenPreviewImpl(source)
+                            {
+                                 if(reportScreenPreviewImplF==null)   
+                                     reportScreenPreviewImplF= new ReportScreenPreviewImpl(source)
                                 {
 
                                     @Override
@@ -431,7 +444,9 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                                     .getFooterColumnHeight();
                                         return super.getHeight();
                                     }
-                                });
+                                };
+                                return adapter.cast(reportScreenPreviewImplF);
+                            }
 
                         }
                         return null;

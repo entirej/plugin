@@ -138,4 +138,10 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         return "preview the defined canvas layout in form.";
     }
 
+    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object selection)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

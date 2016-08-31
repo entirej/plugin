@@ -33,8 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -67,7 +65,6 @@ import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.editors.report.gef.ReportPreviewEditControl;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart.ReportFormScreenCanvas;
-import org.entirej.ide.ui.nodes.AbstractNode;
 
 public class ReportScreenPreviewImpl implements IReportPreviewProvider
 {
@@ -81,6 +78,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
     protected final EJPluginReportScreenProperties properties;
 
     private int                                    x, y;
+    private ReportPreviewEditControl previewEditControl;
 
     public ReportScreenPreviewImpl(EJPluginReportScreenProperties properties)
     {
@@ -131,20 +129,29 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
             parent.setBounds(parent.getBounds().x, parent.getBounds().y, width, height);
         }
     }
+    
+    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object o)
+    {
+        if(previewEditControl!=null && !previewEditControl.isDisposed())
+        {
+            previewEditControl.setModel(new ReportFormScreenCanvas(properties,editor.getReportProperties().getReportWidth(),editor.getReportProperties().getReportHeight()));
+            
+            previewEditControl.setSelectionToViewer(Arrays.asList(o));
+        }
+        
+    }
 
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
-        ReportPreviewEditControl previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
+         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
         previewComposite.setContent(previewEditControl);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
         previewComposite.setExpandHorizontal(true);
         previewComposite.setExpandVertical(true);
         previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
-        previewEditControl.setModel(new ReportFormScreenCanvas(layoutScreenProperties,editor.getReportProperties().getReportWidth(),editor.getReportProperties().getReportHeight()));
-        
-        previewEditControl.setSelectionToViewer(Arrays.asList(o));
+       refresh(editor, previewComposite, layoutScreenProperties);
         // offset
         if (previewEditControl != null)
         {
