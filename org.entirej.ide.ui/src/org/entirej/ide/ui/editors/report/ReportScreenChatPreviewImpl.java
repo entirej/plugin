@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
@@ -56,6 +57,12 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         MOVE.dispose();
     }
 
+    
+    public Action[] getToolbarActions()
+    {
+        return new Action[]{};
+    }
+    
     protected int getHeight()
     {
 

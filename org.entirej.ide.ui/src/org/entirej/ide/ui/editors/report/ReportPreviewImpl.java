@@ -20,6 +20,9 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.Arrays;
 
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
@@ -118,6 +121,12 @@ public class ReportPreviewImpl implements IReportPreviewProvider
            
        }
         
+    }
+    
+    
+    public Action[] getToolbarActions()
+    {
+        return new Action[]{new ZoomInAction(previewEditControl.getZoomManager()),new ZoomOutAction(previewEditControl.getZoomManager())};
     }
     
     public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)

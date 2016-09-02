@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -97,6 +100,13 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         return properties.getHeight();
     }
 
+    
+    public Action[] getToolbarActions()
+    {
+        return new Action[]{new ZoomInAction(previewEditControl.getZoomManager()),new ZoomOutAction(previewEditControl.getZoomManager())};
+        
+    }
+    
     protected EJPluginReportProperties getReportProperties(AbstractEJReportEditor editor)
     {
         return editor.getReportProperties();

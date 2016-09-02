@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
@@ -59,6 +60,11 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
                                                                     {
                                                                         // ignore
 
+                                                                    }
+                                                                    
+                                                                    public Action[] getToolbarActions()
+                                                                    {
+                                                                        return new Action[]{};
                                                                     }
 
                                                                     public void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
@@ -281,6 +287,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
                 getSection().setDescription(defaultPreviewProvider.getDescription());
                 defaultPreviewProvider.buildPreview(editor, previewComposite,selectedNode.getSource());
             }
+            refreshEditorActions();
         }
         catch (Throwable e)
         {
@@ -307,6 +314,50 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 
         getSection().layout();
         getSection().setRedraw(true);
+    }
+
+    private void refreshEditorActions()
+    {
+       if(toolBarManager!=null)
+       {
+           toolBarManager.removeAll();
+           
+          
+           
+           if(previewProvider!=null)
+           {
+               for (Action action : previewProvider.getToolbarActions())
+               {
+                   if (action != null)
+                       toolBarManager.add(action);
+                   else
+                       toolBarManager.add(new Separator());
+               }
+           }
+           else if(previewProviderBase!=null)
+           {
+               for (Action action : previewProviderBase.getToolbarActions())
+               {
+                   if (action != null)
+                       toolBarManager.add(action);
+                   else
+                       toolBarManager.add(new Separator());
+               }
+           }
+           //system actions
+           toolBarManager.add(new Separator());
+           for (Action action : getToolbarActions())
+           {
+               if (action != null)
+                   toolBarManager.add(action);
+               else
+                   toolBarManager.add(new Separator());
+           }
+
+           toolBarManager.update(true);
+           toolbar.update();
+       }
+        
     }
 
     public void buildUI()

@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.ScrolledComposite;
 
 public interface IReportPreviewProvider
@@ -28,4 +29,7 @@ public interface IReportPreviewProvider
     void dispose();
 
     String getDescription();
+    
+    
+    public Action[] getToolbarActions();
 }

@@ -13,6 +13,7 @@ import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
@@ -96,6 +97,11 @@ public class ReportPreviewEditControl extends RulerComposite
         hRuler.setHoffset(5);
         vRuler.setVoffset(5);
 
+    }
+    
+    public ZoomManager getZoomManager()
+    {
+        return (ZoomManager) viewer.getProperty(ZoomManager.class.toString());
     }
 
     protected ReportEditPartFactory createPartFactory(final AbstractEJReportEditor editor)

@@ -20,6 +20,7 @@ package org.entirej.ide.ui.editors.report;
 
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.PaintEvent;
@@ -279,6 +280,11 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
             }
         });
+    }
+
+    public Action[] getToolbarActions()
+    {
+        return new Action[]{};
     }
 
 }

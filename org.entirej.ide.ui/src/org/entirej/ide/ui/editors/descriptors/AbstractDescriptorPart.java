@@ -77,7 +77,7 @@ import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
 
 public abstract class AbstractDescriptorPart extends SectionPart
 {
-    protected static ToolBar  toolbar;
+    protected  ToolBar  toolbar;
 
     protected Composite       body;
 
@@ -90,6 +90,8 @@ public abstract class AbstractDescriptorPart extends SectionPart
     private Object            currentInput;
     private List<Refreshable> refreshables = new ArrayList<Refreshable>();
 
+    protected ToolBarManager toolBarManager;
+
     public AbstractDescriptorPart(FormToolkit toolkit, Composite parent, boolean enableScroll)
     {
         this(toolkit, parent, ExpandableComposite.TITLE_BAR, enableScroll);
@@ -101,7 +103,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         this.toolkit = toolkit;
 
         buildBody(getSection(), toolkit);
-        createSectionToolbar(getSection(), toolkit, getToolbarActions());
+        toolBarManager = createSectionToolbar(getSection(), toolkit, getToolbarActions());
         parent.setBackground(getSection().getBackground());
         this.enableScroll = enableScroll;
     }
@@ -338,7 +340,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         com.setTabList(foucsCtrls.toArray(new Control[0]));
     }
 
-    private static void createSectionToolbar(Section section, FormToolkit toolkit, Action[] toolbarActions)
+    private  ToolBarManager createSectionToolbar(Section section, FormToolkit toolkit, Action[] toolbarActions)
     {
         ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
         toolbar = toolBarManager.createControl(section);
@@ -367,6 +369,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         toolBarManager.update(true);
 
         section.setTextClient(toolbar);
+        return toolBarManager;
     }
 
     protected Composite createAdvancedSection(final Composite body, final IGroupProvider groupProvider, String text, String tooltip, final FormToolkit toolkit,
@@ -383,6 +386,8 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
         final Section advnSection = toolkit.createSection(body, style);
         advnSection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+         createSectionToolbar(advnSection, toolkit, groupProvider.getToolbarActions());
         advnSection.setText(text);
         if (tooltip != null && tooltip.trim().length() > 0)
         {
@@ -454,7 +459,6 @@ public abstract class AbstractDescriptorPart extends SectionPart
         groupProvider.createHeader(handler, advnComp, new GridData(GridData.FILL_HORIZONTAL));
 
         handler.refresh();
-        createSectionToolbar(advnSection, toolkit, groupProvider.getToolbarActions());
         return advnComp;
     }
 
