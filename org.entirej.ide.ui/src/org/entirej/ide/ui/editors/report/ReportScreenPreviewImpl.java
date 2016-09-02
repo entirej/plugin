@@ -140,7 +140,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         }
     }
     
-    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object o)
+    public void refresh(AbstractEJReportEditor editor, Composite previewComposite, Object o)
     {
         if(previewEditControl!=null && !previewEditControl.isDisposed())
         {
@@ -151,17 +151,13 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
         
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
+    public void buildPreview(final AbstractEJReportEditor editor, Composite previewComposite,Object o)
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
          previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
-        previewComposite.setContent(previewEditControl);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-        previewComposite.setExpandHorizontal(true);
-        previewComposite.setExpandVertical(true);
-        previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
-       refresh(editor, previewComposite, layoutScreenProperties);
+        refresh(editor, previewComposite, layoutScreenProperties);
         // offset
         if (previewEditControl != null)
         {
@@ -174,11 +170,8 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
         EJPluginReportProperties formProperties = getReportProperties(editor);
 
-        previewComposite.setContent(pContent);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-        previewComposite.setExpandHorizontal(true);
-        previewComposite.setExpandVertical(true);
-
+   
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 
@@ -199,7 +192,6 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
             createBlockPreview(editor, reportBody, properties);
         }
 
-        previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
                                                                                               // offset
 
         final LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();

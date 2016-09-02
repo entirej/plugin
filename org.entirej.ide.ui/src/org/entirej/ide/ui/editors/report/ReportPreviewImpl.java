@@ -79,7 +79,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
 
-    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object o)
+    public void refresh(AbstractEJReportEditor editor, Composite previewComposite, Object o)
     {
         
        if(previewEditControl!=null && !previewEditControl.isDisposed())
@@ -129,19 +129,15 @@ public class ReportPreviewImpl implements IReportPreviewProvider
         return new Action[]{new ZoomInAction(previewEditControl.getZoomManager()),new ZoomOutAction(previewEditControl.getZoomManager())};
     }
     
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
+    public void buildPreview(final AbstractEJReportEditor editor, Composite previewComposite,Object o)
     {
         
         final EJPluginReportProperties formProperties = getReportProperties(editor);
-        int width = formProperties.getReportWidth();
-        int height = formProperties.getReportHeight();
+//        int width = formProperties.getReportWidth();
+//        int height = formProperties.getReportHeight();
        
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-        previewComposite.setExpandHorizontal(true);
-        previewComposite.setExpandVertical(true);
-
-       
-        previewComposite.setMinSize(width, height);
+      
        
        
          previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true){
@@ -153,12 +149,11 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 return new ReportEditPartFactory(createContext(editor));
             }
         };
-        previewComposite.setContent(previewEditControl);
         refresh(editor, previewComposite, o);
 
     }
 
-    private ReportBlockSectionCanvasPart.BlockSectionCanvas headerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+    private ReportBlockSectionCanvasPart.BlockSectionCanvas headerSection(final AbstractEJReportEditor editor, Composite previewComposite, final EJPluginReportProperties formProperties,
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
@@ -169,7 +164,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
                 formProperties.getMarginLeft(), formProperties.getMarginTop(),  (width - (formProperties.getMarginRight() + formProperties.getMarginLeft())), formProperties.getHeaderSectionHeight());
     }
 
-    private ReportBlockSectionCanvasPart.BlockSectionCanvas footerSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+    private ReportBlockSectionCanvasPart.BlockSectionCanvas footerSection(final AbstractEJReportEditor editor, Composite previewComposite, final EJPluginReportProperties formProperties,
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         
@@ -181,7 +176,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
        
     }
 
-    private ReportBlockSectionCanvasPart.BlockSectionCanvas detailSection(final AbstractEJReportEditor editor, ScrolledComposite previewComposite, final EJPluginReportProperties formProperties,
+    private ReportBlockSectionCanvasPart.BlockSectionCanvas detailSection(final AbstractEJReportEditor editor, Composite previewComposite, final EJPluginReportProperties formProperties,
             int width, int height, Composite report, EJReportBlockContainer blockContainer, Object o)
     {
         

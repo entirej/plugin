@@ -102,7 +102,7 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         }
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o )
+    public void buildPreview(final AbstractEJReportEditor editor, Composite previewComposite,Object o )
     {
         // layout canvas preview
         Composite pContent = new Composite(previewComposite, SWT.NONE);
@@ -110,10 +110,8 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         // EJPluginReportProperties formProperties =
         // getReportProperties(editor);
 
-        previewComposite.setContent(pContent);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-        previewComposite.setExpandHorizontal(true);
-        previewComposite.setExpandVertical(true);
+   
 
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
@@ -126,8 +124,7 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
 
         reportBody.setBounds(10, 10, layoutScreenProperties.getWidth(), getHeight());
 
-        previewComposite.setMinSize(layoutScreenProperties.getWidth() + 20, getHeight() + 20);// add
-                                                                                              // offset
+                                                                                             // offset
         Label info = new Label(reportBody, SWT.NONE);
         info.setText(properties.getChartProperties().getChartType().toString());
         info.setBounds(0, 0, layoutScreenProperties.getWidth(), 25);
@@ -145,7 +142,7 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         return "preview the defined canvas layout in form.";
     }
 
-    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object selection)
+    public void refresh(AbstractEJReportEditor editor, Composite previewComposite, Object selection)
     {
         // TODO Auto-generated method stub
         

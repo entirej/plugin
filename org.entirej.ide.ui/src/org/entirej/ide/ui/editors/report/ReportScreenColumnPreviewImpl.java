@@ -69,7 +69,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
     
-    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite, Object selection)
+    public void refresh(AbstractEJReportEditor editor, Composite previewComposite, Object selection)
     {
        if(pContent!=null && !pContent.isDisposed())
        {
@@ -78,18 +78,15 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         buildPreview(editor, previewComposite, selection);
     }
 
-    public void buildPreview(final AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
+    public void buildPreview(final AbstractEJReportEditor editor, Composite previewComposite,Object o)
     {
         // layout canvas preview
          pContent = new Composite(previewComposite, SWT.NONE);
 
         EJPluginReportProperties formProperties = getReportProperties(editor);
 
-        previewComposite.setContent(pContent);
         setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-        previewComposite.setExpandHorizontal(true);
-        previewComposite.setExpandVertical(true);
-
+  
         pContent.setLayout(null);
         setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 

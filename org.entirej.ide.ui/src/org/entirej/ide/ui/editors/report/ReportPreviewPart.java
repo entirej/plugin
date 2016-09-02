@@ -27,7 +27,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,7 +49,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
 {
     private final AbstractEJReportEditor editor;
     // private AbstractNode<?> selectedNode;
-    private ScrolledComposite            previewComposite;
+    private Composite            previewComposite;
     private AtomicBoolean              autoRefrsh = new AtomicBoolean(true);
     private IReportPreviewProvider       previewProvider;
     private final IReportPreviewProvider defaultPreviewProvider = new IReportPreviewProvider()
@@ -67,7 +66,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
                                                                         return new Action[]{};
                                                                     }
 
-                                                                    public void buildPreview(AbstractEJReportEditor editor, ScrolledComposite previewComposite,Object o)
+                                                                    public void buildPreview(AbstractEJReportEditor editor, Composite previewComposite,Object o)
                                                                     {
                                                                         previewComposite.setBackground(body.getBackground());
                                                                         // ignore
@@ -78,7 +77,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
                                                                         return "select ui element to Edit.";
                                                                     }
 
-                                                                    public void refresh(AbstractEJReportEditor editor, ScrolledComposite previewComposite,
+                                                                    public void refresh(AbstractEJReportEditor editor, Composite previewComposite,
                                                                             Object selection)
                                                                     {
                                                                         // TODO Auto-generated method stub
@@ -268,7 +267,8 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
         }
         body.setLayout(new GridLayout());
 
-        previewComposite = new ScrolledComposite(body, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        previewComposite = new Composite(body, SWT.BORDER );
+        previewComposite.setLayout(new FillLayout());
         GridData layoutData = new GridData(GridData.FILL_BOTH);
         previewComposite.setLayoutData(layoutData);
         layoutData.widthHint = 100;
@@ -298,7 +298,7 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
                 previewProvider.dispose();
                 previewProvider = null;
             }
-            previewComposite = new ScrolledComposite(body, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+            previewComposite = new Composite(body, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
             previewComposite.setLayoutData(layoutData);
             final Writer result = new StringWriter();
@@ -306,9 +306,6 @@ public class ReportPreviewPart extends AbstractDescriptorPart implements INodeDe
             getSection().setDescription("error occurred on preview.");
             Text content = new Text(previewComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
             content.setText(result.toString());
-            previewComposite.setContent(content);
-            previewComposite.setExpandHorizontal(true);
-            previewComposite.setExpandVertical(true);
             EJCoreLog.log(e);
         }
 
