@@ -224,19 +224,7 @@ public class ScreenResizableEditPolicy extends ResizableEditPolicy
         return new SelectEditPartTracker(getHost());
     }
 
-    // /**
-    // * Returns a resize tracker for the given direction to be used by a resize
-    // handle.
-    // *
-    // * @param direction
-    // * the resize direction for the {@link JSSCompoundResizeTracker}.
-    // * @return a new {@link JSSCompoundResizeTracker}
-    // * @since 3.7
-    // */
-    // protected ResizeTracker getResizeTracker(int direction) {
-    // return new JSSCompoundResizeTracker((GraphicalEditPart) getHost(),
-    // direction);
-    // }
+
 
     // =================================== //
 
@@ -256,9 +244,15 @@ public class ScreenResizableEditPolicy extends ResizableEditPolicy
             ReportFormScreenPart part = (ReportFormScreenPart) getHost();
             final EJPluginReportScreenProperties model = part.getModel();
             final ReportEditorContext editorContext = part.getReportEditorContext();
-            final int                            width = model.getWidth() + request.getSizeDelta().width;
+            int widthDelta = request.getSizeDelta().width;
+            int heightDelta = request.getSizeDelta().height;
+            double zoom = part.getZoom();
+            widthDelta = (int) Math.round(widthDelta / zoom);
+            heightDelta = (int) Math.round(heightDelta / zoom);
+            final int                            width = model.getWidth() + widthDelta;
             ;
-            final int                            height = model.getHeight() + request.getSizeDelta().height;
+            
+            final int                            height = model.getHeight() + heightDelta;
             final int                            oldWidth =model.getWidth();
             final int                            oldHeight = model.getHeight();
             

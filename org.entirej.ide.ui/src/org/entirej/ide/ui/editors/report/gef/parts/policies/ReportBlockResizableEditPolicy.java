@@ -17,14 +17,18 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.SharedCursors;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.handles.NonResizableHandleKit;
 import org.eclipse.gef.handles.ResizableHandleKit;
+import org.eclipse.gef.handles.ResizeHandle;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
+import org.eclipse.gef.tools.ResizeTracker;
 import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
@@ -63,6 +67,9 @@ public class ReportBlockResizableEditPolicy extends ResizableEditPolicy
         return list;
     }
 
+    
+    
+ 
     /**
      * Shows or updates feedback for a change bounds request.
      * 
@@ -142,12 +149,7 @@ public class ReportBlockResizableEditPolicy extends ResizableEditPolicy
     {
         if ((getResizeDirections() & direction) == direction)
         {
-            // ColoredSquareHandles handle = new
-            // ColoredSquareHandles((GraphicalEditPart) getHost(), direction);
-            // handle.setDragTracker(getResizeTracker(direction));
-            // handle.setCursor(Cursors.getDirectionalCursor(direction,
-            // getHostFigure().isMirrored()));
-            // handles.add(handle);
+            
             super.createResizeHandle(handles, direction);
         }
         else
@@ -220,19 +222,7 @@ public class ReportBlockResizableEditPolicy extends ResizableEditPolicy
         return new SelectEditPartTracker(getHost());
     }
 
-    // /**
-    // * Returns a resize tracker for the given direction to be used by a resize
-    // handle.
-    // *
-    // * @param direction
-    // * the resize direction for the {@link JSSCompoundResizeTracker}.
-    // * @return a new {@link JSSCompoundResizeTracker}
-    // * @since 3.7
-    // */
-    // protected ResizeTracker getResizeTracker(int direction) {
-    // return new JSSCompoundResizeTracker((GraphicalEditPart) getHost(),
-    // direction);
-    // }
+     
 
     // =================================== //
 
@@ -268,9 +258,17 @@ public class ReportBlockResizableEditPolicy extends ResizableEditPolicy
             ;
             final int height;
 
-            width = model.getLayoutScreenProperties().getWidth() + request.getSizeDelta().width;
+            int widthDelta = request.getSizeDelta().width;
+            
 
-            height = model.getLayoutScreenProperties().getHeight() + request.getSizeDelta().height;
+            int heightDelta = request.getSizeDelta().height;
+            
+            double zoom = part.getZoom();
+            widthDelta = (int) Math.round(widthDelta / zoom);
+            heightDelta = (int) Math.round(heightDelta / zoom);
+            
+            width = model.getLayoutScreenProperties().getWidth() + widthDelta;
+            height = model.getLayoutScreenProperties().getHeight() + heightDelta;
 
             final int oldWidth = model.getLayoutScreenProperties().getWidth();
             final int oldHeight = model.getLayoutScreenProperties().getHeight();

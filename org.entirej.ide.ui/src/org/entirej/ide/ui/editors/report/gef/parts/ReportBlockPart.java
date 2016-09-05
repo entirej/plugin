@@ -81,6 +81,9 @@ public class ReportBlockPart extends AbstractReportGraphicalEditPart implements 
     public Command createMoveCommand(Integer xDelta, Integer yDelta)
     {
 
+        double zoom = getZoom();
+        xDelta = (int) Math.round(xDelta / zoom);
+        yDelta = (int) Math.round(yDelta / zoom);
         final EJPluginReportBlockProperties model = getModel();
         final ReportEditorContext editorContext = getReportEditorContext();
         final int x = model.getLayoutScreenProperties().getX() + xDelta;

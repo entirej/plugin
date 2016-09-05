@@ -259,14 +259,22 @@ public class ScreenItemResizableEditPolicy extends ResizableEditPolicy {
 	            final int                            height ;
 	            
 	            
-	            if(model.isWidthAsPercentage())
-	                width = (int) (((double) (basewidth + request.getSizeDelta().width) / ((EJPluginReportScreenProperties)part.getParent().getModel()).getWidth()) * 100);
+	            int widthDelta = request.getSizeDelta().width;
+	            int heightDelta = request.getSizeDelta().height;
+	            
+	            
+	            double zoom = part.getZoom();
+	            widthDelta = (int) Math.round(widthDelta / zoom);
+	            heightDelta = (int) Math.round(heightDelta / zoom);
+                if(model.isWidthAsPercentage())
+	                width = (int) (((double) (basewidth + widthDelta) / ((EJPluginReportScreenProperties)part.getParent().getModel()).getWidth()) * 100);
 	            else
-	                width = model.getWidth() + request.getSizeDelta().width;
-	            if(model.isHeightAsPercentage())
-	                height = (int) (((double) (baseheight + request.getSizeDelta().height) / ((EJPluginReportScreenProperties)part.getParent().getModel()).getHeight()) * 100);
+	                width = model.getWidth() + widthDelta;
+	           
+                if(model.isHeightAsPercentage())
+	                height = (int) (((double) (baseheight + heightDelta) / ((EJPluginReportScreenProperties)part.getParent().getModel()).getHeight()) * 100);
 	            else
-	                height = model.getHeight() + request.getSizeDelta().height;
+	                height = model.getHeight() + heightDelta;
 	            
 	            
 	            
