@@ -16,8 +16,7 @@ public class ReportBlockColumnFigure extends RectangleFigure
     public ReportBlockColumnFigure(EJPluginReportColumnProperties model)
     {
         this.model = model;
-        EJPluginReportScreenProperties screenProperties = model.getBlockProperties().getLayoutScreenProperties();
-        setPreferredSize(model.getDetailScreen().getWidth(), screenProperties.getHeight());
+        
         GridLayout manager = new GridLayout();
         manager.marginHeight = 0;
         manager.marginWidth = 0;
