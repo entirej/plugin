@@ -32,7 +32,7 @@ public class EJPluginReportColumnProperties
     }
     
    
-    public EJReportBlockProperties getBlockProperties()
+    public EJPluginReportBlockProperties getBlockProperties()
     {
         return blockProperties;
     }

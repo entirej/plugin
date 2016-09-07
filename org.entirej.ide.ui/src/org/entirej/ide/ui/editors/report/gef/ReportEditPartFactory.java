@@ -3,9 +3,11 @@ package org.entirej.ide.ui.editors.report.gef;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.parts.AbstractReportGraphicalEditPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockColumnPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart.BlockSectionCanvas;
@@ -15,6 +17,8 @@ import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart.ReportFormScreenCanvas;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenItemPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportTableScreenCanvasPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportTableScreenCanvasPart.ReportTableScreenCanvas;
 
 public class ReportEditPartFactory implements EditPartFactory
 {
@@ -39,6 +43,14 @@ public class ReportEditPartFactory implements EditPartFactory
         else if (model instanceof ReportFormScreenCanvas)
         {
             part = new ReportFormScreenCanvasPart();
+        }
+        else if (model instanceof EJPluginReportColumnProperties)
+        {
+            part = new ReportBlockColumnPart();
+        }
+        else if (model instanceof ReportTableScreenCanvas)
+        {
+            part = new ReportTableScreenCanvasPart();
         }
         else if (model instanceof EJPluginReportBlockProperties)
         {

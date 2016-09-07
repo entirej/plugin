@@ -4,23 +4,22 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenCanvasFigure;
+import org.entirej.ide.ui.editors.report.gef.figures.ReportTableScreenCanvasFigure;
 
-public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
+public class ReportTableScreenCanvasPart extends AbstractReportGraphicalEditPart
 {
-    ReportFormScreenCanvasFigure canvasFigure;
+    ReportTableScreenCanvasFigure canvasFigure;
 
-    public static class ReportFormScreenCanvas
+    public static class ReportTableScreenCanvas
     {
         final int width;
         final int height;
         
         final EJPluginReportScreenProperties screenProperties;
        
-        public ReportFormScreenCanvas(EJPluginReportScreenProperties screenProperties,int width,int height)
+        public ReportTableScreenCanvas(EJPluginReportScreenProperties screenProperties,int width,int height)
         {
             this.screenProperties = screenProperties;
             this.width = width;
@@ -47,7 +46,7 @@ public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
     @Override
     protected IFigure createFigure()
     {
-        return canvasFigure = new ReportFormScreenCanvasFigure(getModel());
+        return canvasFigure = new ReportTableScreenCanvasFigure(getModel());
     }
 
     @Override
@@ -58,9 +57,9 @@ public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
     }
 
     @Override
-    public ReportFormScreenCanvas getModel()
+    public ReportTableScreenCanvas getModel()
     {
-        return (ReportFormScreenCanvas) super.getModel();
+        return (ReportTableScreenCanvas) super.getModel();
     }
     
     @Override
@@ -73,7 +72,6 @@ public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
         {
             //zoomManager.setZoom(1);
         }
-        
     }
 
     
@@ -86,7 +84,6 @@ public class ReportFormScreenCanvasPart extends AbstractReportGraphicalEditPart
     @Override
     public List<?> getModelChildren()
     {
-        getModel().screenProperties.setHeight(getModel().getHeight());
         return Arrays.asList(getModel().screenProperties);
     }
 }

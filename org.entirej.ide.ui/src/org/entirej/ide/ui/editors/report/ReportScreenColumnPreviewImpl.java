@@ -18,38 +18,30 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.framework.report.interfaces.EJReportBorderProperties;
+import org.entirej.ide.ui.editors.report.gef.ReportPreviewEditControl;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportTableScreenCanvasPart.ReportTableScreenCanvas;
 
 public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 {
-    protected final Color                          COLOR_HEADER       = new Color(Display.getCurrent(), new RGB(180, 180, 180));
-    protected final Color                          COLOR_DETAIL       = new Color(Display.getCurrent(), new RGB(236, 236, 236));
-    protected final Color                          COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
-    protected final Color                          COLOR_LINE         = new Color(Display.getCurrent(), new RGB(118, 118, 118));
-    protected final Color                          COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    protected final Color                          COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-    protected final Color                          COLOR_BLACK        = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
-    protected final Color                          COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 
     protected final EJPluginReportScreenProperties properties;
+    private ReportPreviewEditControl previewEditControl;
 
-    private int                                    x, y;
-    private Composite pContent;
+    
 
     public ReportScreenColumnPreviewImpl(EJPluginReportScreenProperties properties)
     {
@@ -58,10 +50,6 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
     public void dispose()
     {
-        COLOR_HEADER.dispose();
-        COLOR_DETAIL.dispose();
-        COLOR_FOOTER.dispose();
-        COLOR_LINE.dispose();
     }
 
     protected EJPluginReportProperties getReportProperties(AbstractEJReportEditor editor)
@@ -69,94 +57,25 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         return editor.getReportProperties();
     }
     
-    public void refresh(AbstractEJReportEditor editor, Composite previewComposite, Object selection)
+    public void refresh(AbstractEJReportEditor editor, Composite previewComposite, Object o)
     {
-       if(pContent!=null && !pContent.isDisposed())
-       {
-           pContent.dispose();
-       }
-        buildPreview(editor, previewComposite, selection);
+        if(previewEditControl!=null && !previewEditControl.isDisposed())
+        {
+            previewEditControl.setModel(new ReportTableScreenCanvas(properties,editor.getReportProperties().getReportWidth(),editor.getReportProperties().getReportHeight()));
+            
+            previewEditControl.setSelectionToViewer(Arrays.asList(o));
+        }
+        
     }
 
     public void buildPreview(final AbstractEJReportEditor editor, Composite previewComposite,Object o)
     {
-        // layout canvas preview
-         pContent = new Composite(previewComposite, SWT.NONE);
+        final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
-        EJPluginReportProperties formProperties = getReportProperties(editor);
-
-        setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-  
-        pContent.setLayout(null);
-        setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
-
-        Composite reportBody = new Composite(pContent, SWT.BORDER);
-        reportBody.setLayout(null);
-        setPreviewBackground(reportBody, COLOR_WHITE);
-
-        EJPluginReportScreenProperties layoutScreenProperties = properties;
-
-        Composite header = new Composite(reportBody, SWT.NONE);
-        header.setLayout(null);
-        setPreviewBackground(header, COLOR_HEADER);
-        Composite detail = new Composite(reportBody, SWT.NONE);
-        detail.setLayout(null);
-        setPreviewBackground(detail, COLOR_DETAIL);
-        Composite footer = new Composite(reportBody, SWT.NONE);
-        footer.setLayout(null);
-        setPreviewBackground(footer, COLOR_FOOTER);
-
-        List<EJPluginReportColumnProperties> columnProperties = layoutScreenProperties.getColumnContainer().getAllColumnProperties();
-
-        int headerH = layoutScreenProperties.getHeaderColumnHeight();
-
-        int detailH = layoutScreenProperties.getDetailColumnHeight();
-
-        int footerH = layoutScreenProperties.getDetailColumnHeight();
-
-        int totalW = 0;
-        // calculate sections
-        for (EJPluginReportColumnProperties column : columnProperties)
-        {
-
-            if (column.isShowHeader())
-            {
-                if (headerH < column.getHeaderScreen().getHeight())
-                {
-                    headerH = column.getHeaderScreen().getHeight();
-                }
-
-            }
-            if (detailH < column.getDetailScreen().getHeight())
-            {
-                detailH = column.getDetailScreen().getHeight();
-            }
-
-            if (column.isShowFooter())
-            {
-                if (footerH < column.getFooterScreen().getHeight())
-                {
-                    footerH = column.getFooterScreen().getHeight();
-                }
-
-            }
-
-            totalW += column.getDetailScreen().getWidth();
-
-        }
-
-        header.setBounds(0, 0, totalW, headerH);
-        detail.setBounds(0, headerH, totalW, detailH);
-        footer.setBounds(0, headerH + detailH, totalW, footerH);
-
-        addColumnLines(header, columnProperties, true, false);
-        addColumnLines(detail, columnProperties, false, false);
-        addColumnLines(footer, columnProperties, false, true);
-        int sectionsH = (headerH + detailH + footerH);
-
-        reportBody.setBounds(10, 10, layoutScreenProperties.getWidth() > totalW ? layoutScreenProperties.getWidth() : totalW,
-                layoutScreenProperties.getHeight() > sectionsH ? layoutScreenProperties.getHeight() : sectionsH);
-
+         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
+       
+        refresh(editor, previewComposite, layoutScreenProperties);
+        
     }
 
     protected void setPreviewBackground(Control control, Color color)
@@ -166,9 +85,12 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
     public String getDescription()
     {
-        return "preview the defined canvas layout in form.";
+        return "editor the defined canvas layout in form.";
     }
 
+    
+    
+    @Deprecated
     void addColumnLines(final Composite composite, final List<EJPluginReportColumnProperties> columnProperties, final boolean header, final boolean footer)
     {
         composite.addPaintListener(new PaintListener()
@@ -181,7 +103,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
                 {
 
                     e.gc.setLineStyle(SWT.LINE_DASH);
-                    e.gc.setForeground(COLOR_LINE);
+                  //  e.gc.setForeground(COLOR_LINE);
 
                     int x;
                     if (column.isShowHeader() && column.isShowFooter())
@@ -227,7 +149,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
                         int lineWidth = (int) Math.ceil(borderProperties.getLineWidth());
                         e.gc.setLineWidth(lineWidth);
-                        e.gc.setForeground(COLOR_BLACK);
+                        //e.gc.setForeground(COLOR_BLACK);
 
                         switch (borderProperties.getLineStyle())
                         {

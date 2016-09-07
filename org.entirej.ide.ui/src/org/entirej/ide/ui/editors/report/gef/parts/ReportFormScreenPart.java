@@ -16,7 +16,9 @@ import org.eclipse.gef.SnapToGuides;
 import org.eclipse.gef.SnapToHelper;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
+import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
+import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportFormScreenFigure;
 import org.entirej.ide.ui.editors.report.gef.parts.policies.ScreenResizableEditPolicy;
 
@@ -78,11 +80,21 @@ public class ReportFormScreenPart extends AbstractReportGraphicalEditPart
     public List<?> getModelChildren()
     {
         ArrayList<Object> list= new ArrayList<Object>();
-        Collection<?> screenItems = getModel().getScreenItems();
-        list.addAll(screenItems);
         
-        List<EJPluginReportBlockProperties> allSubBlocks = getModel().getAllSubBlocks();
-        list.addAll(allSubBlocks);
+        EJPluginReportScreenProperties model = getModel();
+        if(model.getScreenType()==EJReportScreenType.FORM_LAYOUT)
+        {
+            Collection<?> screenItems = model.getScreenItems();
+            list.addAll(screenItems);
+            
+            List<EJPluginReportBlockProperties> allSubBlocks = getModel().getAllSubBlocks();
+            list.addAll(allSubBlocks);
+        }
+        else if(model.getScreenType()==EJReportScreenType.TABLE_LAYOUT)
+        {
+            List<EJPluginReportColumnProperties> allColumnProperties = getModel().getColumnContainer().getAllColumnProperties();
+            list.addAll(allColumnProperties);
+        }
         return list;
     }
     

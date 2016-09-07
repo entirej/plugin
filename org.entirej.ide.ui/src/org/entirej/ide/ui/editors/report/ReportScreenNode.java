@@ -84,6 +84,7 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
                                                           }
                                                       };
     private Object reportScreenPreviewImpl;
+    private ReportScreenColumnPreviewImpl reportTableScreenPreviewImpl;
 
     public ReportScreenNode(ReportDesignTreeSection treeSection, AbstractNode<?> parent, ReportBlockGroupNode node, EJPluginReportScreenProperties group)
     {
@@ -1098,7 +1099,12 @@ public class ReportScreenNode extends AbstractNode<EJPluginReportScreenPropertie
             }
 
             if (source.getScreenType() == EJReportScreenType.TABLE_LAYOUT)
-                return adapter.cast(new ReportScreenColumnPreviewImpl(source));
+            {
+                if(reportTableScreenPreviewImpl==null)
+                    reportTableScreenPreviewImpl = new ReportScreenColumnPreviewImpl(source);
+                
+              return  adapter.cast(reportTableScreenPreviewImpl);
+            }
             if (source.getScreenType() == EJReportScreenType.CHART_LAYOUT)
                 return adapter.cast(new ReportScreenChatPreviewImpl(source));
         }
