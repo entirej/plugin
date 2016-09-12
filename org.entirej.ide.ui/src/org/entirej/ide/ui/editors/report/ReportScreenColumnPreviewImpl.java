@@ -21,6 +21,8 @@ package org.entirej.ide.ui.editors.report;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -50,6 +52,12 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
     public void dispose()
     {
+    }
+    
+    public Action[] getToolbarActions()
+    {
+        return new Action[]{new ZoomInAction(previewEditControl.getZoomManager()),new ZoomOutAction(previewEditControl.getZoomManager())};
+        
     }
 
     protected EJPluginReportProperties getReportProperties(AbstractEJReportEditor editor)
@@ -201,9 +209,6 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
         });
     }
 
-    public Action[] getToolbarActions()
-    {
-        return new Action[]{};
-    }
+    
 
 }
