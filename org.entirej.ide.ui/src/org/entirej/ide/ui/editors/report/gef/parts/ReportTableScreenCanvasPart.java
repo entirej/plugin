@@ -7,6 +7,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportTableScreenCanvasFigure;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportColumnLabelScreenPart.ReportColumnLabel;
 
 public class ReportTableScreenCanvasPart extends AbstractReportGraphicalEditPart
 {
@@ -84,6 +85,6 @@ public class ReportTableScreenCanvasPart extends AbstractReportGraphicalEditPart
     @Override
     public List<?> getModelChildren()
     {
-        return Arrays.asList(getModel().screenProperties);
+        return Arrays.asList(new ReportColumnLabel(getModel().screenProperties) , getModel().screenProperties);
     }
 }

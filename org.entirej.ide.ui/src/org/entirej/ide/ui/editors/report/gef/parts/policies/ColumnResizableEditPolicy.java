@@ -17,6 +17,7 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.SharedCursors;
@@ -29,7 +30,9 @@ import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.ide.ui.editors.report.gef.ReportEditorContext;
 import org.entirej.ide.ui.editors.report.gef.commands.OperationCommand;
-import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockColumnPart;
+import org.entirej.ide.ui.editors.report.gef.parts.AbstractReportGraphicalEditPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockColumnLabelPart.ReportBlockColumnLabel;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportTableScreenCanvasPart;
 
 public class ColumnResizableEditPolicy extends ResizableEditPolicy
 {
@@ -77,7 +80,7 @@ public class ColumnResizableEditPolicy extends ResizableEditPolicy
         String s = "";
         int scaleH = 0;
         int scaleW = 0;
-        if (getHost().getModel() instanceof EJPluginReportColumnProperties)
+        if (getHost().getModel() instanceof EJPluginReportColumnProperties || getHost().getModel() instanceof ReportBlockColumnLabel)
         {
             IFigure figure = getHostFigure();
             Rectangle oldBounds = new Rectangle(figure.getBounds().x, figure.getBounds().y, figure.getBounds().width, figure.getBounds().height);
@@ -231,10 +234,18 @@ public class ColumnResizableEditPolicy extends ResizableEditPolicy
     @Override
     protected Command getResizeCommand(ChangeBoundsRequest request)
     {
-        if (getHost().getModel() instanceof EJPluginReportColumnProperties)
+        if (getHost().getModel() instanceof EJPluginReportColumnProperties || getHost().getModel() instanceof ReportBlockColumnLabel)
         {
-            ReportBlockColumnPart part = (ReportBlockColumnPart) getHost();
-            final EJPluginReportColumnProperties model = part.getModel();
+            AbstractReportGraphicalEditPart part = (AbstractReportGraphicalEditPart) getHost();
+            final EJPluginReportColumnProperties model;
+            if(getHost().getModel() instanceof ReportBlockColumnLabel)
+            {
+                model = ((ReportBlockColumnLabel) part.getModel()).getColumnProperties();
+            }
+            else
+            {
+                model = (EJPluginReportColumnProperties) part.getModel();
+            }
             final ReportEditorContext editorContext = part.getReportEditorContext();
             int widthDelta = request.getSizeDelta().width;
             int heightDelta = request.getSizeDelta().height;
@@ -258,7 +269,7 @@ public class ColumnResizableEditPolicy extends ResizableEditPolicy
                     editorContext.refreshProperties();
                     editorContext.refreshPreview();
 
-                    getHost().refresh();
+                    refreshParent();
                     return Status.OK_STATUS;
                 }
 
@@ -272,7 +283,7 @@ public class ColumnResizableEditPolicy extends ResizableEditPolicy
                     editorContext.refreshProperties();
                     editorContext.refreshPreview();
 
-                    getHost().refresh();
+                    refreshParent();
                     return Status.OK_STATUS;
                 }
 
@@ -286,8 +297,30 @@ public class ColumnResizableEditPolicy extends ResizableEditPolicy
                     editorContext.refresh(model);
                     editorContext.refreshProperties();
 
-                    getHost().refresh();
+                    refreshParent();
                     return Status.OK_STATUS;
+                }
+                
+                void refreshParent()
+                {
+                    EditPart editPart = getHost().getParent();
+                    while (editPart.getParent()!=null && !(editPart instanceof ReportTableScreenCanvasPart))
+                    {
+                        editPart.refresh();
+                        editPart = editPart.getParent();
+                        
+                    }
+                    refreshPart(editPart);
+                }
+                
+                void refreshPart(EditPart editPart )
+                {
+                    editPart.refresh();
+                    List children = editPart.getChildren();
+                    for (Object object : children)
+                    {
+                        refreshPart((EditPart) object);
+                    }
                 }
             };
 

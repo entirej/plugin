@@ -7,12 +7,16 @@ import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 import org.entirej.ide.ui.editors.report.gef.parts.AbstractReportGraphicalEditPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockColumnLabelPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockColumnLabelPart.ReportBlockColumnLabel;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockColumnPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportBlockSectionCanvasPart.BlockSectionCanvas;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportCanvasPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportCanvasPart.ReportCanvas;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportColumnLabelScreenPart;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportColumnLabelScreenPart.ReportColumnLabel;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportColumnScreenPart;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportColumnScreenPart.ReportColumnScreen;
 import org.entirej.ide.ui.editors.report.gef.parts.ReportFormScreenCanvasPart;
@@ -53,6 +57,14 @@ public class ReportEditPartFactory implements EditPartFactory
         else if (model instanceof EJPluginReportColumnProperties)
         {
             part = new ReportBlockColumnPart();
+        }
+        else if (model instanceof ReportColumnLabel)
+        {
+            part = new ReportColumnLabelScreenPart();
+        }
+        else if (model instanceof ReportBlockColumnLabel)
+        {
+            part = new ReportBlockColumnLabelPart();
         }
         else if (model instanceof ReportTableScreenCanvas)
         {

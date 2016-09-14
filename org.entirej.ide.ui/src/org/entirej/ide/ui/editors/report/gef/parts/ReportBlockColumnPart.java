@@ -52,8 +52,8 @@ public class ReportBlockColumnPart extends AbstractReportGraphicalEditPart
     {
         EJPluginReportColumnProperties model = getModel();
         EJPluginReportScreenProperties screenProperties = model.getBlockProperties().getLayoutScreenProperties();
-        ((ReportBlockColumnFigure)getFigure()).setPreferredSize(model.getDetailScreen().getWidth(), screenProperties.getHeight()+20);
-      getParent().refresh();
+        ((ReportBlockColumnFigure)getFigure()).setPreferredSize(model.getDetailScreen().getWidth(), screenProperties.getHeight());
+      
     }
 
     public DragTracker getDragTracker(Request request)
