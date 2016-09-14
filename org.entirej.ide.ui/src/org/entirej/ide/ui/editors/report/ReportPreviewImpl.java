@@ -41,27 +41,14 @@ import org.entirej.ide.ui.editors.report.gef.parts.ReportCanvasPart.ReportCanvas
 
 public class ReportPreviewImpl implements IReportPreviewProvider
 {
-    protected final Color  COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
-    protected final Color  COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    protected final Color  COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-    protected final Color  COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-
-    protected final Cursor RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
-    protected final Cursor MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-
-    protected final Color  COLOR_HEADER       = new Color(Display.getCurrent(), new RGB(180, 180, 180));
-    protected final Color  COLOR_FOOTER       = new Color(Display.getCurrent(), new RGB(218, 218, 218));
+ 
 
     protected BlockGroup   page;
     private ReportPreviewEditControl previewEditControl;
 
     public void dispose()
     {
-        COLOR_BLOCK.dispose();
-        RESIZE.dispose();
-        COLOR_HEADER.dispose();
-        COLOR_FOOTER.dispose();
-        MOVE.dispose();
+       
     }
 
     public ReportPreviewImpl()
@@ -136,7 +123,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
 //        int width = formProperties.getReportWidth();
 //        int height = formProperties.getReportHeight();
        
-        setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
+
       
        
        

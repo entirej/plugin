@@ -33,13 +33,7 @@ import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
 
 public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
 {
-    protected final Color                          COLOR_BLOCK        = new Color(Display.getCurrent(), new RGB(255, 251, 227));
-    protected final Color                          COLOR_BLOCK_ITEM   = new Color(Display.getCurrent(), new RGB(240, 240, 240));
-    protected final Color                          COLOR_LIGHT_YELLOW = Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    protected final Color                          COLOR_WHITE        = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-    protected final Color                          COLOR_LIGHT_SHADOW = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-    protected final Cursor                         RESIZE             = new Cursor(Display.getCurrent(), SWT.CURSOR_SIZESE);
-    protected final Cursor                         MOVE               = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+   
     protected final EJPluginReportScreenProperties properties;
 
     private int                                    x, y;
@@ -51,10 +45,7 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
 
     public void dispose()
     {
-        COLOR_BLOCK_ITEM.dispose();
-        COLOR_BLOCK.dispose();
-        RESIZE.dispose();
-        MOVE.dispose();
+     
     }
 
     
@@ -110,15 +101,15 @@ public class ReportScreenChatPreviewImpl implements IReportPreviewProvider
         // EJPluginReportProperties formProperties =
         // getReportProperties(editor);
 
-        setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
+       // setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
    
 
         pContent.setLayout(null);
-        setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
+       // setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
 
         final Composite reportBody = new Composite(pContent, SWT.BORDER);
         reportBody.setLayout(null);
-        setPreviewBackground(reportBody, COLOR_WHITE);
+       // setPreviewBackground(reportBody, COLOR_WHITE);
 
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
