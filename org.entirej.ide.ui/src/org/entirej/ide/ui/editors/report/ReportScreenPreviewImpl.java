@@ -78,7 +78,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
          previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
        
-        refresh(editor, previewComposite, layoutScreenProperties);
+        refresh(editor, previewComposite, o==null?layoutScreenProperties:o);
         
     }
 
