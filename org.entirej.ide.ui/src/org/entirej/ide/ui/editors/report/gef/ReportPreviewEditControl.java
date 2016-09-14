@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.entirej.ide.ui.editors.report.AbstractEJReportEditor;
+import org.entirej.ide.ui.editors.report.gef.parts.ReportSelectionProvider;
 import org.entirej.ide.ui.editors.report.gef.ruler.ReportRuler;
 import org.entirej.ide.ui.editors.report.gef.ruler.ReportRulerProvider;
 
@@ -77,7 +78,18 @@ public class ReportPreviewEditControl extends RulerComposite
                 if (firstElement instanceof AbstractGraphicalEditPart)
                 {
                     AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) firstElement;
-                    editor.select(part.getModel(), false);
+                    if(part instanceof ReportSelectionProvider)
+                    {
+                        ReportSelectionProvider selectionProvider = (ReportSelectionProvider)part;
+                        editor.select(selectionProvider.getSelectionObject(), false);
+                        evntTrigger.set(false);
+                        viewer.setSelection(new StructuredSelection(selectionProvider.getPostSelection()));
+                        evntTrigger.set(true);
+                    }
+                    else
+                    {
+                        editor.select(part.getModel(), false);
+                    }
 
                     if (viewer.getControl() != null)
                         viewer.getControl().forceFocus();

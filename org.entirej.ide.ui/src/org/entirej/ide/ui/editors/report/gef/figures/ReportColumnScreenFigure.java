@@ -1,6 +1,7 @@
 package org.entirej.ide.ui.editors.report.gef.figures;
 
 
+import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
@@ -22,8 +23,10 @@ public class ReportColumnScreenFigure extends RectangleFigure
         manager.marginWidth = 0;
         setAlpha(150);
         setLayoutManager(manager);
-        Label figure = new Label(model.getText());
+        Label figure = new Label(model.isSkiped()?"":model.getText());
         add(figure);
+        getLayoutManager().setConstraint(figure, new GridData(GridData.FILL, GridData.FILL, true, true));
+
     }
 
 

@@ -1,24 +1,21 @@
 package org.entirej.ide.ui.editors.report.gef.parts;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.CompoundSnapToHelper;
 import org.eclipse.gef.DragTracker;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.SnapToGeometry;
 import org.eclipse.gef.SnapToGuides;
 import org.eclipse.gef.SnapToHelper;
 import org.eclipse.gef.tools.DragEditPartsTracker;
-import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
-import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
-import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.ui.editors.report.gef.figures.ReportColumnScreenFigure;
 
-public class ReportColumnScreenPart extends AbstractReportGraphicalEditPart
+public class ReportColumnScreenPart extends AbstractReportGraphicalEditPart implements ReportSelectionProvider
 {
     private ReportColumnScreenFigure  base;
     
@@ -29,15 +26,17 @@ public class ReportColumnScreenPart extends AbstractReportGraphicalEditPart
         final String text;
         final int height;
         final int width;
+        final boolean skiped;
         
         final EJPluginReportScreenProperties screenProperties;
 
-        public ReportColumnScreen(String text,int height, int width, EJPluginReportScreenProperties screenProperties)
+        public ReportColumnScreen(String text,int height, int width, EJPluginReportScreenProperties screenProperties,boolean skiped)
         {
             super();
             this.text = text;
             this.height = height;
             this.width = width;
+            this.skiped = skiped;
             this.screenProperties = screenProperties;
         }
 
@@ -56,52 +55,33 @@ public class ReportColumnScreenPart extends AbstractReportGraphicalEditPart
             return text;
         }
         
+        
+        public boolean isSkiped()
+        {
+            return skiped;
+        }
+        
         public EJPluginReportScreenProperties getScreenProperties()
         {
             return screenProperties;
         }
         
-        @Override
-        public int hashCode()
-        {
-            return screenProperties.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            
-            if(obj instanceof ReportColumnScreen)
-            {
-                ReportColumnScreen other = (ReportColumnScreen) obj;
-                if (screenProperties.equals(other.screenProperties))
-                    return true;
-            }
-            if(obj instanceof ReportColumnScreen)
-            {
-                ReportColumnScreen other = (ReportColumnScreen) obj;
-                if (screenProperties.equals(other.screenProperties))
-                    return true;
-            }
-            if(obj instanceof EJPluginReportScreenProperties)
-            {
-               
-                if (screenProperties.equals(obj))
-                    return true;
-            }
-            
-          
-            return false;
-        }
+        
         
         
        
     }
     
+    public Object getSelectionObject()
+    {
+        return getModel().isSkiped()? getParent().getModel(): getModel().getScreenProperties();
+    }
+    
+    
+    public EditPart getPostSelection()
+    {
+        return getParent();
+    }
     
     @Override
     protected IFigure createFigure()

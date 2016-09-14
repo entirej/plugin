@@ -18,10 +18,14 @@ import org.entirej.ide.ui.editors.report.gef.parts.policies.ColumnResizableEditP
 public class ReportBlockColumnPart extends AbstractReportGraphicalEditPart 
 {
 
+    private ReportBlockColumnFigure reportBlockColumnFigure;
+
+
     @Override
     protected IFigure createFigure()
     {
-        return new ReportBlockColumnFigure(getModel());
+         reportBlockColumnFigure = new ReportBlockColumnFigure(getModel());
+        return reportBlockColumnFigure;
     }
 
     @Override
@@ -29,6 +33,12 @@ public class ReportBlockColumnPart extends AbstractReportGraphicalEditPart
     {
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new ColumnResizableEditPolicy());
 
+    }
+    
+    @Override
+    public IFigure getContentPane()
+    {
+        return reportBlockColumnFigure.getContentPane();
     }
 
     @Override
@@ -42,7 +52,7 @@ public class ReportBlockColumnPart extends AbstractReportGraphicalEditPart
     {
         EJPluginReportColumnProperties model = getModel();
         EJPluginReportScreenProperties screenProperties = model.getBlockProperties().getLayoutScreenProperties();
-        ((ReportBlockColumnFigure)getFigure()).setPreferredSize(model.getDetailScreen().getWidth(), screenProperties.getHeight());
+        ((ReportBlockColumnFigure)getFigure()).setPreferredSize(model.getDetailScreen().getWidth(), screenProperties.getHeight()+20);
       getParent().refresh();
     }
 
@@ -66,10 +76,14 @@ public class ReportBlockColumnPart extends AbstractReportGraphicalEditPart
         
         EJPluginReportColumnProperties model = getModel();
         
-//        list.add(new ReportColumnScreen("Header",model.getDetailScreen().getHeaderColumnHeight(),model.getDetailScreen().getWidth(),model.getHeaderScreen()));
-//        list.add(new ReportColumnScreen("Detail",model.getDetailScreen().getDetailColumnHeight(),model.getDetailScreen().getWidth(),model.getDetailScreen()));
-//        list.add(new ReportColumnScreen("Footer",model.getDetailScreen().getFooterColumnHeight(),model.getDetailScreen().getWidth(),model.getFooterScreen()));
-//        
+        if(model.isShowHeader())
+            list.add(new ReportColumnScreen("H",model.getDetailScreen().getHeaderColumnHeight(),model.getDetailScreen().getWidth(),model.getHeaderScreen(),!model.isShowHeader()));
+       
+        list.add(new ReportColumnScreen("D",model.getDetailScreen().getDetailColumnHeight(),model.getDetailScreen().getWidth(),model.getDetailScreen(),false));
+        
+        if(model.isShowFooter())
+            list.add(new ReportColumnScreen("F",model.getDetailScreen().getFooterColumnHeight(),model.getDetailScreen().getWidth(),model.getFooterScreen(),!model.isShowFooter()));
+        
        
         return list;
     }
