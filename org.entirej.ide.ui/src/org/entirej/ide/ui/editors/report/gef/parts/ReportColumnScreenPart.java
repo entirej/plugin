@@ -125,7 +125,7 @@ public class ReportColumnScreenPart extends AbstractReportGraphicalEditPart impl
     @Override
     protected void refreshVisuals()
     {
-        base.setPreferredSize(getModel().getWidth(), getModel().height);
+        base.setPreferredSize(getModel().getWidth(), getModel().getHeight());
         
     }
 
