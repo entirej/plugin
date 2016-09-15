@@ -78,12 +78,12 @@ public class ReportBlockColumnPart extends AbstractReportGraphicalEditPart
         
        
         EJPluginReportScreenProperties layoutScreenProperties = model.getBlockProperties().getLayoutScreenProperties();
-        list.add(new ReportColumnScreen("H",layoutScreenProperties.getHeaderColumnHeight(),model.getDetailScreen().getWidth(),model.getHeaderScreen(),!model.isShowHeader()));
+        list.add(new ReportColumnScreen("[header]",layoutScreenProperties.getHeaderColumnHeight(),model.getDetailScreen().getWidth(),model.getHeaderScreen(),!model.isShowHeader()));
        
-        list.add(new ReportColumnScreen("D",layoutScreenProperties.getDetailColumnHeight(),model.getDetailScreen().getWidth(),model.getDetailScreen(),false));
+        list.add(new ReportColumnScreen("[detail]",layoutScreenProperties.getDetailColumnHeight(),model.getDetailScreen().getWidth(),model.getDetailScreen(),false));
         
         if(model.isShowFooter())
-            list.add(new ReportColumnScreen("F",layoutScreenProperties.getFooterColumnHeight(),model.getDetailScreen().getWidth(),model.getFooterScreen(),!model.isShowFooter()));
+            list.add(new ReportColumnScreen("[footer]",layoutScreenProperties.getFooterColumnHeight(),model.getDetailScreen().getWidth(),model.getFooterScreen(),!model.isShowFooter()));
         
        
         return list;

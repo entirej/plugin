@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
@@ -15,6 +16,7 @@ import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editparts.ZoomListener;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.RedoAction;
@@ -28,6 +30,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
@@ -44,12 +48,16 @@ public class ReportPreviewEditControl extends RulerComposite
     private final ScrollingGraphicalViewer viewer;
 
     private AtomicBoolean                  evntTrigger = new AtomicBoolean(true);
+    private int vOffset;
+    private int hOffset;
 
     public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent, boolean showRuler,int hOffset,int vOffset)
     {
         super(parent, SWT.NONE);
         // setLayout(new FillLayout());
 
+        this.hOffset = hOffset;
+        this.vOffset = vOffset;
         editDomain = new EditDomain();
 
         viewer = new ScrollingGraphicalViewer();
@@ -114,8 +122,84 @@ public class ReportPreviewEditControl extends RulerComposite
         viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER, new ReportRulerProvider(vRuler));
         setGraphicalViewer(viewer);
 
+        if(vOffset!=0 || hOffset!=0)
+        getZoomManager().addZoomListener(new ZoomListener()
+        {
+            
+            public void zoomChanged(double zoom)
+            {
+                Display.getDefault().asyncExec(new  Runnable()
+                {
+                    public void run()
+                    {
+                        layout(true);
+                    }
+                });
+                
+            }
+        });
 
     }
+    
+    
+    public void doLayout() {
+        if(vOffset==0 && hOffset==0)
+        {
+            super.doLayout();
+            return;
+        }
+        GraphicalViewer left = getLeft();
+        GraphicalViewer top = getTop();
+        FigureCanvas editor = getEditor();
+        
+        if (left == null && top == null) {
+                Rectangle area = getClientArea();
+                if (editor != null && !editor.isDisposed()
+                                && !editor.getBounds().equals(area))
+                        editor.setBounds(area);
+                return;
+        }
+
+        int leftWidth = 0, topHeight = 0;
+        Rectangle leftTrim = null, topTrim = null;
+        if (left != null) {
+                leftTrim = calculateRulerTrim((Canvas) left.getControl());
+                // Adding the trim width here because FigureCanvas#computeSize()
+                // does not
+                leftWidth = left.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x
+                                + leftTrim.width;
+        }
+        if (top != null) {
+                topTrim = calculateRulerTrim((Canvas) top.getControl());
+                topHeight = top.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y
+                                + topTrim.height;
+        }
+
+        Rectangle editorSize = getClientArea();
+        editorSize.x = leftWidth;
+        editorSize.y = topHeight;
+        editorSize.width -= leftWidth;
+        editorSize.height -= topHeight;
+        editor.setBounds(editorSize);
+
+        /*
+         * Fix for Bug# 67554 Take trim into account. Some platforms (such as
+         * MacOS and Motif) leave some trimming around some canvasses.
+         */
+        double zoom = getZoomManager().getZoom();
+        Rectangle trim = calculateEditorTrim(editor);
+        if (left != null) {
+                // The - 1 and + 1 are to compensate for the RulerBorder
+                left.getControl().setBounds(0, (topHeight - trim.x + leftTrim.x - 1)+(int) Math.round(vOffset * zoom),
+                                leftWidth,
+                                editorSize.height - trim.height + leftTrim.height + 1);
+        }
+        if (top != null) {
+                top.getControl().setBounds((leftWidth - trim.y + topTrim.y - 1)+(int) Math.round(hOffset * zoom), 0,
+                                editorSize.width - trim.width + topTrim.width + 1,
+                                topHeight);
+        }
+}
     
     public ZoomManager getZoomManager()
     {

@@ -80,7 +80,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
-         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true,0,0);
+         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true,0,21);
        
         refresh(editor, previewComposite, layoutScreenProperties);
         
