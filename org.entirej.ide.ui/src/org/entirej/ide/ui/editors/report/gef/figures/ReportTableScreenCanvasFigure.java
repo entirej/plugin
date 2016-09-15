@@ -9,6 +9,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayeredPane;
 import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.editparts.GridLayer;
 import org.eclipse.gef.editparts.GuideLayer;
@@ -88,6 +89,7 @@ public class ReportTableScreenCanvasFigure extends FreeformViewport
     protected GridLayer createGridLayer()
     {
         GridLayer gridLayer = new GridLayer();
+        gridLayer.setSpacing(new Dimension(10, 10));
         gridLayer.setBackgroundColor(GIRD_COLOR);
         return gridLayer;
     }

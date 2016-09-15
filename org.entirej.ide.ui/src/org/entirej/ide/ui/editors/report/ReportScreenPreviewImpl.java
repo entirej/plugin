@@ -76,7 +76,7 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
     {
         final EJPluginReportScreenProperties layoutScreenProperties = properties;
 
-         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true);
+         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true,0,0);
        
         refresh(editor, previewComposite, o==null?layoutScreenProperties:o);
         

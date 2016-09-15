@@ -8,8 +8,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -43,7 +45,7 @@ public class ReportPreviewEditControl extends RulerComposite
 
     private AtomicBoolean                  evntTrigger = new AtomicBoolean(true);
 
-    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent, boolean showRuler)
+    public ReportPreviewEditControl(final AbstractEJReportEditor editor, Composite parent, boolean showRuler,int hOffset,int vOffset)
     {
         super(parent, SWT.NONE);
         // setLayout(new FillLayout());
@@ -99,15 +101,19 @@ public class ReportPreviewEditControl extends RulerComposite
         viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY, showRuler);
 
         ReportRuler hRuler = new ReportRuler(true);
+        hRuler.setHoffset(hOffset);
+        hRuler.setVoffset(hOffset);
         viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, new ReportRulerProvider(hRuler));
+        viewer.setProperty(SnapToGrid.PROPERTY_GRID_SPACING, new Dimension(10, 10));
 
         ReportRuler vRuler = new ReportRuler(false);
 
+       
+        vRuler.setVoffset(vOffset);
+        vRuler.setHoffset(vOffset);
         viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER, new ReportRulerProvider(vRuler));
         setGraphicalViewer(viewer);
 
-        hRuler.setHoffset(5);
-        vRuler.setVoffset(5);
 
     }
     

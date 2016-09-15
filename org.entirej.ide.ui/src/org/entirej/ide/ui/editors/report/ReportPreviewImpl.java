@@ -127,7 +127,7 @@ public class ReportPreviewImpl implements IReportPreviewProvider
       
        
        
-         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true){
+         previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true,0,0){
             
             
             @Override
