@@ -91,7 +91,10 @@ public class ReportScreenPreviewImpl implements IReportPreviewProvider
 
     public void dispose()
     {
+        if(previewEditControl!=null)
+            previewEditControl.dispose();
         
+        previewEditControl = null;
         
     }
 }
