@@ -54,7 +54,8 @@ public class BlockHandler extends EntireJTagHandler
     private static final String           ELEMENT_SCREEN_H_COL_HEIGHT   = "headerColHeight";
     private static final String           ELEMENT_SCREEN_D_COL_HEIGHT   = "detailColHeight";
     private static final String           ELEMENT_SCREEN_F_COL_HEIGHT   = "footerColHeight";
-    
+    private static final String           ELEMENT_NEW_PAGE              = "newPage";
+
     public BlockHandler(EJPluginReportProperties formProperties)
     {
         _formProperties = formProperties;
@@ -206,6 +207,10 @@ public class BlockHandler extends EntireJTagHandler
         else if (name.equals(ELEMENT_SCREEN_HEIGHT))
         {
             _blockProperties.getLayoutScreenProperties().setHeight(Integer.parseInt(value));
+        }
+        else if (name.equals(ELEMENT_NEW_PAGE))
+        {
+            _blockProperties.getLayoutScreenProperties().setNewPage(Boolean.parseBoolean(value));
         }
     }
     

@@ -56,10 +56,12 @@ import org.entirej.framework.report.service.EJReportBlockService;
 import org.entirej.ide.core.project.EJMarkerFactory;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTypeDescriptor;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator;
+import org.entirej.ide.ui.editors.form.DisplayItemNode;
 import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockAddOperation;
 import org.entirej.ide.ui.editors.report.operations.ReportBlockContainerItemAddOperation;
@@ -964,6 +966,33 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             final List<IMarker> fmarkers = validator.getMarkers();
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
+            
+            final AbstractBooleanDescriptor separtor = new AbstractBooleanDescriptor("Page Brake")
+            {
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.getLayoutScreenProperties().setNewPage(value);
+                    editor.setDirty(true);
+                   
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getLayoutScreenProperties().isNewPage();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+            };
+            descriptors.add(separtor);
+            
             final AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Width")
             {
                 Filter vfilter = new Filter()

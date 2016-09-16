@@ -30,6 +30,8 @@ public class EJPluginReportScreenProperties
     private String                              evenRowVAName;
                                                 
     private final EJPluginReportChartProperties chartProperties;
+
+    private boolean newPage;
                                                 
     public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
@@ -186,5 +188,16 @@ public class EJPluginReportScreenProperties
     public EJReportVisualAttributeProperties getEvenVAProperties()
     {
         return null;
+    }
+
+    public void setNewPage(boolean newPage)
+    {
+        this.newPage = newPage;
+        
+    }
+    
+    public boolean isNewPage()
+    {
+        return newPage;
     }
 }
