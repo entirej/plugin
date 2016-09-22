@@ -1086,6 +1086,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     {
                         List<String> formNames = FormsUtil.getFormNames(javaProject);
                         formNames.remove(editor.getFormProperties().getName());
+                        formNames.add(0,"");
                         return formNames.toArray(new String[0]);
                     }
                     return new String[0];
