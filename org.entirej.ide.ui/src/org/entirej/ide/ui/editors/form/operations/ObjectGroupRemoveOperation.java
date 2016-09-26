@@ -68,7 +68,7 @@ public class ObjectGroupRemoveOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh((container.getFormProperties()), true);
+                     treeSection.refresh();
                 }
             });
         }
@@ -96,7 +96,7 @@ public class ObjectGroupRemoveOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh((container.getFormProperties()), true);
+                     treeSection.refresh();
                     treeSection.selectNodes(true, blockProperties);
                     //treeSection.expand(abstractNode, 2);
 
