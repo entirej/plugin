@@ -751,7 +751,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                                 try
                                 {
                                     enable = false;
-                                    if (!text.isDisposed())
+                                    if (!text.isDisposed() && descriptor.getValue()!=null)
                                         text.setText(descriptor.getValue());
 
                                 }
@@ -773,7 +773,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
             try
             {
                 enable = false;
-                if (!text.isDisposed())
+                if (!text.isDisposed() && descriptor.getValue()!=null)
                     text.setText(descriptor.getValue());
 
             }
@@ -857,7 +857,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                                 try
                                 {
                                     enable = false;
-                                    if (!text.isDisposed())
+                                    if (!text.isDisposed() && descriptor.getValue()!=null)
                                         text.setText(descriptor.getValue());
 
                                 }
@@ -907,7 +907,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
             try
             {
                 enable = false;
-                if (!text.isDisposed())
+                if (!text.isDisposed() && descriptor.getValue()!=null)
                     text.setText(descriptor.getValue());
 
             }
@@ -1098,7 +1098,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                                 try
                                 {
                                     enable = false;
-                                    if (!text.isDisposed())
+                                    if (!text.isDisposed() && descriptor.getValue()!=null)
                                         text.setText(descriptor.getValue());
 
                                 }
@@ -1119,7 +1119,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
             try
             {
                 enable = false;
-                if (!text.isDisposed())
+                if (!text.isDisposed() && descriptor.getValue()!=null)
                     text.setText(descriptor.getValue());
 
             }

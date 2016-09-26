@@ -239,7 +239,7 @@ public class BlockRemoveOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh((container), true);
+                    treeSection.refresh((container.getFormProperties()), true);
                 }
             });
         }
@@ -282,7 +282,7 @@ public class BlockRemoveOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh((container), true);
+                    treeSection.refresh((container.getFormProperties()), true);
                     treeSection.selectNodes(true, blockProperties);
                     // treeSection.expand(abstractNode, 2);
 
