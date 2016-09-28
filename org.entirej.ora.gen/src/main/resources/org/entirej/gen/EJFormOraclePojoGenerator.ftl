@@ -241,7 +241,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
         _initialValues.clear();
         <#list columns as column>
         
-       _initialValues.put(FieldNames.${column.name}, ${column.var_name});
+       _initialValues.put(FieldNames.${column.name}, _values.get(FieldNames.${column.name}));
     	</#list>
     }
 
