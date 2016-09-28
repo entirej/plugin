@@ -32,6 +32,7 @@ public class EJPluginReportScreenProperties
     private final EJPluginReportChartProperties chartProperties;
 
     private boolean newPage;
+    private boolean fitToPage = true;
                                                 
     public EJPluginReportScreenProperties(EJPluginReportBlockProperties blockProperties)
     {
@@ -199,5 +200,15 @@ public class EJPluginReportScreenProperties
     public boolean isNewPage()
     {
         return newPage;
+    }
+    
+    public void setFitToPage(boolean fitToPage)
+    {
+        this.fitToPage = fitToPage;
+    }
+    
+    public boolean isFitToPage()
+    {
+        return fitToPage;
     }
 }

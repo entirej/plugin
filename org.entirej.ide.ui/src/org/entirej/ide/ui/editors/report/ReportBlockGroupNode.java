@@ -967,6 +967,31 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
 
             
+            final AbstractBooleanDescriptor fitToPage = new AbstractBooleanDescriptor("Fit to Page")
+            {
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.getLayoutScreenProperties().setFitToPage(value);
+                    editor.setDirty(true);
+                   
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return source.getLayoutScreenProperties().isFitToPage();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+            };
+            descriptors.add(fitToPage);
             final AbstractBooleanDescriptor separtor = new AbstractBooleanDescriptor("Page Brake")
             {
                 
@@ -975,7 +1000,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 {
                     source.getLayoutScreenProperties().setNewPage(value);
                     editor.setDirty(true);
-                   
+                    
                 }
                 
                 @Override
@@ -988,7 +1013,7 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-
+                    
                 }
             };
             descriptors.add(separtor);
