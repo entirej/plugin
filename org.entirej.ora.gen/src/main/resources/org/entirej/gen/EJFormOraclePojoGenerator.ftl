@@ -239,6 +239,10 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     public void clearInitialValues()
     {
         _initialValues.clear();
+        <#list columns as column>
+        
+       _initialValues.put(FieldNames.${column.name}, ${column.var_name});
+    	</#list>
     }
 
     public void clearValues()
