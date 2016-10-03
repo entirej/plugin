@@ -24,11 +24,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
+import org.entirej.ide.ui.editors.report.AbstractEJReportEditor;
 
 public interface BlockColumnWizardContext
 {
 
-    void addBlockColumn(String name, String label,int width,  EJPluginReportScreenItemProperties itemProperties);
+    void addBlockColumn(String name, String label,String labelVA,int width,  EJPluginReportScreenItemProperties itemProperties);
 
     boolean hasBlockColumn(String name);
 
@@ -39,6 +40,8 @@ public interface BlockColumnWizardContext
     FormToolkit getToolkit();
 
     String getDefaultBlockValue();
+    
+    AbstractEJReportEditor getEditor();
 
     EJPluginReportScreenItemProperties newScreenItem(EJReportScreenItemType type);
 }

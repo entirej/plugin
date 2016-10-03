@@ -1021,13 +1021,18 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                     {
                         return source.getBlockProperties().getName();
                     }
+                    
+                    public AbstractEJReportEditor getEditor()
+                    {
+                        return editor;
+                    }
 
                     public IJavaProject getProject()
                     {
                         return editor.getJavaProject();
                     }
 
-                    public void addBlockColumn(String name, String label, int width, EJPluginReportScreenItemProperties screenItem)
+                    public void addBlockColumn(String name, String label,String labelVA, int width, EJPluginReportScreenItemProperties screenItem)
                     {
                         final EJPluginReportColumnProperties itemProperties = new EJPluginReportColumnProperties(container.getBlockProperties());
 
@@ -1063,6 +1068,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                                 screenLabelItem.setHeightAsPercentage(true);
                                 screenLabelItem.setText(label);
                                 screenLabelItem.setName(name);
+                                screenLabelItem.setVisualAttribute(labelVA);
 
                                 if (screenItem instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
                                 {

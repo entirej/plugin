@@ -71,6 +71,7 @@ public class BlockColumnSelectionPage extends WizardPage
     private final BlockColumnWizardContext     wizardContext;
     private String                             blockColumnName;
     private String                             blockColumnLabel = "";
+    private String                             blockColumnLabelVA ;
     private int                                width            = 90;
     private EJPluginReportScreenItemProperties itemProperties;
     Composite                                  body;
@@ -285,6 +286,11 @@ public class BlockColumnSelectionPage extends WizardPage
     {
         return blockColumnLabel;
     }
+    
+    public String getBlockColumnLabelVA()
+    {
+        return blockColumnLabelVA;
+    }
 
     public EJPluginReportScreenItemProperties getItemProperties()
     {
@@ -423,11 +429,58 @@ public class BlockColumnSelectionPage extends WizardPage
 
         };
         descriptors.add(headerDescriptor);
+   
+        
+        AbstractTextDropDownDescriptor headerVADescriptor = new AbstractTextDropDownDescriptor("Header Visual Attributes", "")
+        {
+            List<String> visualAttributeNames = new ArrayList<String>(source.getBlockProperties().getReportProperties().getEntireJProperties()
+                                                      .getVisualAttributesContainer().getVisualAttributeNames());
+
+            @Override
+            public void setValue(String value)
+            {
+                blockColumnLabelVA =value;
+
+            }
+
+            @Override
+            public String getValue()
+            {
+                return blockColumnLabelVA;
+            }
+
+            public String[] getOptions()
+            {
+                List<String> list = new ArrayList<String>();
+
+                list.add("");
+
+                list.addAll(visualAttributeNames);
+
+                if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                {
+                    list.add(getValue());
+                }
+                return list.toArray(new String[0]);
+            }
+
+            public String getOptionText(String t)
+            {
+                if (t.length() > 0 && !visualAttributeNames.contains(t))
+                {
+                    return String.format("Undefined !< %s >", t);
+                }
+
+                return t;
+            }
+        };
+        
+        descriptors.add(headerVADescriptor);
 
         if (source instanceof EJPluginReportScreenItemProperties.ValueBaseItem)
         {
             final EJPluginReportScreenItemProperties.ValueBaseItem item = (ValueBaseItem) source;
-            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(null, source.getBlockProperties()
+            ReportBlockItemsGroupNode.ItemDefaultValue valueProvider = new ReportBlockItemsGroupNode.ItemDefaultValue(wizardContext.getEditor(), source.getBlockProperties()
                     .getReportProperties(), source.getBlockProperties(), "Value Provider")
             {
                 @Override

@@ -60,7 +60,7 @@ public class BlockColumnWizard extends NewWizard
     protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException
     {
 
-        wizardContext.addBlockColumn(selectionPage.getBlockColumnName(), selectionPage.getBlockColumnLabel(),selectionPage.getWidth(), 
+        wizardContext.addBlockColumn(selectionPage.getBlockColumnName(), selectionPage.getBlockColumnLabel(),selectionPage.getBlockColumnLabelVA(),selectionPage.getWidth(), 
                 selectionPage.getItemProperties());
 
     }
