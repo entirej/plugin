@@ -1140,10 +1140,10 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
         @Override
         public Action[] getActions(FormDesignTreeSection treeSection, AbstractNode<?> patentNode)
         {
-            if(properties.isSeparator())
-            {
-                return new Action[0];
-            }
+//            if(properties.isSeparator())
+//            {
+//                return new Action[0];
+//            }
             EJDevBlockRendererDefinition blockRendererDefinition = properties.getParentItemGroupContainer().getContainerType() == EJPluginItemGroupContainer.MAIN_SCREEN ? properties
                     .getBlockProperties().getBlockRendererDefinition() : null;
 
