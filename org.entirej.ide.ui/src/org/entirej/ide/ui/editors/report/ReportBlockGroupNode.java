@@ -398,6 +398,8 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         @Override
         public Action[] getActions()
         {
+            if(source.isBlockTablelayout())
+            return new Action[] { treeSection.createNewBlockAction(source, true) };
             return new Action[] { treeSection.createNewBlockAction(source, false), treeSection.createNewBlockAction(source, true) };
 
         }
@@ -580,6 +582,13 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
             return new Action[] { createNewSubBlockAction(true) };
         }
 
+        boolean isBlockTablelayout()
+        {
+            
+            return true;
+        }
+                
+        
         public Action createNewSubBlockAction(final boolean controlBlock)
         {
 
@@ -802,6 +811,11 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
         {
 
             BlockGroup groupByBlock = ReportBlockGroupNode.this.source.getBlockGroupByBlock(source);
+            if(groupByBlock.isBlockTablelayout())
+            {
+                return new Action[] {  treeSection.createNewBlockAction(groupByBlock, true), null,
+                        createCopyNameAction() };
+            }
             return new Action[] { treeSection.createNewBlockAction(groupByBlock, false), treeSection.createNewBlockAction(groupByBlock, true), null,
                     createCopyNameAction() };
 

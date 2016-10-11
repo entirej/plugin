@@ -1486,7 +1486,7 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
 
                     public boolean isBlockTablelayout()
                     {
-                        return false;
+                        return blockGroup.isBlockTablelayout();
                     }
 
                     public int getDefaultWidth()
