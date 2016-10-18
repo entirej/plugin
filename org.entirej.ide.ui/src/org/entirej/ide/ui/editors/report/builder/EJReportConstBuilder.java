@@ -72,7 +72,7 @@ import org.entirej.framework.report.enumerations.EJReportScreenType;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.project.EJPluginEntireJClassLoader;
 import org.entirej.ide.core.project.EJReportProject;
-import org.entirej.ide.ui.utils.FormsUtil;
+import org.entirej.ide.ui.utils.ReportsUtil;
 
 public class EJReportConstBuilder extends IncrementalProjectBuilder
 {
@@ -175,10 +175,10 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind("Cleaning EJ Form Constants in {0}", getProject().getName()), 1);
         try
         {
-            List<String> formNames = FormsUtil.getFormNames(JavaCore.create(getProject()), true);
+            List<String> reportNames = ReportsUtil.getReportNames(JavaCore.create(getProject()));
 
             // clean existing markers on schema files
-            cleanReportIn(getProject(), formNames, localmonitor);
+            cleanReportIn(getProject(), reportNames, localmonitor);
 
             localmonitor.worked(1);
         }
@@ -188,7 +188,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
         }
     }
 
-    private void cleanReportIn(IContainer container, List<String> formNames, IProgressMonitor monitor) throws CoreException
+    private void cleanReportIn(IContainer container, List<String> reportNames, IProgressMonitor monitor) throws CoreException
     {
         if (monitor.isCanceled())
         {
@@ -212,7 +212,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
 
                         if (name.startsWith(REPORT_PREFIX))
                         {
-                            for (String formName : formNames)
+                            for (String formName : reportNames)
                             {
 
                                 if (getReportId(formName).equals((name)))
@@ -247,7 +247,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
             IResource member = members[i];
             if (member instanceof IContainer)
             {
-                cleanReportIn((IContainer) member, formNames, monitor);
+                cleanReportIn((IContainer) member, reportNames, monitor);
             }
         }
     }
