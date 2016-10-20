@@ -163,7 +163,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
     public void buildUI(boolean force)
     {
 
-        if (!force && currentInput == getInput())
+        if (!force && currentInput!=null && currentInput == getInput())
         {
             for (Refreshable refreshable : refreshables)
             {
