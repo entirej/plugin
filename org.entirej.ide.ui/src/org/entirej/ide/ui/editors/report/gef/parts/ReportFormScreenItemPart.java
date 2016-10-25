@@ -62,12 +62,12 @@ public class ReportFormScreenItemPart extends AbstractReportGraphicalEditPart im
         int height = model.getHeight();
         if (model.isWidthAsPercentage())
         {
-            width = (int) (((double) ((EJPluginReportScreenProperties) getParent().getModel()).getWidth() / 100) * model.getWidth());
+            width = (int) Math.round(((double) ((EJPluginReportScreenProperties) getParent().getModel()).getWidth() / 100) * model.getWidth());
         }
 
         if (model.isHeightAsPercentage())
         {
-            height = (int) (((double) ((EJPluginReportScreenProperties) getParent().getModel()).getHeight() / 100) * model.getHeight());
+            height = (int) Math.round(((double) ((EJPluginReportScreenProperties) getParent().getModel()).getHeight() / 100) * model.getHeight());
         }
         Rectangle layout = new Rectangle(model.getX(), model.getY(), width, height);
         parent.setLayoutConstraint(this, figure, layout);
