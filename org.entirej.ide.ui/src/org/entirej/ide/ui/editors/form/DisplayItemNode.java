@@ -472,8 +472,11 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
             
             List<AbstractDescriptor<?>> list =new ArrayList<AbstractDescriptor<?>>( Arrays.asList(screenRendererDefDescriptors));
           //  list.add(separtor);
-           // list.add(styleDecriptor);
-         //   list.add(orientationDescriptor);
+            if(source.isSeparator())
+            {
+                list.add(styleDecriptor);
+                list.add(orientationDescriptor);
+            }
             return list.toArray(new AbstractDescriptor[0]);
         }
         List<AbstractDescriptor<?>> descriptors = new ArrayList<AbstractDescriptor<?>>();
