@@ -1356,6 +1356,42 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
 
                             }
                         });
+                        actions.add(new Action("Separator Item")
+                        {
+                            @Override
+                            public void runWithEvent(Event event)
+                            {
+                                
+                                final int containerType = properties.getParentItemGroupContainer().getContainerType();
+                                
+                                EJPluginScreenItemProperties itemProperties;
+                                switch (containerType)
+                                {
+                                    case EJPluginItemGroupContainer.INSERT_SCREEN:
+                                        itemProperties = new EJPluginInsertScreenSpacerItemProperties(properties, true);
+                                        break;
+                                    case EJPluginItemGroupContainer.UPDATE_SCREEN:
+                                        itemProperties = new EJPluginUpdateScreenSpacerItemProperties(properties, true);
+                                        break;
+                                    case EJPluginItemGroupContainer.QUERY_SCREEN:
+                                        itemProperties = new EJPluginQueryScreenSpacerItemProperties(properties, true);
+                                        break;
+                                    default:
+                                        itemProperties = new EJPluginMainScreenSpacerItemProperties(properties, true);
+                                        break;
+                                }
+                                
+                                itemProperties.setReferencedItemName("spacer" + properties.getNextAvailableSpacerItemName());
+                                itemProperties.setVisible(true);
+                                itemProperties.setEditAllowed(false);
+                                itemProperties.setSeparator(true);
+                                
+                                DisplayItemAddOperation addOperation = new DisplayItemAddOperation(treeSection, properties, itemProperties, index);
+                                
+                                treeSection.getEditor().execute(addOperation);
+                                
+                            }
+                        });
                     }
 
                     return actions.toArray(new Action[0]);
@@ -2341,7 +2377,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             final EJPluginItemGroupContainer itemGroupContainer ,final boolean separator)
     {
 
-        return new Action(separator?"Add Separator" :"New Item Group")
+        return new Action(separator?"Add Group Separator" :"New Item Group")
         {
 
             @Override
@@ -2399,7 +2435,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
                 };
                 if(separator)
                 {
-                    context.addGroup("Separator", "", false, 1);
+                    context.addGroup("Group Separator", "", false, 1);
                     return;
                 }
                 ItemGroupWizard wizard = new ItemGroupWizard(context);
