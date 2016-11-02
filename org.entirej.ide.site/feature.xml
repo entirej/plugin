@@ -20,7 +20,7 @@
 <feature
       id="org.entirej.site"
       label="Entirej Integration for Eclipse Update Site"
-      version="4.0.0.qualifier"
+      version="5.0.0.qualifier"
       provider-name="Mojave Innovations GmbH">
 
    <description url="http://www.entirej.com/">
