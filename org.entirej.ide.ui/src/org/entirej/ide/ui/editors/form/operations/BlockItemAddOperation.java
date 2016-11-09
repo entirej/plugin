@@ -70,7 +70,6 @@ public class BlockItemAddOperation extends AbstractOperation
                     if(container.getBlockProperties().getLovDefinition()!=null)
                         treeSection.refresh((container.getBlockProperties().getLovDefinition()), true);
                     else
-                            
                         treeSection.refresh((container.getBlockProperties()), true);
                     treeSection.selectNodes(true, item);
                    // treeSection.expand(abstractNode, 2);

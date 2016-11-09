@@ -57,7 +57,10 @@ public class DisplayItemAddOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh((container.getBlockProperties()), true);
+                    if(container.getBlockProperties().getLovDefinition()!=null)
+                        treeSection.refresh((container.getBlockProperties().getLovDefinition()), true);
+                    else
+                        treeSection.refresh((container.getBlockProperties()), true);
                     treeSection.selectNodes(true, blockProperties);
                     //treeSection.expand(abstractNode, 2);
 
@@ -81,7 +84,10 @@ public class DisplayItemAddOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh((container.getBlockProperties()), true);
+                    if(container.getBlockProperties().getLovDefinition()!=null)
+                        treeSection.refresh((container.getBlockProperties().getLovDefinition()), true);
+                    else
+                        treeSection.refresh((container.getBlockProperties()), true);
                 }
             });
         }
