@@ -65,7 +65,13 @@ public class BlockItemAddOperation extends AbstractOperation
                 public void run()
                 {
                     treeSection.getEditor().setDirty(true);
-                    treeSection.refresh((container.getBlockProperties()), true);
+                   
+                    treeSection.getEditor().setDirty(dirty);
+                    if(container.getBlockProperties().getLovDefinition()!=null)
+                        treeSection.refresh((container.getBlockProperties().getLovDefinition()), true);
+                    else
+                            
+                        treeSection.refresh((container.getBlockProperties()), true);
                     treeSection.selectNodes(true, item);
                    // treeSection.expand(abstractNode, 2);
 
@@ -106,7 +112,11 @@ public class BlockItemAddOperation extends AbstractOperation
                 {
 
                     treeSection.getEditor().setDirty(dirty);
-                    treeSection.refresh((container.getBlockProperties()), true);
+                    if(container.getBlockProperties().getLovDefinition()!=null)
+                        treeSection.refresh((container.getBlockProperties().getLovDefinition()), true);
+                    else
+                            
+                        treeSection.refresh((container.getBlockProperties()), true);
                     updateMirrorItems();
                 }
             });
