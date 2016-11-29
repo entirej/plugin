@@ -27,7 +27,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.help,
  org.eclipse.ltk.core.refactoring,
- org.eclipse.gef;bundle-version="3.10.1"
+ org.eclipse.gef
 Bundle-ClassPath: .
 Bundle-Activator: org.entirej.ide.ui.EJUIPlugin
 Export-Package: org.entirej.ide.ui,
