@@ -413,14 +413,17 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
         setPreviewBackground(layoutBody, COLOR_LIGHT_YELLOW);
         List<EJPluginDrawerPageProperties> items = group.getDrawerPageContainer().getDrawerPageProperties();
         
+        boolean addSep = false;
         for (EJPluginDrawerPageProperties item : items)
         {
+            if(addSep)
+                new Label(layoutBody, SWT.SEPARATOR | SWT.HORIZONTAL);
             TabButton tabItem = new TabButton(layoutBody, SWT.NONE);
            
             tabItem.setText((item.getPageTitle() != null && item.getPageTitle().length() > 0) ? item.getPageTitle() : "<title>: " + item.getName());
             
            
-            
+            addSep = true;
         }
         
         
