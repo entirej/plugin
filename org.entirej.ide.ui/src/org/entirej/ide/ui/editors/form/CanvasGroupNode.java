@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -40,17 +39,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
-import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginDrawerPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginStackedPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginTabPageProperties;
@@ -64,9 +64,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
-import org.entirej.ide.ui.editors.form.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.form.DisplayItemGroupNode.MainDisplayItemGroup;
-import org.entirej.ide.ui.editors.form.RelationsGroupNode.RelationNode;
 import org.entirej.ide.ui.editors.form.operations.CanvasAddOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasBlockAssignmentOperation;
 import org.entirej.ide.ui.editors.form.operations.CanvasRemoveOperation;
@@ -80,7 +78,7 @@ import org.entirej.ide.ui.nodes.dnd.NodeContext;
 import org.entirej.ide.ui.nodes.dnd.NodeMoveProvider;
 import org.entirej.ide.ui.utils.FormsUtil;
 
-public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implements NodeMoveProvider
+public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> implements NodeMoveProvider
 {
     private final FormDesignTreeSection treeSection;
     private final AbstractEJFormEditor  editor;
@@ -92,13 +90,17 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
     private final static Image          POPUP        = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
     private final static Image          TAB          = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
     private final static Image          TAB_PAGE     = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE);
+    private final static Image          DRAWER       = EJUIImages.getImage(EJUIImages.DESC_CANVAS_DRAWER);
+    private final static Image          DRAWER_PAGE  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_DRAWER_PAGE);
     private final static Image          BLOCK_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_BLOCK_REF);
     private final static Image          GROUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_GROUP_REF);
     private final static Image          FORM_REF     = EJUIImages.getImage(EJUIImages.DESC_CANVAS_FORM_REF);
     private final static Image          STACKED_REF  = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED_REF);
     private final static Image          POPUP_REF    = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP_REF);
     private final static Image          TAB_REF      = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_REF);
+    private final static Image          DRAWER_REF   = EJUIImages.getImage(EJUIImages.DESC_CANVAS_DRAWER_REF);
     private final static Image          TAB_PAGE_REF = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB_PAGE_REF);
+    private final static Image          DRAWER_PAGE_REF = EJUIImages.getImage(EJUIImages.DESC_CANVAS_DRAWER_PAGE_REF);
 
     public CanvasGroupNode(FormDesignTreeSection treeSection)
     {
@@ -202,6 +204,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     case TAB:
                         name = "Tab";
                         break;
+                    case DRAWER:
+                        name = "Drawer";
+                        break;
                 }
 
                 return new Action(name)
@@ -255,10 +260,10 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
             {
                 if (isRoot)
                     return new Action[] { createAction(EJCanvasType.BLOCK), createAction(EJCanvasType.GROUP), createAction(EJCanvasType.SPLIT),
-                            createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.POPUP),
+                            createAction(EJCanvasType.TAB),createAction(EJCanvasType.DRAWER), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.POPUP),
                             createAction(EJCanvasType.FORM), createAction(EJCanvasType.SEPARATOR) };
                 return new Action[] { createAction(EJCanvasType.BLOCK), createAction(EJCanvasType.GROUP), createAction(EJCanvasType.SPLIT),
-                        createAction(EJCanvasType.TAB), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.FORM),
+                        createAction(EJCanvasType.TAB),createAction(EJCanvasType.DRAWER), createAction(EJCanvasType.STACKED), createAction(EJCanvasType.FORM),
                         createAction(EJCanvasType.SEPARATOR) };
             }
 
@@ -285,6 +290,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     break;
                 case TAB:
                     nodes.add(new TabCanvasNode(this, canvas));
+                    break;
+                case DRAWER:
+                    nodes.add(new DrawerCanvasNode(this, canvas));
                     break;
                 case STACKED:
                     nodes.add(new StackedCanvasNode(this, canvas));
@@ -359,7 +367,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
         return new CanvasAddOperation(treeSection, source, (EJPluginCanvasProperties) dSource, -1);
     }
 
-    private abstract class AbstractCanvas extends AbstractNode<EJPluginCanvasProperties>implements Neighbor, Movable, NodeOverview
+    private abstract class AbstractCanvas extends AbstractNode<EJPluginCanvasProperties> implements Neighbor, Movable, NodeOverview
     {
 
         public AbstractCanvas(AbstractNode<?> parent, EJPluginCanvasProperties source)
@@ -395,6 +403,8 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     return source.isImportFromObjectGroup() ? FORM_REF : FORM;
                 case TAB:
                     return source.isImportFromObjectGroup() ? TAB_REF : TAB;
+                case DRAWER:
+                    return source.isImportFromObjectGroup() ? DRAWER_REF : DRAWER;
                 case STACKED:
                     return source.isImportFromObjectGroup() ? STACKED_REF : STACKED;
                 case SEPARATOR:
@@ -676,7 +686,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     source.setExpandHorizontally(value == EJCanvasSplitOrientation.HORIZONTAL);
 
                     editor.setDirty(true);
-                 treeSection.getDescriptorViewer().showDetails(node);
+                    treeSection.getDescriptorViewer().showDetails(node);
                     treeSection.refreshPreview();
                     treeSection.refresh(node);
                 }
@@ -695,36 +705,36 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
             };
             AbstractDropDownDescriptor<EJLineStyle> styleDecriptor = new AbstractDropDownDescriptor<EJLineStyle>("Line Style")
             {
-                
+
                 public EJLineStyle[] getOptions()
                 {
-                    
+
                     return EJLineStyle.values();
                 }
-                
+
                 public String getOptionText(EJLineStyle t)
                 {
                     return t.toString();
                 }
-                
+
                 public void setValue(EJLineStyle value)
                 {
                     source.setLineStyle(value);
-                    
+
                     editor.setDirty(true);
                     treeSection.refresh(node);
                 }
-                
+
                 public EJLineStyle getValue()
                 {
                     return source.getLineStyle();
                 }
-                
+
                 @Override
                 public void runOperation(AbstractOperation operation)
                 {
                     editor.execute(operation);
-                    
+
                 }
             };
 
@@ -735,7 +745,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
 
-            return new AbstractDescriptor<?>[] { orientationDescriptor,styleDecriptor, layoutGroupDescriptor };
+            return new AbstractDescriptor<?>[] { orientationDescriptor, styleDecriptor, layoutGroupDescriptor };
 
         }
     }
@@ -1086,7 +1096,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     {
                         List<String> formNames = FormsUtil.getFormNames(javaProject);
                         formNames.remove(editor.getFormProperties().getName());
-                        formNames.add(0,"");
+                        formNames.add(0, "");
                         return formNames.toArray(new String[0]);
                     }
                     return new String[0];
@@ -1626,6 +1636,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     case TAB:
                         nodes.add(new TabCanvasNode(this, canvas));
                         break;
+                    case DRAWER:
+                        nodes.add(new DrawerCanvasNode(this, canvas));
+                        break;
                     case FORM:
                         nodes.add(new FormCanvasNode(this, canvas));
                         break;
@@ -1872,6 +1885,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                     case TAB:
                         nodes.add(new TabCanvasNode(this, canvas));
                         break;
+                    case DRAWER:
+                        nodes.add(new DrawerCanvasNode(this, canvas));
+                        break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
                         break;
@@ -2011,7 +2027,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
         {
             return !TabCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginTabPageProperties
 
-            && (TabCanvasNode.this.source.equals(((EJPluginTabPageProperties) source).getTabCanvasProperties()));
+                    && (TabCanvasNode.this.source.equals(((EJPluginTabPageProperties) source).getTabCanvasProperties()));
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
@@ -2105,6 +2121,167 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
             return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
 
+    }
+    private class DrawerCanvasNode extends AbstractCanvas implements NodeMoveProvider
+    {
+        
+        public DrawerCanvasNode(AbstractNode<?> parent, EJPluginCanvasProperties source)
+        {
+            super(parent, source);
+        }
+        
+        @Override
+        public Action[] getActions()
+        {
+            if (source.isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
+            
+            return new Action[] { new Action("New Drawer Page")
+            {
+                @Override
+                public void runWithEvent(Event event)
+                {
+                    InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), "New Drawer Page", "Page Name", null, new IInputValidator()
+                    {
+                        
+                        public String isValid(String newText)
+                        {
+                            if (newText == null || newText.trim().length() == 0)
+                                return "Page name can't be empty.";
+                            if (source.getTabPageContainer().contains(newText.trim()))
+                                return "page with this name already exists.";
+                            
+                            return null;
+                        }
+                    });
+                    if (dlg.open() == Window.OK)
+                    {
+                        final EJPluginDrawerPageProperties pageProp = new EJPluginDrawerPageProperties(source, dlg.getValue().trim());
+                        
+                        source.getDrawerPageContainer().addDrawerPageProperties(pageProp);
+                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        {
+                            
+                            public void run()
+                            {
+                                editor.setDirty(true);
+                                treeSection.refresh(DrawerCanvasNode.this);
+                                treeSection.selectNodes(false, DrawerCanvasNode.this);
+                                treeSection.expand(DrawerCanvasNode.this);
+                                treeSection.selectNodes(true, (pageProp));
+                                
+                            }
+                        });
+                    }
+                }
+            } };
+        }
+        
+        public boolean isLeaf()
+        {
+            return source.getDrawerPageContainer().isEmpty();
+        }
+        
+        public boolean canMove(Neighbor relation, Object source)
+        {
+            return !DrawerCanvasNode.this.source.isImportFromObjectGroup() && source instanceof EJPluginDrawerPageProperties
+                    
+                    && (DrawerCanvasNode.this.source.equals(((EJPluginDrawerPageProperties) source).getDrawerCanvasProperties()));
+        }
+        
+        public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginDrawerPageProperties> items = source.getDrawerPageContainer().getDrawerPageProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+                    
+                    source.getDrawerPageContainer().addDrawerPageProperties(index, (EJPluginDrawerPageProperties) dSource);
+                }
+            }
+            else
+                source.getDrawerPageContainer().addDrawerPageProperties((EJPluginDrawerPageProperties) dSource);
+            
+        }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+            List<EJPluginDrawerPageProperties> tabProperties = source.getDrawerPageContainer().getDrawerPageProperties();
+            for (EJPluginDrawerPageProperties pageProperties : tabProperties)
+            {
+                nodes.add(new DrawerCanvasPageNode(this, pageProperties));
+            }
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+        
+        public AbstractDescriptor<?>[] getNodeDescriptors()
+        {
+            if (!source.isObjectGroupRoot() && source.isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source) };
+            }
+            final DrawerCanvasNode node = this;
+            final AbstractEJFormEditor editor = treeSection.getEditor();
+            
+            AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, this);
+            
+//            AbstractDropDownDescriptor<EJCanvasTabPosition> orientationDescriptor = new AbstractDropDownDescriptor<EJCanvasTabPosition>("Orientation")
+//            {
+//                
+//                public EJCanvasTabPosition[] getOptions()
+//                {
+//                    
+//                    return EJCanvasTabPosition.values();
+//                }
+//                
+//                @Override
+//                public void runOperation(AbstractOperation operation)
+//                {
+//                    editor.execute(operation);
+//                    
+//                }
+//                
+//                public String getOptionText(EJCanvasTabPosition t)
+//                {
+//                    return t.toString();
+//                }
+//                
+//                public void setValue(EJCanvasTabPosition value)
+//                {
+//                    source.setTabPosition(value);
+//                    editor.setDirty(true);
+//                    treeSection.refresh(node);
+//                }
+//                
+//                public EJCanvasTabPosition getValue()
+//                {
+//                    return source.getTabPosition();
+//                }
+//            };
+            
+            if (source.isObjectGroupRoot())
+            {
+                
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
+            }
+            
+            return new AbstractDescriptor<?>[] {  createMessagePaneSettings(), layoutGroupDescriptor };
+        }
+        
     }
 
     private class StackedCanvasNode extends AbstractCanvas implements NodeMoveProvider
@@ -2332,6 +2509,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                                 case TAB:
                                     createTabLayout(layoutBody, canvas);
                                     break;
+                                case DRAWER:
+                                    createDrawerLayout(layoutBody, canvas);
+                                    break;
                                 case STACKED:
                                     createStackLayout(layoutBody, canvas);
                                     break;
@@ -2425,6 +2605,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                         break;
                     case TAB:
                         nodes.add(new TabCanvasNode(this, canvas));
+                        break;
+                    case DRAWER:
+                        nodes.add(new DrawerCanvasNode(this, canvas));
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
@@ -2826,7 +3009,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
 
     }
 
-    private class TabCanvasPageNode extends AbstractNode<EJPluginTabPageProperties>implements Neighbor, Movable, NodeOverview, NodeMoveProvider
+    private class TabCanvasPageNode extends AbstractNode<EJPluginTabPageProperties> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
     {
 
         public TabCanvasPageNode(AbstractNode<?> parent, EJPluginTabPageProperties source)
@@ -2984,6 +3167,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                         break;
                     case TAB:
                         nodes.add(new TabCanvasNode(this, canvas));
+                        break;
+                    case DRAWER:
+                        nodes.add(new DrawerCanvasNode(this, canvas));
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));
@@ -3213,13 +3399,14 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                             EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer().getBlockProperties(getValue());
                             if (blockProperties != null)
                             {
-                               
+
                                 treeSection.selectNodes(false, editor.getFormProperties().getBlockContainer());
                                 treeSection.expand(editor.getFormProperties().getBlockContainer());
                                 treeSection.selectNodes(false, (blockProperties));
                             }
                             return null;
                         }
+
                         public String[] getOptions()
                         {
                             List<String> options = new ArrayList<String>();
@@ -3360,8 +3547,594 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
         }
 
     }
+    private class DrawerCanvasPageNode extends AbstractNode<EJPluginDrawerPageProperties> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
+    {
+        
+        public DrawerCanvasPageNode(AbstractNode<?> parent, EJPluginDrawerPageProperties source)
+        {
+            super(parent, source);
+        }
+        
+        @Override
+        public String getName()
+        {
+            return source.getName();
+        }
+        
+        @Override
+        public Image getImage()
+        {
+            return source.getDrawerCanvasProperties().isImportFromObjectGroup() ? DRAWER_PAGE_REF : DRAWER_PAGE;
+            
+        }
+        
+        public <S> S getAdapter(Class<S> adapter)
+        {
+            return CanvasGroupNode.this.getAdapter(adapter);
+        }
+        
+        @Override
+        public Action[] getActions()
+        {
+            if (source.getDrawerCanvasProperties().isImportFromObjectGroup())
+            {
+                return new Action[0];
+            }
+            return new Action[] { createNewCanvasAction(this, source.getContainedCanvases(), false) };
+        }
+        
+        @Override
+        public INodeDeleteProvider getDeleteProvider()
+        {
+            if (source.getDrawerCanvasProperties().isImportFromObjectGroup())
+            {
+                return null;
+            }
+            
+            return new INodeDeleteProvider()
+            {
+                
+                public void delete(boolean cleanup)
+                {
+                    
+                    source.getDrawerCanvasProperties().getDrawerPageContainer().removeDrawerPageProperties(source);
+                    editor.setDirty(true);
+                    treeSection.refresh(CanvasGroupNode.this.getParent());
+                    
+                }
+                
+                public AbstractOperation deleteOperation(boolean cleanup)
+                {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+            };
+        }
+        
+        @Override
+        public INodeRenameProvider getRenameProvider()
+        {
+            if (source.getDrawerCanvasProperties().isImportFromObjectGroup())
+            {
+                return null;
+            }
+            return new INodeRenameProvider()
+            {
+                
+                public void rename()
+                {
+                    InputDialog dlg = new InputDialog(EJUIPlugin.getActiveWorkbenchShell(), String.format("Rename Drawer Page [%s]", getName()), "Block Name",
+                            getName(), new IInputValidator()
+                    {
+                        
+                        public String isValid(String newText)
+                        {
+                            if (newText == null || newText.trim().length() == 0)
+                                return "Drawer page name can't be empty.";
+                            if (getName().equals(newText.trim()))
+                                return "";
+                            if (getName().equalsIgnoreCase(newText.trim()))
+                                return null;
+                            if (source.getDrawerCanvasProperties().getTabPageContainer().contains(newText.trim()))
+                                return "Drawer Page with this name already exists.";
+                            return null;
+                        }
+                    });
+                    if (dlg.open() == Window.OK)
+                    {
+                        String newName = dlg.getValue().trim();
+                        source.internalSetName(newName);
+                        EJUIPlugin.getStandardDisplay().asyncExec(new Runnable()
+                        {
+                            
+                            public void run()
+                            {
+                                treeSection.getEditor().setDirty(true);
+                                treeSection.refresh(DrawerCanvasPageNode.this);
+                                
+                            }
+                        });
+                    }
+                    
+                }
+            };
+        }
+        
+        public void addOverview(StyledString styledString)
+        {
+            if (source.getDrawerCanvasProperties().isImportFromObjectGroup())
+            {
+                styledString.append(" [ ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getDrawerCanvasProperties().getReferencedObjectGroupName(), StyledString.DECORATIONS_STYLER);
+                styledString.append(" ] ", StyledString.DECORATIONS_STYLER);
+            }
+            if (source.getPageTitle() != null && source.getPageTitle().trim().length() > 0)
+            {
+                styledString.append(" : ", StyledString.DECORATIONS_STYLER);
+                styledString.append(source.getPageTitle(), StyledString.COUNTER_STYLER);
+            }
+            
+        }
+        
+        public boolean canMove()
+        {
+            return !source.getDrawerCanvasProperties().isImportFromObjectGroup();
+        }
+        
+        public Object getNeighborSource()
+        {
+            return source;
+        }
+        
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+            List<EJPluginCanvasProperties> items = source.getContainedCanvases().getCanvasProperties();
+            for (EJPluginCanvasProperties canvas : items)
+            {
+                switch (canvas.getType())
+                {
+                    case GROUP:
+                        nodes.add(new GroupCanvasNode(this, canvas));
+                        break;
+                    case SPLIT:
+                        nodes.add(new SplitCanvasNode(this, canvas));
+                        break;
+                    case POPUP:
+                        nodes.add(new PopupCanvasNode(this, canvas));
+                        break;
+                    case TAB:
+                        nodes.add(new TabCanvasNode(this, canvas));
+                        break;
+                    case DRAWER:
+                        nodes.add(new DrawerCanvasNode(this, canvas));
+                        break;
+                    case STACKED:
+                        nodes.add(new StackedCanvasNode(this, canvas));
+                        break;
+                    case FORM:
+                        nodes.add(new FormCanvasNode(this, canvas));
+                        break;
+                    case SEPARATOR:
+                        nodes.add(new SeparatorCanvasNode(this, canvas));
+                        break;
+                    default:
+                        nodes.add(new BlockCanvasNode(this, canvas));
+                        break;
+                }
+            }
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+        
+        public boolean isLeaf()
+        {
+            return source.getContainedCanvases().isEmpty();
+        }
+        
+        public boolean canMove(Neighbor relation, Object source)
+        {
+            return !DrawerCanvasPageNode.this.source.getDrawerCanvasProperties().isImportFromObjectGroup() && source instanceof EJPluginCanvasProperties
+                    && !((EJPluginCanvasProperties) source).isImportFromObjectGroup() && ((EJPluginCanvasProperties) source).getType() != EJCanvasType.POPUP
+                    && !isAncestorCanvas(DrawerCanvasPageNode.this.source.getDrawerCanvasProperties(), source);
+        }
+        
+        public void move(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getContainedCanvases().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+                    
+                    source.getContainedCanvases().addCanvasProperties(index, (EJPluginCanvasProperties) dSource);
+                }
+            }
+            else
+                source.getContainedCanvases().addCanvasProperties((EJPluginCanvasProperties) dSource);
+            
+        }
+        
+        public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object dSource, boolean before)
+        {
+            if (neighbor != null)
+            {
+                Object methodNeighbor = neighbor.getNeighborSource();
+                List<EJPluginCanvasProperties> items = source.getContainedCanvases().getCanvasProperties();
+                if (items.contains(methodNeighbor))
+                {
+                    int index = items.indexOf(methodNeighbor);
+                    if (!before)
+                        index++;
+                    
+                    return new CanvasAddOperation(treeSection, source.getContainedCanvases(), (EJPluginCanvasProperties) dSource, index);
+                }
+            }
+            return new CanvasAddOperation(treeSection, source.getContainedCanvases(), (EJPluginCanvasProperties) dSource, -1);
+        }
+        
+        public AbstractDescriptor<?>[] getNodeDescriptors()
+        {
+            if (source.getDrawerCanvasProperties().isImportFromObjectGroup())
+            {
+                return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source.getDrawerCanvasProperties()) };
+            }
+            final DrawerCanvasPageNode node = this;
+            final AbstractEJFormEditor editor = treeSection.getEditor();
+            AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Page Title")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public void setValue(String value)
+                {
+                    source.setPageTitle(value);
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+                
+                @Override
+                public String getValue()
+                {
+                    return source.getPageTitle();
+                }
+            };
+            AbstractTextDescriptor colDescriptor = new AbstractTextDescriptor("Columns")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setNumCols(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setNumCols(1);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    
+                    treeSection.refresh(node);
+                }
+                
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getNumCols());
+                }
+                
+                Text text;
+                
+                @Override
+                public void addEditorAssist(Control control)
+                {
+                    
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+                    
+                    super.addEditorAssist(control);
+                }
+            };
+            AbstractTextDescriptor widthDescriptor = new AbstractTextDescriptor("Drawer Width")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public void setValue(String value)
+                {
+                    try
+                    {
+                        source.setDrawerWidth(Integer.parseInt(value));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        source.setDrawerWidth(1);
+                        if (text != null)
+                        {
+                            text.setText(getValue());
+                            text.selectAll();
+                        }
+                    }
+                    editor.setDirty(true);
+                    
+                    treeSection.refresh(node);
+                }
+                
+                @Override
+                public String getValue()
+                {
+                    return String.valueOf(source.getDrawerWidth());
+                }
+                
+                Text text;
+                
+                @Override
+                public void addEditorAssist(Control control)
+                {
+                    
+                    text = (Text) control;
+                    text.addVerifyListener(new EJPluginEntireJNumberVerifier());
+                    
+                    super.addEditorAssist(control);
+                }
+            };
+            AbstractDescriptor<Boolean> enableDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return source.isEnabled();
+                }
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setEnabled(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+                
+            };
+            enableDescriptor.setText("Enable");
+            AbstractDescriptor<Boolean> visibleDescriptor = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return source.isVisible();
+                }
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setVisible(value.booleanValue());
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+                
+            };
+            visibleDescriptor.setText("Visible");
+            AbstractGroupDescriptor layoutGroupDescriptor = new AbstractGroupDescriptor("Navigation Settings")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                public AbstractDescriptor<?>[] getDescriptors()
+                {
+                    AbstractTextDropDownDescriptor naviBlockDescriptor = new AbstractTextDropDownDescriptor("Navigation Block")
+                    {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
+                        
+                        @Override
+                        public boolean hasLableLink()
+                        {
+                            return true;
+                        }
+                        
+                        @Override
+                        public String lableLinkActivator()
+                        {
+                            EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer().getBlockProperties(getValue());
+                            if (blockProperties != null)
+                            {
+                                
+                                treeSection.selectNodes(false, editor.getFormProperties().getBlockContainer());
+                                treeSection.expand(editor.getFormProperties().getBlockContainer());
+                                treeSection.selectNodes(false, (blockProperties));
+                            }
+                            return null;
+                        }
+                        
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            options.add("");
+                            Collection<EJCanvasProperties> canvasesAssignedTabPage = EJPluginCanvasRetriever
+                                    .retriveAllBlockCanvasesAssignedDrawerPage(editor.formProperties, source);
+                            for (EJCanvasProperties properties : canvasesAssignedTabPage)
+                            {
+                                EJBlockProperties block = properties.getBlockProperties();
+                                if (block != null)
+                                {
+                                    options.add(block.getName());
+                                }
+                            }
+                            
+                            return options.toArray(new String[0]);
+                        }
+                        
+                        public String getOptionText(String t)
+                        {
+                            
+                            return t;
+                        }
+                        
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setFirstNavigationalBlock(value);
+                            EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer().getBlockProperties(getValue());
+                            if (blockProperties != null)
+                            {
+                                EJPluginBlockItemProperties itemProperties = blockProperties.getItemContainer()
+                                        .getItemProperties(source.getFirstNavigationalItem());
+                                if (itemProperties == null)
+                                {
+                                    source.setFirstNavigationalItem("");
+                                }
+                            }
+                            editor.setDirty(true);
+                            treeSection.refresh(node);
+                            if (treeSection.getDescriptorViewer() != null)
+                                treeSection.getDescriptorViewer().showDetails(node);
+                        }
+                        
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getFirstNavigationalBlock();
+                        }
+                    };
+                    AbstractTextDropDownDescriptor naviItemDescriptor = new AbstractTextDropDownDescriptor("Navigation Item")
+                    {
+                        @Override
+                        public void runOperation(AbstractOperation operation)
+                        {
+                            editor.execute(operation);
+                            
+                        }
+                        
+                        @Override
+                        public boolean hasLableLink()
+                        {
+                            return true;
+                        }
+                        
+                        @Override
+                        public String lableLinkActivator()
+                        {
+                            EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer()
+                                    .getBlockProperties(source.getFirstNavigationalBlock());
+                            if (blockProperties != null)
+                            {
+                                EJPluginBlockItemProperties itemProperties = blockProperties.getItemContainer()
+                                        .getItemProperties(source.getFirstNavigationalItem());
+                                if (itemProperties != null)
+                                {
+                                    Object findNode = (editor.getFormProperties().getBlockContainer());
+                                    treeSection.selectNodes(false, findNode);
+                                    treeSection.expand(findNode);
+                                    findNode = (blockProperties);
+                                    treeSection.selectNodes(false, findNode);
+                                    treeSection.expand(findNode);
+                                    
+                                    findNode = (blockProperties.getItemContainer());
+                                    treeSection.selectNodes(false, findNode);
+                                    treeSection.expand(findNode);
+                                    treeSection.selectNodes(false, (itemProperties));
+                                }
+                                
+                            }
+                            return null;
+                        }
+                        
+                        public String[] getOptions()
+                        {
+                            List<String> options = new ArrayList<String>();
+                            options.add("");
+                            EJPluginBlockProperties blockProperties = editor.getFormProperties().getBlockContainer()
+                                    .getBlockProperties(source.getFirstNavigationalBlock());
+                            if (blockProperties != null)
+                            {
+                                List<EJPluginBlockItemProperties> allItemProperties = blockProperties.getItemContainer().getAllItemProperties();
+                                for (EJPluginBlockItemProperties itemProperties : allItemProperties)
+                                {
+                                    options.add(itemProperties.getName());
+                                }
+                                
+                            }
+                            
+                            return options.toArray(new String[0]);
+                        }
+                        
+                        public String getOptionText(String t)
+                        {
+                            
+                            return t;
+                        }
+                        
+                        @Override
+                        public void setValue(String value)
+                        {
+                            source.setFirstNavigationalItem(value);
+                            editor.setDirty(true);
+                            treeSection.refresh(node);
+                        }
+                        
+                        @Override
+                        public String getValue()
+                        {
+                            return source.getFirstNavigationalItem();
+                        }
+                    };
+                    
+                    return new AbstractDescriptor<?>[] { naviBlockDescriptor, naviItemDescriptor };
+                }
+            };
+            return new AbstractDescriptor<?>[] { nameDescriptor,widthDescriptor, colDescriptor, enableDescriptor, visibleDescriptor, layoutGroupDescriptor };
+        }
+        
+    }
 
-    private class StackedCanvasPageNode extends AbstractNode<EJPluginStackedPageProperties>implements Neighbor, Movable, NodeOverview, NodeMoveProvider
+    private class StackedCanvasPageNode extends AbstractNode<EJPluginStackedPageProperties> implements Neighbor, Movable, NodeOverview, NodeMoveProvider
     {
 
         public StackedCanvasPageNode(AbstractNode<?> parent, EJPluginStackedPageProperties source)
@@ -3514,6 +4287,9 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer>implem
                         break;
                     case TAB:
                         nodes.add(new TabCanvasNode(this, canvas));
+                        break;
+                    case DRAWER:
+                        nodes.add(new DrawerCanvasNode(this, canvas));
                         break;
                     case STACKED:
                         nodes.add(new StackedCanvasNode(this, canvas));

@@ -23,14 +23,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -61,6 +56,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkE
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinition;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
 import org.entirej.framework.core.renderers.definitions.interfaces.EJBlockRendererDefinition;
@@ -1119,6 +1115,17 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         {
 
                             for (EJTabPageProperties tabPage : canvas.getTabPageContainer().getAllTabPageProperties())
+                            {
+                                if (tabPage.getFirstNavigationalBlock() != null && tabPage.getFirstNavigationalBlock().equals(oldName))
+                                {
+                                    ((EJPluginTabPageProperties) tabPage).setFirstNavigationalBlock(newName);
+                                }
+                            }
+                        }
+                        if (canvas.getType() == EJCanvasType.DRAWER)
+                        {
+                            
+                            for (EJDrawerPageProperties tabPage : canvas.getDrawerPageContainer().getAllDrawerPageProperties())
                             {
                                 if (tabPage.getFirstNavigationalBlock() != null && tabPage.getFirstNavigationalBlock().equals(oldName))
                                 {

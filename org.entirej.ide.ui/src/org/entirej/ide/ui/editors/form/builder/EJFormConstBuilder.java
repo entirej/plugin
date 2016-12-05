@@ -65,6 +65,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionGroup;
 import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDefinitionList;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJRendererAssignment;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
@@ -835,6 +836,36 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                             builder.append("\n");
 
                             for (EJTabPageProperties page : allTabPageProperties)
+                            {
+                                if (page.getName() != null && page.getName().length() > 0)
+                                {
+                                    builder.append("    public static final String ");
+                                    builder.append(toVAR(page.getName()).toUpperCase().replaceAll(" ", "_"));
+                                    builder.append(" = ");
+                                    builder.append("\"");
+                                    builder.append(page.getName());
+                                    builder.append("\"");
+                                    builder.append(";");
+                                    builder.append("\n");
+                                }
+                            }
+                            builder.append("\n");
+                            builder.append("}");
+                            builder.append("\n");
+                            break;
+                        case DRAWER:
+                            Collection<EJDrawerPageProperties> allDrawerPageProperties = canvasProperties.getDrawerPageContainer().getAllDrawerPageProperties();
+                            
+                            builder.append("\n");
+                            builder.append("public static class ");
+                            builder.append("C_");
+                            builder.append(toVAR(canvasProperties.getName()).toUpperCase().replaceAll(" ", "_"));
+                            builder.append("_PAGES");
+                            builder.append("\n");
+                            builder.append("{");
+                            builder.append("\n");
+                            
+                            for (EJDrawerPageProperties page : allDrawerPageProperties)
                             {
                                 if (page.getName() != null && page.getName().length() > 0)
                                 {

@@ -27,11 +27,13 @@ import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasGroupPageContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasSplitPageContainer;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginDrawerPageContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginPopupCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginStackedPageContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginTabPageContainer;
@@ -83,6 +85,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private boolean _objectGroupRoot;
     
     private EJPluginTabPageContainer         _tabPageContainer;
+    private EJPluginDrawerPageContainer         _drawerPageContainer;
     private EJPluginStackedPageContainer     _stackedPageContainer;
     private EJPluginPopupCanvasContainer     _popupCanvasContainer;
     private EJPluginCanvasGroupPageContainer _canvasGroupContainer;
@@ -108,6 +111,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         _name = name;
         _formProperties = formProperties;
         _tabPageContainer = new EJPluginTabPageContainer(this);
+        _drawerPageContainer = new EJPluginDrawerPageContainer(this);
         _stackedPageContainer = new EJPluginStackedPageContainer(this);
         _popupCanvasContainer = new EJPluginPopupCanvasContainer(formProperties, this);
         _canvasGroupContainer = new EJPluginCanvasGroupPageContainer(formProperties, this);
@@ -241,6 +245,12 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     public EJPluginTabPageContainer getTabPageContainer()
     {
         return _tabPageContainer;
+    }
+    
+    @Override
+    public EJPluginDrawerPageContainer getDrawerPageContainer()
+    {
+        return _drawerPageContainer;
     }
     
     /**
@@ -550,6 +560,15 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         }
         
         return _tabPageContainer.getTabPageProperties(name);
+    }
+    public EJDrawerPageProperties getDrawerPageProperties(String name)
+    {
+        if (name == null)
+        {
+            return null;
+        }
+        
+        return _drawerPageContainer.getDrawerPageProperties(name);
     }
     
     /**

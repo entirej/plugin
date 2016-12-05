@@ -25,14 +25,25 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
@@ -41,6 +52,7 @@ import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginDrawerPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginStackedPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginTabPageProperties;
@@ -104,6 +116,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     break;
                 case TAB:
                     createTabLayout(layoutBody, canvas);
+                    break;
+                case DRAWER:
+                    createDrawerLayout(layoutBody, canvas);
                     break;
                 case STACKED:
                     createStackLayout(layoutBody, canvas);
@@ -240,6 +255,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     case TAB:
                         createTabLayout(layoutBody, canvas);
                         break;
+                    case DRAWER:
+                        createDrawerLayout(layoutBody, canvas);
+                        break;
                     case STACKED:
                         createStackLayout(layoutBody, canvas);
                         break;
@@ -305,6 +323,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     case TAB:
                         createTabLayout(layoutBody, canvas);
                         break;
+                    case DRAWER:
+                        createDrawerLayout(layoutBody, canvas);
+                        break;
                     case STACKED:
                         createStackLayout(layoutBody, canvas);
                         break;
@@ -363,6 +384,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     case TAB:
                         createTabLayout(composite, canvas);
                         break;
+                    case DRAWER:
+                        createDrawerLayout(composite, canvas);
+                        break;
                     case STACKED:
                         createStackLayout(composite, canvas);
                         break;
@@ -379,6 +403,27 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
         if (items.size() > 0)
             layoutBody.setSelection(0);
 
+    }
+    protected void createDrawerLayout(Composite parent, EJPluginCanvasProperties group)
+    {
+        Composite layoutBody = new Composite(parent, SWT.BORDER | (group.getTabPosition() == EJCanvasTabPosition.TOP ? SWT.TOP : SWT.BOTTOM));
+        
+        layoutBody.setLayoutData(createGridData(group));
+        layoutBody.setLayout(new GridLayout(1, false));
+        setPreviewBackground(layoutBody, COLOR_LIGHT_YELLOW);
+        List<EJPluginDrawerPageProperties> items = group.getDrawerPageContainer().getDrawerPageProperties();
+        
+        for (EJPluginDrawerPageProperties item : items)
+        {
+            TabButton tabItem = new TabButton(layoutBody, SWT.NONE);
+           
+            tabItem.setText((item.getPageTitle() != null && item.getPageTitle().length() > 0) ? item.getPageTitle() : "<title>: " + item.getName());
+            
+           
+            
+        }
+        
+        
     }
 
     protected void createStackLayout(Composite parent, EJPluginCanvasProperties group)
@@ -420,6 +465,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                     case TAB:
                         createTabLayout(composite, canvas);
                         break;
+                    case DRAWER:
+                        createDrawerLayout(composite, canvas);
+                        break;
                     case STACKED:
                         createStackLayout(composite, canvas);
                         break;
@@ -445,6 +493,115 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
     public String getDescription()
     {
         return "preview the defined canvas layout in form.";
+    }
+    
+    
+    
+    class TabButton extends Canvas
+    {
+        private int     mouse         = 0;
+        private boolean selection           = false;
+        private String  text          = "";
+        float           rotatingAngle = 270F;
+        int             index         = 0;
+
+        public TabButton(Composite parent, int style)
+        {
+            super(parent, style);
+
+            this.addPaintListener(new PaintListener()
+            {
+                public void paintControl(PaintEvent e)
+                {
+                    paint(e);
+                }
+            });
+
+            this.addMouseListener(new MouseAdapter()
+            {
+
+                public void mouseDown(MouseEvent e)
+                {
+                    mouse = 2;
+                    redraw();
+                }
+
+                public void mouseUp(MouseEvent e)
+                {
+                    mouse = 1;
+                    if (e.x < 0 || e.y < 0 || e.x > getBounds().width || e.y > getBounds().height)
+                    {
+                        mouse = 0;
+                    }
+                    redraw();
+                    if (mouse == 1)
+                        notifyListeners(SWT.Selection, new Event());
+                }
+            });
+            
+        }
+
+        public void setSelection(boolean selection)
+        {
+            this.selection = selection;
+            redraw();
+        }
+        
+        
+        public void setText(String string)
+        {
+            this.text = string;
+            GridData data = new GridData(GridData.FILL_HORIZONTAL);
+            data.heightHint = ((int) getAvgCharWidth(getFont()) * (string.length() + 4));
+            setLayoutData(data);
+            getParent().layout(true);
+            redraw();
+        }
+        
+        public float getAvgCharWidth(Font font)
+        {
+            GC gc = new GC(Display.getCurrent());
+            try
+            {
+
+                gc.setFont(font);
+
+                return gc.getFontMetrics().getAverageCharWidth();
+            }
+            finally
+            {
+                gc.dispose();
+            }
+        }
+
+        public void paint(PaintEvent e)
+        {
+
+            Transform tr = null;
+            tr = new Transform(e.display);
+            
+            Rectangle rectangle = getParent().getBounds();
+            Rectangle r = getBounds();
+            e.width = rectangle.width;
+            
+            
+            
+            // e.gc.setAntialias(SWT.ON);
+            Point p = e.gc.stringExtent(text);
+            
+            tr.translate((rectangle.width / 2), (r.height / 2));
+            tr.rotate(rotatingAngle);
+            e.gc.setTransform(tr);
+
+           
+            
+            e.gc.drawString(text, (r.height / 2) * -1, ((rectangle.width / 2) * -1) + (p.y / 2),true);
+            if(selection)
+            {
+                e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+                e.gc.fillRectangle(0,0,r.height,r.width);
+            }
+        }
     }
 
 }

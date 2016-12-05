@@ -575,6 +575,7 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                 final Image STACKED = EJUIImages.getImage(EJUIImages.DESC_CANVAS_STACKED);
                 final Image POPUP = EJUIImages.getImage(EJUIImages.DESC_CANVAS_POPUP);
                 final Image TAB = EJUIImages.getImage(EJUIImages.DESC_CANVAS_TAB);
+                final Image DRAWER = EJUIImages.getImage(EJUIImages.DESC_CANVAS_DRAWER);
                 AbstractNode<?> canvases = new AbstractNode<EJPluginObjectGroupProperties>(this, source)
                 {
                     public String getName()
@@ -672,6 +673,8 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                                             return POPUP;
                                         case TAB:
                                             return TAB;
+                                        case DRAWER:
+                                            return DRAWER;
                                         case STACKED:
                                             return STACKED;
                                         default:

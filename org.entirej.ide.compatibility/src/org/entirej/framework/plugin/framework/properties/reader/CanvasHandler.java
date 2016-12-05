@@ -32,7 +32,7 @@ public class CanvasHandler extends EntireJTagHandler
 {
     private EJPluginFormProperties   _formProperties;
     private EJPluginCanvasProperties _canvasProperties;
-    
+                                     
     private static final String      ELEMENT_CANVAS                 = "canvas";
     private static final String      ELEMENT_WIDTH                  = "width";
     private static final String      ELEMENT_HEIGHT                 = "height";
@@ -42,9 +42,9 @@ public class CanvasHandler extends EntireJTagHandler
     private static final String      ELEMENT_EXPAND_HORIZONTALLY    = "expandHorizontally";
     private static final String      ELEMENT_EXPAND_VERTICALLY      = "expandVertically";
     private static final String      ELEMENT_DISPLAY_GROUP_FRAME    = "displayGroupFrame";
-    
+                                                                    
     private static final String      ELEMENT_CLOSEABLE_MESSAGE_PANE = "closeableMessagePane";
-    
+                                                                    
     private static final String      ELEMENT_MESSAGE_POSITION       = "messagePosition";
     private static final String      ELEMENT_MESSAGE_PANE_SIZE      = "messagePaneSize";
     private static final String      ELEMENT_DEFAULT_BUTTON_ID      = "defaultButton";
@@ -57,13 +57,14 @@ public class CanvasHandler extends EntireJTagHandler
     private static final String      ELEMENT_BUTTON_TWO_TEXT        = "buttonTwoText";
     private static final String      ELEMENT_BUTTON_THREE_TEXT      = "buttonThreeText";
     private static final String      ELEMENT_TAB_PAGE               = "tabPage";
+    private static final String      ELEMENT_DRAWER_PAGE            = "drawerPage";
     private static final String      ELEMENT_STACKED_PAGE           = "stackedPage";
     private static final String      ELEMENT_INITIAL_STACKED_PAGE   = "initialStackedPageName";
-    
+                                                                    
     private static final String      ELEMENT_REFERRED_FORM_ID       = "referredFormId";
-    
+                                                                    
     private boolean                  _canvasCreated                 = false;
-    
+                                                                    
     public CanvasHandler(EJPluginFormProperties formProperties)
     {
         _formProperties = formProperties;
@@ -86,6 +87,10 @@ public class CanvasHandler extends EntireJTagHandler
         if (name.equals(ELEMENT_TAB_PAGE))
         {
             setDelegate(new TabPageHandler(_canvasProperties));
+        }
+        else if (name.equals(ELEMENT_DRAWER_PAGE))
+        {
+            setDelegate(new DrawerPageHandler(_canvasProperties));
         }
         else if (name.equals(ELEMENT_STACKED_PAGE))
         {
@@ -252,6 +257,11 @@ public class CanvasHandler extends EntireJTagHandler
         if (name.equals(ELEMENT_TAB_PAGE))
         {
             _canvasProperties.getTabPageContainer().addTabPageProperties(((TabPageHandler) currentDelegate).getTabPageProperties());
+            return;
+        }
+        if (name.equals(ELEMENT_DRAWER_PAGE))
+        {
+            _canvasProperties.getDrawerPageContainer().addDrawerPageProperties(((DrawerPageHandler) currentDelegate).getDrawerPageProperties());
             return;
         }
         if (name.equals(ELEMENT_STACKED_PAGE))

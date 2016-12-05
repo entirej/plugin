@@ -36,6 +36,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkE
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJLovDefinitionProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
@@ -507,6 +508,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     writeStringTAG(buffer, "messagePosition", canvasProps.getMessagePosition().name());
                     
                     addTabPageProperties(canvasProps, buffer);
+                    addDrawerPageProperties(canvasProps, buffer);
                     addStackedPageProperties(canvasProps, buffer);
                     addCanvasGroupCanvases(canvasProps, buffer);
                     addCanvasSplitCanvases(canvasProps, buffer);
@@ -1316,6 +1318,45 @@ public class FormPropertiesWriter extends AbstractXmlWriter
             }
         }
         endTAG(buffer, "tabPageList");
+    }
+    protected void addDrawerPageProperties(EJCanvasProperties canvasProperties, StringBuffer buffer)
+    {
+        // Only do this for tab canvases
+        if (canvasProperties.getType() != EJCanvasType.DRAWER)
+        {
+            return;
+        }
+        
+        Iterator<EJDrawerPageProperties> tabPagePropertiesIti = canvasProperties.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
+        startTAG(buffer, "drawerPageList");
+        {
+            while (tabPagePropertiesIti.hasNext())
+            {
+                EJDrawerPageProperties tabPage = tabPagePropertiesIti.next();
+                
+                startOpenTAG(buffer, "drawerPage");
+                {
+                    writePROPERTY(buffer, "name", tabPage.getName());
+                    closeOpenTAG(buffer);
+                    
+                    writeStringTAG(buffer, "pageTitle", tabPage.getPageTitle());
+                    writeStringTAG(buffer, "firstNavigationalBlock", tabPage.getFirstNavigationalBlock());
+                    writeStringTAG(buffer, "firstNavigationalItem", tabPage.getFirstNavigationalItem());
+                    writeBooleanTAG(buffer, "enabled", tabPage.isEnabled());
+                    writeBooleanTAG(buffer, "visible", tabPage.isVisible());
+                    writeIntTAG(buffer, "numCols", tabPage.getNumCols());
+                    writeIntTAG(buffer, "width", tabPage.getDrawerWidth());
+                    
+                    startTAG(buffer, "canvasList");
+                    {
+                        addCanvasList(tabPage.getContainedCanvases(), buffer);
+                    }
+                    endTAG(buffer, "canvasList");
+                }
+                endTAG(buffer, "drawerPage");
+            }
+        }
+        endTAG(buffer, "drawerPageList");
     }
     
     protected void addStackedPageProperties(EJCanvasProperties canvasProperties, StringBuffer buffer)

@@ -37,6 +37,7 @@ import org.entirej.framework.core.properties.containers.interfaces.EJCanvasPrope
 import org.entirej.framework.core.properties.containers.interfaces.EJItemGroupPropertiesContainer;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJFormProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
@@ -301,6 +302,18 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
             else if (canvas.getType() == EJCanvasType.TAB)
             {
                 Iterator<EJTabPageProperties> allTabPages = canvas.getTabPageContainer().getAllTabPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    EJCanvasProperties tabPageChildCanvas = getCanvasProps(allTabPages.next().getContainedCanvases(), canvasName);
+                    if (tabPageChildCanvas != null && tabPageChildCanvas.getName().equalsIgnoreCase(canvasName))
+                    {
+                        return tabPageChildCanvas;
+                    }
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.DRAWER)
+            {
+                Iterator<EJDrawerPageProperties> allTabPages = canvas.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
                 while (allTabPages.hasNext())
                 {
                     EJCanvasProperties tabPageChildCanvas = getCanvasProps(allTabPages.next().getContainedCanvases(), canvasName);
