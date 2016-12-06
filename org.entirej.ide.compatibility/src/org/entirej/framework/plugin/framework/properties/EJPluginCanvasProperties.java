@@ -19,6 +19,7 @@ package org.entirej.framework.plugin.framework.properties;
 
 import java.util.Iterator;
 
+import org.entirej.framework.core.enumerations.EJCanvasDrawerPosition;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
@@ -44,68 +45,70 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     /**
      * 
      */
-    private static final long serialVersionUID = 2469290104959744115L;
-    
+    private static final long                serialVersionUID             = 2469290104959744115L;
+                                                                          
     // This is the container to which this canvas property object belongs. This
     // is required by the item mover to know where to remove the canvas from and
     // where to put it
-    private EJPluginCanvasContainer _parentContainer;
-    
-    private EJPluginFormProperties _formProperties;
-    
-    private EJCanvasType  _type   = EJCanvasType.BLOCK;
-    private EJPopupButton _button = EJPopupButton.ONE;
-    
-    private int     _width               = 0;
-    private int     _height              = 0;
-    private int     _numCols             = 1;
-    private int     _verticalSpan        = 1;
-    private int     _horizontalSpan      = 1;
-    private boolean _expandHorizontally  = true;
-    private boolean _expandVertically    = true;
-    private int     widthOG              = 0;
-    private int     heightOG             = 0;
-    private int     numColsOG            = 1;
-    private int     verticalSpanOG       = 1;
-    private int     horizontalSpanOG     = 1;
-    private boolean expandHorizontallyOG = true;
-    private boolean expandVerticallyOG   = true;
-    
-    private boolean _displayGroupFrame           = false;
-    private String  _name                        = "";
-    private String  _popupPageTitle              = "";
-    private String  _groupFrameTitle             = "";
-    private String  _buttonOneText               = "Not Assigned";
-    private String  _buttonTwoText               = "";
-    private String  _buttonThreeText             = "";
-    private String  _firstInitialStackedPageName = "";
-    
-    private String _referencedObjectGroupName = "";
-    
-    private boolean _objectGroupRoot;
-    
+    private EJPluginCanvasContainer          _parentContainer;
+                                             
+    private EJPluginFormProperties           _formProperties;
+                                             
+    private EJCanvasType                     _type                        = EJCanvasType.BLOCK;
+    private EJPopupButton                    _button                      = EJPopupButton.ONE;
+                                                                          
+    private int                              _width                       = 0;
+    private int                              _height                      = 0;
+    private int                              _numCols                     = 1;
+    private int                              _verticalSpan                = 1;
+    private int                              _horizontalSpan              = 1;
+    private boolean                          _expandHorizontally          = true;
+    private boolean                          _expandVertically            = true;
+    private int                              widthOG                      = 0;
+    private int                              heightOG                     = 0;
+    private int                              numColsOG                    = 1;
+    private int                              verticalSpanOG               = 1;
+    private int                              horizontalSpanOG             = 1;
+    private boolean                          expandHorizontallyOG         = true;
+    private boolean                          expandVerticallyOG           = true;
+                                                                          
+    private boolean                          _displayGroupFrame           = false;
+    private String                           _name                        = "";
+    private String                           _popupPageTitle              = "";
+    private String                           _groupFrameTitle             = "";
+    private String                           _buttonOneText               = "Not Assigned";
+    private String                           _buttonTwoText               = "";
+    private String                           _buttonThreeText             = "";
+    private String                           _firstInitialStackedPageName = "";
+                                                                          
+    private String                           _referencedObjectGroupName   = "";
+                                                                          
+    private boolean                          _objectGroupRoot;
+                                             
     private EJPluginTabPageContainer         _tabPageContainer;
-    private EJPluginDrawerPageContainer         _drawerPageContainer;
+    private EJPluginDrawerPageContainer      _drawerPageContainer;
     private EJPluginStackedPageContainer     _stackedPageContainer;
     private EJPluginPopupCanvasContainer     _popupCanvasContainer;
     private EJPluginCanvasGroupPageContainer _canvasGroupContainer;
     private EJPluginCanvasSplitPageContainer _canvasSplitContainer;
-    
-    private String                   _referredFormId;
+                                             
+    private String                           _referredFormId;
     //
     // If the Canvas type is TAB, then the following properties are also
     // available
-    private EJCanvasTabPosition      _tabPosition      = EJCanvasTabPosition.TOP;
-    private EJCanvasSplitOrientation _splitOrientation = EJCanvasSplitOrientation.HORIZONTAL;
-    
-    private boolean _closeableMessagePane = true;
-    
-    private int _messagePaneSize = 200;
-    
-    private EJCanvasMessagePosition _messagePosition = EJCanvasMessagePosition.RIGHT;
-    
-    private EJLineStyle _lineStyle = EJLineStyle.SOLID;
-    
+    private EJCanvasTabPosition              _tabPosition                 = EJCanvasTabPosition.TOP;
+                                                                          
+    private EJCanvasDrawerPosition           _drawerPosition              = EJCanvasDrawerPosition.RIGHT;
+    private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
+                                                                          
+    private boolean                          _closeableMessagePane        = true;
+                                                                          
+    private int                              _messagePaneSize             = 200;
+                                                                          
+    private EJCanvasMessagePosition          _messagePosition             = EJCanvasMessagePosition.RIGHT;
+                                                                          
+    private EJLineStyle                      _lineStyle                   = EJLineStyle.SOLID;
+                                                                          
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
         _name = name;
@@ -521,6 +524,11 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         _splitOrientation = position;
     }
     
+    public void setDrawerPosition(EJCanvasDrawerPosition position)
+    {
+        _drawerPosition = position;
+    }
+    
     /**
      * Sets the name of the initially displayed stacked page
      * 
@@ -561,6 +569,7 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         
         return _tabPageContainer.getTabPageProperties(name);
     }
+    
     public EJDrawerPageProperties getDrawerPageProperties(String name)
     {
         if (name == null)
@@ -580,6 +589,11 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     public EJCanvasTabPosition getTabPosition()
     {
         return _tabPosition;
+    }
+    
+    public EJCanvasDrawerPosition getDrawerPosition()
+    {
+        return _drawerPosition;
     }
     
     @Override

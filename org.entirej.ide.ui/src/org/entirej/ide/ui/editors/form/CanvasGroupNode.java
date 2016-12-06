@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.entirej.framework.core.enumerations.EJCanvasDrawerPosition;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
@@ -2239,39 +2240,39 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             
             AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, this);
             
-//            AbstractDropDownDescriptor<EJCanvasTabPosition> orientationDescriptor = new AbstractDropDownDescriptor<EJCanvasTabPosition>("Orientation")
-//            {
-//                
-//                public EJCanvasTabPosition[] getOptions()
-//                {
-//                    
-//                    return EJCanvasTabPosition.values();
-//                }
-//                
-//                @Override
-//                public void runOperation(AbstractOperation operation)
-//                {
-//                    editor.execute(operation);
-//                    
-//                }
-//                
-//                public String getOptionText(EJCanvasTabPosition t)
-//                {
-//                    return t.toString();
-//                }
-//                
-//                public void setValue(EJCanvasTabPosition value)
-//                {
-//                    source.setTabPosition(value);
-//                    editor.setDirty(true);
-//                    treeSection.refresh(node);
-//                }
-//                
-//                public EJCanvasTabPosition getValue()
-//                {
-//                    return source.getTabPosition();
-//                }
-//            };
+            AbstractDropDownDescriptor<EJCanvasDrawerPosition> orientationDescriptor = new AbstractDropDownDescriptor<EJCanvasDrawerPosition>("Orientation")
+            {
+                
+                public EJCanvasDrawerPosition[] getOptions()
+                {
+                    
+                    return EJCanvasDrawerPosition.values();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                public String getOptionText(EJCanvasDrawerPosition t)
+                {
+                    return t.toString();
+                }
+                
+                public void setValue(EJCanvasDrawerPosition value)
+                {
+                    source.setDrawerPosition(value);
+                    editor.setDirty(true);
+                    treeSection.refresh(node);
+                }
+                
+                public EJCanvasDrawerPosition getValue()
+                {
+                    return source.getDrawerPosition();
+                }
+            };
             
             if (source.isObjectGroupRoot())
             {
@@ -2279,7 +2280,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 return new AbstractDescriptor<?>[] { getObjectGroupDescriptor(source), layoutGroupDescriptor };
             }
             
-            return new AbstractDescriptor<?>[] {  createMessagePaneSettings(), layoutGroupDescriptor };
+            return new AbstractDescriptor<?>[] { orientationDescriptor, createMessagePaneSettings(), layoutGroupDescriptor };
         }
         
     }

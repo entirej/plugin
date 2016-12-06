@@ -466,6 +466,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     {
                         writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
                     }
+                    else if (canvasProps.getType() == EJCanvasType.DRAWER)
+                    {
+                        writeStringTAG(buffer, "drawerPosition", canvasProps.getDrawerPosition().name());
+                    }
                     else if (canvasProps.getType() == EJCanvasType.FORM)
                     {
                         writeStringTAG(buffer, "referredFormId", canvasProps.getReferredFormId());
