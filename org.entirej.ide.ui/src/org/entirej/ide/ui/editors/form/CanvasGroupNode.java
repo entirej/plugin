@@ -2240,7 +2240,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
             
             AbstractGroupDescriptor layoutGroupDescriptor = createLayoutSettings(editor, treeSection, this);
             
-            AbstractDropDownDescriptor<EJCanvasDrawerPosition> orientationDescriptor = new AbstractDropDownDescriptor<EJCanvasDrawerPosition>("Orientation")
+            AbstractDropDownDescriptor<EJCanvasDrawerPosition> orientationDescriptor = new AbstractDropDownDescriptor<EJCanvasDrawerPosition>("Open Direction")
             {
                 
                 public EJCanvasDrawerPosition[] getOptions()
@@ -2273,6 +2273,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     return source.getDrawerPosition();
                 }
             };
+            orientationDescriptor.setTooltip("The direction the drawer will open");
             
             if (source.isObjectGroupRoot())
             {
