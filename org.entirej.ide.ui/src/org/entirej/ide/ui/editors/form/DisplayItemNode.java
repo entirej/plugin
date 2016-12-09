@@ -677,7 +677,6 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
                 }
                 editor.setDirty(true);
                 treeSection.refresh(DisplayItemNode.this);
-                treeSection.showNodeDetails(DisplayItemNode.this);
             }
 
             @Override
