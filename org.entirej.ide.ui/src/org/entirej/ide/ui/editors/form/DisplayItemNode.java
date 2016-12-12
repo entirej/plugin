@@ -723,7 +723,7 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
                 source.enableLovNotification(value != null && value.trim().length() != 0);
                 editor.setDirty(true);
                 treeSection.refresh(DisplayItemNode.this);
-                treeSection.showNodeDetails(DisplayItemNode.this);
+                treeSection.showNodeDetails(DisplayItemNode.this,false);
             }
 
             @Override

@@ -1446,7 +1446,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                                     editor.setDirty(true);
                                     treeSection.refresh(node);
                                     treeSection.refreshPreview();
-                                    treeSection.showNodeDetails(node);
+                                    treeSection.showNodeDetails(node,true);
                                 }
                             }
 

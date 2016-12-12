@@ -223,14 +223,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             formPreviewer.showDetails(node);
     }
 
-    protected void showNodeDetails(Object node)
-    {
-        Object findNode = (node);
-        if (findNode != null)
-        {
-            showNodeDetails(findNode);
-        }
-    }
+    
 
     public void refreshPreview()
     {
