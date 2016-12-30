@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      
+      <perspective
+            class="org.entirej.ide.ui.EJReportPerspective"
+            icon="$nl$/icons/etools16/entirej.png"
+            id="org.entirej.ide.ui.report.perspective"
+            name="%perspective.report.name">
+         <description>
+            %perspective.report.description
+         </description>
+      </perspective>
+   </extension>
+    <extension
+         id="org.entirej.ide.EJReportConstBuilder"
+         name="EntireJ Report Constants Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.entirej.ide.ui.editors.report.builder.EJReportConstBuilder">
+         </run>
+      </builder>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.entirej.ide.ui.editors.report.EJReportEditor"
+            contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
+            default="true"
+            extensions="ejreport"
+            icon="icons/obj16/report_16.png"
+            id="org.entirej.ide.ui.editors.ej.report"
+            name="%org.entirej.ide.ui.editors.ej.report.name">
+         <contentTypeBinding
+               contentTypeId="org.entirej.ide.ui.editors.ej.form.file">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.entirej.ide.ui.editors.prop.EJReportPropertiesEditor"
+            contributorClass="org.entirej.ide.ui.editors.AbstractActionBarContributor"
+            default="true"
+            icon="icons/etools16/ejreportprop.png"
+            id="org.entirej.ide.ui.editors.ej.report.properties"
+            name="%org.entirej.ide.ui.editors.ej.report.properties.name">
+         <contentTypeBinding
+               contentTypeId="org.entirej.ide.ui.editors.ej.report.properties.file">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            file-extensions="ejreport"
+            id="org.entirej.ide.ui.editors.ej.report.file"
+            name="%org.entirej.ide.ui.editors.ej.report.file.name"
+            priority="high">
+      </content-type>
+      <content-type
+            file-names="report.ejprop"
+            id="org.entirej.ide.ui.editors.ej.report.properties.file"
+            name="%org.entirej.ide.ui.editors.ej.report.properties.file.name"
+            priority="high">
+      </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.project.NewEntireJReportProjectWizard"
+            finalPerspective="org.entirej.ide.ui.report.perspective"
+            icon="$nl$/icons/etools16/newejrprj_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEntireJReportProjectWizard"
+            name="%new.entirejReportProject.name"
+            project="true">
+         <description>
+            %new.entirejProject.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.report.service.NewEJReportPojoServiceWizard"
+            finalPerspective="org.entirej.ide.ui.report.perspective"
+            icon="icons/etools16/newejrbservice_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEJReportPojoServiceWizard"
+            name="%new.entirejrbservice.name"
+            project="false">
+         <description>
+            %new.entirejrbservice.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.entirej.ide.ui.EJ"
+            class="org.entirej.ide.ui.wizards.report.NewEntireJReportWizard"
+            finalPerspective="org.entirej.ide.ui.report.perspective"
+            icon="icons/etools16/newejreport_wiz.png"
+            id="org.entirej.ide.ui.wizards.NewEntireJReportWizard"
+            name="%new.entirejReport.name"
+            project="false">
+         <description>
+            %new.entirejForm.description
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.entirej.ide.ui.report.ActionSet"
+            label="EntireJ Reports">
+         <action
+               class="org.entirej.ide.ui.wizards.report.NewReportAction"
+               icon="icons/etools16/newejreport_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.NewReportAction"
+               label="%new.entirejReport.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejReport.description">
+         </action>
+         <action
+               class="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
+               icon="icons/etools16/newejrbservice_wiz.png"
+               id="org.entirej.ide.ui.wizards.report.service.NewReportPojoServiceAction"
+               label="%new.entirejrbservice.name"
+               toolbarPath="entirejGroup"
+               tooltip="%new.entirejrbservice.description">
+         </action>
+      </actionSet>
+   </extension>
+  
+
+
+
+<extension
+      point="org.entirej.ide.core.spi.ejreportvalidate.provider">
+   <provider
+         class="org.entirej.ide.ui.editors.report.EJReportValidateImpl">
+   </provider>
+</extension>
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         category="org.entirej.ide.core.PreferencesPage"
+         class="org.entirej.ide.ui.editors.preferences.EditorPreferencePage"
+         id="org.entirej.ide.ui.editor"
+         name="Report Editor">
+   </page>
+</extension>
+</plugin>

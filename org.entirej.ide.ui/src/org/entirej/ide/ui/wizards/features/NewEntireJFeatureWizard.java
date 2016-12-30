@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.wizards.NewWizard;
 

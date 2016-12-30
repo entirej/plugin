@@ -33,10 +33,16 @@ Bundle-Activator: org.entirej.ide.ui.EJUIPlugin
 Export-Package: org.entirej.ide.ui,
  org.entirej.ide.ui.editors,
  org.entirej.ide.ui.editors.descriptors,
- org.entirej.ide.ui.editors.prop,
+ org.entirej.ide.ui.editors.handlers,
+ org.entirej.ide.ui.editors.operations,
+ org.entirej.ide.ui.editors.preferences,
  org.entirej.ide.ui.nodes,
+ org.entirej.ide.ui.nodes.dnd,
+ org.entirej.ide.ui.table,
  org.entirej.ide.ui.utils,
  org.entirej.ide.ui.wizards,
- org.entirej.ide.ui.wizards.db
+ org.entirej.ide.ui.wizards.custom,
+ org.entirej.ide.ui.wizards.db,
+ org.entirej.ide.ui.wizards.features
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy

@@ -38,7 +38,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.entirej.ide.core.EJCoreLog;
-import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
 
 public abstract class NewWizard extends Wizard implements INewWizard
@@ -50,7 +49,7 @@ public abstract class NewWizard extends Wizard implements INewWizard
     public NewWizard()
     {
         super();
-        setWindowTitle(EJUIMessages.NewWizard_wtitle);
+        setWindowTitle("New");
         setNeedsProgressMonitor(true);
     }
 

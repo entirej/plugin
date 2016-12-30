@@ -19,7 +19,7 @@
 -->
 <feature
       id="org.entirej.ide.feature"
-      label="EntireJ Tools"
+      label="EntireJ Forms Tools"
       version="5.0.0.qualifier"
       provider-name="Mojave Innovations GmbH"
       plugin="org.entirej.ide.core">
@@ -514,7 +514,13 @@ the developer guide provided by EntireJ.
          version="0.0.0"/>
 
    <plugin
-         id="org.entirej.ext.jasper"
+         id="org.entirej.ide.ui.form"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.entirej.ide.cf.fx"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

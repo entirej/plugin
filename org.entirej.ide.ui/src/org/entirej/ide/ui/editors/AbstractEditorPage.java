@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
 
 public abstract class AbstractEditorPage extends FormPage
@@ -135,7 +134,7 @@ public abstract class AbstractEditorPage extends FormPage
                 }
             };
             helpAction.setImageDescriptor(EJUIImages.DESC_HELP);
-            helpAction.setToolTipText(EJUIMessages.NodeAction_help);
+            helpAction.setToolTipText("Help");
             toolBarManager.add(helpAction);
 
         }

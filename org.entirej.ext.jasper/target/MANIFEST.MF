@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.co
+ re.resources,org.eclipse.ui.ide,org.eclipse.jdt.core,org.eclipse.jdt.
+ ui,org.eclipse.ui.forms,org.entirej.ide.core,org.entirej.core.runtime
+ ,org.entirej.ide.compatibility,org.entirej.ide.ui
+Bundle-Vendor: %Bundle-Vendor
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Bundle-Version: 4.0.0.201411171219
+Bundle-Category: %Bundle-Category
+Bundle-Localization: plugin
+Bundle-Name: %Bundle-Name
+Bundle-Activator: org.entirej.ext.jasper.EJExtJasperPlugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.entirej.ext.jasper;singleton:=true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+
