@@ -495,8 +495,6 @@ the developer guide provided by EntireJ.
          install-size="0"
          version="0.0.0"/>
 
-
-
    <plugin
          id="org.entirej.ext.mysql"
          download-size="0"
@@ -515,6 +513,11 @@ the developer guide provided by EntireJ.
          install-size="0"
          version="0.0.0"/>
 
-
+   <plugin
+         id="org.entirej.ide.ui.report"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
