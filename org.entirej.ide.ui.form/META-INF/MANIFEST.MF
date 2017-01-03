@@ -30,6 +30,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef,
  org.entirej.ide.ui
 Bundle-ClassPath: .
-Bundle-Activator: org.entirej.ide.ui.EJUIPlugin
 Bundle-Localization: plugin
-Bundle-ActivationPolicy: lazy
