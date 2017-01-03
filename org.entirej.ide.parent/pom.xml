@@ -32,6 +32,7 @@
 		<module>../org.entirej.ide.feature</module>
 		<module>../org.entirej.ide.report.feature</module>
 		<module>../org.entirej.ide.site</module>
+		<module>../org.entirej.ide.report.site</module>
 		
 	</modules>
 
