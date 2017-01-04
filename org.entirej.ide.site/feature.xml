@@ -443,7 +443,7 @@ the developer guide provided by EntireJ.
    </license>
 
    <includes
-         id="org.entirej.ide.feature"
+         id="org.entirej.ide.forms.feature"
          version="0.0.0"/>
 
    <includes

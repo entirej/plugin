@@ -18,7 +18,7 @@
     	Mojave Innovations GmbH - initial API and implementation
 -->
 <feature
-      id="org.entirej.ide.feature"
+      id="org.entirej.ide.forms.feature"
       label="EntireJ Forms Tools"
       version="5.0.0.qualifier"
       provider-name="Mojave Innovations GmbH"

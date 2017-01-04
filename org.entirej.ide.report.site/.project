@@ -3,7 +3,7 @@
 	<name>org.entirej.ide.report.site</name>
 	<comment></comment>
 	<projects>
-		<project>org.entirej.ide.feature</project>
+		<project>org.entirej.ide.report.feature</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
