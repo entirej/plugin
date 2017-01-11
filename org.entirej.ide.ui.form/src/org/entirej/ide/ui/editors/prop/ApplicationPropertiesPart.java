@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.entirej.framework.core.EJDefaultApplicationActionProcessor;
+import org.entirej.framework.core.actionprocessor.interfaces.EJApplicationActionProcessor;
 import org.entirej.framework.core.application.definition.interfaces.EJApplicationDefinition;
 import org.entirej.framework.core.interfaces.EJConnectionFactory;
 import org.entirej.framework.core.interfaces.EJTranslator;
@@ -41,6 +43,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
 
     private final AbstractTypeDescriptor    applicationManagerClass;
     private final AbstractTypeDescriptor    connectionFactoryClass;
+    private final AbstractTypeDescriptor    applicationActionProcessorClass;
     private final AbstractTypeDescriptor    translatorFactoryClass;
     private final AbstractPackageDescriptor reusableBlocksPkg;
     private final AbstractPackageDescriptor reusableLovDefinitionsPkg;
@@ -95,13 +98,13 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
             }
         };
         applicationManagerClass.setBaseClass(EJApplicationDefinition.class.getName());
-        connectionFactoryClass = new AbstractTypeDescriptor(editor, "Connection Factory")
+        applicationActionProcessorClass = new AbstractTypeDescriptor(editor, "Application Action Processor")
         {
 
             @Override
             public void setValue(String value)
             {
-                editor.getEntireJProperties().setConnectionFactoryClassName(value);
+                editor.getEntireJProperties().setApplicationActionProcessorClassName(value);
                 editor.setDirty(true);
             }
 
@@ -109,6 +112,25 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
             public String getValue()
             {
 
+                return editor.getEntireJProperties().getApplicationActionProcessorClassName();
+            }
+        };
+        applicationActionProcessorClass.setBaseClass(EJApplicationActionProcessor.class.getName());
+        applicationActionProcessorClass.setDefaultClass(EJDefaultApplicationActionProcessor.class.getName());
+        connectionFactoryClass = new AbstractTypeDescriptor(editor, "Connection Factory")
+        {
+            
+            @Override
+            public void setValue(String value)
+            {
+                editor.getEntireJProperties().setConnectionFactoryClassName(value);
+                editor.setDirty(true);
+            }
+            
+            @Override
+            public String getValue()
+            {
+                
                 return editor.getEntireJProperties().getConnectionFactoryClassName();
             }
         };
@@ -190,7 +212,7 @@ public class ApplicationPropertiesPart extends AbstractDescriptorPart
     @Override
     public AbstractDescriptor<?>[] getDescriptors()
     {
-        return new AbstractDescriptor<?>[] { applicationManagerClass, connectionFactoryClass, translatorFactoryClass, reusableBlocksPkg,
+        return new AbstractDescriptor<?>[] { applicationManagerClass, connectionFactoryClass,applicationActionProcessorClass, translatorFactoryClass, reusableBlocksPkg,
                 reusableLovDefinitionsPkg ,objectGroupDefinitionsPkg};
     }
     

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.entirej.framework.core.actionprocessor.interfaces.EJApplicationActionProcessor;
 import org.entirej.framework.core.application.definition.interfaces.EJApplicationDefinition;
 import org.entirej.framework.core.interfaces.EJConnectionFactory;
 import org.entirej.framework.core.interfaces.EJTranslator;
@@ -117,6 +118,8 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
         addMarker(file, validateApplicationDef(file, entireJProperties, project));
         // validate EJConnectionFactory related problems
         addMarker(file, validateConnectionFactory(file, entireJProperties, project));
+       // validate EJApplicationActionProcessor related problems
+        addMarker(file, validateApplicationActionProcessor(file, entireJProperties, project));
         // validate EJTranslator related problems
         addMarker(file, validateTranslator(file, entireJProperties, project));
         // validate form packages related problems
@@ -192,12 +195,12 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
         }
     }
 
-    Problem validateConnectionFactory(IFile file, EJPluginEntireJProperties prop, IJavaProject project)
+    Problem validateApplicationActionProcessor(IFile file, EJPluginEntireJProperties prop, IJavaProject project)
     {
-        String defClassName = prop.getConnectionFactoryClassName();
+        String defClassName = prop.getApplicationActionProcessorClassName();
         if (defClassName == null || defClassName.trim().length() == 0)
         {
-            return new Problem(Problem.TYPE.ERROR, "Connection Factory: [EJConnectionFactory] must be specified.");
+            return null;
         }
 
         try
@@ -210,7 +213,7 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
 
             if (!JavaAccessUtils.isSubTypeOfInterface(findType, EJConnectionFactory.class))
             {
-                return new Problem(Problem.TYPE.ERROR, String.format("%s is not a sub type of %s.", defClassName, EJConnectionFactory.class.getName()));
+                return new Problem(Problem.TYPE.ERROR, String.format("%s is not a sub type of %s.", defClassName, EJApplicationActionProcessor.class.getName()));
             }
         }
         catch (CoreException e)
@@ -218,6 +221,34 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
             return new Problem(Problem.TYPE.ERROR, e.getMessage());
         }
 
+        return null;
+    }
+    Problem validateConnectionFactory(IFile file, EJPluginEntireJProperties prop, IJavaProject project)
+    {
+        String defClassName = prop.getConnectionFactoryClassName();
+        if (defClassName == null || defClassName.trim().length() == 0)
+        {
+            return new Problem(Problem.TYPE.ERROR, "Connection Factory: [EJConnectionFactory] must be specified.");
+        }
+        
+        try
+        {
+            IType findType = project.findType(defClassName);
+            if (findType == null)
+            {
+                return new Problem(Problem.TYPE.ERROR, String.format("%s can't find in project build path.", defClassName));
+            }
+            
+            if (!JavaAccessUtils.isSubTypeOfInterface(findType, EJConnectionFactory.class))
+            {
+                return new Problem(Problem.TYPE.ERROR, String.format("%s is not a sub type of %s.", defClassName, EJConnectionFactory.class.getName()));
+            }
+        }
+        catch (CoreException e)
+        {
+            return new Problem(Problem.TYPE.ERROR, e.getMessage());
+        }
+        
         return null;
     }
 

@@ -56,8 +56,12 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
     
     private String                             _version         = "1.0";               // default
     private String                             _applicationManagerDefClassName;
+
+    private String                                       _applicationActionProcessorClassName;
     
     private EJFrameworkExtensionProperties     _applicationManagerProperties;
+    
+    
     private IJavaProject                       _javaProject;
     private ArrayList<String>                  _formPackageNames;
     private String                             _connectionFactoryClassName;
@@ -179,6 +183,18 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
     public String getConnectionFactoryClassName()
     {
         return _connectionFactoryClassName;
+    }
+    
+    public void setApplicationActionProcessorClassName(String className)
+    {
+      
+        
+        _applicationActionProcessorClassName = className;
+    }
+    
+    public String getApplicationActionProcessorClassName()
+    {
+        return _applicationActionProcessorClassName;
     }
     
     public void setConnectionFactoryClassName(String className)

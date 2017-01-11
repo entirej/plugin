@@ -162,6 +162,12 @@ public class EJPropertiesPackageMoveParticipant extends MoveParticipant implemen
                                 createPropChange = true;
                                 entirejProperties.setConnectionFactoryClassName(entirejProperties.getConnectionFactoryClassName().replace(oldPkg, newText));
                             }
+                            if (entirejProperties.getApplicationActionProcessorClassName() != null
+                                    && entirejProperties.getApplicationActionProcessorClassName().startsWith(oldPkg))
+                            {
+                                createPropChange = true;
+                                entirejProperties.setApplicationActionProcessorClassName(entirejProperties.getApplicationActionProcessorClassName().replace(oldPkg, newText));
+                            }
                             if (entirejProperties.getTranslatorClassName() != null && entirejProperties.getTranslatorClassName().startsWith(oldPkg))
                             {
                                 createPropChange = true;

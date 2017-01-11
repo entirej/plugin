@@ -158,6 +158,11 @@ public class EJPropertiesTypeRenameParticipant extends RenameParticipant impleme
                                 createPropChange = true;
                                 entirejProperties.setConnectionFactoryClassName(newName);
                             }
+                            if (oldName.equals(entirejProperties.getApplicationActionProcessorClassName()))
+                            {
+                                createPropChange = true;
+                                entirejProperties.setApplicationActionProcessorClassName(newName);
+                            }
                             if (oldName.equals(entirejProperties.getTranslatorClassName()))
                             {
                                 createPropChange = true;
