@@ -211,7 +211,7 @@ public class EJPropertiesValidateImpl implements EJPropertiesValidateProvider
                 return new Problem(Problem.TYPE.ERROR, String.format("%s can't find in project build path.", defClassName));
             }
 
-            if (!JavaAccessUtils.isSubTypeOfInterface(findType, EJConnectionFactory.class))
+            if (!JavaAccessUtils.isSubTypeOfInterface(findType, EJApplicationActionProcessor.class))
             {
                 return new Problem(Problem.TYPE.ERROR, String.format("%s is not a sub type of %s.", defClassName, EJApplicationActionProcessor.class.getName()));
             }
