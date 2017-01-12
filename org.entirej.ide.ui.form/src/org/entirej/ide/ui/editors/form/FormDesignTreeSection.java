@@ -102,6 +102,7 @@ import org.entirej.framework.core.renderers.definitions.interfaces.EJFormRendere
 import org.entirej.framework.dev.EJDevConstants;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
@@ -1211,9 +1212,11 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             layoutBody.setLayout(new FillLayout());
 
                             layoutBody.setLayoutData(createGridData(component));
-                            component.getPluginBlockProperties().getBlockRendererDefinition()
-                                    .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit())
-                                    .addItemWidgetChosenListener(chosenListener);
+                            EJDevBlockRendererDefinition blockRendererDefinition = component.getPluginBlockProperties().getBlockRendererDefinition();
+                           if(blockRendererDefinition!=null)
+                                blockRendererDefinition
+                                        .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit())
+                                        .addItemWidgetChosenListener(chosenListener);
                         }
                         else
                         {
