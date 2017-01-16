@@ -85,6 +85,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperti
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafActionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafBranchProperties;
@@ -1124,6 +1125,20 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 builder.append(";");
                 builder.append("\n");
             }
+        }
+        
+        List<EJPluginLovMappingProperties> allLovMappingProperties = blockProperties.getLovMappingContainer().getAllLovMappingProperties();
+        for (EJPluginLovMappingProperties ejPluginLovMappingProperties : allLovMappingProperties)
+        {
+         // add mapping ID
+            builder.append("    public static final String LM_");
+            builder.append(toVAR(ejPluginLovMappingProperties.getName()).toUpperCase().replaceAll(" ", "_"));
+            builder.append(" = ");
+            builder.append("\"");
+            builder.append(ejPluginLovMappingProperties.getName());
+            builder.append("\"");
+            builder.append(";");
+            builder.append("\n");
         }
 
         builder.append("\n");
