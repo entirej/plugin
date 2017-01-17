@@ -73,7 +73,7 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
 
                 // see if this is it
                 IFile candidate = (IFile) resource;
-                if (isFormFile(candidate))
+                if (candidate.exists() && isFormFile(candidate))
                 {
                     // That's it, but only check it if it has been added or
                     // changed

@@ -1487,6 +1487,8 @@ public class EJFormValidateImpl implements EJFormValidateProvider
             catch (IOException e)
             {
                 EJCoreLog.logException(e);
+                e.printStackTrace();
+                System.err.println(file);
             }
         }
 
