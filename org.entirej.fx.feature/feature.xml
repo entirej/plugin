@@ -18,10 +18,11 @@
     	Mojave Innovations GmbH - initial API and implementation
 -->
 <feature
-      id="org.entirej.site"
-      label="Entirej Integration for Eclipse Update Site"
+      id="org.entirej.fx.feature"
+      label="EntireJ JavaFX Client Framework"
       version="5.0.0.qualifier"
-      provider-name="Mojave Innovations GmbH">
+      provider-name="Mojave Innovations GmbH"
+      plugin="org.entirej.ide.core">
 
    <description url="http://www.entirej.com/">
       The EntireJ-Plugin is a model driven application development
@@ -442,24 +443,22 @@ the developer guide provided by EntireJ.
    limitations under the License.
    </license>
 
-   <includes
-         id="org.entirej.fx.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.entirej.ide.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.entirej.ide.core"/>
+      <import plugin="org.entirej.ide.ui"/>
    </requires>
+
+   <plugin
+         id="org.entirej.ide.cf.fx"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

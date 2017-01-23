@@ -28,7 +28,7 @@
 		<relativePath>../org.entirej.ide.parent</relativePath>
   </parent>
 
-  <artifactId>org.entirej.ide.forms.feature</artifactId>
+  <artifactId>org.entirej.ide.feature</artifactId>
   <packaging>eclipse-feature</packaging>
   <name>Entirej-feature</name>
 

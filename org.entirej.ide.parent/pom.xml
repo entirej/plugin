@@ -30,6 +30,7 @@
 		<module>../org.entirej.ext.oracle</module>
 
 		<module>../org.entirej.ide.feature</module>
+		<module>../org.entirej.fx.feature</module>
 		<module>../org.entirej.ide.report.feature</module>
 		<module>../org.entirej.ide.site</module>
 		<module>../org.entirej.ide.report.site</module>
