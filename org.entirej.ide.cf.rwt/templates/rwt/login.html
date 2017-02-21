@@ -159,6 +159,11 @@
 					<tr>
 						
 						<td><input placeholder="Password"  class="field"  type='password' name='password' /></td>
+						<!-- XXXXXXXXX pass the HASH to server XXXXXXXXXX-->
+						<script>
+						    document.write('<input type="hidden" name="hash" value="'+window.location.hash+'"/>');
+						</script>
+					    <!-- XXXXXXXXXX-->
 					</tr>
 					<!--Remember me option -->
 					<tr><td><input type='checkbox' name='rememberme'/><span style="color: #4a4a4a;font-family: Verdana, 'Lucida Sans', Arial, Helvetica, sans-serif;font-size: 12px;">Remember me</span></td>
