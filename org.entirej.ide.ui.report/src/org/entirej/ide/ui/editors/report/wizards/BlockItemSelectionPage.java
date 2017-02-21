@@ -192,7 +192,7 @@ public class BlockItemSelectionPage extends WizardPage
             {
                 return wizardContext.getProject();
             }
-        }, IJavaElementSearchConstants.CONSIDER_CLASSES, Object.class.getName());
+        }, IJavaElementSearchConstants.CONSIDER_CLASSES|IJavaElementSearchConstants.CONSIDER_ENUMS, Object.class.getName());
         final Button browse = new Button(composite, SWT.PUSH);
         browse.setText("Browse...");
         browse.addSelectionListener(new SelectionAdapter()

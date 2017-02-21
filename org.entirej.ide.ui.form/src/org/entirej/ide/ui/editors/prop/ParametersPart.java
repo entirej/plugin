@@ -417,7 +417,7 @@ public class ParametersPart extends SectionPart
             dataTypeText = new Text(container, SWT.BORDER | SWT.SINGLE);
             if (applicationParameter != null && applicationParameter.getDataTypeName() != null)
                 dataTypeText.setText(applicationParameter.getDataTypeName());
-            TypeAssistProvider.createTypeAssist(dataTypeText, editor, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, null);
+            TypeAssistProvider.createTypeAssist(dataTypeText, editor, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES|IJavaElementSearchConstants.CONSIDER_ENUMS, null);
             dataTypeText.addModifyListener(new ModifyListener()
             {
                 public void modifyText(ModifyEvent e)
