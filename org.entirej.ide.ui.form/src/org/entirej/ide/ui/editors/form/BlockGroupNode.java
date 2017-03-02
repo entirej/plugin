@@ -92,6 +92,7 @@ import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.editors.AbstractMarkerNodeValidator;
 import org.entirej.ide.ui.editors.AbstractMarkerNodeValidator.Filter;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
+import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractGroupDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
@@ -1383,8 +1384,10 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                     editor.setDirty(true);
                     treeSection.refresh(BlockNode.this);
-                    if (treeSection.getDescriptorViewer() != null)
-                        treeSection.getDescriptorViewer().showDetails(BlockNode.this);
+                    if (treeSection.getDescriptorViewer() instanceof AbstractDescriptorPart)
+                    {
+                        ((AbstractDescriptorPart)treeSection.getDescriptorViewer()).buildUI(true);
+                    }
                 }
 
                 @Override
