@@ -432,5 +432,12 @@ public class EJPluginInsertScreenItemProperties implements EJDevInsertScreenItem
         
         return buffer.toString();
     }
+
+    @Override
+    public void enableLovValidation(boolean arg0)
+    {
+        // TODO Auto-generated method stub
+        
+    }
     
 }
