@@ -51,10 +51,12 @@ public class LovMappingHandler extends EntireJTagHandler
             String mappingName = attributes.getValue("name");
             String lovDefinitionName = attributes.getValue("lovDefinitionName");
             String executeAfterQuery = attributes.getValue("executeAfterQuery");
+            String includeDefaultQueryValues = attributes.getValue("includeDefaultQueryValues");
             
             _lovMappingProperties = new EJPluginLovMappingProperties(mappingName, _formProperties);
             
             _lovMappingProperties.setExecuteAfterQuery((executeAfterQuery == null ? Boolean.TRUE.booleanValue() : Boolean.parseBoolean(executeAfterQuery)));
+            _lovMappingProperties.setIncludeDefaultQueryValues((includeDefaultQueryValues == null ? Boolean.FALSE.booleanValue() : Boolean.parseBoolean(includeDefaultQueryValues)));
             _lovMappingProperties.setLovDefinitionName(lovDefinitionName);
             _lovMappingProperties.setMappedBlock(_blockProperties);
             

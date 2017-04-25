@@ -853,7 +853,32 @@ public class LovMappingGroupNode extends AbstractNode<EJPluginLovMappingContaine
                 }
 
             };
-            return new AbstractDescriptor[] { dispalyNameDescriptor, executeAfterQueryDescriptor };
+            final AbstractBooleanDescriptor includeDefaultQueryValuesDescriptor = new AbstractBooleanDescriptor("Add default query values","When set to true, the default query values on the LOV Definition will be added to the query criteria when the LOV is executing in post query.")
+            {
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    source.setIncludeDefaultQueryValues(value.booleanValue());
+                    editor.setDirty(true);
+                    
+                    treeSection.refresh(MappingNode.this);
+                }
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return Boolean.valueOf(source.includeDefaultQueryValues());
+                }
+                
+            };
+            return new AbstractDescriptor[] { dispalyNameDescriptor, executeAfterQueryDescriptor ,includeDefaultQueryValuesDescriptor};
 
         }
     }

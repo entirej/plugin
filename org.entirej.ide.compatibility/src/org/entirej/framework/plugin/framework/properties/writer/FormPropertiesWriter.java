@@ -821,6 +821,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 writePROPERTY(buffer, "name", props.getName());
                 writePROPERTY(buffer, "lovDefinitionName", props.getLovDefinitionName());
                 writePROPERTY(buffer, "executeAfterQuery", "" + props.executeAfterQuery());
+                writePROPERTY(buffer, "includeDefaultQueryValues", "" + props.includeDefaultQueryValues());
                 closeOpenTAG(buffer);
                 
                 writeStringTAG(buffer, "displayName", props.getLovDisplayName());
