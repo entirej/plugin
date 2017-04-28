@@ -25,8 +25,8 @@ import org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeClasspathContainer;
 public class RWTRuntimeVersions
 {
 
-    public static Version CF_V_2_3     = new Version("4.0.0", RWTCFRuntimeClasspathContainer.ID);
-    public static Version CF_RAP_V_2_3 = new Version("4.0.0", RWTRapRuntimeClasspathContainer.ID);
+    public static Version CF_V_2_3     = new Version("5.0.0", RWTCFRuntimeClasspathContainer.ID);
+    public static Version CF_RAP_V_2_3 = new Version("5.0.0", RWTRapRuntimeClasspathContainer.ID);
     public static Version CF_SPRING_V_4 = new Version("4.0.3", RWTRapRuntimeClasspathContainer.ID);
     public static Version CF_TMT_V_2_3 = new Version("4.0.0", RWTCFRuntimeClasspathContainer.ID);
 
