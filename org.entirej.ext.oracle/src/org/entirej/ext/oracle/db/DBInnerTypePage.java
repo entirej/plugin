@@ -168,6 +168,22 @@ public abstract class DBInnerTypePage extends WizardPage
         }
         return null;
     }
+    
+    String toCamelCase(String s)
+    {
+        String[] parts = s.split("_");
+        String camelCaseString = "";
+        for (String part : parts)
+        {
+            camelCaseString = camelCaseString + toProperCase(part);
+        }
+        return camelCaseString;
+    }
+    
+    String toProperCase(String s)
+    {
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+    }
 
     @Override
     public void setVisible(boolean visible)
@@ -272,7 +288,7 @@ public abstract class DBInnerTypePage extends WizardPage
                 {
                     TypeMapper mapper = (TypeMapper) node;
                     IType type = JavaAccessUtils.selectClassType(getShell(), getProject().getResource(), (mapper.mapedClass != null ? mapper.mapedClass
-                            : "*"), null);
+                            : toCamelCase(mapper.type.objName)), null);
                     if (type != null)
                     {
                         mapper.mapedClass = type.getFullyQualifiedName('$');
