@@ -55,6 +55,9 @@ public class EJRWTRendererConfigFix
         mappingBlock.add(new Entry("HTMLMultiRecord", "org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlTableBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTHtmlTableBlockRendererDefinition"));
         
+        mappingBlock.add(new Entry("LineChatRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTLineChartRecordBlockRenderer",
+                "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTLineChartRecordBlockDefinition"));
+        
         // items
         mappingItem.add(new Entry("ListItem", "org.entirej.applicationframework.rwt.renderers.item.EJRWTListItemRenderer",
                 "org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTListBoxRendererDefinition"));
