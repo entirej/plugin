@@ -110,7 +110,7 @@ public class EJRWTRendererConfigFix
         
         if(confied)
         {
-            properties.setVersion("2.2");
+            properties.setVersion("2.3");
         }
         return confied;
     }
@@ -119,7 +119,7 @@ public class EJRWTRendererConfigFix
     {
         
         return "org.entirej.applicationframework.rwt.renderers.application.EJRWTApplicationDefinition".equals(properties
-                .getApplicationManagerDefinitionClassName()) && (properties.getVersion().equals("1.0") || properties.getVersion().equals("2.0"));
+                .getApplicationManagerDefinitionClassName()) && (properties.getVersion().equals("1.0") || properties.getVersion().equals("2.0") || properties.getVersion().equals("2.1")||  properties.getVersion().equals("2.2"));
     }
     
 }
