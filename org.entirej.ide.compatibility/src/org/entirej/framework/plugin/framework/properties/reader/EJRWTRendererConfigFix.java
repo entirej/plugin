@@ -59,6 +59,8 @@ public class EJRWTRendererConfigFix
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTLineChartRecordBlockDefinition"));
         mappingBlock.add(new Entry("PieChatRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTPieChartRecordBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTPieChartRecordBlockDefinition"));
+        mappingBlock.add(new Entry("BarChatRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTBarChartRecordBlockRenderer",
+                "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTBarChartRecordBlockDefinition"));
         
         // items
         mappingItem.add(new Entry("ListItem", "org.entirej.applicationframework.rwt.renderers.item.EJRWTListItemRenderer",
@@ -112,7 +114,7 @@ public class EJRWTRendererConfigFix
         
         if(confied)
         {
-            properties.setVersion("2.4");
+            properties.setVersion("2.5");
         }
         return confied;
     }
@@ -121,7 +123,12 @@ public class EJRWTRendererConfigFix
     {
         
         return "org.entirej.applicationframework.rwt.renderers.application.EJRWTApplicationDefinition".equals(properties
-                .getApplicationManagerDefinitionClassName()) && (properties.getVersion().equals("1.0") || properties.getVersion().equals("2.0") || properties.getVersion().equals("2.1")||  properties.getVersion().equals("2.2")||  properties.getVersion().equals("2.3"));
+                .getApplicationManagerDefinitionClassName()) && (properties.getVersion().equals("1.0") 
+                        || properties.getVersion().equals("2.0") 
+                        || properties.getVersion().equals("2.1")
+                        ||  properties.getVersion().equals("2.2")
+                        ||  properties.getVersion().equals("2.3")
+                        ||  properties.getVersion().equals("2.4"));
     }
     
 }
