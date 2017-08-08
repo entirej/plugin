@@ -21,7 +21,10 @@ package org.entirej.ide.ui.editors.form.wizards;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
@@ -33,6 +36,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -52,6 +56,7 @@ import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.ide.ui.EJUIPlugin;
+import org.entirej.ide.ui.common.viewers.CTreeComboViewer;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
 import org.entirej.ide.ui.utils.JavaAccessUtils;
 import org.entirej.ide.ui.utils.TypeAssistProvider;
@@ -67,7 +72,7 @@ public class DataBlockServiceSelectionPage extends WizardPage
     private Text                         newCanvasText;
 
     private EJPluginRenderer             blockRenderer;
-    private ComboViewer                  blockRenderersViewer;
+    private CTreeComboViewer                  blockRenderersViewer;
 
     private String                       blockCanves;
     private ComboViewer                  blockCanvesViewer;
@@ -162,13 +167,13 @@ public class DataBlockServiceSelectionPage extends WizardPage
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         gd.horizontalSpan = 1;
         formTitleLabel.setLayoutData(gd);
-        blockRenderersViewer = new ComboViewer(composite);
+        blockRenderersViewer = new CTreeComboViewer(composite,SWT.READ_ONLY|SWT.SINGLE|SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 
         gd = new GridData();
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = false;
         gd.horizontalSpan = 2;
-        blockRenderersViewer.getCombo().setLayoutData(gd);
+        blockRenderersViewer.getTree().setLayoutData(gd);
         blockRenderersViewer.setLabelProvider(new ColumnLabelProvider()
         {
             @Override
@@ -183,12 +188,16 @@ public class DataBlockServiceSelectionPage extends WizardPage
             }
 
         });
-
-        blockRenderersViewer.setContentProvider(new IStructuredContentProvider()
+        
+        
+        blockRenderersViewer.setAutoExpandLevel(3);
+       
+        blockRenderersViewer.setContentProvider(new ITreeContentProvider()
         {
-
+            List<EJPluginRenderer> renderers;
             public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
             {
+                 
             }
 
             public void dispose()
@@ -197,8 +206,25 @@ public class DataBlockServiceSelectionPage extends WizardPage
 
             public Object[] getElements(Object inputElement)
             {
-                List<EJPluginRenderer> renderers = wizardContext.getBlockRenderer();
-                Collections.sort(renderers,new Comparator<EJPluginRenderer>()
+                renderers = wizardContext.getBlockRenderer();
+                List<String>  groups = new ArrayList<String>();
+                
+                List<EJPluginRenderer> other = new ArrayList<EJPluginRenderer>();
+                
+                for (EJPluginRenderer renderer : renderers)
+                {
+                    if(renderer.getGroup()!=null && !renderer.getGroup().isEmpty())
+                    {
+                        if(!groups.contains(renderer.getGroup()))
+                        groups.add(renderer.getGroup());
+                    }
+                    else
+                        other.add(renderer); 
+                        
+                    
+                }
+                
+                Collections.sort(other,new Comparator<EJPluginRenderer>()
                 {
 
                     public int compare(EJPluginRenderer o1, EJPluginRenderer o2)
@@ -207,18 +233,75 @@ public class DataBlockServiceSelectionPage extends WizardPage
                         return o1.getAssignedName().compareTo(o2.getAssignedName());
                     }
                 });
-                return renderers.toArray();
+               
+                List<Object> all = new ArrayList<Object>();
+                all.addAll(groups);
+                all.addAll(other);
+                
+                return all.toArray();
+            }
+
+            public Object[] getChildren(Object parentElement)
+            {
+                if(parentElement instanceof String)
+                {
+                    List<EJPluginRenderer> group = new ArrayList<EJPluginRenderer>();
+                    
+                    for (EJPluginRenderer renderer : renderers)
+                    {
+                        if(parentElement.equals(renderer.getGroup()))
+                        {
+                            group.add(renderer);
+                        }
+                    }
+                    
+                    Collections.sort(group,new Comparator<EJPluginRenderer>()
+                    {
+
+                        public int compare(EJPluginRenderer o1, EJPluginRenderer o2)
+                        {
+                         
+                            return o1.getAssignedName().compareTo(o2.getAssignedName());
+                        }
+                    });
+                    
+                    return group.toArray();
+                }
+                return new  Object[0];
+            }
+
+            public Object getParent(Object element)
+            {
+                if(element instanceof EJPluginRenderer)
+                    return ((EJPluginRenderer)element).getGroup();
+                return null;
+            }
+
+            public boolean hasChildren(Object element)
+            {
+                return element instanceof String;
             }
         });
-
+        blockRenderersViewer.getTree().setItemCount(12);
+        
         blockRenderersViewer.addSelectionChangedListener(new ISelectionChangedListener()
         {
 
             public void selectionChanged(SelectionChangedEvent event)
             {
 
-                if (blockRenderersViewer.getSelection() instanceof IStructuredSelection)
-                    blockRenderer = (EJPluginRenderer) ((IStructuredSelection) blockRenderersViewer.getSelection()).getFirstElement();
+                if (blockRenderersViewer.getSelection() instanceof IStructuredSelection  )
+                {
+                    Object firstElement = ((IStructuredSelection) blockRenderersViewer.getSelection()).getFirstElement();
+                    if(firstElement instanceof EJPluginRenderer)
+                    {
+                        blockRenderer = (EJPluginRenderer) firstElement; 
+                        blockRenderersViewer.getTree().hideDropDown();
+                    }
+                    else
+                        blockRenderer = null;
+                    
+                }
                 doUpdateStatus();
             }
         });
@@ -231,13 +314,14 @@ public class DataBlockServiceSelectionPage extends WizardPage
         if (blockRenderersViewer != null)
         {
             blockRenderersViewer.setInput(new Object());
-            blockRenderersViewer.getCombo().select(-1);
-            if (blockRenderersViewer.getCombo().getItemCount() > 0 && blockRenderersViewer.getCombo().getSelectionIndex() == -1)
-            {
-                blockRenderersViewer.getCombo().select(0);
-                if (blockRenderersViewer.getSelection() instanceof IStructuredSelection)
-                    blockRenderer = (EJPluginRenderer) ((IStructuredSelection) blockRenderersViewer.getSelection()).getFirstElement();
-            }
+            //TODO: select first 
+//            blockRenderersViewer.getTree().select(-1);
+//            if (blockRenderersViewer.getCombo().getItemCount() > 0 && blockRenderersViewer.getCombo().getSelectionIndex() == -1)
+//            {
+//                blockRenderersViewer.getCombo().select(0);
+//                if (blockRenderersViewer.getSelection() instanceof IStructuredSelection)
+//                    blockRenderer = (EJPluginRenderer) ((IStructuredSelection) blockRenderersViewer.getSelection()).getFirstElement();
+//            }
             doUpdateStatus();
         }
     }

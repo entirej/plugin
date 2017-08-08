@@ -31,6 +31,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -82,10 +85,23 @@ public class CTreeCombo extends Composite {
 	public CTreeCombo(Composite parent, int style) {
 		super (parent, style = checkStyle (style));
 
-		int textStyle = SWT.SINGLE;
+		GridLayout layout = new GridLayout(2,false);
+		layout.horizontalSpacing=0;
+		layout.marginWidth=0;
+		layout.marginHeight=0;
+		layout.marginTop=0;
+		layout.marginBottom=0;
+		layout.marginLeft=0;
+		layout.marginRight=0;
+		layout.verticalSpacing = 0;
+		
+        setLayout(layout);
+		int textStyle = SWT.NONE;
 		if ((style & SWT.READ_ONLY) != 0) textStyle |= SWT.READ_ONLY;
 		if ((style & SWT.FLAT) != 0) textStyle |= SWT.FLAT;
 		text = new Text (this, textStyle);
+	
+		text.setLayoutData(new GridData(GridData.FILL_BOTH|GridData.GRAB_HORIZONTAL));
 		int arrowStyle = SWT.ARROW | SWT.DOWN;
 		if ((style & SWT.FLAT) != 0) arrowStyle |= SWT.FLAT;
 		arrow = new Button (this, arrowStyle);
@@ -399,6 +415,8 @@ public class CTreeCombo extends Composite {
 //		int itemCount = tree.getItemCount ();
 //		itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount);
 		int itemHeight = tree.getItemHeight () * itemCount;
+		if(itemHeight<250)
+		    itemHeight = 250;
 		Point listSize = tree.computeSize (SWT.DEFAULT, itemHeight, false);
 		tree.setBounds (1, 1, Math.max (size.x - 2, listSize.x), listSize.y);
 
@@ -1026,5 +1044,11 @@ public class CTreeCombo extends Composite {
 
 	public void clearAll(boolean b) {
 		tree.clearAll(b);
+	}
+	
+	public void hideDropDown()
+	{
+	    if(popup!=null && popup.isVisible())
+	        popup.setVisible(false);
 	}
 }
