@@ -153,6 +153,7 @@ public class RendererTreeSection extends AbstractNodeTreeSection
             {
                 EJPluginEntireJProperties entireJProperties = editor.getEntireJProperties();
                 EJPluginRenderer def = new EJPluginRenderer(editor.getEntireJProperties(), "", type);
+                def.setGroup("User Defined");
                 EJPluginAssignedRendererContainer container = null;
                 switch (type)
                 {
