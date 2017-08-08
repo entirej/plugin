@@ -45,6 +45,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -52,6 +53,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
@@ -174,6 +177,8 @@ public class DataBlockServiceSelectionPage extends WizardPage
         gd.grabExcessHorizontalSpace = false;
         gd.horizontalSpan = 2;
         blockRenderersViewer.getTree().setLayoutData(gd);
+         final Image  GROUP = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+        
         blockRenderersViewer.setLabelProvider(new ColumnLabelProvider()
         {
             @Override
@@ -185,6 +190,16 @@ public class DataBlockServiceSelectionPage extends WizardPage
                     return String.format("%s", renderer.getAssignedName(), renderer.getRendererClassName());
                 }
                 return super.getText(element);
+            }
+            
+            @Override
+            public Image getImage(Object element)
+            {
+                if(element instanceof String)
+                {
+                    return GROUP;
+                }
+                return super.getImage(element);
             }
 
         });
@@ -223,6 +238,31 @@ public class DataBlockServiceSelectionPage extends WizardPage
                         
                     
                 }
+                
+                Collections.sort(groups,new Comparator<String>()
+                {
+
+                    public int compare(String o1, String o2)
+                    {
+                         if("Standard Renderers".equals(o1))
+                         {
+                             return -1;
+                         }
+                         if("Standard Renderers".equals(o2))
+                         {
+                             return 1;
+                         }
+                         if("Graph Renderers".equals(o1))
+                         {
+                             return -1;
+                         }
+                         if("Graph Renderers".equals(o2))
+                         {
+                             return 1;
+                         }
+                        return 0;
+                    }
+                });
                 
                 Collections.sort(other,new Comparator<EJPluginRenderer>()
                 {
