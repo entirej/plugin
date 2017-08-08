@@ -20,6 +20,8 @@ package org.entirej.ide.ui.editors.prop;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.jface.action.Action;
@@ -103,7 +105,7 @@ public class RendererTreeSection extends AbstractNodeTreeSection
                 if (props != null)
                 {
                     GroupNode formNode = new GroupNode("Form Renderers", "Application defined form renderers", props.getFormRendererContainer());
-                    GroupNode blockNode = new GroupNode("Block Renderers", "Application defined block renderers", props.getBlockRendererContainer());
+                    DefindGroup blockNode = new DefindGroup("Block Renderers", "Application defined block renderers", props.getBlockRendererContainer());
                     GroupNode itemNode = new GroupNode("Item Renderers", "Application defined item renderers", props.getItemRendererContainer());
                     GroupNode lovNode = new GroupNode("Lov Renderers", "Application defined lov renderers", props.getLovRendererContainer());
                     // GroupNode menuNode = new GroupNode("Menu Renderers",
@@ -186,7 +188,65 @@ public class RendererTreeSection extends AbstractNodeTreeSection
         };
     }
 
-    private class GroupNode extends AbstractNode<EJPluginAssignedRendererContainer> implements  NodeMoveProvider
+    private class SubGroup extends GroupNode
+    {
+
+        public SubGroup(String lable, String tooltip, EJPluginAssignedRendererContainer source)
+        {
+            super(lable, tooltip, source);
+        }
+
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<RendererNode> nodes = new ArrayList<RendererNode>();
+
+            for (EJPluginRenderer renderer : source.getAllRenderers())
+            {
+                if (getName().equals(renderer.getGroup()))
+                    nodes.add(new RendererNode(this, renderer));
+            }
+
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+
+    }
+
+    private class DefindGroup extends GroupNode
+    {
+
+        public DefindGroup(String lable, String tooltip, EJPluginAssignedRendererContainer source)
+        {
+            super(lable, tooltip, source);
+        }
+
+        @Override
+        public AbstractNode<?>[] getChildren()
+        {
+            List<AbstractNode<?>> nodes = new ArrayList<AbstractNode<?>>();
+            Set<String> groups = new TreeSet<String>();
+
+            for (EJPluginRenderer renderer : source.getAllRenderers())
+            {
+                if (renderer.getGroup() != null && !renderer.getGroup().isEmpty())
+                {
+                    if (!groups.contains(renderer.getGroup()))
+                    {
+                        nodes.add(new SubGroup(renderer.getGroup(), renderer.getGroup(), source));
+                        groups.add(renderer.getGroup());
+                    }
+                }
+                else
+
+                nodes.add(new RendererNode(this, renderer));
+            }
+
+            return nodes.toArray(new AbstractNode<?>[0]);
+        }
+
+    }
+
+    private class GroupNode extends AbstractNode<EJPluginAssignedRendererContainer> implements NodeMoveProvider
     {
         private final Image  GROUP = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
         private final String lable;
@@ -243,8 +303,8 @@ public class RendererTreeSection extends AbstractNodeTreeSection
 
         public boolean canMove(Neighbor relation, Object source)
         {
-           
-            return source instanceof EJPluginRenderer && this.source.getRendererType()== (((EJPluginRenderer)source).getRendererType());
+
+            return source instanceof EJPluginRenderer && this.source.getRendererType() == (((EJPluginRenderer) source).getRendererType());
         }
 
         public void move(NodeContext context, Neighbor neighbor, Object source, boolean before)
@@ -259,14 +319,14 @@ public class RendererTreeSection extends AbstractNodeTreeSection
                     if (!before)
                         index++;
 
-                    this.source.addRendererAssignment(index,(EJPluginRenderer)source);
+                    this.source.addRendererAssignment(index, (EJPluginRenderer) source);
                 }
             }
             else
-                this.source.addRendererAssignment((EJPluginRenderer)source);
-            
+                this.source.addRendererAssignment((EJPluginRenderer) source);
+
         }
-        
+
         public AbstractOperation moveOperation(NodeContext context, Neighbor neighbor, Object source, boolean before)
         {
             // TODO Auto-generated method stub
@@ -311,7 +371,7 @@ public class RendererTreeSection extends AbstractNodeTreeSection
                     }
 
                 }
-                
+
                 public AbstractOperation deleteOperation(boolean cleanup)
                 {
                     // TODO Auto-generated method stub

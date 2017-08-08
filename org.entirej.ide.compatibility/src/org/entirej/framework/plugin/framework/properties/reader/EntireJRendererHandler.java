@@ -165,6 +165,7 @@ public class EntireJRendererHandler extends EntireJTagHandler
         if (name != null && rendererDefClassName != null)
         {
             EJPluginRenderer def = _properties.getFormRendererContainer().getRenderer(name);
+            def.setGroup(attributes.getValue("group"));
             if (def != null) def.setRendererDefinitionClassName(rendererDefClassName, false);
         }
     }
@@ -177,6 +178,7 @@ public class EntireJRendererHandler extends EntireJTagHandler
         if (name != null && rendererDefClassName != null)
         {
             EJPluginRenderer def = _properties.getBlockRendererContainer().getRenderer(name);
+            def.setGroup(attributes.getValue("group"));
             if (def != null) def.setRendererDefinitionClassName(rendererDefClassName, false);
         }
     }
@@ -189,6 +191,7 @@ public class EntireJRendererHandler extends EntireJTagHandler
         if (name != null && rendererDefClassName != null)
         {
             EJPluginRenderer def = _properties.getItemRendererContainer().getRenderer(name);
+            def.setGroup(attributes.getValue("group"));
             if (def != null) def.setRendererDefinitionClassName(rendererDefClassName, false);
         }
     }
@@ -201,6 +204,7 @@ public class EntireJRendererHandler extends EntireJTagHandler
         if (name != null && rendererDefClassName != null)
         {
             EJPluginRenderer def = _properties.getLovRendererContainer().getRenderer(name);
+            def.setGroup(attributes.getValue("group"));
             if (def != null) def.setRendererDefinitionClassName(rendererDefClassName, false);
         }
     }
@@ -213,6 +217,7 @@ public class EntireJRendererHandler extends EntireJTagHandler
         if (name != null && rendererDefClassName != null)
         {
             EJPluginRenderer def = _properties.getMenuRendererContainer().getRenderer(name);
+            def.setGroup(attributes.getValue("group"));
             if (def != null) def.setRendererDefinitionClassName(rendererDefClassName, false);
         }
     }
@@ -224,6 +229,7 @@ public class EntireJRendererHandler extends EntireJTagHandler
         if (name != null && rendererDefClassName != null)
         {
             EJPluginRenderer def = _properties.getAppComponentRendererContainer().getRenderer(name);
+            def.setGroup(attributes.getValue("group"));
             if (def != null) def.setRendererDefinitionClassName(rendererDefClassName, false);
         }
     }

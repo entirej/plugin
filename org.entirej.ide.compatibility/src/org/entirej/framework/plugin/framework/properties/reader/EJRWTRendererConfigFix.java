@@ -55,11 +55,11 @@ public class EJRWTRendererConfigFix
         mappingBlock.add(new Entry("HTMLMultiRecord", "org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlTableBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTHtmlTableBlockRendererDefinition"));
         
-        mappingBlock.add(new Entry("LineChatRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTLineChartRecordBlockRenderer",
+        mappingBlock.add(new Entry("LineChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTLineChartRecordBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTLineChartRecordBlockDefinition"));
-        mappingBlock.add(new Entry("PieChatRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTPieChartRecordBlockRenderer",
+        mappingBlock.add(new Entry("PieChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTPieChartRecordBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTPieChartRecordBlockDefinition"));
-        mappingBlock.add(new Entry("BarChatRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTBarChartRecordBlockRenderer",
+        mappingBlock.add(new Entry("BarChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTBarChartRecordBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTBarChartRecordBlockDefinition"));
         
         // items
@@ -70,17 +70,38 @@ public class EJRWTRendererConfigFix
                 "org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTStackedItemRendererDefinition"));
     }
     
+    
+    String getBlockRenderGroup(String id)
+    {
+        
+        if("SingleRecord".equals(id)||"MultiRecord".equals(id)||"TreeTableRecord".equals(id)||"HTMLMultiRecord".equals(id)||"TreeRecord".equals(id))
+        {
+            return "Standard Renderers";
+        }
+        if("LineChartRecord".equals(id)||"PieChartRecord".equals(id)||"BarChartRecord".equals(id))
+        {
+            return "Graph Renderers";
+        }
+       
+        return "User Defined";
+                
+    }
+    
+    
     public boolean config(EJPluginEntireJProperties properties)
     {
         boolean confied = false;
         // check block
         Collection<EJPluginRenderer> blockRenderers = properties.getBlockRendererContainer().getAllRenderers();
         
+        
+        
         BLOCK_ENTRES: 
         for (Entry entry : mappingBlock)
         {
             for (EJPluginRenderer renderer : blockRenderers)
             {
+                
                 if (renderer.getRendererDefinitionClassName().equals(entry.def))
                 {
                     
@@ -91,6 +112,17 @@ public class EJRWTRendererConfigFix
             properties.getBlockRendererContainer().addRendererAssignment(
                     new EJPluginRenderer(properties, entry.name, EJRendererType.BLOCK, entry.def, entry.renderer));
             confied = true;
+        }
+        
+        blockRenderers = properties.getBlockRendererContainer().getAllRenderers();
+        for (EJPluginRenderer renderer : blockRenderers)
+        {
+            String group = getBlockRenderGroup(renderer.getAssignedName());
+            if (!group.equals(renderer.getGroup()))
+            {
+                renderer.setGroup(group);
+                confied = true;
+            }
         }
         //check items
         Collection<EJPluginRenderer> itemRenderers = properties.getItemRendererContainer().getAllRenderers();
@@ -114,7 +146,7 @@ public class EJRWTRendererConfigFix
         
         if(confied)
         {
-            properties.setVersion("2.5");
+            properties.setVersion("2.6");
         }
         return confied;
     }
@@ -128,7 +160,8 @@ public class EJRWTRendererConfigFix
                         || properties.getVersion().equals("2.1")
                         ||  properties.getVersion().equals("2.2")
                         ||  properties.getVersion().equals("2.3")
-                        ||  properties.getVersion().equals("2.4"));
+                        ||  properties.getVersion().equals("2.4")
+                        ||  properties.getVersion().equals("2.5"));
     }
     
 }

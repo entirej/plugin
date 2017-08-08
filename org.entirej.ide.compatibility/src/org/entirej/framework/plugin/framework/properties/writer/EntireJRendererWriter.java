@@ -62,6 +62,7 @@ public class EntireJRendererWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "renderer");
                         {
                             writePROPERTY(buffer, "name", property.getAssignedName());
+                            writePROPERTY(buffer, "group", property.getGroup());
                             // writePROPERTY(buffer, "rendererClassName",
                             // property.getRendererClassName());
                             writePROPERTY(buffer, "rendererDefinitionClassName", property.getRendererDefinitionClassName());
@@ -81,6 +82,7 @@ public class EntireJRendererWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "renderer");
                         {
                             writePROPERTY(buffer, "name", property.getAssignedName());
+                            writePROPERTY(buffer, "group", property.getGroup());
                             // writePROPERTY(buffer, "rendererClassName",
                             // property.getRendererClassName());
                             writePROPERTY(buffer, "rendererDefinitionClassName", property.getRendererDefinitionClassName());
@@ -101,6 +103,7 @@ public class EntireJRendererWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "renderer");
                         {
                             writePROPERTY(buffer, "name", property.getAssignedName());
+                            writePROPERTY(buffer, "group", property.getGroup());
                             // writePROPERTY(buffer, "rendererClassName",
                             // property.getRendererClassName());
                             writePROPERTY(buffer, "rendererDefinitionClassName", property.getRendererDefinitionClassName());
@@ -123,6 +126,7 @@ public class EntireJRendererWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "renderer");
                         {
                             writePROPERTY(buffer, "name", property.getAssignedName());
+                            writePROPERTY(buffer, "group", property.getGroup());
                             // writePROPERTY(buffer, "rendererClassName",
                             // property.getRendererClassName());
                             writePROPERTY(buffer, "rendererDefinitionClassName", property.getRendererDefinitionClassName());
@@ -141,6 +145,7 @@ public class EntireJRendererWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "renderer");
                         {
                             writePROPERTY(buffer, "name", renderer.getAssignedName());
+                            writePROPERTY(buffer, "group", renderer.getGroup());
                             // writePROPERTY(buffer, "rendererClassName",
                             // renderer.getRendererClassName());
                             writePROPERTY(buffer, "rendererDefinitionClassName", renderer.getRendererDefinitionClassName());
@@ -159,6 +164,7 @@ public class EntireJRendererWriter extends AbstractXmlWriter
                         startOpenTAG(buffer, "renderer");
                         {
                             writePROPERTY(buffer, "name", renderer.getAssignedName());
+                            writePROPERTY(buffer, "group", renderer.getGroup());
                             // writePROPERTY(buffer, "rendererClassName",
                             // renderer.getRendererClassName());
                             writePROPERTY(buffer, "rendererDefinitionClassName", renderer.getRendererDefinitionClassName());

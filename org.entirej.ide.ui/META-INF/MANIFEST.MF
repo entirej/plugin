@@ -31,6 +31,8 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ClassPath: .
 Bundle-Activator: org.entirej.ide.ui.EJUIPlugin
 Export-Package: org.entirej.ide.ui,
+ org.entirej.ide.ui.common.viewers,
+ org.entirej.ide.ui.common.widgets,
  org.entirej.ide.ui.editors,
  org.entirej.ide.ui.editors.descriptors,
  org.entirej.ide.ui.editors.handlers,

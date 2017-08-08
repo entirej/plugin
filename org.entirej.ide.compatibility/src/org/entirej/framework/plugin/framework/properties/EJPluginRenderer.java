@@ -50,9 +50,10 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
     /**
      * 
      */
-    private static final long serialVersionUID = 4632592074671794254L;
+    private static final long         serialVersionUID = 4632592074671794254L;
     private EJPluginEntireJProperties _entireJProperties;
     private String                    _name;
+    private String                    _group;
     private String                    _rendererDefinitionClassName;
     private String                    _rendererClassName;
     private EJRendererType            _rendererType;
@@ -65,6 +66,16 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
         _name = name;
         _dataTypeNames = new ArrayList<String>();
         _rendererType = rendererType;
+    }
+    
+    public void setGroup(String _group)
+    {
+        this._group = _group;
+    }
+    
+    public String getGroup()
+    {
+        return _group;
     }
     
     public EJPluginRenderer(EJPluginEntireJProperties entireJProperties, String name, EJRendererType rendererType, String rendererDefClassName,
@@ -387,8 +398,8 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
         }
         catch (ClassNotFoundException e)
         {
-            EJCoreLog.logWarnningMessage("Unable to load class: " + e.getMessage()
-                    + ".\nPlease ensure the class path has been set correctly and the given class exists");
+            EJCoreLog.logWarnningMessage(
+                    "Unable to load class: " + e.getMessage() + ".\nPlease ensure the class path has been set correctly and the given class exists");
             
         }
         return rendererDefinitionClass;
