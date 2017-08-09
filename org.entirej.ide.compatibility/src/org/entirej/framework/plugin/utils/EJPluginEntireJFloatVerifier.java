@@ -27,7 +27,7 @@ public class EJPluginEntireJFloatVerifier implements VerifyListener
         String value = e.text;
         
         // Backspace and Delete
-        if (e.keyCode == 8 || e.keyCode == 127)
+        if (e.keyCode == 8 || e.keyCode == 127 )
         {
             e.doit = true;
         }
@@ -41,6 +41,12 @@ public class EJPluginEntireJFloatVerifier implements VerifyListener
             {
                 try
                 {
+                    if(value.startsWith(".") )
+                        value+="0";
+                    if(value.endsWith(".") )
+                        value = value.substring(0, value.length()-1);
+                    
+                    
                     float floatValue = Float.parseFloat(value);
                     
                     if (floatValue >= 0)

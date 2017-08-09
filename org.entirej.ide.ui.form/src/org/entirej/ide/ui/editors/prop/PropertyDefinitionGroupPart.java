@@ -690,6 +690,10 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
                     @Override
                     public void setValue(String value)
                     {
+                        if(value.startsWith(".") )
+                            value+="0";
+                        if(value.endsWith(".") )
+                            value = value.substring(0, value.length()-1);
                         extensionProperties.setPropertyValue(groupName, value);
                         editor.setDirty(true);
                     }
