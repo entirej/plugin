@@ -225,6 +225,10 @@ public class AppLayoutHandler extends EntireJTagHandler
                     
                     item.setName(value);
                 }
+                if (name.equals("title"))
+                {
+                    item.setTitle(value);
+                }
                 else if (name.equals("fill"))
                 {
                     FILL fill = FILL.valueOf(value);

@@ -360,6 +360,7 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
         writePROPERTY(buffer, "type", item.getType().name());
         closeOpenTAG(buffer);
         writeStringTAG(buffer, "name", item.getName());
+        writeStringTAG(buffer, "title", item.getTitle());
         writeStringTAG(buffer, "fill", item.getFill().name());
         writeStringTAG(buffer, "grab", item.getGrab().name());
         writeIntTAG(buffer, "hHint", item.getHintHeight());
