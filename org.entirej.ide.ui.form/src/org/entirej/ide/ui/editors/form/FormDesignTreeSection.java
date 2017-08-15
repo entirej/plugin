@@ -68,6 +68,8 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -1217,6 +1219,22 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                 blockRendererDefinition
                                         .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit())
                                         .addItemWidgetChosenListener(chosenListener);
+                           
+                           MouseAdapter mouseAdapter = new MouseAdapter()
+                           {
+                               @Override
+                               public void mouseDoubleClick(MouseEvent e)
+                               {
+                                   selectNodes(true, source);
+                               }
+                           };
+                           
+                           
+                           Control[] children = layoutBody.getChildren();
+                           for (Control control : children)
+                           {
+                               control.addMouseListener(mouseAdapter);
+                           }
                         }
                         else
                         {

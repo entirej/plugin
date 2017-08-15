@@ -36,6 +36,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -307,6 +309,23 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                                 component.getPluginBlockProperties().getBlockRendererDefinition()
                                         .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit())
                                         .addItemWidgetChosenListener(chosenListener);
+                                
+                                MouseAdapter mouseAdapter = new MouseAdapter()
+                                {
+                                    @Override
+                                    public void mouseDoubleClick(MouseEvent e)
+                                    {
+                                        selectNodes(true, source);
+                                    }
+                                };
+                                
+                                
+                                Control[] children = layoutBody.getChildren();
+                                for (Control control : children)
+                                {
+                                    control.addMouseListener(mouseAdapter);
+                                }
+
                             }
                             else
                             {
