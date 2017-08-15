@@ -740,7 +740,25 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
-            AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Group Name")
+            AbstractTextDescriptor nameKeyDescriptor = new AbstractTextDescriptor("Name")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    group.setName(value);
+                    editor.setDirty(true);
+                    refresh(GroupNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return group.getName();
+                }
+            };
+            nameKeyDescriptor.setRequired(true);
+            AbstractTextDescriptor nameDescriptor = new AbstractTextDescriptor("Group Title")
             {
 
                 @Override
@@ -850,7 +868,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                     return getItemDescriptors().toArray(new AbstractDescriptor<?>[0]);
                 }
             };
-            return new AbstractDescriptor<?>[] { nameDescriptor, borderDescriptor, hideMarginDescriptor, colDescriptor, layoutGroupDescriptor };
+            return new AbstractDescriptor<?>[] { nameKeyDescriptor,nameDescriptor, borderDescriptor, hideMarginDescriptor, colDescriptor, layoutGroupDescriptor };
         }
 
         public boolean canMove(Neighbor relation, Object source)
@@ -1008,6 +1026,25 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            
+            AbstractTextDescriptor nameKeyDescriptor = new AbstractTextDescriptor("Name")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    group.setName(value);
+                    editor.setDirty(true);
+                    refresh(SplitNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return group.getName();
+                }
+            };
+            nameKeyDescriptor.setRequired(true);
             AbstractDropDownDescriptor<ORIENTATION> orientationDescriptor = new AbstractDropDownDescriptor<ORIENTATION>("Orientation")
             {
 
@@ -1048,12 +1085,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             if(isSupportLayoutSettings())
             {
 
-                return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+                return new AbstractDescriptor<?>[] {nameKeyDescriptor, orientationDescriptor, layoutGroupDescriptor };
             }
             else
             {
 
-                return new AbstractDescriptor<?>[] { orientationDescriptor };
+                return new AbstractDescriptor<?>[] {nameKeyDescriptor, orientationDescriptor };
             }
         }
 
@@ -1212,6 +1249,25 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
+            
+            AbstractTextDescriptor nameKeyDescriptor = new AbstractTextDescriptor("Name")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    group.setName(value);
+                    editor.setDirty(true);
+                    refresh(TabNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return group.getName();
+                }
+            };
+            nameKeyDescriptor.setRequired(true);
             AbstractDropDownDescriptor<TabGroup.ORIENTATION> orientationDescriptor = new AbstractDropDownDescriptor<TabGroup.ORIENTATION>("Orientation")
             {
 
@@ -1252,12 +1308,12 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             if(isSupportLayoutSettings())
             {
 
-                return new AbstractDescriptor<?>[] { orientationDescriptor, layoutGroupDescriptor };
+                return new AbstractDescriptor<?>[] {nameKeyDescriptor, orientationDescriptor, layoutGroupDescriptor };
             }
             else
             {
 
-                return new AbstractDescriptor<?>[] { orientationDescriptor };
+                return new AbstractDescriptor<?>[] {nameKeyDescriptor, orientationDescriptor };
             }
         }
 
@@ -1324,6 +1380,24 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         public AbstractDescriptor<?>[] getNodeDescriptors()
         {
 
+            AbstractTextDescriptor nameKeyDescriptor = new AbstractTextDescriptor("Name")
+            {
+
+                @Override
+                public void setValue(String value)
+                {
+                    component.setName(value);
+                    editor.setDirty(true);
+                    refresh(ComponentNode.this);
+                }
+
+                @Override
+                public String getValue()
+                {
+                    return component.getName();
+                }
+            };
+            nameKeyDescriptor.setRequired(true);
             AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer",
                     "Component renderer defined in application renderers.")
             {
@@ -1408,11 +1482,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                         };
                         if(isSupportLayoutSettings())
                         {
-                            return new AbstractDescriptor<?>[] { rendererDescriptor, rendererGroupDescriptor, layoutGroupDescriptor };
+                            return new AbstractDescriptor<?>[] {nameKeyDescriptor, rendererDescriptor, rendererGroupDescriptor, layoutGroupDescriptor };
                         }
                         else
                         {
-                            return new AbstractDescriptor<?>[] { rendererDescriptor, rendererGroupDescriptor };
+                            return new AbstractDescriptor<?>[] {nameKeyDescriptor, rendererDescriptor, rendererGroupDescriptor };
                         }
                         
                     }
@@ -1420,11 +1494,11 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             }
             if(isSupportLayoutSettings())
             {
-                return new AbstractDescriptor<?>[] { rendererDescriptor, layoutGroupDescriptor };
+                return new AbstractDescriptor<?>[] {nameKeyDescriptor, rendererDescriptor, layoutGroupDescriptor };
             }
             else
             {
-                return new AbstractDescriptor<?>[] { rendererDescriptor };
+                return new AbstractDescriptor<?>[] {nameKeyDescriptor, rendererDescriptor };
             }
            
         }

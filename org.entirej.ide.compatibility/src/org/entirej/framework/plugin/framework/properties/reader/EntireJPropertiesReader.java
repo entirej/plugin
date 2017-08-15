@@ -28,15 +28,17 @@ import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.entirej.framework.core.properties.EJCoreLayoutItem;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.writer.EntireJPropertiesWriter;
 import org.xml.sax.SAXException;
 
 public class EntireJPropertiesReader
 {
-    public static void readProperties(EJPluginEntireJProperties newProperties, IJavaProject project, InputStream inStream, IFile file,  IFile rfile)
+    public static void readProperties(EJPluginEntireJProperties newProperties, IJavaProject project, InputStream inStream, IFile file, IFile rfile)
             throws EJDevFrameworkException
     {
         try
@@ -60,8 +62,8 @@ public class EntireJPropertiesReader
                 try
                 {
                     EJRWTEJApplicationPropertiesFixV1 propertiesFix = new EJRWTEJApplicationPropertiesFixV1();
-                    newProperties.setApplicationManagerDefinitionClassName(propertiesFix.fixRendererDefName(newProperties
-                            .getApplicationManagerDefinitionClassName()));
+                    newProperties.setApplicationManagerDefinitionClassName(
+                            propertiesFix.fixRendererDefName(newProperties.getApplicationManagerDefinitionClassName()));
                     List<EJPluginRenderer> allPluginRenderers = newProperties.getAllPluginRenderers();
                     for (EJPluginRenderer ejPluginRenderer : allPluginRenderers)
                     {
@@ -79,7 +81,7 @@ public class EntireJPropertiesReader
                 }
                 
             }
-            // try automatic renderer settings fix 
+            // try automatic renderer settings fix
             if (EJRWTRendererConfigFix.isRWTCF(newProperties))
             {
                 
@@ -87,7 +89,7 @@ public class EntireJPropertiesReader
                 {
                     EJRWTRendererConfigFix rendererFix = new EJRWTRendererConfigFix();
                     boolean configed = rendererFix.config(newProperties);
-                    if(configed)
+                    if (configed)
                     {
                         new EntireJPropertiesWriter().saveEntireJProperitesFile(newProperties, file, null);
                     }
@@ -106,7 +108,7 @@ public class EntireJPropertiesReader
                 {
                     EJFXRendererConfigFix rendererFix = new EJFXRendererConfigFix();
                     boolean configed = rendererFix.config(newProperties);
-                    if(configed)
+                    if (configed)
                     {
                         new EntireJPropertiesWriter().saveEntireJProperitesFile(newProperties, file, null);
                     }
@@ -115,6 +117,27 @@ public class EntireJPropertiesReader
                 catch (Exception e)
                 {
                     // ignore
+                }
+                
+            }
+            
+            // fix layout component Names
+            {
+                boolean configed = false;
+                List<EJCoreLayoutItem> layoutItems = EntirejPropertiesUtils.findAll(newProperties.getLayoutContainer());
+                
+                for (EJCoreLayoutItem item : layoutItems)
+                {
+                    if (item.getName() == null || item.getName().trim().isEmpty())
+                    {
+                        item.setName(genName(layoutItems));
+                        configed = true;
+                    }
+                }
+                
+                if (configed)
+                {
+                    new EntireJPropertiesWriter().saveEntireJProperitesFile(newProperties, file, null);
                 }
                 
             }
@@ -134,6 +157,27 @@ public class EntireJPropertiesReader
         }
     }
     
-
+    private static String genName(List<EJCoreLayoutItem> layoutItems)
+    {
+        int index = 0;
+        boolean matchFound = true;
+        String tag = "layout_item_";
+        while (matchFound)
+        {
+            index++;
+            String name = tag + index;
+            matchFound = false;
+            for (EJCoreLayoutItem item : layoutItems)
+            {
+                if (name.equals(item.getName()))
+                {
+                    matchFound = true;
+                    break;
+                }
+            }
+        }
+        
+        return tag + index;
+    }
     
 }

@@ -17,11 +17,17 @@
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
+import org.entirej.framework.core.properties.EJCoreLayoutContainer;
+import org.entirej.framework.core.properties.EJCoreLayoutItem;
+import org.entirej.framework.core.properties.EJCoreLayoutItem.ItemContainer;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesReader;
@@ -62,6 +68,36 @@ public class EntirejPropertiesUtils
         catch (EJDevFrameworkException e)
         {
             throw new CoreException(new Status(IStatus.ERROR, EntireJFrameworkPlugin.PLUGIN_ID, e.getMessage(), e));
+        }
+        
+    }
+    
+    
+    public static List<EJCoreLayoutItem> findAll(EJCoreLayoutContainer container)
+    {
+        List<EJCoreLayoutItem> items = new ArrayList<EJCoreLayoutItem>();
+        
+        List<EJCoreLayoutItem> sub = container.getItems();
+        for (EJCoreLayoutItem item : sub)
+        {
+            items.add(item);
+            findAllItems(item,items);
+        }
+        
+        return items;
+    }
+
+    private static  void findAllItems(EJCoreLayoutItem item, List<EJCoreLayoutItem> items)
+    {
+        if(item instanceof ItemContainer)
+        {
+            ItemContainer container = (ItemContainer) item;
+            List<EJCoreLayoutItem> list = container.getItems();
+            for (EJCoreLayoutItem sub : list)
+            {
+                items.add(sub);
+                findAllItems(sub,items);
+            }
         }
         
     }
