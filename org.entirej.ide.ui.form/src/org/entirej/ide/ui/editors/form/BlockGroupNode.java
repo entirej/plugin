@@ -39,6 +39,8 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -65,6 +67,7 @@ import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.EJDevBlockRendererDefinitionControl;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockWidgetChosenListener;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
@@ -119,32 +122,33 @@ import org.entirej.ide.ui.wizards.service.NewEJPojoServiceWizard;
 
 public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> implements NodeMoveProvider
 {
-    private final FormDesignTreeSection         treeSection;
-    private final AbstractEJFormEditor          editor;
-    private final static Image                  GROUP            = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
-    private final static Image                  BLOCK            = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
-    private final static Image                  BLOCK_MIRROR     = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
-    private final static Image                  BLOCK_MIRROR_REF = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
-    private final static Image                  BLOCK_NTB        = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
-    private final static Image                  BLOCK_NTB_REF    = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
-    private final static Image                  BLOCK_REF        = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
-    private final EJDevItemWidgetChosenListener chosenListener   = new EJDevItemWidgetChosenListener()
-                                                                 {
+    private final FormDesignTreeSection          treeSection;
+    private final AbstractEJFormEditor           editor;
+    private final static Image                   GROUP                          = EJUIImages.getImage(EJUIImages.DESC_MENU_GROUP);
+    private final static Image                   BLOCK                          = EJUIImages.getImage(EJUIImages.DESC_BLOCK);
+    private final static Image                   BLOCK_MIRROR                   = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR);
+    private final static Image                   BLOCK_MIRROR_REF               = EJUIImages.getImage(EJUIImages.DESC_BLOCK_MIRROR_REF);
+    private final static Image                   BLOCK_NTB                      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
+    private final static Image                   BLOCK_NTB_REF                  = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
+    private final static Image                   BLOCK_REF                      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
+    private final EJDevItemWidgetChosenListener  chosenListener                 = new EJDevItemWidgetChosenListener()
+                                                                                {
 
-                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                     {
-                                                                         if (arg0 != null && treeSection != null)
-                                                                         {
+                                                                                    public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
+                                                                                    {
+                                                                                        if (arg0 != null && treeSection != null)
+                                                                                        {
 
-                                                                            
-                                                                                 treeSection.selectNodes(true, arg0);
-                                                                             
-                                                                         }
+                                                                                            treeSection.selectNodes(true, arg0);
 
-                                                                     }
-                                                                 };
+                                                                                        }
 
-    public BlockGroupNode(AbstractNode<?> parent,FormDesignTreeSection treeSection)
+                                                                                    }
+                                                                                };
+
+   
+
+    public BlockGroupNode(AbstractNode<?> parent, FormDesignTreeSection treeSection)
     {
         super(parent, treeSection.getEditor().getFormProperties().getBlockContainer());
         this.editor = treeSection.getEditor();
@@ -265,8 +269,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 {
                     BlockGroup blockGroup = new BlockGroup();
                     blockGroup.setName(dlg.getValue());
-                    
-                    BlockGroupAddOperation addOperation = new BlockGroupAddOperation(treeSection, source, blockGroup, -1); 
+
+                    BlockGroupAddOperation addOperation = new BlockGroupAddOperation(treeSection, source, blockGroup, -1);
                     editor.execute(addOperation);
                 }
             }
@@ -360,16 +364,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             };
         }
 
-        
         @Override
         public Action[] getActions()
         {
 
-            return new Action[] { treeSection.createNewBlockAction(false,source), treeSection.createNewBlockAction(true,source), treeSection.createNewMirrorBlockAction(null,source),
-                    treeSection.createNewRefBlockAction(true,source),  };
+            return new Action[] { treeSection.createNewBlockAction(false, source), treeSection.createNewBlockAction(true, source),
+                    treeSection.createNewMirrorBlockAction(null, source), treeSection.createNewRefBlockAction(true, source), };
         }
-        
-        
+
         @Override
         public INodeRenameProvider getRenameProvider()
         {
@@ -486,33 +488,32 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     {
 
         private AbstractMarkerNodeValidator validator = new AbstractMarkerNodeValidator()
-                                                      {
+        {
 
-                                                          public void refreshNode()
-                                                          {
-                                                              treeSection.refresh(BlockGroupNode.this);
-                                                          }
+            public void refreshNode()
+            {
+                treeSection.refresh(BlockGroupNode.this);
+            }
 
-                                                          @Override
-                                                          public List<IMarker> getMarkers()
-                                                          {
-                                                              List<IMarker> fmarkers = new ArrayList<IMarker>();
+            @Override
+            public List<IMarker> getMarkers()
+            {
+                List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                              IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
-                                                              for (IMarker marker : markers)
-                                                              {
-                                                                  int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                  if ((tag & FormNodeTag.BLOCK) != 0 && source.getName() != null
-                                                                          && source.getName().equals(marker.getAttribute(FormNodeTag.BLOCK_ID, null)))
-                                                                  {
+                IMarker[] markers = editor.getMarkers(EJMarkerFactory.MARKER_ID);
+                for (IMarker marker : markers)
+                {
+                    int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
+                    if ((tag & FormNodeTag.BLOCK) != 0 && source.getName() != null && source.getName().equals(marker.getAttribute(FormNodeTag.BLOCK_ID, null)))
+                    {
 
-                                                                      fmarkers.add(marker);
-                                                                  }
-                                                              }
+                        fmarkers.add(marker);
+                    }
+                }
 
-                                                              return fmarkers;
-                                                          }
-                                                      };
+                return fmarkers;
+            }
+        };
 
         public BlockNode(AbstractNode<?> parent, EJPluginBlockProperties source)
         {
@@ -631,6 +632,23 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                                     source, pContent, editor.getToolkit());
                             addBlockControlToCanvas.addItemWidgetChosenListener(chosenListener);
 
+                           
+                            MouseAdapter mouseAdapter = new MouseAdapter()
+                            {
+                                @Override
+                                public void mouseDoubleClick(MouseEvent e)
+                                {
+                                    treeSection.selectNodes(true, source);
+                                }
+                            };
+                            
+                            
+                            Control[] children = pContent.getChildren();
+                            for (Control control : children)
+                            {
+                                control.addMouseListener(mouseAdapter);
+                            }
+
                         }
                         if (width > 0 && height > 0)
                             previewComposite.setMinSize(width, height);
@@ -695,32 +713,32 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         source.getMainScreenItemGroupDisplayContainer())
                 {
                     private AbstractMarkerNodeValidator svalidator = new AbstractMarkerNodeValidator()
-                                                                   {
+                    {
 
-                                                                       public void refreshNode()
-                                                                       {
-                                                                           treeSection.refresh(BlockNode.this);
-                                                                       }
+                        public void refreshNode()
+                        {
+                            treeSection.refresh(BlockNode.this);
+                        }
 
-                                                                       @Override
-                                                                       public List<IMarker> getMarkers()
-                                                                       {
-                                                                           List<IMarker> fmarkers = new ArrayList<IMarker>();
+                        @Override
+                        public List<IMarker> getMarkers()
+                        {
+                            List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                                           List<IMarker> markers = validator.getMarkers();
-                                                                           for (IMarker marker : markers)
-                                                                           {
-                                                                               int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                               if ((tag & FormNodeTag.MAIN) != 0)
-                                                                               {
+                            List<IMarker> markers = validator.getMarkers();
+                            for (IMarker marker : markers)
+                            {
+                                int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
+                                if ((tag & FormNodeTag.MAIN) != 0)
+                                {
 
-                                                                                   fmarkers.add(marker);
-                                                                               }
-                                                                           }
+                                    fmarkers.add(marker);
+                                }
+                            }
 
-                                                                           return fmarkers;
-                                                                       }
-                                                                   };
+                            return fmarkers;
+                        }
+                    };
 
                     public <S> S getAdapter(Class<S> adapter)
                     {
@@ -767,32 +785,32 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     }
 
                     private AbstractMarkerNodeValidator svalidator = new AbstractMarkerNodeValidator()
-                                                                   {
+                    {
 
-                                                                       public void refreshNode()
-                                                                       {
-                                                                           treeSection.refresh(BlockNode.this);
-                                                                       }
+                        public void refreshNode()
+                        {
+                            treeSection.refresh(BlockNode.this);
+                        }
 
-                                                                       @Override
-                                                                       public List<IMarker> getMarkers()
-                                                                       {
-                                                                           List<IMarker> fmarkers = new ArrayList<IMarker>();
+                        @Override
+                        public List<IMarker> getMarkers()
+                        {
+                            List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                                           List<IMarker> markers = validator.getMarkers();
-                                                                           for (IMarker marker : markers)
-                                                                           {
-                                                                               int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                               if ((tag & FormNodeTag.QUERY) != 0)
-                                                                               {
+                            List<IMarker> markers = validator.getMarkers();
+                            for (IMarker marker : markers)
+                            {
+                                int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
+                                if ((tag & FormNodeTag.QUERY) != 0)
+                                {
 
-                                                                                   fmarkers.add(marker);
-                                                                               }
-                                                                           }
+                                    fmarkers.add(marker);
+                                }
+                            }
 
-                                                                           return fmarkers;
-                                                                       }
-                                                                   };
+                            return fmarkers;
+                        }
+                    };
 
                     public <S> S getAdapter(Class<S> adapter)
                     {
@@ -866,32 +884,32 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     }
 
                     private AbstractMarkerNodeValidator svalidator = new AbstractMarkerNodeValidator()
-                                                                   {
+                    {
 
-                                                                       public void refreshNode()
-                                                                       {
-                                                                           treeSection.refresh(BlockNode.this);
-                                                                       }
+                        public void refreshNode()
+                        {
+                            treeSection.refresh(BlockNode.this);
+                        }
 
-                                                                       @Override
-                                                                       public List<IMarker> getMarkers()
-                                                                       {
-                                                                           List<IMarker> fmarkers = new ArrayList<IMarker>();
+                        @Override
+                        public List<IMarker> getMarkers()
+                        {
+                            List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                                           List<IMarker> markers = validator.getMarkers();
-                                                                           for (IMarker marker : markers)
-                                                                           {
-                                                                               int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                               if ((tag & FormNodeTag.INSET) != 0)
-                                                                               {
+                            List<IMarker> markers = validator.getMarkers();
+                            for (IMarker marker : markers)
+                            {
+                                int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
+                                if ((tag & FormNodeTag.INSET) != 0)
+                                {
 
-                                                                                   fmarkers.add(marker);
-                                                                               }
-                                                                           }
+                                    fmarkers.add(marker);
+                                }
+                            }
 
-                                                                           return fmarkers;
-                                                                       }
-                                                                   };
+                            return fmarkers;
+                        }
+                    };
 
                     public <S> S getAdapter(Class<S> adapter)
                     {
@@ -966,32 +984,32 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     }
 
                     private AbstractMarkerNodeValidator svalidator = new AbstractMarkerNodeValidator()
-                                                                   {
+                    {
 
-                                                                       public void refreshNode()
-                                                                       {
-                                                                           treeSection.refresh(BlockNode.this);
-                                                                       }
+                        public void refreshNode()
+                        {
+                            treeSection.refresh(BlockNode.this);
+                        }
 
-                                                                       @Override
-                                                                       public List<IMarker> getMarkers()
-                                                                       {
-                                                                           List<IMarker> fmarkers = new ArrayList<IMarker>();
+                        @Override
+                        public List<IMarker> getMarkers()
+                        {
+                            List<IMarker> fmarkers = new ArrayList<IMarker>();
 
-                                                                           List<IMarker> markers = validator.getMarkers();
-                                                                           for (IMarker marker : markers)
-                                                                           {
-                                                                               int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
-                                                                               if ((tag & FormNodeTag.UPDATE) != 0)
-                                                                               {
+                            List<IMarker> markers = validator.getMarkers();
+                            for (IMarker marker : markers)
+                            {
+                                int tag = marker.getAttribute(NodeValidateProvider.NODE_TAG, FormNodeTag.NONE);
+                                if ((tag & FormNodeTag.UPDATE) != 0)
+                                {
 
-                                                                                   fmarkers.add(marker);
-                                                                               }
-                                                                           }
+                                    fmarkers.add(marker);
+                                }
+                            }
 
-                                                                           return fmarkers;
-                                                                       }
-                                                                   };
+                            return fmarkers;
+                        }
+                    };
 
                     public <S> S getAdapter(Class<S> adapter)
                     {
@@ -1071,7 +1089,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                     public AbstractOperation deleteOperation(boolean cleanup)
                     {
-                        if(cleanup)
+                        if (cleanup)
                         {
                             return BlockRemoveOperation.createCleanupOperation(treeSection, BlockGroupNode.this.source, source);
                         }
@@ -1126,7 +1144,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         }
                         if (canvas.getType() == EJCanvasType.DRAWER)
                         {
-                            
+
                             for (EJDrawerPageProperties tabPage : canvas.getDrawerPageContainer().getAllDrawerPageProperties())
                             {
                                 if (tabPage.getFirstNavigationalBlock() != null && tabPage.getFirstNavigationalBlock().equals(oldName))
@@ -1148,8 +1166,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         }
 
                     }
-                    List<EJPluginBlockProperties> allBlockProperties = new ArrayList<EJPluginBlockProperties>(source.getFormProperties().getBlockContainer()
-                            .getAllBlockProperties());
+                    List<EJPluginBlockProperties> allBlockProperties = new ArrayList<EJPluginBlockProperties>(
+                            source.getFormProperties().getBlockContainer().getAllBlockProperties());
                     List<EJPluginLovDefinitionProperties> allLovDefinitionProperties = source.getFormProperties().getLovDefinitionContainer()
                             .getAllLovDefinitionProperties();
                     for (EJPluginLovDefinitionProperties lovDefinitionProperties : allLovDefinitionProperties)
@@ -1158,9 +1176,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     }
                     if (source.getFormProperties().getFirstNavigableBlock().equals(oldName))
                     {
-                        
+
                         source.getFormProperties().setFirstNavigableBlock(newName);
-                            
+
                     }
                     for (EJPluginBlockProperties properties : allBlockProperties)
                     {
@@ -1257,9 +1275,9 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
         {
             for (EJPluginBlockProperties childProperties : source.getMirrorChildren())
             {
-                
-                    treeSection.refresh(childProperties);
-                
+
+                treeSection.refresh(childProperties);
+
             }
 
         }
@@ -1329,14 +1347,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             AbstractTextDropDownDescriptor rendererDescriptor = new AbstractTextDropDownDescriptor("Renderer", "The renderer you have chosen for your block")
             {
                 Filter vfilter = new Filter()
-                               {
+                {
 
-                                   public boolean match(int tag, IMarker marker)
-                                   {
+                    public boolean match(int tag, IMarker marker)
+                    {
 
-                                       return (tag & FormNodeTag.RENDERER) != 0;
-                                   }
-                               };
+                        return (tag & FormNodeTag.RENDERER) != 0;
+                    }
+                };
 
                 @Override
                 public String getErrors()
@@ -1386,7 +1404,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     treeSection.refresh(BlockNode.this);
                     if (treeSection.getDescriptorViewer() instanceof AbstractDescriptorPart)
                     {
-                        ((AbstractDescriptorPart)treeSection.getDescriptorViewer()).buildUI(true);
+                        ((AbstractDescriptorPart) treeSection.getDescriptorViewer()).buildUI(true);
                     }
                 }
 
@@ -1403,19 +1421,18 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
             if (supportCanvas())
             {
-                canvasDescriptor = new AbstractTextDropDownDescriptor(
-                        "Canvas",
+                canvasDescriptor = new AbstractTextDropDownDescriptor("Canvas",
                         "Any block displayed on your form requires a block canvas. Click <a href=\"http://docs.entirej.com/display/EJ1/Laying+out+an+EntireJ+Form#LayingoutanEntireJForm-Canvases\">here</a> for more information on EntireJ Canvases")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & FormNodeTag.CANVAS) != 0;
-                                       }
-                                   };
+                            return (tag & FormNodeTag.CANVAS) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1469,8 +1486,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                     public String lableLinkActivator()
                     {
 
-                        EJPluginCanvasProperties canvasProperties = (EJPluginCanvasProperties) EJPluginCanvasRetriever.getCanvasProperties(
-                                editor.getFormProperties(), getValue());
+                        EJPluginCanvasProperties canvasProperties = (EJPluginCanvasProperties) EJPluginCanvasRetriever
+                                .getCanvasProperties(editor.getFormProperties(), getValue());
                         if (canvasProperties != null)
                         {
                             // when finding canvas it need to expand nested
@@ -1608,14 +1625,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 final AbstractTextDescriptor referencedDescriptor = new AbstractTextDescriptor("Referenced Block")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & FormNodeTag.REF) != 0;
-                                       }
-                                   };
+                            return (tag & FormNodeTag.REF) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1704,20 +1721,18 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             }
             else if (source.isControlBlock())
             {
-                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
-                        editor,
-                        "Action Processor",
+                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor",
                         "If you are creating a very large form, then your Form Level Action Processor may be getting a little too large, if this is the case you can split action to each block. EntireJ will always send events to the block level action processor instead of the form level one if it exists. Any block not having its own action processor will be managed by the the form level action processor")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
-                                       }
-                                   };
+                            return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1794,14 +1809,14 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 AbstractTypeDescriptor serivceDescriptor = new AbstractTypeDescriptor(editor, "Block Service")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & FormNodeTag.SERVICE) != 0;
-                                       }
-                                   };
+                            return (tag & FormNodeTag.SERVICE) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1858,20 +1873,18 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                 };
                 serivceDescriptor.setBaseClass(EJBlockService.class.getName());
-                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(
-                        editor,
-                        "Action Processor",
+                AbstractTypeDescriptor actionDescriptor = new AbstractTypeDescriptor(editor, "Action Processor",
                         "If you are creating a very large form, then your Form Level Action Processor may be getting a little too large, if this is the case you can split action to each block. EntireJ will always send events to the block level action processor instead of the form level one if it exists. Any block not having its own action processor will be managed by the the form level action processor")
                 {
                     Filter vfilter = new Filter()
-                                   {
+                    {
 
-                                       public boolean match(int tag, IMarker marker)
-                                       {
+                        public boolean match(int tag, IMarker marker)
+                        {
 
-                                           return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
-                                       }
-                                   };
+                            return (tag & FormNodeTag.ACTION_PROCESSOR) != 0;
+                        }
+                    };
 
                     @Override
                     public String getErrors()
@@ -1913,8 +1926,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 descriptors.add(serivceDescriptor);
                 descriptors.add(actionDescriptor);
 
-                final AbstractTextDescriptor maxResultsDescriptor = new AbstractTextDescriptor(
-                        "Max Results",
+                final AbstractTextDescriptor maxResultsDescriptor = new AbstractTextDescriptor("Max Results",
                         "If your block can handle paging then you can define the maximum amount of rows that should be retrieved by your block for each query. Click <a href=\"http://docs.entirej.com/display/EJ1/Block+Services\">here</a> for more details on block services and their available methods.")
                 {
 
@@ -1964,8 +1976,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         super.addEditorAssist(control);
                     }
                 };
-                final AbstractTextDescriptor pageSizeDescriptor = new AbstractTextDescriptor(
-                        "Page Size",
+                final AbstractTextDescriptor pageSizeDescriptor = new AbstractTextDescriptor("Page Size",
                         "If your block can handle paging then you can define the amount of rows that should be retrieved for each page. Click <a href=\"http://docs.entirej.com/display/EJ1/Block+Services\">here</a> for more details on block services and their available methods.")
                 {
 
@@ -2179,8 +2190,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
             if (rendereProperties != null)
             {
 
-                final EJDevBlockRendererDefinition formRendererDefinition = ExtensionsPropertiesFactory.loadBlockRendererDefinition(
-                        source.getEntireJProperties(), source.getBlockRendererName());
+                final EJDevBlockRendererDefinition formRendererDefinition = ExtensionsPropertiesFactory
+                        .loadBlockRendererDefinition(source.getEntireJProperties(), source.getBlockRendererName());
                 if (formRendererDefinition != null)
                 {
                     final EJPropertyDefinitionGroup definitionGroup = formRendererDefinition.getBlockPropertyDefinitionGroup();
@@ -2210,8 +2221,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                                                     EJPropertyDefinition propertyDefinition)
                                             {
                                                 propertyDefinition.clearValidValues();
-                                                EJBlockRendererDefinition rendererDef = ExtensionsPropertiesFactory.loadBlockRendererDefinition(
-                                                        source.getEntireJProperties(), source.getBlockRendererName());
+                                                EJBlockRendererDefinition rendererDef = ExtensionsPropertiesFactory
+                                                        .loadBlockRendererDefinition(source.getEntireJProperties(), source.getBlockRendererName());
 
                                                 rendererDef.loadValidValuesForProperty(frameworkExtensionProperties, propertyDefinition);
                                             }
@@ -2260,8 +2271,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                             final EJPluginFormProperties formProperties = editor.getFormProperties();
                             final EJPluginBlockProperties blockProperties = source.makeCopy(blockName, false);
 
-                            
-                            
                             blockProperties.setCanvasName(canvas);
                             blockProperties.setBlockRendererName(source.getBlockRendererName(), true);
                             // create items if service is also selected
@@ -2276,8 +2285,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                             }
                             else
                             {
-                                BlockAddOperation addOperation = new BlockAddOperation(treeSection, formProperties.getBlockContainer(),
-                                        blockProperties, -1);
+                                BlockAddOperation addOperation = new BlockAddOperation(treeSection, formProperties.getBlockContainer(), blockProperties, -1);
                                 editor.execute(addOperation);
                             }
 
@@ -2285,8 +2293,8 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
 
                         public List<EJCanvasProperties> getCanvas()
                         {
-                            Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever.retriveAllNonAssignedBlockCanvases(editor
-                                    .getFormProperties());
+                            Collection<EJCanvasProperties> canvasCollection = EJPluginCanvasRetriever
+                                    .retriveAllNonAssignedBlockCanvases(editor.getFormProperties());
                             return new ArrayList<EJCanvasProperties>(canvasCollection);
                         }
 
@@ -2354,8 +2362,7 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 return new BlockAddOperation(treeSection, source, (BlockContainerItem) dSource, index);
             }
         }
-      
-        
+
         return new BlockAddOperation(treeSection, source, (BlockContainerItem) dSource, -1);
     }
 }
