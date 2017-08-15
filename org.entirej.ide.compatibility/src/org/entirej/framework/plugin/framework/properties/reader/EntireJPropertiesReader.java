@@ -130,7 +130,29 @@ public class EntireJPropertiesReader
                 {
                     if (item.getName() == null || item.getName().trim().isEmpty())
                     {
-                        item.setName(genName(layoutItems));
+                        String tag ="layout_item_";
+                        
+                        switch (item.getType())
+                        {
+                            case COMPONENT:
+                                tag ="component_";
+                                break;
+                            case GROUP:
+                                tag ="group_";
+                                break;
+                            case SPLIT:
+                                tag ="split_";
+                                break;
+                            case SPACE:
+                                tag ="space_";
+                                break;
+                            case TAB:
+                                tag ="tab_";
+                                break;
+                           
+                        }
+                        
+                        item.setName(genName(tag,layoutItems));
                         configed = true;
                     }
                 }
@@ -157,11 +179,10 @@ public class EntireJPropertiesReader
         }
     }
     
-    private static String genName(List<EJCoreLayoutItem> layoutItems)
+    private static String genName(String tag,List<EJCoreLayoutItem> layoutItems)
     {
         int index = 0;
         boolean matchFound = true;
-        String tag = "layout_item_";
         while (matchFound)
         {
             index++;

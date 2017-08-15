@@ -52,6 +52,7 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevAppComponentRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginAssignedRendererContainer;
 import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
@@ -201,7 +202,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             {
 
                 EJCoreLayoutItem.LayoutGroup group = new LayoutGroup();
-                container.addItem(group);
+                container.addItem(populateName(group));
                 editor.setDirty(true);
                 Object parent = (container);
                 refresh(parent);
@@ -225,7 +226,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             {
 
                 EJCoreLayoutItem.SplitGroup group = new SplitGroup();
-                container.addItem(group);
+                container.addItem(populateName(group));
                 editor.setDirty(true);
                 Object parent = (container);
                 refresh(parent);
@@ -249,7 +250,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             {
 
                 EJCoreLayoutItem.TabGroup group = new TabGroup();
-                container.addItem(group);
+                container.addItem(populateName(group));
                 editor.setDirty(true);
                 Object parent = (container);
                 refresh(parent);
@@ -273,7 +274,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             {
 
                 EJCoreLayoutItem.LayoutSpace group = new LayoutSpace();
-                container.addItem(group);
+                container.addItem(populateName(group));
                 editor.setDirty(true);
                 Object parent = (container);
                 refresh(parent);
@@ -284,6 +285,68 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             }
 
         };
+    }
+    
+    
+    private static String genName(String tag,List<EJCoreLayoutItem> layoutItems)
+    {
+        int index = 0;
+        boolean matchFound = true;
+        while (matchFound)
+        {
+            index++;
+            String name = tag + index;
+            matchFound = false;
+            for (EJCoreLayoutItem item : layoutItems)
+            {
+                if (name.equals(item.getName()))
+                {
+                    matchFound = true;
+                    break;
+                }
+            }
+        }
+        
+        return tag + index;
+    }
+    
+    EJCoreLayoutItem populateName(EJCoreLayoutItem item)
+    {
+        EJCoreLayoutContainer layoutContainer = editor.getEntireJProperties().getLayoutContainer();
+        
+        List<EJCoreLayoutItem> layoutItems = EntirejPropertiesUtils.findAll(layoutContainer);
+        
+        
+            if (item.getName() == null || item.getName().trim().isEmpty())
+            {
+                String tag ="layout_item_";
+                
+                switch (item.getType())
+                {
+                    case COMPONENT:
+                        tag ="component_";
+                        break;
+                    case GROUP:
+                        tag ="group_";
+                        break;
+                    case SPLIT:
+                        tag ="split_";
+                        break;
+                    case SPACE:
+                        tag ="space_";
+                        break;
+                    case TAB:
+                        tag ="tab_";
+                        break;
+                   
+                }
+                
+                item.setName(genName(tag,layoutItems));
+                
+            }
+            
+            return item;
+        
     }
 
     private Action createNewCompAction(final ItemContainer container)
@@ -297,7 +360,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             {
 
                 EJCoreLayoutItem.LayoutComponent group = new LayoutComponent();
-                container.addItem(group);
+                container.addItem(populateName(group));
                 editor.setDirty(true);
                 Object parent = (container);
                 refresh(parent);
@@ -599,7 +662,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         @Override
         public String getName()
         {
-            return "<space>";
+            return source.getName();
         }
 
         public AbstractDescriptor<?>[] getNodeDescriptors()
@@ -632,7 +695,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
             {
                 return group.getTitle();
             }
-            return "<group>";
+            return group.getName();
         }
 
         @Override
@@ -918,7 +981,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         public String getName()
         {
 
-            return "<split>";
+            return group.getName();
         }
 
         @Override
@@ -1141,7 +1204,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         public String getName()
         {
 
-            return "<tab>";
+            return group.getName();
         }
 
         @Override
@@ -1365,9 +1428,9 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
         {
             if (component.getRenderer() != null && component.getRenderer().length() > 0)
             {
-                return component.getRenderer();
+                return source.getName()+" :"+ component.getRenderer();
             }
-            return "<component>";
+            return source.getName();
         }
 
         @Override

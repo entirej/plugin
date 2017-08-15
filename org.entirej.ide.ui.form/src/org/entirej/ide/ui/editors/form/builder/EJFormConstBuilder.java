@@ -57,6 +57,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEdit;
 import org.entirej.framework.core.enumerations.EJScreenType;
+import org.entirej.framework.core.properties.EJCoreLayoutContainer;
+import org.entirej.framework.core.properties.EJCoreLayoutItem;
+import org.entirej.framework.core.properties.EJCoreLayoutItem.LayoutComponent;
+import org.entirej.framework.core.properties.EJCoreLayoutItem.TYPE;
+import org.entirej.framework.core.properties.EJCoreLayoutItem.TabGroup;
 import org.entirej.framework.core.properties.definitions.EJPropertyDefinitionType;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
@@ -93,6 +98,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafFormPro
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafSpacerProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuProperties;
+import org.entirej.framework.plugin.framework.properties.EntirejPropertiesUtils;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJFormReader;
@@ -498,6 +504,11 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             builder.append("{");
             builder.append("\n");
 
+            EJCoreLayoutContainer layoutContainer = entireJProperties.getLayoutContainer();
+            
+            List<EJCoreLayoutItem> layoutItems = EntirejPropertiesUtils.findAll(layoutContainer);
+           
+            
             Set<String> actions = new TreeSet<String>();
             // adding menu id's parameters
             for (EJPluginMenuProperties menuProperties : entireJProperties.getPluginMenuContainer().getAllMenuProperties())
@@ -515,6 +526,23 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 }
                 addActionsFromMenuProperties(menuProperties, actions);
             }
+            
+            for (EJCoreLayoutItem item : layoutItems)
+            {
+                if(item.getType()==TYPE.COMPONENT)
+                {
+                    EJCoreLayoutItem.LayoutComponent component = (LayoutComponent) item;
+                    EJFrameworkExtensionProperties rendereProperties = component.getRendereProperties();
+                    if(rendereProperties!=null)
+                    {
+                        //TODO:
+                    }
+                }
+            }
+            
+            
+            
+            
 
             builder.append("\n");
             // adding form parameters
@@ -565,6 +593,68 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                 builder.append(";");
                 builder.append("\n");
             }
+            
+            
+            
+            {
+                
+                
+                for (EJCoreLayoutItem item : layoutItems)
+                {
+                    if(item.getType()==TYPE.TAB)
+                    {
+                        builder.append("    public static final String TAB_");
+                        builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
+                        builder.append(" = ");
+                        builder.append("\"");
+                        builder.append(item.getName());
+                        builder.append("\"");
+                        builder.append(";");
+                        builder.append("\n");
+                    }
+                }
+                
+                
+                
+                for (EJCoreLayoutItem item : layoutItems)
+                {
+                    if(item.getType()==TYPE.TAB)
+                    {
+                        builder.append("\n");
+                        builder.append("public static class ");
+                        builder.append("TAB_");
+                        builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
+                        builder.append("_PAGES");
+                        builder.append("\n");
+                        builder.append("{");
+                        builder.append("\n");
+                        EJCoreLayoutItem.TabGroup tabGroup = (TabGroup) item; 
+                        for (EJCoreLayoutItem page : tabGroup.getItems())
+                        {
+                            if (page.getName() != null && page.getName().length() > 0)
+                            {
+                                builder.append("    public static final String ");
+                                builder.append(toVAR(page.getName()).toUpperCase().replaceAll(" ", "_"));
+                                builder.append(" = ");
+                                builder.append("\"");
+                                builder.append(page.getName());
+                                builder.append("\"");
+                                builder.append(";");
+                                builder.append("\n");
+                            }
+                        }
+                        builder.append("\n");
+                        builder.append("}");
+                        builder.append("\n");
+                    }
+                }
+                
+                
+                
+               
+                
+            }
+            
 
             builder.append("\n");
             builder.append("}");
