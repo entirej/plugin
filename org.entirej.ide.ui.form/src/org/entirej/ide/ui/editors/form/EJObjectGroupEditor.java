@@ -295,7 +295,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                         }
 
                         @Override
-                        protected void createComponent(Composite parent, EJPluginCanvasProperties component)
+                        protected void createComponent(Composite parent,final EJPluginCanvasProperties component)
                         {
                             if (component.getPluginBlockProperties() != null)
                             {
@@ -315,7 +315,7 @@ public class EJObjectGroupEditor extends AbstractEJFormEditor
                                     @Override
                                     public void mouseDoubleClick(MouseEvent e)
                                     {
-                                        selectNodes(true, source);
+                                        selectNodes(true, component.getPluginBlockProperties());
                                     }
                                 };
                                 

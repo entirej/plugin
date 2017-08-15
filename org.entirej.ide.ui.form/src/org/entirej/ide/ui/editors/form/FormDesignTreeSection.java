@@ -1203,7 +1203,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     }
 
                     @Override
-                    protected void createComponent(Composite parent, EJPluginCanvasProperties component)
+                    protected void createComponent(Composite parent, final EJPluginCanvasProperties component)
                     {
                         if (component.getPluginBlockProperties() != null)
                         {
@@ -1225,7 +1225,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                                @Override
                                public void mouseDoubleClick(MouseEvent e)
                                {
-                                   selectNodes(true, source);
+                                   selectNodes(true, component.getPluginBlockProperties());
                                }
                            };
                            
