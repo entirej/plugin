@@ -1611,7 +1611,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                     @Override
                     public void setValue(String value)
                     {
-                        source.setName(value);
+                        source.setTitle(value);
 
                         editor.setDirty(true);
                         refresh(AbstractLayoutItem.this);
@@ -1621,7 +1621,7 @@ public class LayoutTreeSection extends AbstractNodeTreeSection
                     @Override
                     public String getValue()
                     {
-                        return source.getName();
+                        return source.getTitle();
                     }
 
                 };
