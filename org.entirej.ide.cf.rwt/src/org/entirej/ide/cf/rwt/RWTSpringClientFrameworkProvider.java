@@ -56,6 +56,8 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
     private static final String RWT_APP_LAUNCHER            = "/templates/rwt/ApplicationLauncher.java";
     private static final String RWT_APP_AUTH           = "/templates/rwt/EJAuthenticationProvider.java";
     private static final String RWT_APP_AUTH_CONFIG           = "/templates/rwt/EJSecurityConfig.java";
+    private static final String RWT_APP_ACCESSDENIEDSERVLET          = "/templates/rwt/AccessDeniedServlet.java";
+    private static final String RWT_APP_LOGINSERVLET           = "/templates/rwt/LoginServlet.java";
     private static final String RWT_WEB_DD                  = "/templates/rwt/web.xml";
     private static final String RWT_WEB_INDEX               = "/templates/rwt/index.html";
     private static final String RWT_WEB_LOGIN              = "/templates/rwt/login.html";
@@ -72,6 +74,8 @@ public class RWTSpringClientFrameworkProvider implements ClientFrameworkProvider
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LAUNCHER, "src/org/entirej/ApplicationLauncher.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH, "src/org/entirej/EJAuthenticationProvider.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG, "src/org/entirej/EJSecurityConfig.java");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_ACCESSDENIEDSERVLET, "src/org/entirej/AccessDeniedServlet.java");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LOGINSERVLET, "src/org/entirej/LoginServlet.java");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_DD, "WebContent/WEB-INF/web.xml");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_BANNER, "WebContent/resources/banner.png");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_INDEX, "WebContent/index.html");

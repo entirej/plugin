@@ -14,14 +14,14 @@ public class EJSecurityConfig extends EJDefaultSpringSecurityConfigProvider
        
         super.configure(http,context);
         
-        http.authorizeRequests().antMatchers("/resources/**", "/login.html/**").
-        permitAll().anyRequest()/*.hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login.html").usernameParameter("username").passwordParameter("password")
+        http.authorizeRequests().antMatchers("/resources/**", "/login/**").
+        permitAll().anyRequest()/*.hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password")
         .permitAll()
         .and()
         .logout()
         .permitAll()
         .logoutUrl("/logout")
-        .logoutSuccessUrl("/login.html?logout")
+        .logoutSuccessUrl("/login?logout")
         .and()
         .exceptionHandling().accessDeniedPage("/403.html")
         /*for remember me option note:  InMemoryTokenRepositoryImpl use only for testing, On production replace with PersistentTokenRepository*/
