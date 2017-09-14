@@ -4,7 +4,7 @@ Bundle-Name: EntireJ - compatibility
 Bundle-SymbolicName: org.entirej.ide.compatibility;singleton:=true
 Bundle-Version: 5.0.0.qualifier
 Bundle-Activator: org.entirej.framework.plugin.EntireJFrameworkPlugin
-Bundle-Vendor: Mojave Innovations GmbH
+Bundle-Vendor: CRESOFT AG
 Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.core.resources,
  org.eclipse.jdt.ui,

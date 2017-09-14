@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.writer;
 
@@ -28,7 +28,7 @@ import javax.crypto.spec.DESKeySpec;
 
 public class Encrypter
 {
-    private static final String pwd       = "?À›ùTn›à%Ð8MV”—NÆ¼d~Æ¨Wë+";
+    private static final String pwd       = "?ï¿½ï¿½ï¿½Tnï¿½ï¿½%ï¿½8MVï¿½ï¿½NÆ¼d~Æ¨Wï¿½+";
     private static String       algorithm = "DES";
     
     public static byte[] encrypt(String input) throws Exception

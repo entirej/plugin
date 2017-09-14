@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.editors.report.builder;
 
@@ -743,7 +743,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                         if (item.getName() != null && item.getName().length() > 0)
                         {
                             // add block ID
-                            builder.append("    public static final String I_");
+                            builder.append("    public static final String SI_");
                             builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
                             builder.append(" = ");
                             builder.append("\"");
@@ -800,7 +800,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                                 if (item.getName() != null && item.getName().length() > 0)
                                 {
                                     // add block ID
-                                    builder.append("    public static final String I_");
+                                    builder.append("    public static final String SI_");
                                     builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
                                     builder.append(" = ");
                                     builder.append("\"");
@@ -834,7 +834,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                                 if (item.getName() != null && item.getName().length() > 0)
                                 {
                                     // add block ID
-                                    builder.append("    public static final String I_");
+                                    builder.append("    public static final String SI_");
                                     builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
                                     builder.append(" = ");
                                     builder.append("\"");
@@ -871,7 +871,7 @@ public class EJReportConstBuilder extends IncrementalProjectBuilder
                                 if (item.getName() != null && item.getName().length() > 0)
                                 {
                                     // add block ID
-                                    builder.append("    public static final String I_");
+                                    builder.append("    public static final String SI_");
                                     builder.append(toVAR(item.getName()).toUpperCase().replaceAll(" ", "_"));
                                     builder.append(" = ");
                                     builder.append("\"");
