@@ -369,7 +369,7 @@ public class ReportBlockItemsGroupNode extends AbstractNode<EJReportBlockItemCon
                             public void run()
                             {
                                 editor.setDirty(true);
-                                treeSection.refresh();
+                                treeSection.refresh(source);
 
                             }
                         });

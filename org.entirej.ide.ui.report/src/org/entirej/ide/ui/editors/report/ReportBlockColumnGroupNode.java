@@ -783,7 +783,7 @@ public class ReportBlockColumnGroupNode extends AbstractNode<EJReportColumnConta
                             public void run()
                             {
                                 editor.setDirty(true);
-                                treeSection.refresh();
+                                treeSection.refresh(source);
 
                             }
                         });

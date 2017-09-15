@@ -520,6 +520,7 @@ public class BlockColumnSelectionPage extends WizardPage
                 public String[] getOptions()
                 {
                     List<String> options = new ArrayList<String>();
+                    options.add(EJReportScreenAlignment.NONE.name());
                     options.add(EJReportScreenAlignment.LEFT.name());
                     options.add(EJReportScreenAlignment.CENTER.name());
                     options.add(EJReportScreenAlignment.RIGHT.name());
@@ -551,6 +552,7 @@ public class BlockColumnSelectionPage extends WizardPage
                 public String[] getOptions()
                 {
                     List<String> options = new ArrayList<String>();
+                    options.add(EJReportScreenAlignment.NONE.name());
                     options.add(EJReportScreenAlignment.TOP.name());
                     options.add(EJReportScreenAlignment.CENTER.name());
                     options.add(EJReportScreenAlignment.BOTTOM.name());
