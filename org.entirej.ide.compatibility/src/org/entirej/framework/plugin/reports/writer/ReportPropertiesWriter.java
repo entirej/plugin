@@ -450,6 +450,17 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     
                     writeStringTAG(buffer, "hAlignment", item.getHAlignment().name());
                     writeStringTAG(buffer, "vAlignment", item.getVAlignment().name());
+                    
+                    EJPluginReportBorderProperties borderProperties = item.getBorderProperties();
+                    writeStringTAG(buffer, "showTopLine", borderProperties.isShowTopLine() + "");
+                    writeStringTAG(buffer, "showBottomLine", borderProperties.isShowBottomLine() + "");
+                    writeStringTAG(buffer, "showLeftLine", borderProperties.isShowLeftLine() + "");
+                    writeStringTAG(buffer, "showRightLine", borderProperties.isShowRightLine() + "");
+                    writeStringTAG(buffer, "lineWidth", borderProperties.getLineWidth() + "");
+                    writeStringTAG(buffer, "lineStyle", borderProperties.getLineStyle().name());
+                    writeStringTAG(buffer, "lineVA", borderProperties.getVisualAttributeName());
+                    
+                    
                 }
                 if (itemProps instanceof EJPluginReportScreenItemProperties.RotatableItem)
                 {

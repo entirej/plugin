@@ -88,7 +88,7 @@ public class EJPluginReportBorderProperties implements EJReportBorderProperties
     }
     
     @Override
-    public EJReportVisualAttributeProperties getVisualAttributeProperties()
+    public EJReportVisualAttributeProperties getLineVisualAttributeProperties()
     {
         // igmore this in PLUGIN
         return null;

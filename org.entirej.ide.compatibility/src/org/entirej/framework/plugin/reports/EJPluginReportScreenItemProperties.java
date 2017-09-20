@@ -363,6 +363,8 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         private EJReportScreenAlignment hAlignment = EJReportScreenAlignment.LEFT;
         private EJReportScreenAlignment vAlignment = EJReportScreenAlignment.CENTER;
         
+        private EJPluginReportBorderProperties borderProperties = new EJPluginReportBorderProperties();
+        
         public AlignmentBaseItem(EJPluginReportBlockProperties blockProperties)
         {
             super(blockProperties);
@@ -387,6 +389,14 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.vAlignment = vAlignment;
         }
+        
+        public EJPluginReportBorderProperties getBorderProperties()
+        {
+            return borderProperties;
+        }
+        
+        
+        
         
     }
     public static abstract class ValueBaseItem extends AlignmentBaseItem

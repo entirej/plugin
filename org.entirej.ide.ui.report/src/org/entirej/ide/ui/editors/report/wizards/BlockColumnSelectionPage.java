@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
+import org.entirej.framework.plugin.reports.EJPluginReportBorderProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.AlignmentBaseItem;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenItemProperties.Date.DateFormats;
@@ -56,6 +57,8 @@ import org.entirej.framework.plugin.utils.EJPluginEntireJNumberVerifier;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
+import org.entirej.framework.report.interfaces.EJReportBorderProperties;
+import org.entirej.ide.ui.editors.descriptors.AbstractBooleanDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractDescriptorPart;
 import org.entirej.ide.ui.editors.descriptors.AbstractProjectSrcFileDescriptor;
@@ -63,6 +66,7 @@ import org.entirej.ide.ui.editors.descriptors.AbstractTextDescDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDescriptor;
 import org.entirej.ide.ui.editors.descriptors.AbstractTextDropDownDescriptor;
 import org.entirej.ide.ui.editors.descriptors.IJavaProjectProvider;
+import org.entirej.ide.ui.editors.report.ReportBlockColumnGroupNode;
 import org.entirej.ide.ui.editors.report.ReportBlockItemsGroupNode;
 
 public class BlockColumnSelectionPage extends WizardPage
@@ -576,6 +580,243 @@ public class BlockColumnSelectionPage extends WizardPage
 
             descriptors.add(hAlignment);
             descriptors.add(vAlignment);
+            
+            {
+               final EJPluginReportBorderProperties borderProperties = item.getBorderProperties();
+                AbstractTextDropDownDescriptor lineStyle = new AbstractTextDropDownDescriptor("Border Line Style")
+                {
+                    @Override
+                    public String getValue()
+                    {
+                        return borderProperties.getLineStyle().name();
+                    }
+
+                    public String[] getOptions()
+                    {
+                        List<String> options = new ArrayList<String>();
+                        for (EJReportBorderProperties.LineStyle formats : EJReportBorderProperties.LineStyle.values())
+                        {
+                            options.add(formats.name());
+                        }
+                        return options.toArray(new String[0]);
+                    }
+
+                    public String getOptionText(String t)
+                    {
+
+                        return EJReportBorderProperties.LineStyle.valueOf(t).toString();
+                    }
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        borderProperties.setLineStyle(EJReportBorderProperties.LineStyle.valueOf(value));
+
+                    }
+
+                   
+
+                };
+
+                final AbstractTextDescriptor LinewidthDescriptor = new AbstractTextDescriptor("Border Line Width")
+                {
+
+                    @Override
+                    public String getTooltip()
+                    {
+
+                        return "The width <b>(in pixels)</b> of the Line.";
+                    }
+
+                   
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        try
+                        {
+                            borderProperties.setLineWidth(Double.parseDouble(value));
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            borderProperties.setLineWidth(1);
+                            if (text != null)
+                            {
+                                text.setText(getValue());
+                                text.selectAll();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return String.valueOf(borderProperties.getLineWidth());
+                    }
+
+                    Text text;
+
+                    @Override
+                    public void addEditorAssist(Control control)
+                    {
+
+                        text = (Text) control;
+                        text.addVerifyListener(new EJPluginEntireJNumberVerifier()
+                        {
+
+                            @Override
+                            protected boolean validate(String value)
+                            {
+                                try
+                                {
+                                    Double intValue = Double.parseDouble(value);
+
+                                    if (intValue > -1)
+                                    {
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
+                                catch (NumberFormatException exception)
+                                {
+                                    // ignore
+                                }
+
+                                return false;
+                            }
+
+                        });
+
+                        super.addEditorAssist(control);
+                    }
+                };
+
+                AbstractTextDropDownDescriptor vaLineDescriptor = new AbstractTextDropDownDescriptor("Border Visual Attributes", "")
+                {
+                    List<String> visualAttributeNames = new ArrayList<String>(source.getBlockProperties().getReportProperties().getEntireJProperties()
+                            .getVisualAttributesContainer().getVisualAttributeNames());
+
+                    @Override
+                    public void setValue(String value)
+                    {
+                        borderProperties.setVisualAttributeName(value);
+                      
+                    }
+
+                    @Override
+                    public String getValue()
+                    {
+                        return borderProperties.getVisualAttributeName();
+                    }
+
+                    
+
+                    public String[] getOptions()
+                    {
+                        List<String> list = new ArrayList<String>();
+
+                        list.add("");
+
+                        list.addAll(visualAttributeNames);
+
+                        if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                        {
+                            list.add(getValue());
+                        }
+                        return list.toArray(new String[0]);
+                    }
+
+                    public String getOptionText(String t)
+                    {
+                        if (t.length() > 0 && !visualAttributeNames.contains(t))
+                        {
+                            return String.format("Undefined !< %s >", t);
+                        }
+
+                        return t;
+                    }
+                };
+
+                descriptors.add(lineStyle);
+                descriptors.add(LinewidthDescriptor);
+                descriptors.add(vaLineDescriptor);
+                descriptors.add(new AbstractBooleanDescriptor("Border Top Line")
+                {
+                    
+
+                    @Override
+                    public void setValue(Boolean value)
+                    {
+                        borderProperties.setShowTopLine(value);
+                      
+                    }
+
+                    @Override
+                    public Boolean getValue()
+                    {
+                        return borderProperties.isShowTopLine();
+                    }
+                });
+                descriptors.add(new AbstractBooleanDescriptor("Border Bottom Line")
+                {
+
+                    
+
+                    @Override
+                    public void setValue(Boolean value)
+                    {
+                        borderProperties.setShowBottomLine(value);
+                    }
+
+                    @Override
+                    public Boolean getValue()
+                    {
+                        return borderProperties.isShowBottomLine();
+                    }
+                });
+                descriptors.add(new AbstractBooleanDescriptor("Border Left Line")
+                {
+                    
+
+                    @Override
+                    public void setValue(Boolean value)
+                    {
+                        borderProperties.setShowLeftLine(value);
+                    }
+
+                    @Override
+                    public Boolean getValue()
+                    {
+                        return borderProperties.isShowLeftLine();
+                    }
+                });
+                descriptors.add(new AbstractBooleanDescriptor("Border Right Line")
+                {
+
+                    
+
+                    @Override
+                    public void setValue(Boolean value)
+                    {
+                        borderProperties.setShowRightLine(value);
+                        
+                    }
+
+                    @Override
+                    public Boolean getValue()
+                    {
+                        return borderProperties.isShowRightLine();
+                    }
+                });
+                
+                
+            }
+            
+            
+            
         }
 
         if (source instanceof EJPluginReportScreenItemProperties.RotatableItem)

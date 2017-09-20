@@ -1097,6 +1097,9 @@ public class ReportBlockScreenItemsGroupNode extends AbstractNode<EJReportScreen
 
                 descriptors.add(hAlignment);
                 descriptors.add(vAlignment);
+
+                descriptors.addAll(Arrays.asList(ReportBlockColumnGroupNode.addBorderDescriptors(editor, new AbstractDescriptor[0], item.getBorderProperties())));
+                
             }
 
             if (source instanceof EJPluginReportScreenItemProperties.RotatableItem)

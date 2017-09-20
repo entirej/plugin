@@ -31,6 +31,8 @@ import org.entirej.framework.report.enumerations.EJReportMarkupType;
 import org.entirej.framework.report.enumerations.EJReportScreenAlignment;
 import org.entirej.framework.report.enumerations.EJReportScreenItemType;
 import org.entirej.framework.report.enumerations.EJReportScreenRotation;
+import org.entirej.framework.report.interfaces.EJReportBorderProperties;
+import org.entirej.framework.report.properties.EJCoreReportScreenItemProperties;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -66,9 +68,15 @@ public class ScreenItemHandler extends EntireJTagHandler
     
     private static final String                ELEMENT_SCREEN_DEFAULT_IMAGE        = "defaultImage";
     
-    private static final String              ELEMENT_SCREEN_PADDING_LEFT         = "leftPadding";
-    private static final String              ELEMENT_SCREEN_PADDING_RIGHT        = "rightPadding";
-   
+    private static final String                ELEMENT_SCREEN_PADDING_LEFT         = "leftPadding";
+    private static final String                ELEMENT_SCREEN_PADDING_RIGHT        = "rightPadding";
+    private static final String                ELEMENT_SHOW_TOPLINE                = "showTopLine";
+    private static final String                ELEMENT_SHOW_BOTTOMLINE             = "showBottomLine";
+    private static final String                ELEMENT_SHOW_LEFTLINE               = "showLeftLine";
+    private static final String                ELEMENT_SHOW_RIGHTLINE              = "showRightLine";
+    private static final String                ELEMENT_LINE_WIDTH                  = "lineWidth";
+    private static final String                ELEMENT_LINE_STYLE                  = "lineStyle";
+    private static final String                ELEMENT_LINE_VA                     = "lineVA";
     
     public ScreenItemHandler(EJPluginReportScreenProperties blockProperties)
     {
@@ -190,6 +198,64 @@ public class ScreenItemHandler extends EntireJTagHandler
                 
             }
         }
+        else if (name.equals(ELEMENT_LINE_WIDTH))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setLineWidth(Double.parseDouble(value));
+            }
+        }
+        else if (name.equals(ELEMENT_LINE_STYLE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setLineStyle(EJReportBorderProperties.LineStyle.valueOf(value));
+            }
+        }
+        else if (name.equals(ELEMENT_LINE_VA))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setVisualAttributeName(value);
+            }
+        }
+        else if (name.equals(ELEMENT_SHOW_TOPLINE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setShowTopLine(Boolean.valueOf(value));
+            }
+        }
+        else if (name.equals(ELEMENT_SHOW_BOTTOMLINE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setShowBottomLine(Boolean.valueOf(value));
+            }
+        }
+        else if (name.equals(ELEMENT_SHOW_LEFTLINE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setShowLeftLine(Boolean.valueOf(value));
+            }
+        }
+        else if (name.equals(ELEMENT_SHOW_RIGHTLINE))
+        {
+            if (_itemProperties instanceof EJPluginReportScreenItemProperties.AlignmentBaseItem)
+            {
+                final EJPluginReportScreenItemProperties.AlignmentBaseItem item = (AlignmentBaseItem) _itemProperties;
+                item.getBorderProperties().setShowRightLine(Boolean.valueOf(value));
+            }
+        }
+
+        
         else if (name.equals(ELEMENT_SCREEN_ROTATION))
         {
             if (_itemProperties instanceof EJPluginReportScreenItemProperties.RotatableItem)
