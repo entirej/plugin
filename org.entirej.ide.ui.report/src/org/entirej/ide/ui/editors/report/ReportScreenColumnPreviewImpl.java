@@ -85,7 +85,7 @@ public class ReportScreenColumnPreviewImpl implements IReportPreviewProvider
 
          previewEditControl = new ReportPreviewEditControl(editor,previewComposite,true,0,21);
        
-        refresh(editor, previewComposite, layoutScreenProperties);
+        refresh(editor, previewComposite, o==null?layoutScreenProperties:o);
         
     }
 
