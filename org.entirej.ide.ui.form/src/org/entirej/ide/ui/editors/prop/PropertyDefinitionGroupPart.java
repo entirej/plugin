@@ -709,11 +709,11 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
                     {
                         if (dataType == EJPropertyDefinitionType.INTEGER && control instanceof Text)
                         {
-                            ((Text) control).addVerifyListener(new EJPluginEntireJNumberVerifier());
+                            ((Text) control).addVerifyListener(new EJPluginEntireJNumberVerifier(true));
                         }
                         else if (dataType == EJPropertyDefinitionType.FLOAT && control instanceof Text)
                         {
-                            ((Text) control).addVerifyListener(new EJPluginEntireJFloatVerifier());
+                            ((Text) control).addVerifyListener(new EJPluginEntireJFloatVerifier(true));
                         }
                         super.addEditorAssist(control);
                     }

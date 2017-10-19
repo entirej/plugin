@@ -22,6 +22,17 @@ import org.eclipse.swt.events.VerifyListener;
 
 public class EJPluginEntireJFloatVerifier implements VerifyListener
 {
+    boolean supportNegative;
+    public EJPluginEntireJFloatVerifier()
+    {
+       
+    }
+    public EJPluginEntireJFloatVerifier(boolean supportNegative)
+    {
+       this.supportNegative = supportNegative;
+    }
+    
+    
     public void verifyText(VerifyEvent e)
     {
         String value = e.text;
@@ -41,6 +52,10 @@ public class EJPluginEntireJFloatVerifier implements VerifyListener
             {
                 try
                 {
+                    if(supportNegative&& value.startsWith("-")){
+                        e.doit = true;
+                        return ;
+                    }
                     if(value.startsWith(".") )
                         value="0"+value;
                     if(value.endsWith(".") )

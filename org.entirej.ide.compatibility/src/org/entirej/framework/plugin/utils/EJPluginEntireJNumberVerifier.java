@@ -24,7 +24,15 @@ import org.eclipse.swt.events.VerifyListener;
 public class EJPluginEntireJNumberVerifier implements VerifyListener
 {
     
-    
+    boolean supportNegative;
+    public EJPluginEntireJNumberVerifier()
+    {
+       
+    }
+    public EJPluginEntireJNumberVerifier(boolean supportNegative)
+    {
+       this.supportNegative = supportNegative;
+    }
     protected boolean validate(String value)
     {
         
@@ -55,6 +63,10 @@ public class EJPluginEntireJNumberVerifier implements VerifyListener
         
         
         if(value.equals(".")){
+            e.doit = true;
+            return ;
+        }
+        if(supportNegative && value.startsWith("-")){
             e.doit = true;
             return ;
         }
