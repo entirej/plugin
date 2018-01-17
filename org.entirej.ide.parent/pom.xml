@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.entirej.ide</groupId>
 	<artifactId>org.entirej.ide.parent</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Entirej Development Tool</name>
 	<modules>

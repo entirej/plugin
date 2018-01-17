@@ -87,7 +87,7 @@ public class RWTCoreRuntimeClasspathContainer implements IClasspathContainer
 
     public String getDescription()
     {
-        return "EntireJ Bundled RWT/RAP Core 5.0.0 Runtime Libraries.";
+        return "EntireJ Bundled RWT/RAP Core 5.1.0 Runtime Libraries.";
     }
 
     public int getKind()
