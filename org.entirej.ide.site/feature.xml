@@ -20,7 +20,7 @@
 <feature
       id="org.entirej.site"
       label="Entirej Integration for Eclipse Update Site"
-      version="5.0.0.qualifier"
+      version="5.1.0.qualifier"
       provider-name="CRESOFT AG">
 
    <description url="http://www.entirej.com/">
