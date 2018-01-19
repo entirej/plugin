@@ -66,7 +66,9 @@ public class SpringKerberosFeatureConfigProvider implements FeatureConfigProvide
 					"src/org/entirej/EJKerberosAuthenticationProvider.java");
 			CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG,
 					"src/org/entirej/EJKerberosSecurityConfig.java");
-			
+
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_ACCESSDENIEDSERVLET, "src/org/entirej/AccessDeniedServlet.java");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LOGINSERVLET, "src/org/entirej/LoginServlet.java");
 			if(addBasicSpring)
 			{
 				CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_BANNER,
@@ -135,5 +137,9 @@ public class SpringKerberosFeatureConfigProvider implements FeatureConfigProvide
 	private static final String RWT_WEB_LOGIN = "/templates/rwt/login.html";
 	private static final String RWT_WEB_403 = "/templates/rwt/403.html";
 	private static final String RWT_WEB_BANNER = "/templates/rwt/banner.png";
+	
+
+    private static final String RWT_APP_ACCESSDENIEDSERVLET          = "/templates/rwt/AccessDeniedServlet.java";
+    private static final String RWT_APP_LOGINSERVLET           = "/templates/rwt/LoginServlet.java";
 
 }

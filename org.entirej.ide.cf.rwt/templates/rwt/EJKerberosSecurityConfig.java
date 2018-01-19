@@ -18,8 +18,8 @@ public class EJKerberosSecurityConfig extends EJDefaultSpringSecurityConfigProvi
        
         super.configure(http,context);
         
-        http.authorizeRequests().antMatchers("/resources/**", "/login.html/**").
-        permitAll().anyRequest()/*.hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login.html").usernameParameter("username").passwordParameter("password")
+        http.authorizeRequests().antMatchers("/resources/**", "/login/**").
+        permitAll().anyRequest()/*.hasAuthority("USER").antMatchers("/**")*/.authenticated().and().formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password")
         .permitAll()
         .and()
         .logout()
@@ -27,9 +27,9 @@ public class EJKerberosSecurityConfig extends EJDefaultSpringSecurityConfigProvi
 
         
         .logoutUrl("/logout")
-        .logoutSuccessUrl("/login.html?logout")
+        .logoutSuccessUrl("/login?logout")
         .and()
-        .exceptionHandling().accessDeniedPage("/403.html").authenticationEntryPoint(new SpnegoEntryPoint("/login.html"))
+        .exceptionHandling().accessDeniedPage("/403").authenticationEntryPoint(new SpnegoEntryPoint("/login"))
         /*for remember me option note:  InMemoryTokenRepositoryImpl use only for testing, On production replace with PersistentTokenRepository*/
         .and().rememberMe().rememberMeParameter("rememberme").tokenRepository(new InMemoryTokenRepositoryImpl()).useSecureCookie(true).tokenValiditySeconds(60*60*24)
         //;/*kerberos */

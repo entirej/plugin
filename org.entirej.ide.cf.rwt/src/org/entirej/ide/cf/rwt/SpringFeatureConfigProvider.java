@@ -63,6 +63,9 @@ public class SpringFeatureConfigProvider implements FeatureConfigProvider {
 					"src/org/entirej/EJAuthenticationProvider.java");
 			CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_AUTH_CONFIG,
 					"src/org/entirej/EJSecurityConfig.java");
+
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_ACCESSDENIEDSERVLET, "src/org/entirej/AccessDeniedServlet.java");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LOGINSERVLET, "src/org/entirej/LoginServlet.java");
 			CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_WEB_BANNER,
 					"WebContent/resources/banner.png");
 			Map<String, String> params = new HashMap<String, String>();
@@ -125,5 +128,9 @@ public class SpringFeatureConfigProvider implements FeatureConfigProvider {
 	private static final String RWT_WEB_LOGIN = "/templates/rwt/login.html";
 	private static final String RWT_WEB_403 = "/templates/rwt/403.html";
 	private static final String RWT_WEB_BANNER = "/templates/rwt/banner.png";
+	
+
+    private static final String RWT_APP_ACCESSDENIEDSERVLET          = "/templates/rwt/AccessDeniedServlet.java";
+    private static final String RWT_APP_LOGINSERVLET           = "/templates/rwt/LoginServlet.java";
 
 }
