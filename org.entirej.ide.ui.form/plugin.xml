@@ -186,18 +186,6 @@
       </wizard>
       <wizard
             category="org.entirej.ide.ui.EJ"
-            class="org.entirej.ide.ui.wizards.report.service.NewEJReportPojoServiceWizard"
-            finalPerspective="org.entirej.ide.ui.report.perspective"
-            icon="icons/etools16/newejrbservice_wiz.png"
-            id="org.entirej.ide.ui.wizards.NewEJReportPojoServiceWizard"
-            name="%new.entirejrbservice.name"
-            project="false">
-         <description>
-            %new.entirejrbservice.description
-         </description>
-      </wizard>
-      <wizard
-            category="org.entirej.ide.ui.EJ"
             class="org.entirej.ide.ui.wizards.form.NewEntireJRefLovWizard"
             finalPerspective="org.entirej.ide.ui.perspective"
             icon="icons/etools16/newejreflov_wiz.png"
