@@ -70,7 +70,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedFrameworkConnection con = org.entirej.framework.core.EJConnectionHelper.getConnection();
+            EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.getConnection();
             try
             {
                 return _array.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
@@ -187,7 +187,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     {
         if (c == null || c.isClosed())
         {
-            EJManagedFrameworkConnection con = org.entirej.framework.core.EJConnectionHelper.getConnection();
+            EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.getConnection();
             try
             {
                 return _struct.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
