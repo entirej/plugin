@@ -189,6 +189,7 @@ public class RefBlockSelectionPage extends WizardPage
             public Object[] getElements(Object inputElement)
             {
                 List<String> renderers = wizardContext.getReferencedBlockNames();
+                
                 Collections.sort(renderers);
                 return renderers.toArray();
             }

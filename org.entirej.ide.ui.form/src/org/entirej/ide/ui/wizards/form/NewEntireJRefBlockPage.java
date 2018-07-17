@@ -277,7 +277,8 @@ public class NewEntireJRefBlockPage extends NewTypeWizardPage implements IJavaPr
        
         blockRenderersViewer.setContentProvider(new ITreeContentProvider()
         {
-            List<EJPluginRenderer> renderers;
+            List<EJPluginRenderer> 
+            renderers = new ArrayList<EJPluginRenderer>();;
             public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
             {
                  
@@ -425,6 +426,7 @@ public class NewEntireJRefBlockPage extends NewTypeWizardPage implements IJavaPr
                         blockRenderer = null;
                     
                 }
+                fBlockRendererStatus = formRendererChanged();
                 doStatusUpdate();
             }
         });
