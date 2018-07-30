@@ -699,7 +699,9 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
             public String[] getOptions()
             {
                 List<String> options = new ArrayList<String>();
-                List<EJPluginLovMappingProperties> lovMappingProperties = source.getBlockProperties().getLovMappingContainer().getAllLovMappingProperties();
+                List<EJPluginLovMappingProperties> lovMappingProperties =  (source.getBlockProperties().isMirrorBlock())
+                        ? source.getBlockProperties().getMirrorParent().getLovMappingContainer().getAllLovMappingProperties()                    
+                        : source.getBlockProperties().getLovMappingContainer().getAllLovMappingProperties();
 
                 options.add("");
                 for (EJPluginLovMappingProperties lovProp : lovMappingProperties)

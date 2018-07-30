@@ -92,10 +92,7 @@ public class EJPluginLovMappingContainer
         {
             _lovMappingProperties.add(lovMappingProperties);
             
-            for (EJPluginBlockProperties mirrorBlock : _blockProperties.getMirrorChildren())
-            {
-                mirrorBlock.getLovMappingContainer().addLovMappingProperties(lovMappingProperties.makeCopy(mirrorBlock));
-            }
+           
         }
     }
     
@@ -105,10 +102,7 @@ public class EJPluginLovMappingContainer
         {
             _lovMappingProperties.add(index, lovMappingProperties);
             
-            for (EJPluginBlockProperties mirrorBlock : _blockProperties.getMirrorChildren())
-            {
-                mirrorBlock.getLovMappingContainer().addLovMappingProperties(index, lovMappingProperties.makeCopy(mirrorBlock));
-            }
+           
         }
     }
     
@@ -128,10 +122,7 @@ public class EJPluginLovMappingContainer
             }
         }
         
-        for (EJPluginBlockProperties mirrorBlock : _blockProperties.getMirrorChildren())
-        {
-            mirrorBlock.getLovMappingContainer().removeLovMappingProperties(name);
-        }
+       
     }
     
     public int removeLovMappingProperties(EJPluginLovMappingProperties props)
