@@ -18,7 +18,9 @@
  ******************************************************************************/
 package org.entirej.ide.ui.wizards.service;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,7 +46,6 @@ import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
-import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -768,10 +769,42 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
        
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
-      
-        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
-                true, true, true, null);
-        op.run(new NullProgressMonitor());
+        Class<?> importClass = null;
+        try
+        {
+            importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
+        }
+        catch (ClassNotFoundException e)
+        {
+            try
+            {
+                importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
+            }
+            catch (ClassNotFoundException ex)
+            {
+                System.err.println("NO OrganizeImportsOperation found");
+            }
+        }
+        if (importClass != null)
+        {
+            Constructor<?> constructor;
+            try
+            {
+                constructor = importClass.getConstructor(org.eclipse.jdt.core.ICompilationUnit.class, org.eclipse.jdt.core.dom.CompilationUnit.class,
+                        boolean.class, boolean.class, boolean.class, org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery.class);
+                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
+
+                Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
+                method.invoke(newInstance, new NullProgressMonitor());
+            }
+
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+
         
     }
 

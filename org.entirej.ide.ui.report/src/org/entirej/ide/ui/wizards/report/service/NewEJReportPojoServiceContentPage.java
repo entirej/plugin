@@ -18,7 +18,9 @@
  ******************************************************************************/
 package org.entirej.ide.ui.wizards.report.service;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,7 +46,6 @@ import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
-import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -93,29 +94,25 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     private BlockServiceWizardProvider             wizardProvider;
     private final NewEJReportPojoServiceSelectPage pojoPage;
 
-    private IJavaProject      currentProject;
-    private String            contentProviderError;
-    
-    
-    private boolean createSerivce   = true;
-    private boolean serviceOptional = true;
-    
-    
-    
-    
+    private IJavaProject                           currentProject;
+    private String                                 contentProviderError;
+
+    private boolean                                createSerivce   = true;
+    private boolean                                serviceOptional = true;
+
     /**
      * This wizard's list of pages (element type: <code>IWizardPage</code>).
      */
-    private List<IWizardPage> pages = new ArrayList<IWizardPage>();
+    private List<IWizardPage>                      pages           = new ArrayList<IWizardPage>();
 
-    private List<IWizardPage>                opPages = new ArrayList<IWizardPage>();
+    private List<IWizardPage>                      opPages         = new ArrayList<IWizardPage>();
 
     public NewEJReportPojoServiceContentPage(NewEJReportPojoServiceSelectPage pojoServiceSelectPage)
     {
-        super(true,"ejr.pojo.content");
+        super(true, "ejr.pojo.content");
         setTitle("Report Block Service/Pojo Content");
         setDescription("Enter the data required to generate the report block service/pojo.");
-        
+
         this.pojoPage = pojoServiceSelectPage;
     }
 
@@ -129,8 +126,6 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         return getJavaProject();
     }
 
-    
-
     public boolean isCreateSerivce()
     {
         return createSerivce;
@@ -141,7 +136,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         this.createSerivce = createSerivce;
         this.serviceOptional = serviceOptional;
     }
-    
+
     public boolean skipService()
     {
         return !isCreateSerivce();
@@ -166,18 +161,15 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             createServiceOptionControls(composite, 3);
             createDescComponent(composite).setText("If you choose not to generate the Block Service then only the Pojo will be generated");
         }
-        
-       
+
         createEmptySpace(composite, 1);
         createEmptySpace(composite, 4);
         createEmptySpace(composite, 4);
-        
+
         createEmptySpace(composite, 4);
         createSeparator(composite, nColumns);
         createProviderGroup(composite);
-        
-       
-        
+
         setControl(composite);
         Dialog.applyDialogFont(composite);
     }
@@ -297,11 +289,11 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     public IWizardPage getOptionalNextPage(IWizardPage page)
     {
         int index = opPages.indexOf(page);
-        if ( index == -1)
+        if (index == -1)
         {
-            if(opPages.isEmpty())
-              return null;
-            
+            if (opPages.isEmpty())
+                return null;
+
             opPages.get(0);
         }
         IWizardPage iWizardPage = opPages.get(index + 1);
@@ -309,8 +301,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             return getOptionalNextPage(iWizardPage);
         return iWizardPage;
     }
-    
-    
+
     public IWizardPage getOptionalPreviousPage(IWizardPage page)
     {
         int index = opPages.indexOf(page);
@@ -324,12 +315,12 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             return getOptionalPreviousPage(iWizardPage);
         return iWizardPage;
     }
-    
+
     public int getOptionalPageCount()
     {
         return opPages.size();
     }
-    
+
     public IWizardPage getOptinalStartingPage()
     {
         if (opPages.size() == 0)
@@ -338,14 +329,14 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         }
         return opPages.get(0);
     }
-    
+
     private void cleanSubPages()
     {
         for (IWizardPage page : pages)
         {
             page.dispose();
         }
-        
+
         for (IWizardPage page : opPages)
         {
             page.dispose();
@@ -353,7 +344,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         opPages.clear();
         pages.clear();
     }
-    
+
     public void init(IStructuredSelection selection)
     {
         IJavaElement jelem = getInitialJavaElement(selection);
@@ -373,7 +364,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         group.setText("Content Provider");
         group.setLayout(new GridLayout(2, false));
         GridData layoutData = new GridData(GridData.FILL_BOTH);
-        layoutData.horizontalSpan=4;
+        layoutData.horizontalSpan = 4;
         group.setLayoutData(layoutData);
 
         comboProviderViewer = new ComboViewer(group);
@@ -428,16 +419,15 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
                 {
                     EJCoreLog.log(ex);
                 }
-               Collections.sort(exportProviders, new Comparator<BlockServiceContentProvider>(){
-
-                public int compare(BlockServiceContentProvider o1, BlockServiceContentProvider o2)
+                Collections.sort(exportProviders, new Comparator<BlockServiceContentProvider>()
                 {
-                    return o1.getProviderName().compareTo(o2.getProviderName());
-                }
-                   
-                   
-                   
-               });
+
+                    public int compare(BlockServiceContentProvider o1, BlockServiceContentProvider o2)
+                    {
+                        return o1.getProviderName().compareTo(o2.getProviderName());
+                    }
+
+                });
                 return exportProviders.toArray();
             }
         });
@@ -636,9 +626,42 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     {
 
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
+        Class<?> importClass = null;
+        try
+        {
+            importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
+        }
+        catch (ClassNotFoundException e)
+        {
+            try
+            {
+                importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
+            }
+            catch (ClassNotFoundException ex)
+            {
+                System.err.println("NO OrganizeImportsOperation found");
+            }
+        }
+        if (importClass != null)
+        {
+            Constructor<?> constructor;
+            try
+            {
+                constructor = importClass.getConstructor(org.eclipse.jdt.core.ICompilationUnit.class, org.eclipse.jdt.core.dom.CompilationUnit.class,
+                        boolean.class, boolean.class, boolean.class, org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery.class);
+                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
-        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
-        op.run(new NullProgressMonitor());
+                Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
+                method.invoke(newInstance, new NullProgressMonitor());
+            }
+
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
     public String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
@@ -730,19 +753,16 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
     }
 
-    private void createServiceClass(ReportBlockServiceContent blockServiceContent,final String pojoClassName, NewEJReportGenServicePage servicePage,
+    private void createServiceClass(ReportBlockServiceContent blockServiceContent, final String pojoClassName, NewEJReportGenServicePage servicePage,
             IProgressMonitor monitor) throws Exception, CoreException
     {
         EJReportServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(),
                 wizardProvider.getReportServiceGenerator());
-        
-        
-        
 
         EJReportServiceGeneratorType serviceGeneratorType = blockServiceContent.getServiceGeneratorType();
         String serviceClassName = servicePage.getTypeName();
         serviceGeneratorType.setServiceName(serviceClassName);
-        if(pojoClassName!=null)
+        if (pojoClassName != null)
         {
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
@@ -788,7 +808,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             }
 
             buffer.setContents(fileContents);
-           
+
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
 
@@ -800,13 +820,13 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
                     if (iWizard instanceof NewWizard)
                     {
                         NewWizard wizard = (NewWizard) iWizard;
-                        if(pojoClassName!=null)
+                        if (pojoClassName != null)
                         {
                             final IType createdType = parentCU.getType(pojoClassName);
                             wizard.selectAndReveal(createdType.getResource());
                             wizard.openResource((IFile) createdType.getResource());
                         }
-                       
+
                     }
 
                 }
@@ -821,17 +841,17 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         }
 
     }
-    
+
     public BlockServiceWizardProvider getWizardProvider()
     {
         return wizardProvider;
     }
+
     public boolean pageOfMain(IWizardPage page)
     {
         return pages.contains(page);
     }
-    
-    
+
     private void createServiceOptionControls(Composite composite, int nColumns)
     {
 
