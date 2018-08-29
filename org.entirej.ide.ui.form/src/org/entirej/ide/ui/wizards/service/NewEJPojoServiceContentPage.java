@@ -770,15 +770,19 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
        
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
         Class<?> importClass = null;
+        Class<?> importSubClass = null;
         try
         {
             importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
+            importSubClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery");
         }
         catch (ClassNotFoundException e)
         {
             try
             {
                 importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
+
+                importSubClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation.IChooseImportQuery");
             }
             catch (ClassNotFoundException ex)
             {
@@ -791,7 +795,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             try
             {
                 constructor = importClass.getConstructor(org.eclipse.jdt.core.ICompilationUnit.class, org.eclipse.jdt.core.dom.CompilationUnit.class,
-                        boolean.class, boolean.class, boolean.class, org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery.class);
+                        boolean.class, boolean.class, boolean.class, importSubClass);
                 Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
                 Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
