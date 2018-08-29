@@ -88,33 +88,32 @@ import org.entirej.ide.ui.wizards.NewWizard;
 public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements BlockServiceContentProvider.GeneratorContext
 {
 
-    private ComboViewer                      comboProviderViewer;
-    private Label                            providerDescription;
-    private BlockServiceContentProvider      blockServiceContentProvider;
-    private BlockServiceWizardProvider       wizardProvider;
+    private ComboViewer                 comboProviderViewer;
+    private Label                       providerDescription;
+    private BlockServiceContentProvider blockServiceContentProvider;
+    private BlockServiceWizardProvider  wizardProvider;
 
-    private boolean              createSerivce   = true;
-    private boolean              serviceOptional = true;
-    
-    private IJavaProject                     currentProject;
-    private String                           contentProviderError;
+    private boolean                     createSerivce   = true;
+    private boolean                     serviceOptional = true;
+
+    private IJavaProject                currentProject;
+    private String                      contentProviderError;
     /**
      * This wizard's list of pages (element type: <code>IWizardPage</code>).
      */
-    private List<IWizardPage>                pages = new ArrayList<IWizardPage>();
-    private List<IWizardPage>                opPages = new ArrayList<IWizardPage>();
-    private NewEJPojoServiceSelectPage pojoPage;
+    private List<IWizardPage>           pages           = new ArrayList<IWizardPage>();
+    private List<IWizardPage>           opPages         = new ArrayList<IWizardPage>();
+    private NewEJPojoServiceSelectPage  pojoPage;
 
     public NewEJPojoServiceContentPage(NewEJPojoServiceSelectPage pojoServiceSelectPage)
     {
-        super(true,"ej.pojo.content");
+        super(true, "ej.pojo.content");
         setTitle("Block Service/Pojo Content");
         setDescription("Enter the data required to generate the block service/pojo.");
 
         this.pojoPage = pojoServiceSelectPage;
     }
 
-    
     private void createServiceOptionControls(Composite composite, int nColumns)
     {
 
@@ -145,7 +144,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         btnCreateService.setLayoutData(gd);
     }
-    
+
     public boolean isCreateSerivce()
     {
         return createSerivce;
@@ -156,12 +155,12 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         this.createSerivce = createSerivce;
         this.serviceOptional = serviceOptional;
     }
-    
+
     public IPackageFragmentRoot getPackageFragmentRoot()
     {
         return pojoPage.getPackageFragmentRoot();
     }
-    
+
     public BlockServiceWizardProvider getWizardProvider()
     {
         return wizardProvider;
@@ -196,23 +195,19 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             createServiceOptionControls(composite, 3);
             createDescComponent(composite).setText("If you choose not to generate the Block Service then only the Pojo will be generated");
         }
-        
-        
+
         createEmptySpace(composite, 1);
         createEmptySpace(composite, 4);
         createEmptySpace(composite, 4);
-        
+
         createEmptySpace(composite, 4);
         createSeparator(composite, nColumns);
         createProviderGroup(composite);
-        
-       
-        
+
         setControl(composite);
         Dialog.applyDialogFont(composite);
     }
-    
-    
+
     public static Control createEmptySpace(Composite parent, int span)
     {
         Label label = new Label(parent, SWT.LEFT);
@@ -304,7 +299,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                             wizardPage.setWizard(getWizard());
                         }
                         subPages = wizardProvider.getOptionalPages();
-                        
+
                         for (IWizardPage wizardPage : subPages)
                         {
                             opPages.add(wizardPage);
@@ -365,7 +360,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         group.setText("Content Provider");
         group.setLayout(new GridLayout(2, false));
         GridData layoutData = new GridData(GridData.FILL_BOTH);
-        layoutData.horizontalSpan=4;
+        layoutData.horizontalSpan = 4;
         group.setLayoutData(layoutData);
 
         comboProviderViewer = new ComboViewer(group);
@@ -425,7 +420,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
                     public int compare(BlockServiceContentProvider o1, BlockServiceContentProvider o2)
                     {
-                      
+
                         return o1.getProviderName().compareTo(o2.getProviderName());
                     }
                 });
@@ -515,7 +510,6 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 return false;
             }
         }
-        
 
         return true;
     }
@@ -533,18 +527,18 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             return getNextPage(iWizardPage);
         return iWizardPage;
     }
-    
+
     public IWizardPage getOptionalNextPage(IWizardPage page)
     {
         int index = opPages.indexOf(page);
-        if ( index == -1)
+        if (index == -1)
         {
-            if(opPages.isEmpty())
-              return null;
-            
-           return opPages.get(0);
+            if (opPages.isEmpty())
+                return null;
+
+            return opPages.get(0);
         }
-        if(opPages.size()>=(index + 1))
+        if (opPages.size() >= (index + 1))
         {
             return null;
         }
@@ -562,6 +556,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         }
         return pages.get(0);
     }
+
     public IWizardPage getOptinalStartingPage()
     {
         if (opPages.size() == 0)
@@ -575,9 +570,10 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
     {
         return pages.size();
     }
+
     public int getOptionalPageCount()
     {
-        return  opPages.size();
+        return opPages.size();
     }
 
     public IWizardPage getPreviousPage(IWizardPage page)
@@ -588,12 +584,13 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             // first page or page not found
             return null;
         }
-        
+
         IWizardPage iWizardPage = pages.get(index - 1);
         if (wizardProvider.skipPage(iWizardPage))
             return getPreviousPage(iWizardPage);
         return iWizardPage;
     }
+
     public IWizardPage getOptionalPreviousPage(IWizardPage page)
     {
         int index = opPages.indexOf(page);
@@ -648,7 +645,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             pojoGeneratorType.setPackageName(pojoGeneratorType.getPackageName());
             pojoGeneratorType.setClassName(pojoPage.getTypeName());
             String pojoClassName = null;
-            if(! wizardProvider.skipMainPojo())
+            if (!wizardProvider.skipMainPojo())
                 pojoClassName = createPojoClass(pojoGeneratorType, monitor);
 
             if (isCreateSerivce())
@@ -709,8 +706,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             connectedCU = parentCU;
 
             IBuffer buffer = parentCU.getBuffer();
-            
-            
+
             String fileContents = FTLEngine.genrateFormPojo(pojoContentGenerator.getTemplate(), pojoGeneratorType);
 
             if (fileContents == null)
@@ -731,9 +727,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            
-            
-           
+
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -761,28 +755,22 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         }
 
     }
-    
-    
-    @SuppressWarnings("restriction")
-    private void organizeImports(ICompilationUnit cu)
-            throws OperationCanceledException, CoreException {
 
-       
+
+    private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
+    {
+
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
         Class<?> importClass = null;
-        Class<?> importSubClass = null;
         try
         {
             importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
-            importSubClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery");
         }
         catch (ClassNotFoundException e)
         {
             try
             {
                 importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
-
-                importSubClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation.IChooseImportQuery");
             }
             catch (ClassNotFoundException ex)
             {
@@ -794,8 +782,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             Constructor<?> constructor;
             try
             {
-                constructor = importClass.getConstructor(org.eclipse.jdt.core.ICompilationUnit.class, org.eclipse.jdt.core.dom.CompilationUnit.class,
-                        boolean.class, boolean.class, boolean.class, importSubClass);
+                constructor = importClass.getDeclaredConstructors()[0];
                 Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
                 Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
@@ -809,22 +796,19 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         }
 
-        
     }
 
-    private void createServiceClass(BlockServiceContent blockServiceContent, final String pojoClassName, NewEJGenServicePage servicePage, IProgressMonitor monitor)
-            throws Exception, CoreException
+    private void createServiceClass(BlockServiceContent blockServiceContent, final String pojoClassName, NewEJGenServicePage servicePage,
+            IProgressMonitor monitor) throws Exception, CoreException
     {
         EJServiceContentGenerator serviceContentGenerator = createServiceContentGenerator(servicePage.getJavaProject(), wizardProvider.getServiceGenerator());
-       
-       
 
         EJServiceGeneratorType serviceGeneratorType = blockServiceContent.getServiceGeneratorType();
         String serviceClassName = servicePage.getTypeName();
-        
+
         serviceGeneratorType.setServiceName(serviceClassName);
-        
-        if(pojoClassName!=null)
+
+        if (pojoClassName != null)
         {
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
@@ -848,7 +832,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         try
         {
-           final ICompilationUnit parentCU = pack.createCompilationUnit(serviceClassName + ".java", "", false, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
+            final ICompilationUnit parentCU = pack.createCompilationUnit(serviceClassName + ".java", "", false, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
             // create a working copy with a new owner
             parentCU.becomeWorkingCopy(new SubProgressMonitor(monitor, 1));
             connectedCU = parentCU;
@@ -870,11 +854,10 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             }
 
             buffer.setContents(fileContents);
-            
-         
+
             organizeImports(connectedCU);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-          
+
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -883,7 +866,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                     if (iWizard instanceof NewWizard)
                     {
                         NewWizard wizard = (NewWizard) iWizard;
-                        if(pojoClassName!=null)
+                        if (pojoClassName != null)
                         {
                             IType createdType = parentCU.getType(pojoClassName);
                             wizard.selectAndReveal(createdType.getResource());
@@ -910,7 +893,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         return pages.contains(page);
     }
 
-       public void init(IStructuredSelection selection)
+    public void init(IStructuredSelection selection)
     {
         IJavaElement jelem = getInitialJavaElement(selection);
         initContainerPage(jelem);

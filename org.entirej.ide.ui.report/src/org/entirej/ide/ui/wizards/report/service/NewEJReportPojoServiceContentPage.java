@@ -621,7 +621,6 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         }
     }
 
-    @SuppressWarnings("restriction")
     private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
     {
 
@@ -647,8 +646,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             Constructor<?> constructor;
             try
             {
-                constructor = importClass.getConstructor(org.eclipse.jdt.core.ICompilationUnit.class, org.eclipse.jdt.core.dom.CompilationUnit.class,
-                        boolean.class, boolean.class, boolean.class, org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery.class);
+                constructor = importClass.getDeclaredConstructors()[0];
                 Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
                 Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
@@ -663,6 +661,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         }
 
     }
+
 
     public String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
