@@ -700,7 +700,7 @@ public class DisplayItemNode extends AbstractNode<EJPluginScreenItemProperties>i
             {
                 List<String> options = new ArrayList<String>();
                 List<EJPluginLovMappingProperties> lovMappingProperties = new ArrayList<EJPluginLovMappingProperties>();
-                        if(source.getBlockProperties().isMirrorBlock())
+                if(source.getBlockProperties()!=null && source.getBlockProperties().isMirrorBlock())
                 {
                     if(source.getBlockProperties().getMirrorParent() !=null && source.getBlockProperties().getMirrorParent().getLovMappingContainer()!=null)
                                 lovMappingProperties = source.getBlockProperties().getMirrorParent().getLovMappingContainer().getAllLovMappingProperties() ;
