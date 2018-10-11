@@ -46,6 +46,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -630,6 +631,13 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         {
                             EJDevBlockRendererDefinitionControl addBlockControlToCanvas = blockRendererDefinition.addBlockControlToCanvas(mainScreenProperties,
                                     source, pContent, editor.getToolkit());
+                            
+                            if(addBlockControlToCanvas==null)
+                            {
+                                Label dummy = new Label(pContent, SWT.NONE);
+                                dummy.setText("< "+mainScreenProperties.getBlockProperties().getName()+
+                                        "["+mainScreenProperties.getBlockProperties().getBlockRendererName() +"] >");
+                            }
                             addBlockControlToCanvas.addItemWidgetChosenListener(chosenListener);
 
                            
