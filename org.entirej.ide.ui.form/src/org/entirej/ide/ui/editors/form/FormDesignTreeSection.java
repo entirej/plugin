@@ -104,6 +104,7 @@ import org.entirej.framework.core.renderers.definitions.interfaces.EJFormRendere
 import org.entirej.framework.dev.EJDevConstants;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
+import org.entirej.framework.dev.renderer.definition.EJDevBlockRendererDefinitionControl;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
@@ -1216,9 +1217,12 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                             layoutBody.setLayoutData(createGridData(component));
                             EJDevBlockRendererDefinition blockRendererDefinition = component.getPluginBlockProperties().getBlockRendererDefinition();
                            if(blockRendererDefinition!=null)
-                                blockRendererDefinition
-                                        .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit())
-                                        .addItemWidgetChosenListener(chosenListener);
+                        {
+                            EJDevBlockRendererDefinitionControl controlToCanvas = blockRendererDefinition
+                                    .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit());
+                                    if(controlToCanvas!=null )
+                                        controlToCanvas.addItemWidgetChosenListener(chosenListener);
+                        }
                            
                            MouseAdapter mouseAdapter = new MouseAdapter()
                            {
