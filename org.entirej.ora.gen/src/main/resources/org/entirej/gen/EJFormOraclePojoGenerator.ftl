@@ -92,8 +92,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
         ArrayList<${JAVA_REC_NAME}> recs = new ArrayList<${JAVA_REC_NAME}>();
         for (Object obj : recArray)
         {
-            recs.add((${JAVA_REC_NAME}) obj);
-
+			recs.add((${JAVA_REC_NAME}) ${JAVA_REC_NAME}.getOracleDataFactory().create(obj, ((OracleArray) jdbcValue).getBaseType()));
         }
 
         ${JAVA_OBJECT_NAME} tab = new ${JAVA_OBJECT_NAME}();
