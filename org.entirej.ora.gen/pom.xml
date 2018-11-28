@@ -22,7 +22,7 @@
 			<artifactId>oracle.sql</artifactId>
 			<version>ojdbc</version>
 			<scope>system</scope>
-			<systemPath>${basedir}/ext/ojdbc6.jar</systemPath>
+			<systemPath>${basedir}/ext/ojdbc8.jar</systemPath>
 		</dependency>
 	</dependencies>
 

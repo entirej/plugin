@@ -1,13 +1,10 @@
 package org.entirej;
 
-import oracle.sql.Datum;
-import oracle.sql.ORAData;
-import oracle.sql.ORADataFactory;
+import oracle.jdbc.OracleData;
+import oracle.jdbc.OracleDataFactory;
 
-public interface EJOraCollectionType extends ORAData, ORADataFactory
+public interface EJOraCollectionType extends OracleData, OracleDataFactory
 {
 
     public String getSqlName();
-
-    public ORAData create(Datum d, int sqlType);
 }

@@ -1,20 +1,20 @@
 package org.entirej.report;
 
 import java.sql.Array;
+import java.sql.SQLException;
 import java.sql.Types;
 
 import org.entirej.EJOraCollectionType;
 import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportStatementParameter;
 
-import oracle.sql.ARRAY;
-import oracle.sql.ORAData;
+import oracle.jdbc.OracleData;
 
 public class EJStatementParameterOraArray<T extends EJOraCollectionType> extends EJReportStatementParameter
 {
     private static final int JDBC_TYPE = Types.ARRAY;
 
-    private T _tableType;
+    private T                _tableType;
 
     public EJStatementParameterOraArray(Class<T> claszz, EJReportParameterType parameterType)
     {
@@ -56,16 +56,25 @@ public class EJStatementParameterOraArray<T extends EJOraCollectionType> extends
         return _tableType;
     }
 
-    public ORAData create(Array d)
+    public OracleData create(Array d)
     {
-        return _tableType.create((ARRAY) d, JDBC_TYPE);
+        try
+        {
+            return _tableType.create(d, JDBC_TYPE);
+        }
+        catch (SQLException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void setValue(T value)
     {
         _tableType = value;
     }
-    
+
     public T getValue()
     {
         return _tableType;

@@ -1,5 +1,6 @@
 package org.entirej.report;
 
+import java.sql.SQLException;
 import java.sql.Struct;
 import java.sql.Types;
 
@@ -7,14 +8,13 @@ import org.entirej.EJOraCollectionType;
 import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportStatementParameter;
 
-import oracle.sql.ORAData;
-import oracle.sql.STRUCT;
+import oracle.jdbc.OracleData;
 
 public class EJStatementParameterOraStruct<T extends EJOraCollectionType> extends EJReportStatementParameter
 {
     private static final int JDBC_TYPE = Types.STRUCT;
 
-    private T _tableType;
+    private T _recordType;
 
     public EJStatementParameterOraStruct(Class<T> claszz, EJReportParameterType parameterType)
     {
@@ -22,7 +22,7 @@ public class EJStatementParameterOraStruct<T extends EJOraCollectionType> extend
         try
         {
 
-            _tableType = claszz.newInstance();
+            _recordType = claszz.newInstance();
 
         }
         catch (InstantiationException | IllegalAccessException e)
@@ -35,7 +35,7 @@ public class EJStatementParameterOraStruct<T extends EJOraCollectionType> extend
     public EJStatementParameterOraStruct(T tableType, EJReportParameterType parameterType)
     {
         super(parameterType);
-        _tableType = tableType;
+        _recordType = tableType;
     }
 
     public int getJdbcType()
@@ -47,28 +47,37 @@ public class EJStatementParameterOraStruct<T extends EJOraCollectionType> extend
     {
         if (type != null)
         {
-            _tableType = type;
+            _recordType = type;
         }
     }
 
     public T getCollectionType()
     {
-        return _tableType;
+        return _recordType;
     }
 
-    public ORAData create(Struct d)
+    public OracleData create(Struct d)
     {
-        return _tableType.create((STRUCT) d, JDBC_TYPE);
+        try
+        {
+            return _recordType.create(d, JDBC_TYPE);
+        }
+        catch (SQLException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
     
     public void setValue(T value)
     {
-        _tableType = value;
+        _recordType = value;
     }
 
     public T getValue()
     {
-        return _tableType;
+        return _recordType;
     }
 
 }
