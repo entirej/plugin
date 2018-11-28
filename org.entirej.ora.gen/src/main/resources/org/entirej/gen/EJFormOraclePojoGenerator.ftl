@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Objects;
 
 import org.entirej.framework.core.EJFieldName;
@@ -14,6 +15,7 @@ import oracle.jdbc.OracleArray;
 import oracle.jdbc.OracleData;
 import oracle.jdbc.OracleDataFactory;
 import oracle.jdbc.OracleTypes;
+import oracle.jdbc.OracleStruct;
 import oracle.jdbc.driver.OracleConnection;
 
 <#list imports as import>
@@ -46,7 +48,6 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
 
     public ${JAVA_OBJECT_NAME}(${JAVA_REC_NAME}[] a)
     {
-        _array = new MutableArray(2002, a, ${JAVA_REC_NAME}.getORADataFactory());
         if (a != null)
         {
             _values = Arrays.asList(a);
@@ -65,7 +66,6 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     public void setValues(List<${JAVA_REC_NAME}> a)
     {
         _values = a;
-        _array.setObjectArray(a.toArray(new ${JAVA_REC_NAME}[0]));
     } 
     
     public static OracleDataFactory getOracleDataFactory()
@@ -96,7 +96,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
 
         }
 
-        ${JAVA_REC_NAME} tab = new ${JAVA_REC_NAME}();
+        ${JAVA_OBJECT_NAME} tab = new ${JAVA_OBJECT_NAME}();
         tab.setValues(recs);
         return tab;
     }
@@ -227,19 +227,13 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     @EJFieldName("${column.name}")
     public void set${column.method_name}(${column.data_type} ${column.var_name})
     {
-        try
-        {
-            _struct.setAttribute(${column?index}, ${column.var_name});
+     
             _values.put(FieldNames.${column.name}, ${column.var_name});
             if (!_initialValues.containsKey(FieldNames.${column.name}))
             {
                 _initialValues.put(FieldNames.${column.name}, ${column.var_name});
             }
-        }
-        catch (SQLException e)
-        {
-            throw new EJApplicationException(e);
-        }
+        
         
     }
     
