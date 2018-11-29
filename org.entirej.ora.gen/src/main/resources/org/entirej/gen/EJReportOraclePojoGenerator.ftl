@@ -45,10 +45,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
         return _SQL_NAME;
     }
 
-    public static ORADataFactory getORADataFactory()
-    {
-        return _${JAVA_OBJECT_NAME}Factory;
-    }
+
 
     /* constructors */
     public ${JAVA_OBJECT_NAME}()
@@ -63,6 +60,11 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
         {
             _values = Arrays.asList(a);
         }
+    }
+
+    public static OracleDataFactory getOracleDataFactory()
+    {
+        return new ${JAVA_OBJECT_NAME}();
     }
 
     /* ORAData interface */

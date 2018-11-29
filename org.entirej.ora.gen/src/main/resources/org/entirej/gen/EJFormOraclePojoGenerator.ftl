@@ -70,7 +70,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     
     public static OracleDataFactory getOracleDataFactory()
     {
-        return new ${JAVA_REC_NAME}();
+        return new ${JAVA_OBJECT_NAME}();
     }
 
     @Override
