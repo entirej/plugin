@@ -1987,7 +1987,7 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                     dataTypeText = new Text(container, SWT.BORDER | SWT.SINGLE);
                     if (applicationParameter != null && applicationParameter.getDataTypeName() != null)
                         dataTypeText.setText(applicationParameter.getDataTypeName());
-                    TypeAssistProvider.createTypeAssist(dataTypeText, editor, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES|IJavaElementSearchConstants.CONSIDER_ENUMS, null);
+                    TypeAssistProvider.createTypeAssist(dataTypeText, editor, IJavaElementSearchConstants.CONSIDER_ALL_TYPES, null);
                     dataTypeText.addModifyListener(new ModifyListener()
                     {
                         public void modifyText(ModifyEvent e)

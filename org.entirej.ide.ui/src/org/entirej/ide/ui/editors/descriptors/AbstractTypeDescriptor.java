@@ -32,7 +32,7 @@ public abstract class AbstractTypeDescriptor extends AbstractDescriptor<String>
     private String                     baseClass;
     private String                     defaultClass;
     private boolean                    defaultClassOpen;
-    private int                        scope = IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES|IJavaElementSearchConstants.CONSIDER_ENUMS;
+    private int                        scope = IJavaElementSearchConstants.CONSIDER_ALL_TYPES;
 
     public AbstractTypeDescriptor(IJavaProjectProvider projectProvider)
     {
