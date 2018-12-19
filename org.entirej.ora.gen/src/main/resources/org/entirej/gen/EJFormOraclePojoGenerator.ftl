@@ -23,7 +23,7 @@ import ${import};
 </#list>
 import java.util.HashMap;
 
-public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
+public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
 {
     
 <#if TABLE_NAME != "">
@@ -76,7 +76,7 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     @Override
     public Object toJDBCObject(Connection conn) throws SQLException
     {
-        return ((OracleConnection) conn).createOracleArray(_SQL_NAME, _values.toArray(new ${JAVA_REC_NAME}[0]));
+        return org.entirej.EJOraSystemTypeHelper.toJDBCArray(conn,_SQL_NAME, _values.toArray(new ${JAVA_REC_NAME}[0]));
     }
 
     @Override
@@ -124,20 +124,11 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     }
 
         
-    private Object toJDBC(Object o,Connection conn) throws SQLException
-    {
-        if(o instanceof oracle.jdbc.OracleData) 
-        {
-            return ((oracle.jdbc.OracleData)o).toJDBCObject(conn);
-        }
-        
-        return o;
-    }
     
     @Override
     public Object toJDBCObject(Connection conn) throws SQLException
     {
-        return conn.createStruct(getSqlName(),
+        return org.entirej.EJOraSystemTypeHelper.toJDBCS(conn,getSqlName(),
                 new Object[] {<#list columns as column> toJDBC(get${column.method_name}(),conn) ,</#list> });
     }
     

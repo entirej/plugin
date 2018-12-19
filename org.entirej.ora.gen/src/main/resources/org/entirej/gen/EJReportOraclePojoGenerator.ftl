@@ -27,24 +27,21 @@ import ${import};
 </#list>
 import java.util.HashMap;
 
-public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
+public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
 {
     
 <#if TABLE_NAME != "">
-    public static final String _SQL_NAME     = "${TABLE_NAME}";
+        public static final String _SQL_NAME     = "${TABLE_NAME}";
     public static final int    _SQL_TYPECODE = OracleTypes.ARRAY;
 
     private List<${JAVA_REC_NAME}> _values = new ArrayList<${JAVA_REC_NAME}>();
 
-    MutableArray _array;
 
-    private static final ${JAVA_OBJECT_NAME} _${JAVA_OBJECT_NAME}Factory = new ${JAVA_OBJECT_NAME}();
 
     public String getSqlName()
     {
         return _SQL_NAME;
     }
-
 
 
     /* constructors */
@@ -55,59 +52,57 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
 
     public ${JAVA_OBJECT_NAME}(${JAVA_REC_NAME}[] a)
     {
-        _array = new MutableArray(2002, a, ${JAVA_REC_NAME}.getORADataFactory());
         if (a != null)
         {
             _values = Arrays.asList(a);
         }
     }
 
+
+    /* array accessor methods */
+    @EJFieldName("VALUES")
+    public List<${JAVA_REC_NAME}> getValues()
+    {
+        return Collections.unmodifiableList(_values);
+    }
+
+    @EJFieldName("VALUES")
+    public void setValues(List<${JAVA_REC_NAME}> a)
+    {
+        _values = a;
+    } 
+    
     public static OracleDataFactory getOracleDataFactory()
     {
         return new ${JAVA_OBJECT_NAME}();
     }
-
-    /* ORAData interface */
-    public Datum toDatum(Connection c) throws SQLException
+    
+    
+    @Override
+    public Object toJDBCObject(Connection conn) throws SQLException
     {
-        if (c == null || c.isClosed())
-        {
-            EJReportManagedFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
-            try
-            {
-                return _array.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
-            }
-            finally
-            {
-                con.close();
-            }
-        }
-        else
-        {
-            return _array.toDatum(c, _SQL_NAME);
-        }
+        return org.entirej.EJOraSystemTypeHelper.toJDBCArray(conn,_SQL_NAME, _values.toArray(new ${JAVA_REC_NAME}[0]));
     }
 
-    /* ORADataFactory interface */
-    public ORAData create(Datum d, int sqlType)
+    @Override
+    public OracleData create(Object jdbcValue, int arg1) throws SQLException
     {
-        try
+        if (Objects.isNull(jdbcValue))
         {
-            if (d == null)
-            {
-                return null;
-            }
-
-            ${JAVA_OBJECT_NAME} a = new ${JAVA_OBJECT_NAME}();
-            a._array = new MutableArray(2002, (ARRAY) d, ${JAVA_REC_NAME}.getORADataFactory());
-            a.setValues(Arrays.asList((${JAVA_REC_NAME}[]) a._array.getObjectArray(new ${JAVA_REC_NAME}[a._array.length()])));
-
-            return a;
+            return null;
         }
-        catch (SQLException e)
+
+        Object[] recArray = (Object[]) ((OracleArray) jdbcValue).getArray();
+
+        ArrayList<${JAVA_REC_NAME}> recs = new ArrayList<${JAVA_REC_NAME}>();
+        for (Object obj : recArray)
         {
-            throw new EJReportRuntimeException(e);
+			recs.add((${JAVA_REC_NAME}) ${JAVA_REC_NAME}.getOracleDataFactory().create(obj, ((OracleArray) jdbcValue).getBaseType()));
         }
+
+        ${JAVA_OBJECT_NAME} tab = new ${JAVA_OBJECT_NAME}();
+        tab.setValues(recs);
+        return tab;
     }
 
     /* array accessor methods */
@@ -133,111 +128,62 @@ public class ${JAVA_OBJECT_NAME} implements EJOraCollectionType
     public static final String _SQL_NAME     = "${DB_OBJECT_NAME}";
     public static final int    _SQL_TYPECODE = OracleTypes.STRUCT;   
 
-
-    protected MutableStruct _struct;
-
-    protected static int[]                   _sqlType                  = { <#list columns as column>${column.JAVA_OBJECT_TYPE}<#if column?has_next >, </#if></#list> };
-    protected static ORADataFactory[]        _factory                  = new ORADataFactory[${columns?size}];
-    protected static final ${JAVA_OBJECT_NAME} _${JAVA_OBJECT_NAME}Factory = new ${JAVA_OBJECT_NAME}();
-
     private HashMap<FieldNames<?>, Object> _values        = new HashMap<FieldNames<?>, Object>();
     private HashMap<FieldNames<?>, Object> _initialValues = new HashMap<FieldNames<?>, Object>();
 
-    static
-    {
-        <#list columns as column>
-        <#if column.is_array == "true" || column.is_struct == "true">
-        _factory[${column?index}] = ${column.data_type}.getORADataFactory();
-        </#if>
-        </#list>
-    }
-
-    public static ORADataFactory getORADataFactory()
-    {
-        return _${JAVA_OBJECT_NAME}Factory;
-    }
+    
 
     public String getSqlName()
     {
         return _SQL_NAME;
     }
 
-    /* constructors */
-    protected void _init_struct(boolean init)
-    {
-        if (init)
-        {
-            _struct = new MutableStruct(new Object[${columns?size}], _sqlType, _factory);
-        }
-    }
+    
 
     public ${JAVA_OBJECT_NAME}()
     {
-        _init_struct(true);
     }
 
-    public ${JAVA_OBJECT_NAME}(<#list columns as column>${column.data_type} ${column.var_name}<#if column?has_next >, </#if></#list> )
+        
+    
+    @Override
+    public Object toJDBCObject(Connection conn) throws SQLException
     {
-        _init_struct(true);
-        <#list columns as column>
-        set${column.method_name}(${column.var_name});
-        </#list>
+        return org.entirej.EJOraSystemTypeHelper.toJDBCS(conn,getSqlName(),
+                new Object[] {<#list columns as column> toJDBC(get${column.method_name}(),conn) ,</#list> });
     }
+    
+    
 
-    /* ORAData interface */
-    public Datum toDatum(Connection c) throws SQLException
+    @Override
+    public OracleData create(Object jdbcValue, int sqltype) throws SQLException
     {
-        if (c == null || c.isClosed())
-        {
-            EJReportManagedFrameworkConnection con = org.entirej.framework.report.EJReportConnectionHelper.getConnection();
-            try
-            {
-                return _struct.toDatum(((Connection) con.getConnectionObject()).unwrap(OracleConnection.class), _SQL_NAME);
-            }
-            finally
-            {
-                con.close();
-            }
-        }
-        else
-        {
-            return _struct.toDatum(c, _SQL_NAME);
-        }
-    }
-
-    /* ORADataFactory interface */
-    public ORAData create(Datum d, int sqlType)
-    {
-        try
-        {
-            return create(null, d, sqlType);
-        }
-        catch (SQLException e)
-        {
-            throw new EJReportRuntimeException(e);
-        }
-    }
-
-    protected ORAData create(${JAVA_OBJECT_NAME} o, Datum d, int sqlType) throws SQLException
-    {
-        if (d == null)
+        if (Objects.isNull(jdbcValue))
         {
             return null;
         }
-        if (o == null)
-        {
-            o = new ${JAVA_OBJECT_NAME}();
-        }
 
-        MutableStruct struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
-
+        LinkedList<Object> attr = new LinkedList<>(Arrays.asList(((OracleStruct) jdbcValue).getAttributes()));
+        ${JAVA_OBJECT_NAME} r = new ${JAVA_OBJECT_NAME}();
         
         <#list columns as column>
-        o.set${column.method_name}((${column.data_type}) struct.getAttribute(${column?index}));
+        <#if column.is_array == "true" || column.is_struct == "true">
+        r.set${column.method_name}((${column.data_type})${column.data_type}.getOracleDataFactory().create(attr.removeFirst(),${column.data_type}._SQL_TYPECODE)); 
+        <#else>        
+        r.set${column.method_name}((${column.data_type})attr.removeFirst());
+        </#if> 
+        
         </#list>
-
-        return o;
+        
+        return r;
     }
+
+    public static OracleDataFactory getOracleDataFactory()
+    {
+        return new ${JAVA_OBJECT_NAME}();
+    }
+    
+
 
     public void clearInitialValues()
     {
