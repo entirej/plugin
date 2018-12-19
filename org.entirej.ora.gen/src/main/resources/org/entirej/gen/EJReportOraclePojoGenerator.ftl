@@ -149,7 +149,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     @Override
     public Object toJDBCObject(Connection conn) throws SQLException
     {
-        return org.entirej.EJOraSystemTypeHelper.toJDBCS(conn,getSqlName(),
+        return org.entirej.EJOraSystemTypeHelper.toJDBCStruct(conn,getSqlName(),
                 new Object[] {<#list columns as column> toJDBC(get${column.method_name}(),conn) ,</#list> });
     }
     
