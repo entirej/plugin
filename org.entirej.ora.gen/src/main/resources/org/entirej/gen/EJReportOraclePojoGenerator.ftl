@@ -105,22 +105,6 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
         return tab;
     }
 
-    /* array accessor methods */
-    @EJReportFieldName("VALUES")
-    public List<${JAVA_REC_NAME}> getValues()
-    {
-        return Collections.unmodifiableList(_values);
-    }
-
-    @EJReportFieldName("VALUES")
-    public void setValues(List<${JAVA_REC_NAME}> a)
-    {
-        _values = a;
-    } 
-    
-    
-    
-    
     
     
 <#else>
