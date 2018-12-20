@@ -217,7 +217,7 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
         
         
         <#list columns as column>
-        builder.append("${column.name}").append(" : ").append(getValue(FieldNames.${column.name})).append(" : ").append(getInitialValue(FieldNames.${column.name})).append("\n");
+        builder.append("${column.name}").append(" : ").append(getValue(FieldNames.${column.name})).append("\n");
         </#list>
         
         
@@ -225,7 +225,7 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     }
 
 /***********************************************************************************************/
-
+    @SuppressWarnings( "hiding" )
     public static class FieldNames<T>
     {
     

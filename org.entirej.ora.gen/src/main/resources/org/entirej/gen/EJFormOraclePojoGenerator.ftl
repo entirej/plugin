@@ -247,7 +247,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     }
 
 /***********************************************************************************************/
-
+    @SuppressWarnings( "hiding" )
     public static class FieldNames<T>
     {
     
