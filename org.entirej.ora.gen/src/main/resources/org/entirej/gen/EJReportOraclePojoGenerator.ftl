@@ -6,28 +6,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Objects;
 
-import org.entirej.EJOraCollectionType;
+import org.entirej.EJReportOraCollectionType;
 import org.entirej.framework.report.EJReportRuntimeException;
 import org.entirej.framework.report.EJReportFieldName;
 import org.entirej.framework.report.EJReportManagedFrameworkConnection;
-import oracle.jdbc.OracleConnection;
+
+
+import oracle.jdbc.OracleArray;
+import oracle.jdbc.OracleData;
+import oracle.jdbc.OracleDataFactory;
 import oracle.jdbc.OracleTypes;
-import oracle.jpub.runtime.MutableStruct;
-import oracle.sql.Datum;
-import oracle.sql.ORAData;
-import oracle.sql.ORADataFactory;
-import oracle.sql.STRUCT;
+import oracle.jdbc.OracleStruct;
+import oracle.jdbc.driver.OracleConnection;
 
 <#list imports as import>
 import ${import};
 </#list>
 import java.util.HashMap;
 
-public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
+public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
 {
     
 <#if TABLE_NAME != "">
@@ -81,7 +81,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     @Override
     public Object toJDBCObject(Connection conn) throws SQLException
     {
-        return org.entirej.EJOraSystemTypeHelper.toJDBCArray(conn,_SQL_NAME, _values.toArray(new ${JAVA_REC_NAME}[0]));
+        return org.entirej.EJReportOraSystemTypeHelper.toJDBCArray(conn,_SQL_NAME, _values.toArray(new ${JAVA_REC_NAME}[0]));
     }
 
     @Override
@@ -116,7 +116,6 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     public void setValues(List<${JAVA_REC_NAME}> a)
     {
         _values = a;
-        _array.setObjectArray(a.toArray(new ${JAVA_REC_NAME}[0]));
     } 
     
     
@@ -149,7 +148,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     @Override
     public Object toJDBCObject(Connection conn) throws SQLException
     {
-        return org.entirej.EJOraSystemTypeHelper.toJDBCStruct(conn,getSqlName(),
+        return org.entirej.EJReportOraSystemTypeHelper.toJDBCStruct(conn,getSqlName(),
                 new Object[] {<#list columns as column> toJDBC(get${column.method_name}(),conn) ,</#list> });
     }
     
@@ -236,7 +235,6 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     {
         try
         {
-            _struct.setAttribute(${column?index}, ${column.var_name});
             _values.put(FieldNames.${column.name}, ${column.var_name});
             if (!_initialValues.containsKey(FieldNames.${column.name}))
             {
