@@ -4,13 +4,13 @@ import java.sql.SQLException;
 import java.sql.Struct;
 import java.sql.Types;
 
-import org.entirej.EJOraCollectionType;
+import org.entirej.EJReportOraCollectionType;
 import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportStatementParameter;
 
 import oracle.jdbc.OracleData;
 
-public class EJStatementParameterOraStruct<T extends EJOraCollectionType> extends EJReportStatementParameter
+public class EJStatementParameterOraStruct<T extends EJReportOraCollectionType> extends EJReportStatementParameter
 {
     private static final int JDBC_TYPE = Types.STRUCT;
 
