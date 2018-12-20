@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Objects;
 
 import org.entirej.EJReportOraCollectionType;
 import org.entirej.framework.report.EJReportRuntimeException;
@@ -60,13 +59,13 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
 
 
     /* array accessor methods */
-    @EJFieldName("VALUES")
+    @EJReportFieldName("VALUES")
     public List<${JAVA_REC_NAME}> getValues()
     {
         return Collections.unmodifiableList(_values);
     }
 
-    @EJFieldName("VALUES")
+    @EJReportFieldName("VALUES")
     public void setValues(List<${JAVA_REC_NAME}> a)
     {
         _values = a;
@@ -87,7 +86,7 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     @Override
     public OracleData create(Object jdbcValue, int arg1) throws SQLException
     {
-        if (Objects.isNull(jdbcValue))
+        if (jdbcValue == null)
         {
             return null;
         }
@@ -141,7 +140,7 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     @Override
     public OracleData create(Object jdbcValue, int sqltype) throws SQLException
     {
-        if (Objects.isNull(jdbcValue))
+        if (jdbcValue == null)
         {
             return null;
         }
@@ -217,19 +216,11 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     @EJReportFieldName("${column.name}")
     public void set${column.method_name}(${column.data_type} ${column.var_name})
     {
-        try
+        _values.put(FieldNames.${column.name}, ${column.var_name});
+        if (!_initialValues.containsKey(FieldNames.${column.name}))
         {
-            _values.put(FieldNames.${column.name}, ${column.var_name});
-            if (!_initialValues.containsKey(FieldNames.${column.name}))
-            {
-                _initialValues.put(FieldNames.${column.name}, ${column.var_name});
-            }
+            _initialValues.put(FieldNames.${column.name}, ${column.var_name});
         }
-        catch (SQLException e)
-        {
-            throw new EJReportRuntimeException(e);
-        }
-        
     }
     
 </#list>
