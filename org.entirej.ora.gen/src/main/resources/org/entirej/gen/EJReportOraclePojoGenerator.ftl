@@ -175,7 +175,7 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
 
 
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "hiding"})
     public <T> T getValue(FieldNames<T> fieldName)
     {
         if (_values.containsKey(fieldName))

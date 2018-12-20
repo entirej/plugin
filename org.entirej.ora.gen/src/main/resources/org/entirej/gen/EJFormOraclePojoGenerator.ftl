@@ -178,7 +178,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
         _values.clear();
     }
 
-    @SuppressWarnings("unchecked", "hiding")
+	@SuppressWarnings({"unchecked", "hiding"})
     public <T> T getInitialValue(FieldNames<T> fieldName)
     {
         if (_initialValues.containsKey(fieldName))
@@ -191,7 +191,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
         }
     }
 
-    @SuppressWarnings("unchecked", "hiding")
+    @SuppressWarnings({"unchecked", "hiding"})
     public <T> T getValue(FieldNames<T> fieldName)
     {
         if (_values.containsKey(fieldName))
