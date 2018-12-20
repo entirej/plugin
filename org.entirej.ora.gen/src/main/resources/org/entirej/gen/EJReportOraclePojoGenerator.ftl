@@ -111,7 +111,6 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     public static final int    _SQL_TYPECODE = OracleTypes.STRUCT;   
 
     private HashMap<FieldNames<?>, Object> _values        = new HashMap<FieldNames<?>, Object>();
-    private HashMap<FieldNames<?>, Object> _initialValues = new HashMap<FieldNames<?>, Object>();
 
     
 
@@ -167,28 +166,14 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     
 
 
-    public void clearInitialValues()
-    {
-        _initialValues.clear();
-    }
+    
 
     public void clearValues()
     {
         _values.clear();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getInitialValue(FieldNames<T> fieldName)
-    {
-        if (_initialValues.containsKey(fieldName))
-        {
-            return (T) _initialValues.get(fieldName);
-        }
-        else
-        {
-            return null;
-        }
-    }
+
 
     @SuppressWarnings("unchecked")
     public <T> T getValue(FieldNames<T> fieldName)
@@ -217,10 +202,7 @@ public class ${JAVA_OBJECT_NAME} extends EJReportOraCollectionType
     public void set${column.method_name}(${column.data_type} ${column.var_name})
     {
         _values.put(FieldNames.${column.name}, ${column.var_name});
-        if (!_initialValues.containsKey(FieldNames.${column.name}))
-        {
-            _initialValues.put(FieldNames.${column.name}, ${column.var_name});
-        }
+        
     }
     
 </#list>
