@@ -142,7 +142,7 @@
       point="org.eclipse.ui.preferencePages">
    <page
          category="org.entirej.ide.core.PreferencesPage"
-         class="org.entirej.ide.ui.editors.preferences.EditorPreferencePage"
+         class="org.entirej.ide.ui.editors.preferences.ReportEditorPreferencePage"
          id="org.entirej.ide.ui.editor"
          name="Report Editor">
    </page>

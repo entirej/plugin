@@ -33,5 +33,11 @@
             class="org.entirej.ide.ui.wizards.custom.CustomBlockServiceContentProvider">
       </provider>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.entirej.ide.ui.EJUIPlugin">
+      </startup>
+   </extension>
 
 </plugin>

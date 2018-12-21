@@ -17,12 +17,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.entirej.ide.ui.EJUIPlugin;
 
-public class EditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage
+public class ReportEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage
 {
 
-    public EditorPreferencePage()
+    public ReportEditorPreferencePage()
     {
-        super("Form Editor", GRID);
+        super("Report Editor", GRID);
     }
 
     public void init(IWorkbench workbench)
@@ -33,16 +33,16 @@ public class EditorPreferencePage extends FieldEditorPreferencePage implements I
     @Override
     protected void createFieldEditors()
     {
+        
         {
-            RadioGroupFieldEditor autoPerpectiveEd = new RadioGroupFieldEditor("AbstractEJFormEditor.autoPerspectiveSwitch",
-                    "Automatically switch to EntireJ Form Perspective", 3, new String[][] { { "Always", MessageDialogWithToggle.ALWAYS },
+            RadioGroupFieldEditor autoPerpectiveEd = new RadioGroupFieldEditor("AbstractEJReportEditor.autoPerspectiveSwitch",
+                    "Automatically switch to EntireJ Report Perspective", 3, new String[][] { { "Always", MessageDialogWithToggle.ALWAYS },
                             { "Never", MessageDialogWithToggle.NEVER }, { "Prompt", "" }
 
                     }, getFieldEditorParent(), true);
 
             addField(autoPerpectiveEd);
         }
-        
 
     }
 
