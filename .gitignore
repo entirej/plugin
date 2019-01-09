@@ -28,3 +28,5 @@
 /org.entirej.development/target
 /org.entirej.ide.upload/target
 /org.entirej.ide.libs/target
+/org.entirej.ext.jasper/bin
+/org.entirej.ext.jasper/target
