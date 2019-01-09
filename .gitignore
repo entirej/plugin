@@ -30,3 +30,6 @@
 /org.entirej.ide.libs/target
 /org.entirej.ext.jasper/bin
 /org.entirej.ext.jasper/target
+/org.entirej.fx.feature/target
+/org.entirej.ide.report.site/target
+
