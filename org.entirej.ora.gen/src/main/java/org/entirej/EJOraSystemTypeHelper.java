@@ -27,8 +27,17 @@ public class EJOraSystemTypeHelper {
 		EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.getConnection();
 		try
 		{
+			Object[] convertedData = new Object[data.length];
+			 for (int i = 0; i < data.length; i++)
+             {
+                 if(data[i] instanceof EJOraCollectionType) {
+                     EJOraCollectionType type = (EJOraCollectionType) data[i];
+                     convertedData[i] = type.toJDBC(type, conn);
+                 }
+             }
+			 
 			return ((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class))
-					.createOracleArray(sqlName, data);
+					.createOracleArray(sqlName, convertedData);
 		} finally {
 			con.close();
 		}
