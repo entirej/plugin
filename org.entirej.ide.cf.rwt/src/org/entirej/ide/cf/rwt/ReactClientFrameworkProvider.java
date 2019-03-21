@@ -90,7 +90,7 @@ public class ReactClientFrameworkProvider implements ClientFrameworkProvider {
 		return "Creates a project adding the React.js Application Framework and renderers.\nThe application.ejprop file will be pre-configured with references to the React.js Renderers";
 	}
 
-	@Override
+	
 	public IClasspathAttribute[] getClasspathAttributes() {
 		return new IClasspathAttribute[0];
 	}
