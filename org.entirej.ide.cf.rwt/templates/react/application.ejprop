@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entirejFramework>
+    <version><![CDATA[2.0]]></version>
+    <applicationManager><![CDATA[org.entirej.applicationframework.sb.EJSBApplicationManager]]></applicationManager>
+    <applicationManagerDefinition><![CDATA[org.entirej.runtime.sb.renderers.application.EJSBApplicationDefinition]]></applicationManagerDefinition>
+    <connectionFactoryClassName><![CDATA[org.entirej.db.connection.EmbeddedConnectionFactory]]></connectionFactoryClassName>
+    <applicationActionProcessor></applicationActionProcessor>
+    <reusableBlocksLocation></reusableBlocksLocation>
+    <reusableLovDefinitionLocation><![CDATA[org/entirej/lov]]></reusableLovDefinitionLocation>
+    <objectGroupDefinitionLocation></objectGroupDefinitionLocation>
+    <translatorClassName></translatorClassName>
+    <applicationLevelParameterList>
+    </applicationLevelParameterList>
+    <applicationDefinedProperties>
+        <propertyGroup name="SPRING_SECURITY">
+            <property name="SPRING_SECURITY_CONFIG" multilingual="false" propertyType="PROJECT_CLASS_FILE"><![CDATA[org.entirej.applicationframework.sb.spring.ext.EJDefaultSpringSecurityConfigProvider]]></property>
+            <property name="SPRING_SECURITY_AUTH" multilingual="false" propertyType="PROJECT_CLASS_FILE"><![CDATA[org.entirej.applicationframework.sb.spring.ext.EJDefaultSpringSecurityAuthenticationProvider]]></property>
+        </propertyGroup>
+    </applicationDefinedProperties>
+    <packages>
+        <formsPackage name="org/entirej/forms"/>
+    </packages>
+    <renderer>
+        <formRenderers>
+            <renderer name="Form" rendererClassName="org.entirej.applicationframework.sb.EJSBForm"/>
+        </formRenderers>
+        <blockRenderers>
+            <renderer name="FormLayout" rendererClassName="org.entirej.applicationframework.sb.EJSBFormLayoutBlock"/>
+            <renderer name="TableLayout" rendererClassName="org.entirej.applicationframework.sb.EJSBTableLayoutBlock"/>
+        </blockRenderers>
+        <itemRenderers>
+            <renderer name="Text" rendererClassName="org.entirej.applicationframework.sb.item.EJSBTextItemRenderer">
+            </renderer>
+            <renderer name="Date" rendererClassName="org.entirej.applicationframework.sb.item.EJSBDateItemRenderer">
+            </renderer>
+            <renderer name="Button" rendererClassName="org.entirej.applicationframework.sb.item.EJSBButtonItemRenderer">
+            </renderer>
+            <renderer name="Selection" rendererClassName="org.entirej.applicationframework.sb.item.EJSBSelectiontemRenderer">
+            </renderer>
+            <renderer name="Number" rendererClassName="org.entirej.applicationframework.sb.item.EJSBNumberItemRenderer">
+            </renderer>
+        </itemRenderers>
+        <lovRenderers>
+            <renderer name="EMPTY " rendererClassName="org.entirej.applicationframework.sb.lov.EmptyLovRenderer"/>
+            <renderer name="Standard" rendererClassName="org.entirej.applicationframework.sb.lov.BaseLovRenderer"/>
+        </lovRenderers>
+        <menuRenderers>
+        </menuRenderers>
+        <appCompRenderers>
+            <renderer name="Menu" rendererClassName="org.entirej.applicationframework.sb.EJSBStub"/>
+            <renderer name="TabFormContainer" rendererClassName="org.entirej.applicationframework.sb.EJSBStub"/>
+        </appCompRenderers>
+    </renderer>
+    <applicationMenus>
+        <applicationMenu name="Default" actionProcessorClassName="" default="true">
+            <leaf type="BRANCH" name="Actions">
+                <displayName><![CDATA[Actions]]></displayName>
+                <icon></icon>
+            </leaf>
+            <leaf type="BRANCH" name="Forms">
+                <displayName><![CDATA[Forms]]></displayName>
+                <icon></icon>
+            </leaf>
+        </applicationMenu>
+    </applicationMenus>
+    <applicationLayout>
+        <title><![CDATA[EJ React App]]></title>
+        <col>1</col>
+        <height>0</height>
+        <width>0</width>
+        <items>
+            <item type="GROUP">
+                <name><![CDATA[group_1]]></name>
+                <title></title>
+                <fill><![CDATA[BOTH]]></fill>
+                <grab><![CDATA[BOTH]]></grab>
+                <hHint>0</hHint>
+                <wHint>0</wHint>
+                <hMin>0</hMin>
+                <wMin>0</wMin>
+                <hSpan>1</hSpan>
+                <VSpan>1</VSpan>
+                <col>2</col>
+                <title></title>
+                <border>false</border>
+                <hideMargin>false</hideMargin>
+                <items>
+                    <item type="COMPONENT">
+                        <name><![CDATA[component_1]]></name>
+                        <title></title>
+                        <fill><![CDATA[BOTH]]></fill>
+                        <grab><![CDATA[VERTICAL]]></grab>
+                        <hHint>0</hHint>
+                        <wHint>200</wHint>
+                        <hMin>0</hMin>
+                        <wMin>200</wMin>
+                        <hSpan>1</hSpan>
+                        <VSpan>1</VSpan>
+                        <renderer><![CDATA[Menu]]></renderer>
+                        <rendererProperties>
+                            <property name="MENU_GROUP" multilingual="false" propertyType="MENU_GROUP"><![CDATA[Default]]></property>
+                        </rendererProperties>
+                    </item>
+                    <item type="COMPONENT">
+                        <name><![CDATA[component_2]]></name>
+                        <title></title>
+                        <fill><![CDATA[BOTH]]></fill>
+                        <grab><![CDATA[BOTH]]></grab>
+                        <hHint>0</hHint>
+                        <wHint>0</wHint>
+                        <hMin>0</hMin>
+                        <wMin>0</wMin>
+                        <hSpan>1</hSpan>
+                        <VSpan>1</VSpan>
+                        <renderer><![CDATA[TabFormContainer]]></renderer>
+                        <rendererProperties>
+                        </rendererProperties>
+                    </item>
+                </items>
+            </item>
+        </items>
+    </applicationLayout>
+    <visualAttributes>
+    </visualAttributes>
+</entirejFramework>

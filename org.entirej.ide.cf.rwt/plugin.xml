@@ -103,6 +103,11 @@
          class="org.entirej.ide.cf.rwt.RWTSpringClientFrameworkProvider"></provider>
 </extension>
 <extension
+      point="org.entirej.ide.core.spi.clientframework.exportProvider">
+   <provider
+         class="org.entirej.ide.cf.rwt.ReactClientFrameworkProvider"></provider>
+</extension>
+<extension
       point="org.entirej.ide.core.spi.featureconfig.provider">
    <provider
          class="org.entirej.ide.cf.rwt.SpringFeatureConfigProvider">
