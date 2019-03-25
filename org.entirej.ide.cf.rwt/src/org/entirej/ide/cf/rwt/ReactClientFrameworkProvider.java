@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.entirej.ide.cf.rwt;
 
+import java.util.Date;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -95,4 +97,14 @@ public class ReactClientFrameworkProvider implements ClientFrameworkProvider {
 		return new IClasspathAttribute[0];
 	}
 
+	
+	@SuppressWarnings("deprecation")
+	public static void main(String[] args) {
+		Date time = new Date(70, 0, 1, 0,0,1);
+		
+		System.out.println(3>>>1);
+		System.out.println(3&2);
+		System.out.println(3%2);
+		System.out.println(3^2);
+	}
 }
