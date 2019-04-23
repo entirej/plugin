@@ -653,8 +653,9 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 createServiceClass(blockServiceContent, pojoClassName, servicePage, monitor);
             }
         }
-        catch (final Exception e)
+        catch (final Throwable e)
         {
+            EJCoreLog.logException(e);
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
