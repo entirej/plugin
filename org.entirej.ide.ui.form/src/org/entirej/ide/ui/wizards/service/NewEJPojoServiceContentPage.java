@@ -669,6 +669,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
     public String createPojoClass(EJPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
 
+        EJCoreLog.logInfoMessage("Start - > createPojoClass");
         Class<?> pojoGeneratorClass = EJPluginEntireJClassLoader.loadClass(getJavaProject(), wizardProvider.getPogoGenerator());
         if (!EJPojoContentGenerator.class.isAssignableFrom(pojoGeneratorClass))
         {
@@ -678,6 +679,8 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         EJPojoContentGenerator pojoContentGenerator = (EJPojoContentGenerator) pojoGeneratorClass.newInstance();
 
         pojoGeneratorType.setPackageName(pojoPage.getPackageText());
+        
+        EJCoreLog.logInfoMessage("pkg - > "+pojoPage.getPackageText());
 
         IPackageFragmentRoot root = getPackageFragmentRoot();
         IPackageFragment pack = root.getPackageFragment(pojoGeneratorType.getPackageName());
@@ -697,23 +700,29 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         }
         pojoGeneratorType.setPackageName(pack.getElementName());
         ICompilationUnit connectedCU = null;
-
+       
         try
         {
+            EJCoreLog.logInfoMessage("start class - > "+pojoGeneratorType.getClassName());
             ICompilationUnit parentCU = pack.createCompilationUnit(pojoGeneratorType.getClassName() + ".java", "", true, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
             // create a working copy with a new owner
             parentCU.becomeWorkingCopy(new SubProgressMonitor(monitor, 1));
             connectedCU = parentCU;
+            EJCoreLog.logInfoMessage("end class - > "+pojoGeneratorType.getClassName());
 
             IBuffer buffer = parentCU.getBuffer();
 
+            EJCoreLog.logInfoMessage("start FTLEngine - > "+pojoGeneratorType);
+            EJCoreLog.logInfoMessage("start FTLEngine src- > "+ pojoContentGenerator.getTemplate());
             String fileContents = FTLEngine.genrateFormPojo(pojoContentGenerator.getTemplate(), pojoGeneratorType);
 
             if (fileContents == null)
             {
                 throw new IllegalArgumentException("No content provided by chosen pojo generator.");
             }
+            EJCoreLog.logInfoMessage("end FTLEngine - > "+fileContents);
 
+            EJCoreLog.logInfoMessage("start CodeFormatter - > ");
             CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(getProject().getOptions(true));
             IDocument doc = new Document(fileContents);
             TextEdit edit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, doc.get(), 0, doc.get().length(), 0, null);
@@ -722,12 +731,16 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 edit.apply(doc);
                 fileContents = doc.get();
             }
+            EJCoreLog.logInfoMessage("END CodeFormatter - > "+fileContents);
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
+            EJCoreLog.logInfoMessage("start organizeImports - > ");
             organizeImports(connectedCU);
+            EJCoreLog.logInfoMessage("end organizeImports - > ");
+            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-
+            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -742,6 +755,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
                 }
             });
+            EJCoreLog.logInfoMessage("return - > "+createdType.getFullyQualifiedName('$'));
             return createdType.getFullyQualifiedName('$');
         }
         finally
