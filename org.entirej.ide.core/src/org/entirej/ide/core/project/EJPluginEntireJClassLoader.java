@@ -148,6 +148,7 @@ public class EJPluginEntireJClassLoader
         catch (Throwable e)
         {
             // ignore
+            EJCoreLog.log(e);
         }
 
         // get output path level call loading
@@ -160,9 +161,10 @@ public class EJPluginEntireJClassLoader
         }
         catch (JavaModelException e)
         {// ignore
+            EJCoreLog.log(e);
         }
         
-
+        EJCoreLog.logInfoMessage("end loadClass - > "+className +": "+String.valueOf(classLoader!=null));
         return classLoader.loadClass(className);
 
     }
