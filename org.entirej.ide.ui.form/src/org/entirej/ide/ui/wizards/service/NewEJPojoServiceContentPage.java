@@ -676,7 +676,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         {
             throw new IllegalArgumentException("The pojo generator does not implement the interface: EJPojoContentGenerator");
         }
-
+        EJCoreLog.logInfoMessage("Start - > EJPojoContentGenerator");
         EJPojoContentGenerator pojoContentGenerator = (EJPojoContentGenerator) pojoGeneratorClass.newInstance();
 
         pojoGeneratorType.setPackageName(pojoPage.getPackageText());

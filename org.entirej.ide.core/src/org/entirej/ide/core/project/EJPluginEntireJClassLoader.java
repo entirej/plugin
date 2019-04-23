@@ -129,6 +129,7 @@ public class EJPluginEntireJClassLoader
 
     public static Class<?> loadClass(final IJavaProject javaProject, String className) throws ClassNotFoundException
     {
+        EJCoreLog.logInfoMessage("loadClass - > "+className);
         ClassLoader classLoader = WEAK_LOADERS.get(javaProject);
 
         if (classLoader == null)
