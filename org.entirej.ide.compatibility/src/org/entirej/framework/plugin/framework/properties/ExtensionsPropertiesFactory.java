@@ -691,26 +691,26 @@ public class ExtensionsPropertiesFactory
         }
         catch (ClassNotFoundException e)
         {
-            EJCoreLog.logWarnningMessage("Unable to load class: " + className
-                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
+//            EJCoreLog.logWarnningMessage("Unable to load class: " + className
+//                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
             return null;
         }
         catch (NoClassDefFoundError e)
         {
-            EJCoreLog.logWarnningMessage("Unable to load class: " + className
-                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
+//            EJCoreLog.logWarnningMessage("Unable to load class: " + className
+//                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
             return null;
         }
         catch (InstantiationException e)
         {
-            EJCoreLog.logWarnningMessage("Unable to load class: " + className
-                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
+//            EJCoreLog.logWarnningMessage("Unable to load class: " + className
+//                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
             return null;
         }
         catch (IllegalAccessException e)
         {
-            EJCoreLog.logWarnningMessage("Unable to load class: " + className
-                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
+//            EJCoreLog.logWarnningMessage("Unable to load class: " + className
+//                    + ".\nPlease ensure the class path has been set correctly and the given class exists",e);
             return null;
         }
     }
