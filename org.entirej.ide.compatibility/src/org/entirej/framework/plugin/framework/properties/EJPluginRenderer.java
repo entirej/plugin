@@ -398,9 +398,9 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
         }
         catch (ClassNotFoundException e)
         {
-            EJCoreLog.logWarnningMessage(
-                    "Unable to load class: " + e.getMessage() + ".\nPlease ensure the class path has been set correctly and the given class exists");
-            
+//            EJCoreLog.logWarnningMessage(
+//                    "Unable to load class: " + e.getMessage() + ".\nPlease ensure the class path has been set correctly and the given class exists");
+//            
         }
         return rendererDefinitionClass;
     }
