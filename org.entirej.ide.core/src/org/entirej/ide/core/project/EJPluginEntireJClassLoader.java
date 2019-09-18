@@ -135,26 +135,34 @@ public class EJPluginEntireJClassLoader
         if (classLoader == null)
         {
             classLoader = getClassloader(javaProject);
-            try
-            {
-                // javaProject.getResolvedClasspath(true);//make sure project in
-                // build
-                classLoader = new OutputClassLoader(javaProject.getOutputLocation(), classLoader);
-            }
-            catch (JavaModelException e)
-            {// ignore
-                EJCoreLog.log(e);
-            }
-            
             WEAK_LOADERS.put(javaProject, classLoader);
             EJCoreLog.logInfoMessage("load classLoader for  - > "+javaProject.hashCode()+":"+className +": "+String.valueOf(classLoader!=null));
         }
 
-      
+        try
+        {
+            Class<?> loadClass = classLoader.loadClass(className);
+            if (loadClass != null)
+                return loadClass;
+        }
+        catch (Throwable e)
+        {
+            // ignore
+            //EJCoreLog.log(e);
+        }
 
         // get output path level call loading
 
-       
+        try
+        {
+            // javaProject.getResolvedClasspath(true);//make sure project in
+            // build
+            classLoader = new OutputClassLoader(javaProject.getOutputLocation(), classLoader);
+        }
+        catch (JavaModelException e)
+        {// ignore
+            EJCoreLog.log(e);
+        }
         
        // EJCoreLog.logInfoMessage("end loadClass - > "+className +": "+String.valueOf(classLoader!=null));
         return classLoader.loadClass(className);
