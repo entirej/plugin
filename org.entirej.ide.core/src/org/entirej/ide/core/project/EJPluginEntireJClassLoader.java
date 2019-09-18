@@ -129,14 +129,14 @@ public class EJPluginEntireJClassLoader
 
     public static Class<?> loadClass(final IJavaProject javaProject, String className) throws ClassNotFoundException
     {
-        EJCoreLog.logInfoMessage("loadClass - > "+className);
+       // EJCoreLog.logInfoMessage("loadClass - > "+className);
         ClassLoader classLoader = WEAK_LOADERS.get(javaProject);
 
         if (classLoader == null)
         {
             classLoader = getClassloader(javaProject);
             WEAK_LOADERS.put(javaProject, classLoader);
-
+            EJCoreLog.logInfoMessage("load classLoader for  - > "+javaProject.hashCode()+":"+className +": "+String.valueOf(classLoader!=null));
         }
 
         try
@@ -164,7 +164,7 @@ public class EJPluginEntireJClassLoader
             EJCoreLog.log(e);
         }
         
-        EJCoreLog.logInfoMessage("end loadClass - > "+className +": "+String.valueOf(classLoader!=null));
+       // EJCoreLog.logInfoMessage("end loadClass - > "+className +": "+String.valueOf(classLoader!=null));
         return classLoader.loadClass(className);
 
     }

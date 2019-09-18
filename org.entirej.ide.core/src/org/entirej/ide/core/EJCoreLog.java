@@ -52,6 +52,10 @@ public class EJCoreLog
     {
         log(new Status(IStatus.WARNING, EJCorePlugin.ID, IStatus.WARNING, message, null));
     }
+    public static void logWarnningMessage(String message,Throwable e)
+    {
+        log(new Status(IStatus.WARNING, EJCorePlugin.ID, IStatus.WARNING, message, e));
+    }
 
     public static void logWarnning(Throwable e)
     {
