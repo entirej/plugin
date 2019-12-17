@@ -453,7 +453,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
             final EJCoreMessagePaneProperties messagePaneProperties = source.getMessagePaneProperties();
             
-            final AbstractTextDropDownDescriptor va = new AbstractTextDropDownDescriptor("Default Visual Attributes", "")
+            final AbstractTextDropDownDescriptor va = new AbstractTextDropDownDescriptor("Visual Attribute", "")
             {
                 List<String> visualAttributeNames = new ArrayList<String>(
                         editor.getFormProperties().getEntireJProperties().getVisualAttributesContainer().getVisualAttributeNames());
@@ -503,8 +503,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                     return t;
                 }
             };
-            va.setText("Custom Formatting");
-            va.setTooltip("Indicates if the message pane support custom formatting test. eg:html,xhtml");
+            va.setText("Visual Attribute");
             final AbstractDescriptor<Boolean> customFormatting = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
             {
                 
