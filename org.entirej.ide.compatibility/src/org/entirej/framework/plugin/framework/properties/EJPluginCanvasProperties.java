@@ -26,9 +26,11 @@ import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
+import org.entirej.framework.core.properties.EJCoreMessagePaneProperties;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
+import org.entirej.framework.core.properties.interfaces.EJMessagePaneProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginCanvasContainer;
@@ -101,13 +103,12 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
     private EJCanvasDrawerPosition           _drawerPosition              = EJCanvasDrawerPosition.RIGHT;
     private EJCanvasSplitOrientation         _splitOrientation            = EJCanvasSplitOrientation.HORIZONTAL;
                                                                           
-    private boolean                          _closeableMessagePane        = true;
-                                                                          
-    private int                              _messagePaneSize             = 200;
-                                                                          
-    private EJCanvasMessagePosition          _messagePosition             = EJCanvasMessagePosition.RIGHT;
+
                                                                           
     private EJLineStyle                      _lineStyle                   = EJLineStyle.SOLID;
+    
+
+    private EJCoreMessagePaneProperties          _messagePaneProperties         = new EJCoreMessagePaneProperties();
                                                                           
     public EJPluginCanvasProperties(EJPluginFormProperties formProperties, String name)
     {
@@ -772,35 +773,13 @@ public class EJPluginCanvasProperties implements EJCanvasProperties, EJPluginFor
         this._referredFormId = referredFormId;
     }
     
-    public void setCloseableMessagePane(boolean closeableMessagePane)
+    
+    @Override
+    public EJCoreMessagePaneProperties getMessagePaneProperties()
     {
-        this._closeableMessagePane = closeableMessagePane;
+        return _messagePaneProperties;
     }
     
-    public Boolean getCloseableMessagePane()
-    {
-        return _closeableMessagePane;
-    }
-    
-    public void setMessagePosition(EJCanvasMessagePosition messagePosition)
-    {
-        this._messagePosition = messagePosition;
-    }
-    
-    public EJCanvasMessagePosition getMessagePosition()
-    {
-        return _messagePosition;
-    }
-    
-    public int getMessagePaneSize()
-    {
-        return _messagePaneSize;
-    }
-    
-    public void setMessagePaneSize(int messagePaneSize)
-    {
-        this._messagePaneSize = messagePaneSize;
-    }
     
     public void setDefaultPopupButton(EJPopupButton button)
     {

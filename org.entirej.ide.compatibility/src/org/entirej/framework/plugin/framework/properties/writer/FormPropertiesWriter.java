@@ -507,10 +507,11 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "lineStyle", canvasProps.getLineStyle().name());
                     }
                     
-                    writeBooleanTAG(buffer, "closeableMessagePane", canvasProps.getCloseableMessagePane());
-                    writeIntTAG(buffer, "messagePaneSize", canvasProps.getMessagePaneSize());
-                    writeStringTAG(buffer, "messagePosition", canvasProps.getMessagePosition().name());
-                    
+                    writeBooleanTAG(buffer, "closeableMessagePane", canvasProps.getMessagePaneProperties().getCloseable());
+                    writeBooleanTAG(buffer, "messagePaneFormatting", canvasProps.getMessagePaneProperties().getCustomFormatting());
+                    writeIntTAG(buffer, "messagePaneSize", canvasProps.getMessagePaneProperties().getSize());
+                    writeStringTAG(buffer, "messagePosition", canvasProps.getMessagePaneProperties().getPosition().name());
+                    writeStringTAG(buffer, "messagePaneVa", canvasProps.getMessagePaneProperties().getVa());
                     addTabPageProperties(canvasProps, buffer);
                     addDrawerPageProperties(canvasProps, buffer);
                     addStackedPageProperties(canvasProps, buffer);

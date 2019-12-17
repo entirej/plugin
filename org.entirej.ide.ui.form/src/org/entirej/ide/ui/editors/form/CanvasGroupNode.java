@@ -46,6 +46,7 @@ import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
+import org.entirej.framework.core.properties.EJCoreMessagePaneProperties;
 import org.entirej.framework.core.properties.interfaces.EJBlockProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
@@ -450,13 +451,18 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
         protected AbstractGroupDescriptor createMessagePaneSettings()
         {
 
-            final AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            final EJCoreMessagePaneProperties messagePaneProperties = source.getMessagePaneProperties();
+            
+            final AbstractTextDropDownDescriptor va = new AbstractTextDropDownDescriptor("Default Visual Attributes", "")
             {
+                List<String> visualAttributeNames = new ArrayList<String>(
+                        editor.getFormProperties().getEntireJProperties().getVisualAttributesContainer().getVisualAttributeNames());
 
                 @Override
-                public Boolean getValue()
+                public void setValue(String value)
                 {
-                    return !source.getCloseableMessagePane();
+                    messagePaneProperties.setVa(value);
+                    editor.setDirty(true);
                 }
 
                 @Override
@@ -467,12 +473,87 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 }
 
                 @Override
-                public void setValue(Boolean value)
+                public String getValue()
                 {
-                    source.setCloseableMessagePane(!value.booleanValue());
-                    editor.setDirty(true);
+                    return messagePaneProperties.getVa();
                 }
 
+                public String[] getOptions()
+                {
+                    List<String> list = new ArrayList<String>();
+
+                    list.add("");
+
+                    list.addAll(visualAttributeNames);
+
+                    if (getValue() != null && getValue().length() > 0 && !visualAttributeNames.contains(getValue()))
+                    {
+                        list.add(getValue());
+                    }
+                    return list.toArray(new String[0]);
+                }
+
+                public String getOptionText(String t)
+                {
+                    if (t.length() > 0 && !visualAttributeNames.contains(t))
+                    {
+                        return String.format("Undefined !< %s >", t);
+                    }
+
+                    return t;
+                }
+            };
+            va.setText("Custom Formatting");
+            va.setTooltip("Indicates if the message pane support custom formatting test. eg:html,xhtml");
+            final AbstractDescriptor<Boolean> customFormatting = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return !messagePaneProperties.getCustomFormatting();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    messagePaneProperties.setCustomFormatting(!value.booleanValue());
+                    editor.setDirty(true);
+                }
+                
+            };
+            customFormatting.setText("Custom Formatting");
+            customFormatting.setTooltip("Indicates if the message pane support custom formatting test. eg:html,xhtml");
+            final AbstractDescriptor<Boolean> canvasMessagePane = new AbstractDescriptor<Boolean>(AbstractDescriptor.TYPE.BOOLEAN)
+            {
+                
+                @Override
+                public Boolean getValue()
+                {
+                    return !messagePaneProperties.getCloseable();
+                }
+                
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+                    
+                }
+                
+                @Override
+                public void setValue(Boolean value)
+                {
+                    messagePaneProperties.setCloseable(!value.booleanValue());
+                    editor.setDirty(true);
+                }
+                
             };
             canvasMessagePane.setText("Keep Message Pane open");
             canvasMessagePane.setTooltip("Indicates if the message pane on the screen should be kept open at all times with no close button");
@@ -491,7 +572,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 {
                     try
                     {
-                        source.setMessagePaneSize(Integer.parseInt(value));
+                        messagePaneProperties.setSize(Integer.parseInt(value));
                     }
                     catch (NumberFormatException e)
                     {
@@ -508,7 +589,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 @Override
                 public String getValue()
                 {
-                    return String.valueOf(source.getMessagePaneSize());
+                    return String.valueOf(messagePaneProperties.getSize());
                 }
 
                 Text text;
@@ -547,13 +628,13 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public void setValue(EJCanvasMessagePosition value)
                 {
-                    source.setMessagePosition(value);
+                    messagePaneProperties.setPosition(value);
                     editor.setDirty(true);
                 }
 
                 public EJCanvasMessagePosition getValue()
                 {
-                    return source.getMessagePosition();
+                    return messagePaneProperties.getPosition();
                 }
             };
 
@@ -562,7 +643,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
                 public AbstractDescriptor<?>[] getDescriptors()
                 {
-                    return new AbstractDescriptor<?>[] { canvasMessagePane, sizeHintDescriptor, position };
+                    return new AbstractDescriptor<?>[] { canvasMessagePane, sizeHintDescriptor, position,va,customFormatting };
                 }
             };
         }
