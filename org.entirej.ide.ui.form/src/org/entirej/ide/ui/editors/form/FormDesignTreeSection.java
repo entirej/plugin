@@ -1292,6 +1292,503 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                 }
 
             };
+            
+
+            class ParameterDialog extends TitleAreaDialog
+            {
+
+                private String                       message = "";
+
+                private EJPluginApplicationParameter applicationParameter;
+
+                private Text                         nameText;
+                private Text                         dataTypeText;
+                private Text                         defaultValueText;
+
+                public ParameterDialog(Shell parentShell, EJPluginApplicationParameter applicationParameter)
+                {
+                    super(parentShell);
+                    setShellStyle(SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
+                    setHelpAvailable(false);
+                    this.applicationParameter = applicationParameter;
+                }
+
+                @Override
+                protected Control createContents(Composite parent)
+                {
+                    Control contents = super.createContents(parent);
+
+                    setTitle("Form Parameter");
+                    if (applicationParameter == null)
+                    {
+
+                        message = "Add a form level parameter.";
+                        getShell().setText("Add Parameter");
+                        setMessage(message);
+                        getButton(IDialogConstants.OK_ID).setEnabled(false);
+                    }
+                    else
+                    {
+                        message = "Edit form level parameter";
+                        getShell().setText("Edit Parameter");
+                        validate();
+                    }
+
+                    return contents;
+                }
+
+                @Override
+                protected Control createDialogArea(Composite parent)
+                {
+
+                    Composite body = new Composite(parent, SWT.BORDER);
+                    body.setLayout(new GridLayout());
+                    GridData sectionData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
+                    body.setLayoutData(sectionData);
+                    buildControls(body);
+
+                    return parent;
+                }
+
+                private void buildControls(Composite parent)
+                {
+                    // TODO: rework layout code
+                    Composite container = new Composite(parent, SWT.NULL);
+                    GridLayout layout = new GridLayout();
+                    container.setLayout(layout);
+                    container.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL));
+                    layout.numColumns = 4;
+                    layout.verticalSpacing = 9;
+
+                    Label nameLabel = new Label(container, SWT.NULL);
+                    nameLabel.setText("Parameter Name:");
+                    nameText = new Text(container, SWT.BORDER | SWT.SINGLE);
+                    if (applicationParameter != null && applicationParameter.getName() != null)
+                        nameText.setText(applicationParameter.getName());
+                    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+                    gd.horizontalSpan = 3;
+                    nameText.setLayoutData(gd);
+                    nameText.addModifyListener(new ModifyListener()
+                    {
+                        public void modifyText(ModifyEvent e)
+                        {
+                            validate();
+                        }
+                    });
+                    Label classLabel = new Label(container, SWT.NULL);
+                    classLabel.setText("Parameter Type:");
+                    dataTypeText = new Text(container, SWT.BORDER | SWT.SINGLE);
+                    if (applicationParameter != null && applicationParameter.getDataTypeName() != null)
+                        dataTypeText.setText(applicationParameter.getDataTypeName());
+                    TypeAssistProvider.createTypeAssist(dataTypeText, editor, IJavaElementSearchConstants.CONSIDER_ALL_TYPES, null);
+                    dataTypeText.addModifyListener(new ModifyListener()
+                    {
+                        public void modifyText(ModifyEvent e)
+                        {
+                            verifyDefaultValue();
+                            validate();
+
+                        }
+                    });
+
+                    gd = new GridData();
+                    gd.horizontalAlignment = GridData.FILL;
+                    gd.grabExcessHorizontalSpace = true;
+                    gd.horizontalSpan = 2;
+                    dataTypeText.setLayoutData(gd);
+
+                    Button _dataTypeChoiceButton = new Button(container, SWT.PUSH);
+                    _dataTypeChoiceButton.setText("Browse...");
+                    _dataTypeChoiceButton.addSelectionListener(new SelectionAdapter()
+                    {
+                        @Override
+                        public void widgetSelected(SelectionEvent e)
+                        {
+                            IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), editor.getJavaProject().getResource(),
+                                    IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
+                            if (type != null)
+                            {
+                                dataTypeText.setText(type.getFullyQualifiedName('$'));
+                            }
+                        }
+                    });
+
+                    GridData buttonGd = new GridData();
+                    buttonGd.horizontalAlignment = GridData.END;
+                    buttonGd.verticalAlignment = GridData.CENTER;
+                    buttonGd.widthHint = 60;
+                    _dataTypeChoiceButton.setLayoutData(buttonGd);
+
+                    Label defaultValueLabel = new Label(container, SWT.NULL);
+                    defaultValueLabel.setText("Default Value:");
+                    defaultValueText = new Text(container, SWT.BORDER | SWT.SINGLE);
+                    if (applicationParameter != null && applicationParameter.getDefaultValue() != null)
+                        defaultValueText.setText(applicationParameter.getDefaultValue());
+                    gd = new GridData(GridData.FILL_HORIZONTAL);
+                    gd.horizontalSpan = 3;
+                    defaultValueText.setLayoutData(gd);
+                    defaultValueText.addModifyListener(new ModifyListener()
+                    {
+                        public void modifyText(ModifyEvent e)
+                        {
+                            validate();
+                        }
+                    });
+                    verifyDefaultValue();
+                }
+
+                private void verifyDefaultValue()
+                {
+                    String type = dataTypeText.getText();
+                    if (type.length() == 0 || !EJPluginApplicationParameter.isValidDefaultValueType(type))
+                    {
+                        defaultValueText.setEnabled(false);
+                        defaultValueText.setText("");
+                    }
+                    else
+                    {
+                        defaultValueText.setEnabled(true);
+
+                    }
+                }
+
+                private void validate()
+                {
+                    IStatus iStatus = org.eclipse.core.runtime.Status.OK_STATUS;
+
+                    if (nameText != null && nameText.getText().length() == 0)
+                    {
+                        iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Parameter name is empty.");
+                    }
+                    if (iStatus.isOK() && nameText != null && (nameText.getText().length() > 0) && !JavaAccessUtils.isJavaIdentifier(nameText.getText()))
+                    {
+                        iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Parameter name is not a valid Java identifier.");
+                    }
+                    if (iStatus.isOK() && dataTypeText != null && (dataTypeText.getText().length() == 0))
+                    {
+                        iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a parameter type.");
+                    }
+                    else if (iStatus.isOK() && defaultValueText != null && (defaultValueText.getText().length() != 0))
+                    {
+                        String defaultValueError = EJPluginApplicationParameter.validateDefaultValue(dataTypeText.getText(), defaultValueText.getText());
+                        if (defaultValueError != null)
+                            iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), defaultValueError);
+                    }
+
+                    if (iStatus.isOK() && nameText != null)
+                    {
+                        if ((applicationParameter == null || !applicationParameter.getName().equals(nameText.getText()))
+                                && editor.getFormProperties().containsFormParameter(nameText.getText()))
+                        {
+                            iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "The form already contains a parameter with this name.");
+                        }
+                    }
+                    if (iStatus.isOK())
+                    {
+                        setMessage(message);
+                    }
+                    else
+                    {
+                        setMessage(iStatus.getMessage(), IMessageProvider.ERROR);
+
+                    }
+                    if (getButton(IDialogConstants.OK_ID) != null)
+                        getButton(IDialogConstants.OK_ID).setEnabled(iStatus.isOK());
+
+                }
+
+                @Override
+                protected void buttonPressed(int buttonId)
+                {
+                    if (buttonId == IDialogConstants.CANCEL_ID)
+                    {
+                        super.buttonPressed(buttonId);
+                    }
+                    else
+                    {
+                        if (applicationParameter == null)
+                        {
+                            applicationParameter = new EJPluginApplicationParameter(null, null);
+                        }
+                        if (nameText != null && dataTypeText != null)
+                        {
+                            applicationParameter.setName(nameText.getText());
+                            applicationParameter.setDataTypeName(dataTypeText.getText());
+                            applicationParameter.setDefaultValue(defaultValueText.getText());
+                        }
+                        super.buttonPressed(buttonId);
+                    }
+
+                }
+
+                private EJPluginApplicationParameter getApplicationParameter()
+                {
+
+                    return applicationParameter;
+                }
+
+            }
+            
+            AbstractGroupDescriptor parametersDes = new AbstractGroupDescriptor("Form Parameters")
+            {
+                IRefreshHandler              handler;
+                TableViewer                  tableViewer;
+                EJPluginApplicationParameter entry = null;
+                Action                       deleteAction;
+                Action                       editAction;
+
+                @Override
+                public String getTooltip()
+                {
+                    return "Form parameters are form global variables that can be accessed from the forms action processor or used as default Query / Insert values on the block items. For more information, read the Form Properties section <a href=\"http://docs.entirej.com/display/EJ1/Form+Properties#FormProperties-FormParameters\">here</a>";
+                }
+
+                @Override
+                public void runOperation(AbstractOperation operation)
+                {
+                    editor.execute(operation);
+
+                }
+
+                public Action[] getToolbarActions()
+                {
+
+                    Action addAction = new Action("Add", IAction.AS_PUSH_BUTTON)
+                    {
+
+                        @Override
+                        public void runWithEvent(Event event)
+                        {
+
+                            EJPluginApplicationParameter newEntry = new EJPluginApplicationParameter("", "java.lang.String");
+
+                            ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), newEntry);
+                            if (dialog.open() == Window.OK)
+                            {
+                                source.getFormProperties().addFormParameter(newEntry);
+
+                                if (tableViewer != null)
+                                {
+                                    tableViewer.add(newEntry);
+                                    tableViewer.setSelection(new StructuredSelection(newEntry), true);
+                                }
+                                editor.setDirty(true);
+                            }
+
+                        }
+
+                    };
+                    addAction.setImageDescriptor(EJUIImages.DESC_ADD_ITEM);
+
+                    // create delete Action
+                    editAction = new Action("Edit", IAction.AS_PUSH_BUTTON)
+                    {
+
+                        @Override
+                        public void run()
+                        {
+                            if (entry == null)
+                                return;
+
+                            if (tableViewer != null)
+                            {
+                                ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), entry);
+                                if (dialog.open() == Window.OK)
+                                {
+                                    tableViewer.refresh(entry);
+                                    editor.setDirty(true);
+                                }
+                                setEnabled(entry != null);
+                            }
+                            editor.setDirty(true);
+                        }
+
+                    };
+                    editAction.setImageDescriptor(EJUIImages.DESC_FORM_EDIT_PROP);
+                    editAction.setEnabled(entry != null);
+                    // create delete Action
+                    deleteAction = new Action("Delete", IAction.AS_PUSH_BUTTON)
+                    {
+
+                        @Override
+                        public void run()
+                        {
+                            if (entry == null)
+                                return;
+
+                            source.getFormProperties().removeFormParameter(entry);
+                            if (tableViewer != null)
+                            {
+                                tableViewer.remove(entry);
+                                if (tableViewer.getTable().getItemCount() > 0)
+                                    tableViewer.getTable().select(tableViewer.getTable().getItemCount() - 1);
+                                if (tableViewer.getSelection() instanceof IStructuredSelection)
+                                    entry = (EJPluginApplicationParameter) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                                if (handler != null)
+                                    handler.refresh();
+                                setEnabled(entry != null);
+                            }
+                            editor.setDirty(true);
+                        }
+
+                    };
+                    deleteAction.setImageDescriptor(EJUIImages.DESC_DELETE_ITEM);
+                    deleteAction.setDisabledImageDescriptor(EJUIImages.DESC_DELETE_ITEM_DISABLED);
+                    deleteAction.setEnabled(entry != null);
+
+                    return new Action[] { addAction, editAction, deleteAction };
+                }
+
+                public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
+                {
+                    this.handler = handler;
+                    tableViewer = new TableViewer(parent, SWT.VIRTUAL | SWT.BORDER | SWT.FULL_SELECTION);
+
+                    Table table = tableViewer.getTable();
+                    table.setHeaderVisible(true);
+                    TableViewerColumnFactory factory = new TableViewerColumnFactory(tableViewer);
+                    ColumnViewerToolTipSupport.enableFor(tableViewer);
+                    gd.verticalSpan = 2;
+                    gd.heightHint = 150;
+                    gd.widthHint = 100;
+                    gd.horizontalIndent = 0;
+                    table.setLayoutData(gd);
+
+                    factory.createColumn("Name", 120, new ColumnLabelProvider()
+                    {
+
+                        @Override
+                        public String getText(Object element)
+                        {
+
+                            if (element instanceof EJPluginApplicationParameter)
+                            {
+                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
+                                return entry.getName();
+                            }
+                            return "";
+                        }
+                    });
+                    factory.createColumn("Data Type", 200, new ColumnLabelProvider()
+                    {
+
+                        @Override
+                        public String getText(Object element)
+                        {
+
+                            if (element instanceof EJPluginApplicationParameter)
+                            {
+                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
+                                return entry.getDataTypeName();
+                            }
+                            return "";
+                        }
+                    });
+                    factory.createColumn("Default Value", 200, new ColumnLabelProvider()
+                    {
+
+                        @Override
+                        public String getText(Object element)
+                        {
+
+                            if (element instanceof EJPluginApplicationParameter)
+                            {
+                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
+                                return entry.getDefaultValue();
+                            }
+                            return "";
+                        }
+                    });
+                    /*
+                     * factory.createColumn("Default Value", 120, new
+                     * ColumnLabelProvider() {
+                     * 
+                     * @Override public String getText(Object element) {
+                     * 
+                     * if (element instanceof EJPluginApplicationParameter) {
+                     * EJPluginApplicationParameter entry =
+                     * (EJPluginApplicationParameter) element; return
+                     * entry.getDefaultValue(); } return ""; } });
+                     */
+                    tableViewer.setContentProvider(new IStructuredContentProvider()
+                    {
+
+                        public void inputChanged(Viewer arg0, Object arg1, Object arg2)
+                        {
+                        }
+
+                        public void dispose()
+                        {
+                        }
+
+                        public Object[] getElements(Object arg0)
+                        {
+                            return (Object[]) getValue();
+                        }
+                    });
+                    tableViewer.addSelectionChangedListener(new ISelectionChangedListener()
+                    {
+
+                        public void selectionChanged(SelectionChangedEvent event)
+                        {
+                            EJPluginApplicationParameter newEntry = null;
+                            if (tableViewer.getSelection() instanceof IStructuredSelection)
+                                newEntry = (EJPluginApplicationParameter) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                            if ((newEntry == null && entry != null) || (!newEntry.equals(entry)))
+                            {
+                                entry = newEntry;
+                                handler.refresh();
+                            }
+
+                            if (deleteAction != null)
+                                deleteAction.setEnabled(entry != null);
+                            if (editAction != null)
+                                editAction.setEnabled(entry != null);
+                        }
+                    });
+
+                    tableViewer.addDoubleClickListener(new IDoubleClickListener()
+                    {
+
+                        public void doubleClick(DoubleClickEvent event)
+                        {
+                            IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+                            Object[] items = selection.toArray();
+
+                            if (items.length == 1 && items[0] instanceof EJPluginApplicationParameter)
+                            {
+                                EJPluginApplicationParameter applicationParameter = (EJPluginApplicationParameter) items[0];
+                                ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), applicationParameter);
+                                if (dialog.open() == Window.OK)
+                                {
+                                    tableViewer.refresh(applicationParameter);
+                                    editor.setDirty(true);
+                                }
+                            }
+
+                        }
+                    });
+
+                    tableViewer.setInput(new Object());
+                    if (tableViewer.getTable().getItemCount() > 0)
+                        tableViewer.getTable().select(0);
+                    if (tableViewer.getSelection() instanceof IStructuredSelection)
+                        entry = (EJPluginApplicationParameter) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                    return table;
+                }
+
+                public Object getValue()
+                {
+                    return source.getFormProperties().getAllFormParameters().toArray();
+                };
+
+                public AbstractDescriptor<?>[] getDescriptors()
+                {
+
+                    return new AbstractDescriptor<?>[0];
+
+                }
+            };
 
             AbstractGroupDescriptor metadataGroupDescriptor = new AbstractGroupDescriptor("Metadata")
             {
@@ -1896,506 +2393,13 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
                         };
 
                         return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor,firstFormDescriptor, layoutGroupDescriptor,
-                                rendererGroupDescriptor, metadataGroupDescriptor };
+                                rendererGroupDescriptor,parametersDes, metadataGroupDescriptor };
                     }
                 }
             }
 
-            class ParameterDialog extends TitleAreaDialog
-            {
 
-                private String                       message = "";
 
-                private EJPluginApplicationParameter applicationParameter;
-
-                private Text                         nameText;
-                private Text                         dataTypeText;
-                private Text                         defaultValueText;
-
-                public ParameterDialog(Shell parentShell, EJPluginApplicationParameter applicationParameter)
-                {
-                    super(parentShell);
-                    setShellStyle(SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
-                    setHelpAvailable(false);
-                    this.applicationParameter = applicationParameter;
-                }
-
-                @Override
-                protected Control createContents(Composite parent)
-                {
-                    Control contents = super.createContents(parent);
-
-                    setTitle("Form Parameter");
-                    if (applicationParameter == null)
-                    {
-
-                        message = "Add a form level parameter.";
-                        getShell().setText("Add Parameter");
-                        setMessage(message);
-                        getButton(IDialogConstants.OK_ID).setEnabled(false);
-                    }
-                    else
-                    {
-                        message = "Edit form level parameter";
-                        getShell().setText("Edit Parameter");
-                        validate();
-                    }
-
-                    return contents;
-                }
-
-                @Override
-                protected Control createDialogArea(Composite parent)
-                {
-
-                    Composite body = new Composite(parent, SWT.BORDER);
-                    body.setLayout(new GridLayout());
-                    GridData sectionData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-                    body.setLayoutData(sectionData);
-                    buildControls(body);
-
-                    return parent;
-                }
-
-                private void buildControls(Composite parent)
-                {
-                    // TODO: rework layout code
-                    Composite container = new Composite(parent, SWT.NULL);
-                    GridLayout layout = new GridLayout();
-                    container.setLayout(layout);
-                    container.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL));
-                    layout.numColumns = 4;
-                    layout.verticalSpacing = 9;
-
-                    Label nameLabel = new Label(container, SWT.NULL);
-                    nameLabel.setText("Parameter Name:");
-                    nameText = new Text(container, SWT.BORDER | SWT.SINGLE);
-                    if (applicationParameter != null && applicationParameter.getName() != null)
-                        nameText.setText(applicationParameter.getName());
-                    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-                    gd.horizontalSpan = 3;
-                    nameText.setLayoutData(gd);
-                    nameText.addModifyListener(new ModifyListener()
-                    {
-                        public void modifyText(ModifyEvent e)
-                        {
-                            validate();
-                        }
-                    });
-                    Label classLabel = new Label(container, SWT.NULL);
-                    classLabel.setText("Parameter Type:");
-                    dataTypeText = new Text(container, SWT.BORDER | SWT.SINGLE);
-                    if (applicationParameter != null && applicationParameter.getDataTypeName() != null)
-                        dataTypeText.setText(applicationParameter.getDataTypeName());
-                    TypeAssistProvider.createTypeAssist(dataTypeText, editor, IJavaElementSearchConstants.CONSIDER_ALL_TYPES, null);
-                    dataTypeText.addModifyListener(new ModifyListener()
-                    {
-                        public void modifyText(ModifyEvent e)
-                        {
-                            verifyDefaultValue();
-                            validate();
-
-                        }
-                    });
-
-                    gd = new GridData();
-                    gd.horizontalAlignment = GridData.FILL;
-                    gd.grabExcessHorizontalSpace = true;
-                    gd.horizontalSpan = 2;
-                    dataTypeText.setLayoutData(gd);
-
-                    Button _dataTypeChoiceButton = new Button(container, SWT.PUSH);
-                    _dataTypeChoiceButton.setText("Browse...");
-                    _dataTypeChoiceButton.addSelectionListener(new SelectionAdapter()
-                    {
-                        @Override
-                        public void widgetSelected(SelectionEvent e)
-                        {
-                            IType type = JavaAccessUtils.selectType(EJUIPlugin.getActiveWorkbenchShell(), editor.getJavaProject().getResource(),
-                                    IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
-                            if (type != null)
-                            {
-                                dataTypeText.setText(type.getFullyQualifiedName('$'));
-                            }
-                        }
-                    });
-
-                    GridData buttonGd = new GridData();
-                    buttonGd.horizontalAlignment = GridData.END;
-                    buttonGd.verticalAlignment = GridData.CENTER;
-                    buttonGd.widthHint = 60;
-                    _dataTypeChoiceButton.setLayoutData(buttonGd);
-
-                    Label defaultValueLabel = new Label(container, SWT.NULL);
-                    defaultValueLabel.setText("Default Value:");
-                    defaultValueText = new Text(container, SWT.BORDER | SWT.SINGLE);
-                    if (applicationParameter != null && applicationParameter.getDefaultValue() != null)
-                        defaultValueText.setText(applicationParameter.getDefaultValue());
-                    gd = new GridData(GridData.FILL_HORIZONTAL);
-                    gd.horizontalSpan = 3;
-                    defaultValueText.setLayoutData(gd);
-                    defaultValueText.addModifyListener(new ModifyListener()
-                    {
-                        public void modifyText(ModifyEvent e)
-                        {
-                            validate();
-                        }
-                    });
-                    verifyDefaultValue();
-                }
-
-                private void verifyDefaultValue()
-                {
-                    String type = dataTypeText.getText();
-                    if (type.length() == 0 || !EJPluginApplicationParameter.isValidDefaultValueType(type))
-                    {
-                        defaultValueText.setEnabled(false);
-                        defaultValueText.setText("");
-                    }
-                    else
-                    {
-                        defaultValueText.setEnabled(true);
-
-                    }
-                }
-
-                private void validate()
-                {
-                    IStatus iStatus = org.eclipse.core.runtime.Status.OK_STATUS;
-
-                    if (nameText != null && nameText.getText().length() == 0)
-                    {
-                        iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Parameter name is empty.");
-                    }
-                    if (iStatus.isOK() && nameText != null && (nameText.getText().length() > 0) && !JavaAccessUtils.isJavaIdentifier(nameText.getText()))
-                    {
-                        iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Parameter name is not a valid Java identifier.");
-                    }
-                    if (iStatus.isOK() && dataTypeText != null && (dataTypeText.getText().length() == 0))
-                    {
-                        iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "Please choose a parameter type.");
-                    }
-                    else if (iStatus.isOK() && defaultValueText != null && (defaultValueText.getText().length() != 0))
-                    {
-                        String defaultValueError = EJPluginApplicationParameter.validateDefaultValue(dataTypeText.getText(), defaultValueText.getText());
-                        if (defaultValueError != null)
-                            iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), defaultValueError);
-                    }
-
-                    if (iStatus.isOK() && nameText != null)
-                    {
-                        if ((applicationParameter == null || !applicationParameter.getName().equals(nameText.getText()))
-                                && editor.getFormProperties().containsFormParameter(nameText.getText()))
-                        {
-                            iStatus = new Status(IStatus.ERROR, EJUIPlugin.getID(), "The form already contains a parameter with this name.");
-                        }
-                    }
-                    if (iStatus.isOK())
-                    {
-                        setMessage(message);
-                    }
-                    else
-                    {
-                        setMessage(iStatus.getMessage(), IMessageProvider.ERROR);
-
-                    }
-                    if (getButton(IDialogConstants.OK_ID) != null)
-                        getButton(IDialogConstants.OK_ID).setEnabled(iStatus.isOK());
-
-                }
-
-                @Override
-                protected void buttonPressed(int buttonId)
-                {
-                    if (buttonId == IDialogConstants.CANCEL_ID)
-                    {
-                        super.buttonPressed(buttonId);
-                    }
-                    else
-                    {
-                        if (applicationParameter == null)
-                        {
-                            applicationParameter = new EJPluginApplicationParameter(null, null);
-                        }
-                        if (nameText != null && dataTypeText != null)
-                        {
-                            applicationParameter.setName(nameText.getText());
-                            applicationParameter.setDataTypeName(dataTypeText.getText());
-                            applicationParameter.setDefaultValue(defaultValueText.getText());
-                        }
-                        super.buttonPressed(buttonId);
-                    }
-
-                }
-
-                private EJPluginApplicationParameter getApplicationParameter()
-                {
-
-                    return applicationParameter;
-                }
-
-            }
-
-            AbstractGroupDescriptor parametersDes = new AbstractGroupDescriptor("Form Parameters")
-            {
-                IRefreshHandler              handler;
-                TableViewer                  tableViewer;
-                EJPluginApplicationParameter entry = null;
-                Action                       deleteAction;
-                Action                       editAction;
-
-                @Override
-                public String getTooltip()
-                {
-                    return "Form parameters are form global variables that can be accessed from the forms action processor or used as default Query / Insert values on the block items. For more information, read the Form Properties section <a href=\"http://docs.entirej.com/display/EJ1/Form+Properties#FormProperties-FormParameters\">here</a>";
-                }
-
-                @Override
-                public void runOperation(AbstractOperation operation)
-                {
-                    editor.execute(operation);
-
-                }
-
-                public Action[] getToolbarActions()
-                {
-
-                    Action addAction = new Action("Add", IAction.AS_PUSH_BUTTON)
-                    {
-
-                        @Override
-                        public void runWithEvent(Event event)
-                        {
-
-                            EJPluginApplicationParameter newEntry = new EJPluginApplicationParameter("", "java.lang.String");
-
-                            ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), newEntry);
-                            if (dialog.open() == Window.OK)
-                            {
-                                source.getFormProperties().addFormParameter(newEntry);
-
-                                if (tableViewer != null)
-                                {
-                                    tableViewer.add(newEntry);
-                                    tableViewer.setSelection(new StructuredSelection(newEntry), true);
-                                }
-                                editor.setDirty(true);
-                            }
-
-                        }
-
-                    };
-                    addAction.setImageDescriptor(EJUIImages.DESC_ADD_ITEM);
-
-                    // create delete Action
-                    editAction = new Action("Edit", IAction.AS_PUSH_BUTTON)
-                    {
-
-                        @Override
-                        public void run()
-                        {
-                            if (entry == null)
-                                return;
-
-                            if (tableViewer != null)
-                            {
-                                ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), entry);
-                                if (dialog.open() == Window.OK)
-                                {
-                                    tableViewer.refresh(entry);
-                                    editor.setDirty(true);
-                                }
-                                setEnabled(entry != null);
-                            }
-                            editor.setDirty(true);
-                        }
-
-                    };
-                    editAction.setImageDescriptor(EJUIImages.DESC_FORM_EDIT_PROP);
-                    editAction.setEnabled(entry != null);
-                    // create delete Action
-                    deleteAction = new Action("Delete", IAction.AS_PUSH_BUTTON)
-                    {
-
-                        @Override
-                        public void run()
-                        {
-                            if (entry == null)
-                                return;
-
-                            source.getFormProperties().removeFormParameter(entry);
-                            if (tableViewer != null)
-                            {
-                                tableViewer.remove(entry);
-                                if (tableViewer.getTable().getItemCount() > 0)
-                                    tableViewer.getTable().select(tableViewer.getTable().getItemCount() - 1);
-                                if (tableViewer.getSelection() instanceof IStructuredSelection)
-                                    entry = (EJPluginApplicationParameter) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-                                if (handler != null)
-                                    handler.refresh();
-                                setEnabled(entry != null);
-                            }
-                            editor.setDirty(true);
-                        }
-
-                    };
-                    deleteAction.setImageDescriptor(EJUIImages.DESC_DELETE_ITEM);
-                    deleteAction.setDisabledImageDescriptor(EJUIImages.DESC_DELETE_ITEM_DISABLED);
-                    deleteAction.setEnabled(entry != null);
-
-                    return new Action[] { addAction, editAction, deleteAction };
-                }
-
-                public Control createHeader(final IRefreshHandler handler, Composite parent, GridData gd)
-                {
-                    this.handler = handler;
-                    tableViewer = new TableViewer(parent, SWT.VIRTUAL | SWT.BORDER | SWT.FULL_SELECTION);
-
-                    Table table = tableViewer.getTable();
-                    table.setHeaderVisible(true);
-                    TableViewerColumnFactory factory = new TableViewerColumnFactory(tableViewer);
-                    ColumnViewerToolTipSupport.enableFor(tableViewer);
-                    gd.verticalSpan = 2;
-                    gd.heightHint = 150;
-                    gd.widthHint = 100;
-                    gd.horizontalIndent = 0;
-                    table.setLayoutData(gd);
-
-                    factory.createColumn("Name", 120, new ColumnLabelProvider()
-                    {
-
-                        @Override
-                        public String getText(Object element)
-                        {
-
-                            if (element instanceof EJPluginApplicationParameter)
-                            {
-                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
-                                return entry.getName();
-                            }
-                            return "";
-                        }
-                    });
-                    factory.createColumn("Data Type", 200, new ColumnLabelProvider()
-                    {
-
-                        @Override
-                        public String getText(Object element)
-                        {
-
-                            if (element instanceof EJPluginApplicationParameter)
-                            {
-                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
-                                return entry.getDataTypeName();
-                            }
-                            return "";
-                        }
-                    });
-                    factory.createColumn("Default Value", 200, new ColumnLabelProvider()
-                    {
-
-                        @Override
-                        public String getText(Object element)
-                        {
-
-                            if (element instanceof EJPluginApplicationParameter)
-                            {
-                                EJPluginApplicationParameter entry = (EJPluginApplicationParameter) element;
-                                return entry.getDefaultValue();
-                            }
-                            return "";
-                        }
-                    });
-                    /*
-                     * factory.createColumn("Default Value", 120, new
-                     * ColumnLabelProvider() {
-                     * 
-                     * @Override public String getText(Object element) {
-                     * 
-                     * if (element instanceof EJPluginApplicationParameter) {
-                     * EJPluginApplicationParameter entry =
-                     * (EJPluginApplicationParameter) element; return
-                     * entry.getDefaultValue(); } return ""; } });
-                     */
-                    tableViewer.setContentProvider(new IStructuredContentProvider()
-                    {
-
-                        public void inputChanged(Viewer arg0, Object arg1, Object arg2)
-                        {
-                        }
-
-                        public void dispose()
-                        {
-                        }
-
-                        public Object[] getElements(Object arg0)
-                        {
-                            return (Object[]) getValue();
-                        }
-                    });
-                    tableViewer.addSelectionChangedListener(new ISelectionChangedListener()
-                    {
-
-                        public void selectionChanged(SelectionChangedEvent event)
-                        {
-                            EJPluginApplicationParameter newEntry = null;
-                            if (tableViewer.getSelection() instanceof IStructuredSelection)
-                                newEntry = (EJPluginApplicationParameter) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-                            if ((newEntry == null && entry != null) || (!newEntry.equals(entry)))
-                            {
-                                entry = newEntry;
-                                handler.refresh();
-                            }
-
-                            if (deleteAction != null)
-                                deleteAction.setEnabled(entry != null);
-                            if (editAction != null)
-                                editAction.setEnabled(entry != null);
-                        }
-                    });
-
-                    tableViewer.addDoubleClickListener(new IDoubleClickListener()
-                    {
-
-                        public void doubleClick(DoubleClickEvent event)
-                        {
-                            IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-                            Object[] items = selection.toArray();
-
-                            if (items.length == 1 && items[0] instanceof EJPluginApplicationParameter)
-                            {
-                                EJPluginApplicationParameter applicationParameter = (EJPluginApplicationParameter) items[0];
-                                ParameterDialog dialog = new ParameterDialog(EJUIPlugin.getActiveWorkbenchShell(), applicationParameter);
-                                if (dialog.open() == Window.OK)
-                                {
-                                    tableViewer.refresh(applicationParameter);
-                                    editor.setDirty(true);
-                                }
-                            }
-
-                        }
-                    });
-
-                    tableViewer.setInput(new Object());
-                    if (tableViewer.getTable().getItemCount() > 0)
-                        tableViewer.getTable().select(0);
-                    if (tableViewer.getSelection() instanceof IStructuredSelection)
-                        entry = (EJPluginApplicationParameter) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-                    return table;
-                }
-
-                public Object getValue()
-                {
-                    return source.getFormProperties().getAllFormParameters().toArray();
-                };
-
-                public AbstractDescriptor<?>[] getDescriptors()
-                {
-
-                    return new AbstractDescriptor<?>[0];
-
-                }
-            };
 
             return new AbstractDescriptor<?>[] { titleDescriptor, rendererDescriptor, actionDescriptor,firstFormDescriptor, layoutGroupDescriptor, parametersDes,
                     metadataGroupDescriptor };
