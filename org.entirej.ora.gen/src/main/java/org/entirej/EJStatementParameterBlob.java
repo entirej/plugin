@@ -23,25 +23,7 @@ public class EJStatementParameterBlob extends EJStatementParameter
         setValue(value);
     }
 
-    public Object getValue()
-    {
-        try
-        {
-            Blob blob = (Blob) super.getValue();
-            if (blob == null)
-            {
-                return null;
-            }
-            
-            byte[] blobAsBytes = blob.getBytes(1, (int) blob.length());
-            blob.free();
-            return blobAsBytes;
-        }
-        catch (SQLException e)
-        {
-            return null;
-        }
-    }
+    
 
     public int getJdbcType()
     {
