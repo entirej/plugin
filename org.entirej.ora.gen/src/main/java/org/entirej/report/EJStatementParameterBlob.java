@@ -9,26 +9,26 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.entirej.framework.core.EJApplicationException;
-import org.entirej.framework.core.service.EJParameterType;
+import org.entirej.framework.report.EJReportRuntimeException;
+import org.entirej.framework.report.service.EJReportParameterType;
 import org.entirej.framework.report.service.EJReportStatementParameter;
 
 public class EJStatementParameterBlob extends EJReportStatementParameter
 {
     private static final int JDBC_TYPE = Types.BLOB;
 
-    public EJStatementParameterBlob(EJParameterType type)
+    public EJStatementParameterBlob(EJReportParameterType type)
     {
         super(type);
     }
 
-    public EJStatementParameterBlob(EJParameterType type, byte[] value)
+    public EJStatementParameterBlob(EJReportParameterType type, byte[] value)
     {
         super(type);
         setValue(value);
     }
     
-    public EJStatementParameterBlob(EJParameterType type, File value)
+    public EJStatementParameterBlob(EJReportParameterType type, File value)
     {
     	super(type);
     	setValue(value);
@@ -67,9 +67,9 @@ public class EJStatementParameterBlob extends EJReportStatementParameter
 
 			return blob;
 		} catch (SQLException e) {
-			throw new EJApplicationException(e);
+			throw new EJReportRuntimeException(e);
 		} catch (IOException e) {
-			throw new EJApplicationException(e);
+			throw new EJReportRuntimeException(e);
 		}
 	}
 }
