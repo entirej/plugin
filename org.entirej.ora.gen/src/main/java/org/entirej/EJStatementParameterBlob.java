@@ -1,5 +1,6 @@
 package org.entirej;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,6 +29,34 @@ public class EJStatementParameterBlob extends EJStatementParameter {
 	public EJStatementParameterBlob(EJParameterType type, File value) {
 		super(type);
 		setValue(value);
+	}
+
+	@Override
+	public void setValue(Object value) {
+
+		if (value == null) {
+			super.setValue(null);
+
+		}
+
+		else if (value instanceof byte[]) {
+			super.setValue(value);
+
+		} else if (value instanceof File) {
+			super.setValue(value);
+			return;
+		} else if (value instanceof Blob) {
+			try (InputStream binaryStream = ((Blob) value).getBinaryStream();
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
+
+				copyStream(binaryStream, outputStream);
+
+				super.setValue(outputStream.toByteArray());
+			} catch (SQLException | IOException e) {
+				throw new EJApplicationException(e);
+			}
+		} else
+			throw new IllegalArgumentException("Type not valid" + value.getClass().getName());
 	}
 
 	public int getJdbcType() {
