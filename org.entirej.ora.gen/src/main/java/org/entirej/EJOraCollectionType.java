@@ -1,9 +1,10 @@
 package org.entirej;
 
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.entirej.framework.core.EJManagedFrameworkConnection;
+import org.entirej.framework.core.EJApplicationException;
 
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleData;
@@ -13,22 +14,30 @@ public abstract class EJOraCollectionType implements OracleData, OracleDataFacto
 {
 
     public abstract String getSqlName();
-    
-    
+
     protected Object toJDBC(Object o, Connection conn) throws SQLException
     {
         if (o instanceof oracle.jdbc.OracleData)
         {
-            EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.getConnection();
-            try
-            {
-                return ((oracle.jdbc.OracleData) o).toJDBCObject(((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class)));
-            }
-            finally
-            {
-                con.close();
-            }
+            return ((oracle.jdbc.OracleData) o).toJDBCObject(conn.unwrap(OracleConnection.class));
         }
         return o;
     }
+
+    protected Object toJDBCClob(String text, Connection conn)
+    {
+
+        Clob descLong;
+        try
+        {
+            descLong = conn.createClob();
+            descLong.setString(1L, text);
+            return descLong;
+        }
+        catch (SQLException e)
+        {
+            throw new EJApplicationException(e);
+        }
+    }
+
 }
