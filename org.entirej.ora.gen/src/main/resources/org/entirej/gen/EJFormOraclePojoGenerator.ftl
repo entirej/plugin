@@ -129,7 +129,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     public Object toJDBCObject(Connection conn) throws SQLException
     {
         return org.entirej.EJOraSystemTypeHelper.toJDBCStruct(conn,getSqlName(),
-                new Object[] {<#list columns as column> toJDBC(get${column.method_name}(),conn) ,</#list> });
+                new Object[] {<#list columns as column> <#if column.data_type == \"Clob\">toJDBCClob(get${column.method_name}(),conn)<#else>toJDBC(get${column.method_name}(),conn)</#if> ,</#list> });
     }
     
     
@@ -148,6 +148,8 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
         <#list columns as column>
         <#if column.is_array == "true" || column.is_struct == "true">
         r.set${column.method_name}((${column.data_type})${column.data_type}.getOracleDataFactory().create(attr.removeFirst(),${column.data_type}._SQL_TYPECODE)); 
+        <#elseif column.data_type == "Clob" >
+        r.set${column.method_name}(EJOraSystemTypeHelper.convertClobToString((${column.data_type})attr.removeFirst()));
         <#else>        
         r.set${column.method_name}((${column.data_type})attr.removeFirst());
         </#if> 
@@ -209,13 +211,13 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
 /***********************************************************************************************/
     <#list columns as column>
     @EJFieldName("${column.name}")
-    public ${column.data_type} get${column.method_name}()
+    public <#if column.data_type == \"Clob\">String<#else>${column.data_type}</#if> get${column.method_name}()
     {
       return getValue(FieldNames.${column.name});
     }
     
     @EJFieldName("${column.name}")
-    public void set${column.method_name}(${column.data_type} ${column.var_name})
+    public void set${column.method_name}(<#if column.data_type == \"Clob\">String<#else>${column.data_type}</#if> ${column.var_name})
     {
      
             _values.put(FieldNames.${column.name}, ${column.var_name});
@@ -252,7 +254,7 @@ public class ${JAVA_OBJECT_NAME} extends EJOraCollectionType
     {
     
     <#list columns as column>
-        public static final FieldNames<${column.data_type}> ${column.name} = new FieldNames<>();
+        public static final FieldNames<<#if column.data_type == \"Clob\">String<#else>${column.data_type}</#if>> ${column.name} = new FieldNames<>();
     </#list>
         T type;
     }
