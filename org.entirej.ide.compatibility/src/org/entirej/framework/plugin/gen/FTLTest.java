@@ -1,15 +1,18 @@
 package org.entirej.framework.plugin.gen;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJTableColumn;
@@ -34,6 +37,10 @@ public class FTLTest
             pojoGeneratorType.setClassName("User");
             pojoGeneratorType.setPackageName("org.entirej");
             pojoGeneratorType.setProperty("dev", "anuradha");
+            pojoGeneratorType.setProperty("JAVA_OBJECT_NAME", "TJT");
+            pojoGeneratorType.setProperty("TABLE_NAME", "");
+            pojoGeneratorType.setProperty("JAVA_REC_NAME", "TM01");
+            pojoGeneratorType.setProperty("DB_OBJECT_NAME", "TM01");
             
             List<EJTableColumn> columns = new ArrayList<EJTableColumn>();
             
@@ -44,7 +51,7 @@ public class FTLTest
                 
                 EJTableColumn column2 = new EJTableColumn();
                 column2.setName("NAME");
-                column2.setDatatypeName("String");
+                column2.setDatatypeName(Clob.class.getSimpleName());
                 
                 EJTableColumn column3 = new EJTableColumn();
                 column3.setName("DATE");
@@ -56,8 +63,7 @@ public class FTLTest
             }
             pojoGeneratorType.setColumnNames(columns);
         }
-        String tl = "${columns?size}\n"+
-                     "<#if columns??><#list columns as column>${column.name}<#if column?has_next >, </#if></#list></#if>";
+        String tl = getTemplate();
         FTLEngine.genrateFormPojo(tl, pojoGeneratorType);
     }
    
@@ -110,4 +116,38 @@ public class FTLTest
         }
     }
     
+    
+    public  static String getTemplate()
+    {
+        return asString("FTLTest.ftl");
+    }
+
+    public static String asString(String resourceNmae)
+    {
+
+        InputStream stream = FTLTest.class.getResourceAsStream(resourceNmae);
+        if (stream == null)
+        {
+            return "";
+        }
+        Scanner scanner = new Scanner(stream);
+        try
+        {
+
+            return scanner.useDelimiter("\\A").next();
+        }
+        finally
+        {
+            try
+            {
+                stream.close();
+                scanner.close();
+            }
+            catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 }
