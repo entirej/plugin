@@ -36,6 +36,14 @@
             </renderer>
             <renderer name="ImageItem" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTImageItemRendererDefinition">
             </renderer>
+            <renderer name="HtmlEditorItem" group="" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTHtmlEditorItemRendererDefinition">
+            </renderer>
+            <renderer name="StackedItem" group="" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTStackedItemRendererDefinition">
+            </renderer>
+            <renderer name="HelpItem" group="User Defined" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTHelpItemRendererDefinition">
+            </renderer>
+            <renderer name="HtmlView" group="User Defined" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTHtmlViewItemRendererDefinition">
+            </renderer>
         </itemRenderers>
         <lovRenderers>
             <renderer name="Standard" rendererDefinitionClassName="org.entirej.applicationframework.rwt.renderers.lov.definition.EJRWTStandardLovRendererDefinition"/>
