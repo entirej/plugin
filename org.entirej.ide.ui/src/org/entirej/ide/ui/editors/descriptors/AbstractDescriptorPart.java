@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,16 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.editors.descriptors;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -74,13 +77,20 @@ import org.entirej.ide.ui.editors.descriptors.IGroupProvider.IRefreshHandler;
 
 public abstract class AbstractDescriptorPart extends SectionPart
 {
-    protected Composite   body;
+    protected  ToolBar  toolbar;
 
-    protected FormToolkit toolkit;
+    protected Composite       body;
 
-    private boolean       activeForcus = false;
+    protected FormToolkit     toolkit;
 
-    private final boolean enableScroll;
+    private boolean           activeForcus = false;
+
+    private final boolean     enableScroll;
+
+    private Object            currentInput;
+    private List<Refreshable> refreshables = new ArrayList<Refreshable>();
+
+    protected ToolBarManager toolBarManager;
 
     public AbstractDescriptorPart(FormToolkit toolkit, Composite parent, boolean enableScroll)
     {
@@ -93,7 +103,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         this.toolkit = toolkit;
 
         buildBody(getSection(), toolkit);
-        createSectionToolbar(getSection(), toolkit, getToolbarActions());
+        toolBarManager = createSectionToolbar(getSection(), toolkit, getToolbarActions());
         parent.setBackground(getSection().getBackground());
         this.enableScroll = enableScroll;
     }
@@ -139,6 +149,8 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
     public abstract AbstractDescriptor<?>[] getDescriptors();
 
+    public abstract Object getInput();
+
     public abstract String getSectionTitle();
 
     public abstract String getSectionDescription();
@@ -148,9 +160,21 @@ public abstract class AbstractDescriptorPart extends SectionPart
         return new Action[0];
     }
 
-    public void buildUI()
+    public void buildUI(boolean force)
     {
 
+        if (!force && currentInput!=null && currentInput == getInput())
+        {
+            for (Refreshable refreshable : refreshables)
+            {
+                if(refreshable!=null)
+                    refreshable.refresh();
+            }
+            return;
+        }
+
+        currentInput = getInput();
+        refreshables.clear();
         FormToolkit toolkit = this.toolkit;
         final Section section = getSection();
 
@@ -296,6 +320,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                 break;
 
         }
+        refreshables.add(editorSection);
         return editorSection;
     }
 
@@ -315,10 +340,10 @@ public abstract class AbstractDescriptorPart extends SectionPart
         com.setTabList(foucsCtrls.toArray(new Control[0]));
     }
 
-    private static void createSectionToolbar(Section section, FormToolkit toolkit, Action[] toolbarActions)
+    private  ToolBarManager createSectionToolbar(Section section, FormToolkit toolkit, Action[] toolbarActions)
     {
         ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-        final ToolBar toolbar = toolBarManager.createControl(section);
+        toolbar = toolBarManager.createControl(section);
         final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
         toolbar.setCursor(handCursor);
         // Cursor needs to be explicitly disposed
@@ -344,6 +369,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         toolBarManager.update(true);
 
         section.setTextClient(toolbar);
+        return toolBarManager;
     }
 
     protected Composite createAdvancedSection(final Composite body, final IGroupProvider groupProvider, String text, String tooltip, final FormToolkit toolkit,
@@ -360,6 +386,8 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
         final Section advnSection = toolkit.createSection(body, style);
         advnSection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+         createSectionToolbar(advnSection, toolkit, groupProvider.getToolbarActions());
         advnSection.setText(text);
         if (tooltip != null && tooltip.trim().length() > 0)
         {
@@ -431,7 +459,6 @@ public abstract class AbstractDescriptorPart extends SectionPart
         groupProvider.createHeader(handler, advnComp, new GridData(GridData.FILL_HORIZONTAL));
 
         handler.refresh();
-        createSectionToolbar(advnSection, toolkit, groupProvider.getToolbarActions());
         return advnComp;
     }
 
@@ -447,7 +474,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
         super.dispose();
     }
 
-    public abstract class AbstractEditorSection<T>
+    public abstract class AbstractEditorSection<T> implements Refreshable
     {
         protected final AbstractDescriptor<T> descriptor;
 
@@ -488,7 +515,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
                 }
                 text += " :* "; //$NON-NLS-1$
             }
-            
+
             else
             {
                 if (descriptor.isOverride())
@@ -671,7 +698,7 @@ public abstract class AbstractDescriptorPart extends SectionPart
     class TextEditorSection extends AbstractEditorSection<String>
     {
         private Text text;
-
+        boolean enable = true;
         public TextEditorSection(AbstractDescriptor<String> descriptor)
         {
             super(descriptor);
@@ -711,39 +738,58 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
             text.addModifyListener(new ModifyListener()
             {
-                boolean enable = true;
+              
+
                 public void modifyText(ModifyEvent e)
                 {
-                    if(enable)
-                    descriptor.runOperation(descriptor.createOperation(text.getText(),new IRefreshHandler()
-                    {
-                        
-                        public void refresh()
+                    if (enable)
+                        descriptor.runOperation(descriptor.createOperation(text.getText(), new IRefreshHandler()
                         {
+
+                            public void refresh()
+                            {
                                 try
                                 {
                                     enable = false;
-                                    if(!text.isDisposed())
+                                    if (!text.isDisposed() && descriptor.getValue()!=null)
                                         text.setText(descriptor.getValue());
-                                    
-                                }finally
+
+                                }
+                                finally
                                 {
                                     enable = true;
                                 }
-                            
-                        }
-                    }));
-                    
+
+                            }
+                        }));
+
                 }
             });
             descriptor.addEditorAssist(text);
             addIssueDecoration(text);
+        }
+        public void refresh()
+        {
+            try
+            {
+                enable = false;
+                if (!text.isDisposed() && descriptor.getValue()!=null)
+                    text.setText(descriptor.getValue());
+
+            }
+            finally
+            {
+                enable = true;
+            }
+            
         }
     }
 
     class TypeEditorSection extends AbstractEditorSection<String>
     {
         private Text               text;
+        boolean enable = true;
+
         private TextContentAdapter contentAdapter = new TextContentAdapter();
 
         public TypeEditorSection(AbstractDescriptor<String> descriptor)
@@ -799,29 +845,30 @@ public abstract class AbstractDescriptorPart extends SectionPart
             text.setLayoutData(gd);
             text.addModifyListener(new ModifyListener()
             {
-                boolean enable = true;
+                
                 public void modifyText(ModifyEvent e)
                 {
-                    if(enable)
-                    descriptor.runOperation(descriptor.createOperation(text.getText(),new IRefreshHandler()
-                    {
-                        
-                        public void refresh()
+                    if (enable)
+                        descriptor.runOperation(descriptor.createOperation(text.getText(), new IRefreshHandler()
                         {
+
+                            public void refresh()
+                            {
                                 try
                                 {
                                     enable = false;
-                                    if(!text.isDisposed())
+                                    if (!text.isDisposed() && descriptor.getValue()!=null)
                                         text.setText(descriptor.getValue());
-                                    
-                                }finally
+
+                                }
+                                finally
                                 {
                                     enable = true;
                                 }
-                            
-                        }
-                    }));
-                    
+
+                            }
+                        }));
+
                 }
             });
             descriptor.addEditorAssist(text);
@@ -855,7 +902,21 @@ public abstract class AbstractDescriptorPart extends SectionPart
              */
             addIssueDecoration(browse);
         }
+        public void refresh()
+        {
+            try
+            {
+                enable = false;
+                if (!text.isDisposed() && descriptor.getValue()!=null)
+                    text.setText(descriptor.getValue());
 
+            }
+            finally
+            {
+                enable = true;
+            }
+
+        }
         private void showRightEnd()
         {
             contentAdapter.setCursorPosition(text, text.getText().length());
@@ -890,12 +951,12 @@ public abstract class AbstractDescriptorPart extends SectionPart
                 {
                     descriptor.runOperation(descriptor.createOperation(button.getSelection(), new IRefreshHandler()
                     {
-                        
+
                         public void refresh()
                         {
-                            if(!button.isDisposed())
+                            if (!button.isDisposed())
                                 button.setSelection(descriptor.getValue());
-                            
+
                         }
                     }));
 
@@ -905,18 +966,24 @@ public abstract class AbstractDescriptorPart extends SectionPart
                 {
                     descriptor.runOperation(descriptor.createOperation(button.getSelection(), new IRefreshHandler()
                     {
-                        
+
                         public void refresh()
                         {
-                            if(!button.isDisposed())
+                            if (!button.isDisposed())
                                 button.setSelection(descriptor.getValue());
-                            
+
                         }
                     }));
 
                 }
             });
             addIssueDecoration(button);
+        }
+        public void refresh()
+        {
+            if (!button.isDisposed())
+                button.setSelection(descriptor.getValue());
+
         }
     }
 
@@ -933,24 +1000,46 @@ public abstract class AbstractDescriptorPart extends SectionPart
         @Override
         public void createContents(Composite parent, FormToolkit toolkit)
         {
+           
             if (customUIProvider.isUseLabel())
                 createLabel(parent, toolkit);
             GridData gd = new GridData(GridData.FILL_HORIZONTAL);
             gd.widthHint = 20;
             gd.horizontalSpan = 1;
             gd.horizontalIndent = 3;
-            Control createBody = customUIProvider.createBody(parent, gd);
+            this.parent = parent;
+             createBody = customUIProvider.createBody(parent, gd);
 
             createBody.setLayoutData(gd);
 
             addIssueDecoration(createBody);
         }
+        public void refresh()
+        {
+//            if(createBody!=null)
+//            {
+//                createBody.dispose();
+//            }
+//            GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+//            gd.widthHint = 20;
+//            gd.horizontalSpan = 1;
+//            gd.horizontalIndent = 3;
+//             createBody = customUIProvider.createBody(parent, gd);
+//
+//            createBody.setLayoutData(gd);
+//
+//            addIssueDecoration(createBody);
+//            parent.layout(true);
+            
+        }
+        Control createBody =null;
+        Composite parent=null;
     }
 
     class DescriptionEditorSection extends AbstractEditorSection<String>
     {
         private Text text;
-
+        boolean enable = true;
         public DescriptionEditorSection(AbstractDescriptor<String> descriptor)
         {
             super(descriptor);
@@ -996,39 +1085,56 @@ public abstract class AbstractDescriptorPart extends SectionPart
             text.setLayoutData(gd);
             text.addModifyListener(new ModifyListener()
             {
-                boolean enable = true;
+               
+
                 public void modifyText(ModifyEvent e)
                 {
-                    if(enable)
-                    descriptor.runOperation(descriptor.createOperation(text.getText(),new IRefreshHandler()
-                    {
-                        
-                        public void refresh()
+                    if (enable)
+                        descriptor.runOperation(descriptor.createOperation(text.getText(), new IRefreshHandler()
                         {
+
+                            public void refresh()
+                            {
                                 try
                                 {
                                     enable = false;
-                                    if(!text.isDisposed())
+                                    if (!text.isDisposed() && descriptor.getValue()!=null)
                                         text.setText(descriptor.getValue());
-                                    
-                                }finally
+
+                                }
+                                finally
                                 {
                                     enable = true;
                                 }
-                            
-                        }
-                    }));
-                    
+
+                            }
+                        }));
+
                 }
             });
             addIssueDecoration(text);
+        }
+        public void refresh()
+        {
+            try
+            {
+                enable = false;
+                if (!text.isDisposed() && descriptor.getValue()!=null)
+                    text.setText(descriptor.getValue());
+
+            }
+            finally
+            {
+                enable = true;
+            }
+
         }
     }
 
     class SelectionEditorSection extends AbstractEditorSection<Object>
     {
         private Combo combo;
-
+        boolean enable = true;
         public SelectionEditorSection(AbstractDescriptor<Object> descriptor)
         {
             super(descriptor);
@@ -1048,7 +1154,19 @@ public abstract class AbstractDescriptorPart extends SectionPart
             {
                 @SuppressWarnings("unchecked")
                 final ISelectionValueProvider<Object> provider = (ISelectionValueProvider<Object>) descriptor;
-                for (Object item : provider.getOptions())
+                List<Object> options = Arrays.asList(provider.getOptions());
+                Collections.sort(options, new Comparator<Object>()
+                {
+
+                    public int compare(Object o1, Object o2)
+                    {
+                        String key1 = provider.getOptionText(o1);
+                        String key2 = provider.getOptionText(o2);
+                        return key1.compareTo(key2);
+                    }
+                });
+
+                for (Object item : options)
                 {
                     String key = provider.getOptionText(item);
                     combo.add(key);
@@ -1059,38 +1177,59 @@ public abstract class AbstractDescriptorPart extends SectionPart
 
                 combo.addSelectionListener(new SelectionAdapter()
                 {
-                   
 
-                    
-                    
-                    boolean enable = true;
+               
+
                     public void widgetSelected(SelectionEvent event)
                     {
                         String key = combo.getText();
-                        if(enable)
-                            descriptor.runOperation(descriptor.createOperation(key != null ? combo.getData(key) : null,new IRefreshHandler()
-                        {
-                            
-                            public void refresh()
+                        if (enable)
+                            descriptor.runOperation(descriptor.createOperation(key != null ? combo.getData(key) : null, new IRefreshHandler()
                             {
+
+                                public void refresh()
+                                {
                                     try
                                     {
                                         enable = false;
-                                        if(!combo.isDisposed())
+                                        if (!combo.isDisposed())
                                             combo.setText(provider.getOptionText(descriptor.getValue()));
-                                        
-                                    }finally
+
+                                    }
+                                    finally
                                     {
                                         enable = true;
                                     }
-                                
-                            }
-                        }));
-                        
+
+                                }
+                            }));
+
                     }
                 });
             }
             addIssueDecoration(combo);
         }
+        public void refresh()
+        {
+            final ISelectionValueProvider<Object> provider = (ISelectionValueProvider<Object>) descriptor;
+            try
+            {
+                enable = false;
+                if (!combo.isDisposed())
+                    
+                    combo.setText(descriptor.getValue()==null?"":provider.getOptionText(descriptor.getValue()));
+
+            }
+            finally
+            {
+                enable = true;
+            }
+
+        }
+    }
+
+    private static interface Refreshable
+    {
+        void refresh();
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.cf.rwt.lib;
 
@@ -37,7 +37,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
 
     public RWTCoreRuntimeContainerPage()
     {
-        super("EntireJ Bundled RWT/RAP Core 2.32 Runtime");
+        super("EntireJ Bundled RWT/RAP Core 3.5.0 Runtime");
     }
 
     public void initialize(IJavaProject javaProject, IClasspathEntry[] currentEntries)
@@ -57,7 +57,7 @@ public class RWTCoreRuntimeContainerPage extends WizardPage implements IClasspat
     public void createControl(Composite parent)
     {
         setTitle("EntireJ Bundled RWT/RAP Core Runtime");
-        setDescription("Add bundled rwt/rap core 3.2.0 libraries to project path.");
+        setDescription("Add bundled rwt/rap core 3.5.0 libraries to project path.");
 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.wizards;
 
@@ -38,7 +38,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.entirej.ide.core.EJCoreLog;
-import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
 
 public abstract class NewWizard extends Wizard implements INewWizard
@@ -50,7 +49,7 @@ public abstract class NewWizard extends Wizard implements INewWizard
     public NewWizard()
     {
         super();
-        setWindowTitle(EJUIMessages.NewWizard_wtitle);
+        setWindowTitle("New");
         setNeedsProgressMonitor(true);
     }
 

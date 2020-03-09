@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 /*
  * Created on Nov 5, 2005
@@ -48,7 +48,6 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkE
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.plugin.EJPluginParameterChecker;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafActionProperties;
@@ -59,7 +58,6 @@ import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafPropert
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuLeafSpacerProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMenuProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 
 public class EntireJPropertiesWriter extends AbstractXmlWriter
 {
@@ -77,6 +75,7 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "applicationManager", applicationDefinition != null ? applicationDefinition.getApplicationManagerClassName() : "");
             writeStringTAG(buffer, "applicationManagerDefinition", properties.getApplicationManagerDefinitionClassName());
             writeStringTAG(buffer, "connectionFactoryClassName", properties.getConnectionFactoryClassName());
+            writeStringTAG(buffer, "applicationActionProcessor", properties.getApplicationActionProcessorClassName());
             writeStringTAG(buffer, "reusableBlocksLocation", properties.getReusableBlocksLocation());
             writeStringTAG(buffer, "reusableLovDefinitionLocation", properties.getReusableLovDefinitionLocation());
             writeStringTAG(buffer, "objectGroupDefinitionLocation", properties.getObjectGroupDefinitionLocation());
@@ -284,11 +283,11 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
         }
         catch (CoreException e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save EntireJ Properties");
+           e.printStackTrace();
         }
         catch (UnsupportedEncodingException e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save EntireJ Properties");
+            e.printStackTrace();
         }
     }
     
@@ -361,6 +360,7 @@ public class EntireJPropertiesWriter extends AbstractXmlWriter
         writePROPERTY(buffer, "type", item.getType().name());
         closeOpenTAG(buffer);
         writeStringTAG(buffer, "name", item.getName());
+        writeStringTAG(buffer, "title", item.getTitle());
         writeStringTAG(buffer, "fill", item.getFill().name());
         writeStringTAG(buffer, "grab", item.getGrab().name());
         writeIntTAG(buffer, "hHint", item.getHintHeight());

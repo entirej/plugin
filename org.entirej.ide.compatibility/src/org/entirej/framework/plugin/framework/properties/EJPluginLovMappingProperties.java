@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
@@ -31,6 +31,8 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
     private String                                 _lovDisplayName;
     
     private boolean                                _executeAfterQuery = true;
+
+    private boolean                                 _includeDefaultQueryValues  = false;
     private EJPluginBlockProperties                _mappedBlock;
     private List<EJPluginLovItemMappingProperties> _lovItemMappings;
     
@@ -56,6 +58,9 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
         _lovMappingName = name;
     }
     
+    
+    
+    
     public void setExecuteAfterQuery(boolean executeAfterQuery)
     {
         _executeAfterQuery = executeAfterQuery;
@@ -64,6 +69,16 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
     public boolean executeAfterQuery()
     {
         return _executeAfterQuery;
+    }
+    
+    public boolean includeDefaultQueryValues()
+    {
+        return _includeDefaultQueryValues;
+    }
+    
+    public void setIncludeDefaultQueryValues(boolean includeDefaultQueryValues)
+    {
+        this._includeDefaultQueryValues = includeDefaultQueryValues;
     }
     
     /**
@@ -278,6 +293,7 @@ public class EJPluginLovMappingProperties implements EJPluginFormPreviewProvider
         
         EJPluginLovMappingProperties newMapping = new EJPluginLovMappingProperties(mappingName, forBlock.getFormProperties());
         newMapping.setExecuteAfterQuery(executeAfterQuery());
+        newMapping.setIncludeDefaultQueryValues(includeDefaultQueryValues());
         newMapping.setLovDefinitionName(lovDefName);
         newMapping.setLovDisplayName(lovDisplayName);
         newMapping.setMappedBlock(forBlock);

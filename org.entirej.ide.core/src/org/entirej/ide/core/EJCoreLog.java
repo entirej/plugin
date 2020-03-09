@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.core;
 
@@ -51,6 +51,10 @@ public class EJCoreLog
     public static void logWarnningMessage(String message)
     {
         log(new Status(IStatus.WARNING, EJCorePlugin.ID, IStatus.WARNING, message, null));
+    }
+    public static void logWarnningMessage(String message,Throwable e)
+    {
+        log(new Status(IStatus.WARNING, EJCorePlugin.ID, IStatus.WARNING, message, e));
     }
 
     public static void logWarnning(Throwable e)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.core.project;
 
@@ -129,13 +129,14 @@ public class EJPluginEntireJClassLoader
 
     public static Class<?> loadClass(final IJavaProject javaProject, String className) throws ClassNotFoundException
     {
+       // EJCoreLog.logInfoMessage("loadClass - > "+className);
         ClassLoader classLoader = WEAK_LOADERS.get(javaProject);
 
         if (classLoader == null)
         {
             classLoader = getClassloader(javaProject);
             WEAK_LOADERS.put(javaProject, classLoader);
-
+            EJCoreLog.logInfoMessage("load classLoader for  - > "+javaProject.hashCode()+":"+className +": "+String.valueOf(classLoader!=null));
         }
 
         try
@@ -147,6 +148,7 @@ public class EJPluginEntireJClassLoader
         catch (Throwable e)
         {
             // ignore
+            //EJCoreLog.log(e);
         }
 
         // get output path level call loading
@@ -159,9 +161,10 @@ public class EJPluginEntireJClassLoader
         }
         catch (JavaModelException e)
         {// ignore
+            EJCoreLog.log(e);
         }
         
-
+       // EJCoreLog.logInfoMessage("end loadClass - > "+className +": "+String.valueOf(classLoader!=null));
         return classLoader.loadClass(className);
 
     }

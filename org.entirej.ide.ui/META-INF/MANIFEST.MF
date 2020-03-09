@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.entirej.ide.ui;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Category: %Bundle-Category
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -26,16 +26,25 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.launching,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.help,
- org.eclipse.ltk.core.refactoring
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.gef
 Bundle-ClassPath: .
 Bundle-Activator: org.entirej.ide.ui.EJUIPlugin
 Export-Package: org.entirej.ide.ui,
+ org.entirej.ide.ui.common.viewers,
+ org.entirej.ide.ui.common.widgets,
  org.entirej.ide.ui.editors,
  org.entirej.ide.ui.editors.descriptors,
- org.entirej.ide.ui.editors.prop,
+ org.entirej.ide.ui.editors.handlers,
+ org.entirej.ide.ui.editors.operations,
+ org.entirej.ide.ui.editors.preferences,
  org.entirej.ide.ui.nodes,
+ org.entirej.ide.ui.nodes.dnd,
+ org.entirej.ide.ui.table,
  org.entirej.ide.ui.utils,
  org.entirej.ide.ui.wizards,
- org.entirej.ide.ui.wizards.db
+ org.entirej.ide.ui.wizards.custom,
+ org.entirej.ide.ui.wizards.db,
+ org.entirej.ide.ui.wizards.features
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy

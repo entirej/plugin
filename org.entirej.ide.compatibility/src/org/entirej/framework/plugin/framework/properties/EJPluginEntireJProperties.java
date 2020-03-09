@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
@@ -56,8 +56,12 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
     
     private String                             _version         = "1.0";               // default
     private String                             _applicationManagerDefClassName;
+
+    private String                                       _applicationActionProcessorClassName;
     
     private EJFrameworkExtensionProperties     _applicationManagerProperties;
+    
+    
     private IJavaProject                       _javaProject;
     private ArrayList<String>                  _formPackageNames;
     private String                             _connectionFactoryClassName;
@@ -179,6 +183,18 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
     public String getConnectionFactoryClassName()
     {
         return _connectionFactoryClassName;
+    }
+    
+    public void setApplicationActionProcessorClassName(String className)
+    {
+      
+        
+        _applicationActionProcessorClassName = className;
+    }
+    
+    public String getApplicationActionProcessorClassName()
+    {
+        return _applicationActionProcessorClassName;
     }
     
     public void setConnectionFactoryClassName(String className)
@@ -317,7 +333,7 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
      */
     public void logInfoMessage(String message)
     {
-        EntireJFrameworkPlugin.logInfo(message);
+        System.out.println(message);
     }
     
     /**
@@ -331,7 +347,8 @@ public abstract class EJPluginEntireJProperties implements EJEntireJProperties
      */
     public void logErrorMessage(String message, Exception ex)
     {
-        EntireJFrameworkPlugin.logError(message, ex);
+        System.err.println(message);
+        ex.printStackTrace();
     }
     
     public EJCoreVisualAttributeContainer getVisualAttributesContainer()

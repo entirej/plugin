@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,14 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
+import org.entirej.framework.core.enumerations.EJCanvasDrawerPosition;
 import org.entirej.framework.core.enumerations.EJCanvasMessagePosition;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasTabPosition;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJLineStyle;
 import org.entirej.framework.core.enumerations.EJPopupButton;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
@@ -32,35 +34,41 @@ public class CanvasHandler extends EntireJTagHandler
     private EJPluginFormProperties   _formProperties;
     private EJPluginCanvasProperties _canvasProperties;
     
-    private static final String      ELEMENT_CANVAS                 = "canvas";
-    private static final String      ELEMENT_WIDTH                  = "width";
-    private static final String      ELEMENT_HEIGHT                 = "height";
-    private static final String      ELEMENT_NUM_COLS               = "numCols";
-    private static final String      ELEMENT_HORIZONTAL_SPAN        = "horizontalSpan";
-    private static final String      ELEMENT_VERTICAL_SPAN          = "verticalSpan";
-    private static final String      ELEMENT_EXPAND_HORIZONTALLY    = "expandHorizontally";
-    private static final String      ELEMENT_EXPAND_VERTICALLY      = "expandVertically";
-    private static final String      ELEMENT_DISPLAY_GROUP_FRAME    = "displayGroupFrame";
+    private static final String      ELEMENT_CANVAS                  = "canvas";
+    private static final String      ELEMENT_WIDTH                   = "width";
+    private static final String      ELEMENT_HEIGHT                  = "height";
+    private static final String      ELEMENT_NUM_COLS                = "numCols";
+    private static final String      ELEMENT_HORIZONTAL_SPAN         = "horizontalSpan";
+    private static final String      ELEMENT_VERTICAL_SPAN           = "verticalSpan";
+    private static final String      ELEMENT_EXPAND_HORIZONTALLY     = "expandHorizontally";
+    private static final String      ELEMENT_EXPAND_VERTICALLY       = "expandVertically";
+    private static final String      ELEMENT_DISPLAY_GROUP_FRAME     = "displayGroupFrame";
     
-    private static final String      ELEMENT_CLOSEABLE_MESSAGE_PANE = "closeableMessagePane";
+    private static final String      ELEMENT_CLOSEABLE_MESSAGE_PANE  = "closeableMessagePane";
     
-    private static final String      ELEMENT_MESSAGE_POSITION       = "messagePosition";
-    private static final String      ELEMENT_MESSAGE_PANE_SIZE      = "messagePaneSize";
-    private static final String      ELEMENT_DEFAULT_BUTTON_ID      = "defaultButton";
-    private static final String      ELEMENT_FRAME_TITLE            = "groupFrameTitle";
-    private static final String      ELEMENT_POPUP_PAGE_TITLE       = "popupPageTitle";
-    private static final String      ELEMENT_TAB_POSITION           = "tabPosition";
-    private static final String      ELEMENT_SPLIT_ORIENTATION      = "splitOrientation";
-    private static final String      ELEMENT_BUTTON_ONE_TEXT        = "buttonOneText";
-    private static final String      ELEMENT_BUTTON_TWO_TEXT        = "buttonTwoText";
-    private static final String      ELEMENT_BUTTON_THREE_TEXT      = "buttonThreeText";
-    private static final String      ELEMENT_TAB_PAGE               = "tabPage";
-    private static final String      ELEMENT_STACKED_PAGE           = "stackedPage";
-    private static final String      ELEMENT_INITIAL_STACKED_PAGE   = "initialStackedPageName";
+    private static final String      ELEMENT_MESSAGE_POSITION        = "messagePosition";
+    private static final String      ELEMENT_MESSAGE_PANE_SIZE       = "messagePaneSize";
     
-    private static final String      ELEMENT_REFERRED_FORM_ID       = "referredFormId";
+    private static final String      ELEMENT_MESSAGE_PANE_VA         = "messagePaneVa";
+    private static final String      ELEMENT_MESSAGE_PANE_FORMATTING = "messagePaneFormatting";
+    private static final String      ELEMENT_DEFAULT_BUTTON_ID       = "defaultButton";
+    private static final String      ELEMENT_FRAME_TITLE             = "groupFrameTitle";
+    private static final String      ELEMENT_POPUP_PAGE_TITLE        = "popupPageTitle";
+    private static final String      ELEMENT_TAB_POSITION            = "tabPosition";
+    private static final String      ELEMENT_DRAWER_POSITION         = "drawerPosition";
+    private static final String      ELEMENT_SPLIT_ORIENTATION       = "splitOrientation";
+    private static final String      ELEMENT_LINE_STYLE              = "lineStyle";
+    private static final String      ELEMENT_BUTTON_ONE_TEXT         = "buttonOneText";
+    private static final String      ELEMENT_BUTTON_TWO_TEXT         = "buttonTwoText";
+    private static final String      ELEMENT_BUTTON_THREE_TEXT       = "buttonThreeText";
+    private static final String      ELEMENT_TAB_PAGE                = "tabPage";
+    private static final String      ELEMENT_DRAWER_PAGE             = "drawerPage";
+    private static final String      ELEMENT_STACKED_PAGE            = "stackedPage";
+    private static final String      ELEMENT_INITIAL_STACKED_PAGE    = "initialStackedPageName";
     
-    private boolean                  _canvasCreated                 = false;
+    private static final String      ELEMENT_REFERRED_FORM_ID        = "referredFormId";
+    
+    private boolean                  _canvasCreated                  = false;
     
     public CanvasHandler(EJPluginFormProperties formProperties)
     {
@@ -84,6 +92,10 @@ public class CanvasHandler extends EntireJTagHandler
         if (name.equals(ELEMENT_TAB_PAGE))
         {
             setDelegate(new TabPageHandler(_canvasProperties));
+        }
+        else if (name.equals(ELEMENT_DRAWER_PAGE))
+        {
+            setDelegate(new DrawerPageHandler(_canvasProperties));
         }
         else if (name.equals(ELEMENT_STACKED_PAGE))
         {
@@ -177,7 +189,7 @@ public class CanvasHandler extends EntireJTagHandler
         {
             if (value.length() > 0)
             {
-                _canvasProperties.setCloseableMessagePane(Boolean.parseBoolean(value));
+                _canvasProperties.getMessagePaneProperties().setCloseable(Boolean.parseBoolean(value));
             }
         }
         
@@ -185,7 +197,7 @@ public class CanvasHandler extends EntireJTagHandler
         {
             if (value.length() > 0)
             {
-                _canvasProperties.setMessagePosition(EJCanvasMessagePosition.valueOf(value));
+                _canvasProperties.getMessagePaneProperties().setPosition(EJCanvasMessagePosition.valueOf(value));
             }
         }
         
@@ -193,7 +205,21 @@ public class CanvasHandler extends EntireJTagHandler
         {
             if (value.length() > 0)
             {
-                _canvasProperties.setMessagePaneSize(Integer.parseInt(value));
+                _canvasProperties.getMessagePaneProperties().setSize(Integer.parseInt(value));
+            }
+        }
+        else if (name.equals(ELEMENT_MESSAGE_PANE_FORMATTING))
+        {
+            if (value.length() > 0)
+            {
+                _canvasProperties.getMessagePaneProperties().setCustomFormatting(Boolean.parseBoolean(value));
+            }
+        }
+        else if (name.equals(ELEMENT_MESSAGE_PANE_VA))
+        {
+            if (value.length() > 0)
+            {
+                _canvasProperties.getMessagePaneProperties().setVa(value);
             }
         }
         else if (name.equals(ELEMENT_DEFAULT_BUTTON_ID))
@@ -216,10 +242,19 @@ public class CanvasHandler extends EntireJTagHandler
         {
             _canvasProperties.setTabPosition(EJCanvasTabPosition.valueOf(value));
         }
+        else if (name.equals(ELEMENT_DRAWER_POSITION))
+        {
+            _canvasProperties.setDrawerPosition(EJCanvasDrawerPosition.valueOf(value));
+        }
         else if (name.equals(ELEMENT_SPLIT_ORIENTATION))
         {
             _canvasProperties.setSplitOrientation(EJCanvasSplitOrientation.valueOf(value));
         }
+        else if (name.equals(ELEMENT_LINE_STYLE))
+        {
+            _canvasProperties.setLineStyle(EJLineStyle.valueOf(value));
+        }
+        
         else if (name.equals(ELEMENT_BUTTON_ONE_TEXT))
         {
             _canvasProperties.setButtonOneText(value);
@@ -245,6 +280,11 @@ public class CanvasHandler extends EntireJTagHandler
         if (name.equals(ELEMENT_TAB_PAGE))
         {
             _canvasProperties.getTabPageContainer().addTabPageProperties(((TabPageHandler) currentDelegate).getTabPageProperties());
+            return;
+        }
+        if (name.equals(ELEMENT_DRAWER_PAGE))
+        {
+            _canvasProperties.getDrawerPageContainer().addDrawerPageProperties(((DrawerPageHandler) currentDelegate).getDrawerPageProperties());
             return;
         }
         if (name.equals(ELEMENT_STACKED_PAGE))

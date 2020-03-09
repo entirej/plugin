@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.reports.containers;
 
@@ -36,6 +36,9 @@ public class EJReportBlockContainer
     {
         _reportProperties = reportProperties;
         _blockProperties = new ArrayList<BlockGroup>();
+
+        headerSection.setBlockTablelayout(true);
+        footerSection.setBlockTablelayout(true);
     }
     
     public EJPluginReportProperties getReportProperties()
@@ -52,6 +55,7 @@ public class EJReportBlockContainer
     public void setHeaderSection(BlockGroup headerSection)
     {
         this.headerSection = headerSection;
+        headerSection.setBlockTablelayout(true);
         headerSection.setName("Header Section");
     }
     
@@ -63,6 +67,7 @@ public class EJReportBlockContainer
     public void setFooterSection(BlockGroup footerSection)
     {
         this.footerSection = footerSection;
+        footerSection.setBlockTablelayout(true);
         footerSection.setName("Footer Section");
     }
     
@@ -106,6 +111,7 @@ public class EJReportBlockContainer
         if (blockProperties != null)
         {
             _blockProperties.add(blockProperties);
+            blockProperties.setBlockTablelayout(false);
         }
     }
     
@@ -350,6 +356,7 @@ public class EJReportBlockContainer
         }
         
         private List<EJPluginReportBlockProperties> _blockProperties = new ArrayList<EJPluginReportBlockProperties>();
+        private boolean blockTablelayout;
         
         public boolean isEmpty()
         {
@@ -442,6 +449,17 @@ public class EJReportBlockContainer
         public List<EJPluginReportBlockProperties> getAllBlockProperties()
         {
             return _blockProperties;
+        }
+
+        public boolean isBlockTablelayout()
+        {
+           
+            return blockTablelayout;
+        }
+        
+        public void setBlockTablelayout(boolean blockTablelayout)
+        {
+            this.blockTablelayout = blockTablelayout;
         }
     }
 

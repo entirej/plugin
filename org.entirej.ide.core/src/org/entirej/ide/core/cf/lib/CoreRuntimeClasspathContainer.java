@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.core.cf.lib;
 
@@ -47,7 +47,7 @@ public class CoreRuntimeClasspathContainer implements IClasspathContainer
 //        else
 //        {
             runtimePath = CFProjectHelper.getPathInPlugin(EJRuntimePlugin.getDefault().getBundle(), new Path("/extlibs/"));
-            description = "EntireJ Core [3.2.0] Runtime Libraries.";
+            description = "EntireJ Core [4.0.0] Runtime Libraries.";
 //        }
     }
     

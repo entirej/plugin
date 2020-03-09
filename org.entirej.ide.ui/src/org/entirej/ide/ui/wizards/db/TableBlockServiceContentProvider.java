@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.wizards.db;
 
@@ -24,9 +24,13 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.entirej.framework.core.service.EJFormPojoGenerator;
+import org.entirej.framework.core.service.EJFormServiceGenerator;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.report.service.EJReportPojoGenerator;
 import org.entirej.framework.report.service.EJReportPojoGeneratorType;
+import org.entirej.framework.report.service.EJReportServiceGenerator;
 import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
 
@@ -61,6 +65,41 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
     {
         return new BlockServiceWizardProvider()
         {
+            
+            
+            public String getPojoSuggest()
+            {
+                String name = columnSelectionPage.getSelectedTable().getName();
+                return toCamelCase(name);
+            }
+            
+            public String getServiceSuggest()
+            {
+                return getPojoSuggest()+"Service";
+            }
+            
+            
+            String toCamelCase(String s)
+            {
+                String[] parts = s.split("_");
+                String camelCaseString = "";
+                for (String part : parts)
+                {
+                    camelCaseString = camelCaseString + toProperCase(part);
+                }
+                return camelCaseString;
+            }
+
+            String toProperCase(String s)
+            {
+                return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+            }
+            
+            public boolean skipMainPojo()
+            {
+                // TODO Auto-generated method stub
+                return false;
+            }
             private DBColumnSelectionPage columnSelectionPage = new DBColumnSelectionPage();
 
             public void init(GeneratorContext context)
@@ -74,6 +113,30 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
                 
             }
 
+            
+            public String getPogoGenerator()
+            {
+                return EJFormPojoGenerator.class.getName();
+            }
+
+            public String getServiceGenerator()
+            {
+
+                return EJFormServiceGenerator.class.getName();
+
+            }
+            public String getReportPogoGenerator()
+            {
+                return EJReportPojoGenerator.class.getName();
+            }
+            
+            public String getReportServiceGenerator()
+            {
+                
+                return EJReportServiceGenerator.class.getName();
+                
+            }
+            
             public boolean canFinish(IWizardPage page)
             {
                 return page.isPageComplete();
@@ -89,6 +152,12 @@ public class TableBlockServiceContentProvider implements BlockServiceContentProv
                 return Arrays.<IWizardPage> asList(columnSelectionPage);
             }
 
+            
+            public List<IWizardPage> getOptionalPages()
+            {
+                return Arrays.asList();
+            }
+            
             public void createRequiredResources(IProgressMonitor monitor)
             {
                 // ignore

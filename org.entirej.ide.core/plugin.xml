@@ -8,6 +8,7 @@
 <extension-point id="org.entirej.ide.core.spi.ejformvalidate.provider" name="EJ Form Validate Provider" schema="schema/org.entirej.ide.core.spi.ejformvalidate.Provider.exsd"/>
 <extension-point id="org.entirej.ide.core.spi.ejreportpropertiesvalidate.provider" name="EJ Report Properties Validate Provider" schema="schema/org.entirej.ide.core.spi.ejreportpropertiesvalidate.Provider.exsd"/>
 <extension-point id="org.entirej.ide.core.spi.ejreportvalidate.provider" name="EJ Form Validate Provider" schema="schema/org.entirej.ide.core.spi.ejreportvalidate.Provider.exsd"/>
+<extension-point id="org.entirej.ide.core.spi.featureconfig.provider" name="EJ Feature Config Provider" schema="schema/org.entirej.ide.core.spi.featureconfig.Provider.exsd"/>
 <extension
       point="org.entirej.ide.core.spi.databaseconnectivity.exportProvider">
    <provider

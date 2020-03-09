@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.writer;
 
@@ -36,12 +36,12 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkE
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJLovDefinitionProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
@@ -66,7 +66,6 @@ import org.entirej.framework.plugin.framework.properties.containers.EJPluginBloc
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginLovDefinitionContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginRelationContainer;
 import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginScreenItemProperties;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 
 public class FormPropertiesWriter extends AbstractXmlWriter
 {
@@ -85,6 +84,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 writeIntTAG(buffer, "formHeight", form.getFormHeight());
                 writeIntTAG(buffer, "numCols", form.getNumCols());
                 writeStringTAG(buffer, "actionProcessorClassName", form.getActionProcessorClassName());
+                writeStringTAG(buffer, "firstNavigableBlock", form.getFirstNavigableBlock());
                 writeStringTAG(buffer, "formRendererName", form.getFormRendererName());
                 
                 // Now add the forms parameters
@@ -206,7 +206,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         }
         catch (Exception e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save form: " + form.getName());
+            e.printStackTrace();
         }
     }
     
@@ -255,14 +255,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         catch (CoreException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable block: "
-                    + blockProperties.getBlockProperties().getName());
+            
         }
         catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable block: "
-                    + blockProperties.getBlockProperties().getName());
+            
         }
     }
     
@@ -301,14 +299,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         catch (CoreException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable lov definition: "
-                    + lovDefinitionProperties.getLovDefinitionProperties().getName());
         }
         catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save reusable lov definition: "
-                    + lovDefinitionProperties.getLovDefinitionProperties().getName());
         }
     }
     
@@ -472,6 +466,10 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     {
                         writeStringTAG(buffer, "tabPosition", canvasProps.getTabPosition().name());
                     }
+                    else if (canvasProps.getType() == EJCanvasType.DRAWER)
+                    {
+                        writeStringTAG(buffer, "drawerPosition", canvasProps.getDrawerPosition().name());
+                    }
                     else if (canvasProps.getType() == EJCanvasType.FORM)
                     {
                         writeStringTAG(buffer, "referredFormId", canvasProps.getReferredFormId());
@@ -503,12 +501,19 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                     {
                         writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
                     }
+                    else if (canvasProps.getType() == EJCanvasType.SEPARATOR )
+                    {
+                        writeStringTAG(buffer, "splitOrientation", canvasProps.getSplitOrientation().name());
+                        writeStringTAG(buffer, "lineStyle", canvasProps.getLineStyle().name());
+                    }
                     
-                    writeBooleanTAG(buffer, "closeableMessagePane", canvasProps.getCloseableMessagePane());
-                    writeIntTAG(buffer, "messagePaneSize", canvasProps.getMessagePaneSize());
-                    writeStringTAG(buffer, "messagePosition", canvasProps.getMessagePosition().name());
-                    
+                    writeBooleanTAG(buffer, "closeableMessagePane", canvasProps.getMessagePaneProperties().getCloseable());
+                    writeBooleanTAG(buffer, "messagePaneFormatting", canvasProps.getMessagePaneProperties().getCustomFormatting());
+                    writeIntTAG(buffer, "messagePaneSize", canvasProps.getMessagePaneProperties().getSize());
+                    writeStringTAG(buffer, "messagePosition", canvasProps.getMessagePaneProperties().getPosition().name());
+                    writeStringTAG(buffer, "messagePaneVa", canvasProps.getMessagePaneProperties().getVa());
                     addTabPageProperties(canvasProps, buffer);
+                    addDrawerPageProperties(canvasProps, buffer);
                     addStackedPageProperties(canvasProps, buffer);
                     addCanvasGroupCanvases(canvasProps, buffer);
                     addCanvasSplitCanvases(canvasProps, buffer);
@@ -817,6 +822,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 writePROPERTY(buffer, "name", props.getName());
                 writePROPERTY(buffer, "lovDefinitionName", props.getLovDefinitionName());
                 writePROPERTY(buffer, "executeAfterQuery", "" + props.executeAfterQuery());
+                writePROPERTY(buffer, "includeDefaultQueryValues", "" + props.includeDefaultQueryValues());
                 closeOpenTAG(buffer);
                 
                 writeStringTAG(buffer, "displayName", props.getLovDisplayName());
@@ -959,6 +965,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
         writeBooleanTAG(buffer, "expandVertically", itemGroup.canExpandVertically());
         writeStringTAG(buffer, "verticalAlignment", itemGroup.getVerticalAlignment().name());
         writeStringTAG(buffer, "horizontalAlignment", itemGroup.getHorizontalAlignment().name());
+       
         if (itemGroup.getRendererProperties() != null)
         {
             
@@ -982,6 +989,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -997,6 +1010,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1008,7 +1027,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the Block Renderer required
                                 // properties
                                 if (!itemProps.getBlockProperties().isUsedInLovDefinition())
@@ -1060,6 +1079,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1075,6 +1100,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1086,7 +1117,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the Query Screen Renderer Item
                                 // properties
                                 startTAG(buffer, "queryScreenRendererItemProperties");
@@ -1122,6 +1153,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1137,6 +1174,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1148,7 +1191,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the insert Screen Renderer Item
                                 // properties
                                 startTAG(buffer, "insertScreenRendererItemProperties");
@@ -1183,6 +1226,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "itemGroup");
                 {
                     writePROPERTY(buffer, "name", itemGroup.getName());
+                    if(itemGroup.isSeparator())
+                    {
+                        writePROPERTY(buffer, "isSeparator","" + itemGroup.isSeparator());
+                        writePROPERTY(buffer, "separatorLineStyle", itemGroup.getSeparatorLineStyle().name());
+                        writePROPERTY(buffer, "separatorOrientation", itemGroup.getSeparatorOrientation().name());
+                    }
                     closeOpenTAG(buffer);
                     
                     addItemGroupProperties(itemGroup, buffer);
@@ -1198,6 +1247,12 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                             {
                                 writePROPERTY(buffer, "referencedItemName", itemProps.getReferencedItemName());
                                 writePROPERTY(buffer, "isSpacerItem", "" + itemProps.isSpacerItem());
+                                if(itemProps.isSeparator())
+                                {
+                                    writePROPERTY(buffer, "isSeparator","" + itemProps.isSeparator());
+                                    writePROPERTY(buffer, "separatorLineStyle", itemProps.getSeparatorLineStyle().name());
+                                    writePROPERTY(buffer, "separatorOrientation", itemProps.getSeparatorOrientation().name());
+                                }
                                 closeOpenTAG(buffer);
                                 
                                 writeStringTAG(buffer, "label", itemProps.getLabel());
@@ -1209,7 +1264,7 @@ public class FormPropertiesWriter extends AbstractXmlWriter
                                 writeStringTAG(buffer, "lovMappingName", itemProps.getLovMappingName());
                                 writeBooleanTAG(buffer, "validateFromLov", itemProps.validateFromLov());
                                 writeStringTAG(buffer, "actionCommand", itemProps.getActionCommand());
-                                
+                               
                                 // Now add the UpdateScreen Renderer Item
                                 // properties
                                 startTAG(buffer, "updateScreenRendererItemProperties");
@@ -1269,6 +1324,45 @@ public class FormPropertiesWriter extends AbstractXmlWriter
             }
         }
         endTAG(buffer, "tabPageList");
+    }
+    protected void addDrawerPageProperties(EJCanvasProperties canvasProperties, StringBuffer buffer)
+    {
+        // Only do this for tab canvases
+        if (canvasProperties.getType() != EJCanvasType.DRAWER)
+        {
+            return;
+        }
+        
+        Iterator<EJDrawerPageProperties> tabPagePropertiesIti = canvasProperties.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
+        startTAG(buffer, "drawerPageList");
+        {
+            while (tabPagePropertiesIti.hasNext())
+            {
+                EJDrawerPageProperties tabPage = tabPagePropertiesIti.next();
+                
+                startOpenTAG(buffer, "drawerPage");
+                {
+                    writePROPERTY(buffer, "name", tabPage.getName());
+                    closeOpenTAG(buffer);
+                    
+                    writeStringTAG(buffer, "pageTitle", tabPage.getPageTitle());
+                    writeStringTAG(buffer, "firstNavigationalBlock", tabPage.getFirstNavigationalBlock());
+                    writeStringTAG(buffer, "firstNavigationalItem", tabPage.getFirstNavigationalItem());
+                    writeBooleanTAG(buffer, "enabled", tabPage.isEnabled());
+                    writeBooleanTAG(buffer, "visible", tabPage.isVisible());
+                    writeIntTAG(buffer, "numCols", tabPage.getNumCols());
+                    writeIntTAG(buffer, "width", tabPage.getDrawerWidth());
+                    
+                    startTAG(buffer, "canvasList");
+                    {
+                        addCanvasList(tabPage.getContainedCanvases(), buffer);
+                    }
+                    endTAG(buffer, "canvasList");
+                }
+                endTAG(buffer, "drawerPage");
+            }
+        }
+        endTAG(buffer, "drawerPageList");
     }
     
     protected void addStackedPageProperties(EJCanvasProperties canvasProperties, StringBuffer buffer)

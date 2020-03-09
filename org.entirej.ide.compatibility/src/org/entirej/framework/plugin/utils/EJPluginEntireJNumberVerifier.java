@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.utils;
 
@@ -24,7 +24,15 @@ import org.eclipse.swt.events.VerifyListener;
 public class EJPluginEntireJNumberVerifier implements VerifyListener
 {
     
-    
+    boolean supportNegative;
+    public EJPluginEntireJNumberVerifier()
+    {
+       
+    }
+    public EJPluginEntireJNumberVerifier(boolean supportNegative)
+    {
+       this.supportNegative = supportNegative;
+    }
     protected boolean validate(String value)
     {
         
@@ -55,6 +63,10 @@ public class EJPluginEntireJNumberVerifier implements VerifyListener
         
         
         if(value.equals(".")){
+            e.doit = true;
+            return ;
+        }
+        if(supportNegative && value.startsWith("-")){
             e.doit = true;
             return ;
         }

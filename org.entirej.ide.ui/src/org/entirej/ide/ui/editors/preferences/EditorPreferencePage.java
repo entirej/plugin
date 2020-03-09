@@ -22,7 +22,7 @@ public class EditorPreferencePage extends FieldEditorPreferencePage implements I
 
     public EditorPreferencePage()
     {
-        super("Editor", GRID);
+        super("Form Editor", GRID);
     }
 
     public void init(IWorkbench workbench)
@@ -42,15 +42,7 @@ public class EditorPreferencePage extends FieldEditorPreferencePage implements I
 
             addField(autoPerpectiveEd);
         }
-        {
-            RadioGroupFieldEditor autoPerpectiveEd = new RadioGroupFieldEditor("AbstractEJReportEditor.autoPerspectiveSwitch",
-                    "Automatically switch to EntireJ Report Perspective", 3, new String[][] { { "Always", MessageDialogWithToggle.ALWAYS },
-                            { "Never", MessageDialogWithToggle.NEVER }, { "Prompt", "" }
-
-                    }, getFieldEditorParent(), true);
-
-            addField(autoPerpectiveEd);
-        }
+        
 
     }
 

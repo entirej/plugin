@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.core.cf;
 
@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -129,6 +131,51 @@ public class CFProjectHelper
 
                 out.write(buf, 0, len);
 
+            }
+            out.close();
+        }
+        finally
+        {
+            in.close();
+        }
+    }
+    
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+    
+    public static void addFile(IJavaProject project, Bundle bundle, String sourcefile, String targetFileName,Map<String,String> params) throws IOException
+    {
+        InputStream stream = FileLocator.openStream(bundle, new Path(sourcefile), true);
+        
+        String content = convertStreamToString(stream);
+        stream.close();
+        
+        for (Entry<String, String> entry : params.entrySet())
+        {
+            content = content.replaceAll(entry.getKey(), entry.getValue());
+        }
+        
+        BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(content.getBytes()));
+        try
+        {
+            File tempFile = new File(project.getProject().getLocation().toOSString(), targetFileName);
+            
+            if (!tempFile.exists() || !tempFile.getParentFile().exists())
+            {
+                tempFile.getParentFile().mkdirs();
+            }
+            
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tempFile));
+            
+            byte[] buf = new byte[2048];
+            int len;
+            while ((len = in.read(buf)) > 0)
+            {
+                
+                out.write(buf, 0, len);
+                
             }
             out.close();
         }

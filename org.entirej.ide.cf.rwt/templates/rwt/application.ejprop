@@ -83,6 +83,14 @@
             </renderer>
             <renderer name="ImageItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTImageItemRenderer">
             </renderer>
+            <renderer name="HtmlEditorItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlEditorItemRenderer">
+            </renderer>
+            <renderer name="StackedItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTStackedItemRenderer">
+            </renderer>
+            <renderer name="HelpItem" rendererClassName="org.entirej.applicationframework.rwt.renderers.item.EJRWTHelpItemRenderer">
+            </renderer>
+            <renderer name="HtmlView" rendererClassName="org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlViewItemRenderer">
+            </renderer>
         </itemRenderers>
         <lovRenderers>
             <renderer name="Standard" rendererClassName="org.entirej.applicationframework.rwt.renderers.lov.EJRWTStandardLovRenderer"/>

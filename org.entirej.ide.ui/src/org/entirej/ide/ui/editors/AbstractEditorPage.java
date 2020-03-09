@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.editors;
 
@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.entirej.ide.ui.EJUIImages;
-import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
 
 public abstract class AbstractEditorPage extends FormPage
@@ -135,7 +134,7 @@ public abstract class AbstractEditorPage extends FormPage
                 }
             };
             helpAction.setImageDescriptor(EJUIImages.DESC_HELP);
-            helpAction.setToolTipText(EJUIMessages.NodeAction_help);
+            helpAction.setToolTipText("Help");
             toolBarManager.add(helpAction);
 
         }

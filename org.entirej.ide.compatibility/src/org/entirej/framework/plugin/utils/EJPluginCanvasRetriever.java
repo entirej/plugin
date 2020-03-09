@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.utils;
 
@@ -24,12 +24,15 @@ import java.util.Iterator;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.properties.containers.interfaces.EJCanvasPropertiesContainer;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJStackedPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginDrawerPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginStackedPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginTabPageProperties;
+import org.entirej.framework.plugin.framework.properties.containers.EJPluginDrawerPageCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginStackedPageCanvasContainer;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginTabPageCanvasContainer;
 
@@ -70,12 +73,78 @@ public class EJPluginCanvasRetriever
         
         return canvasList;
     }
+    public static Collection<EJCanvasProperties> retriveAllCanvasesOnMainScreen(EJPluginFormProperties formProperties)
+    {
+        ArrayList<EJCanvasProperties> canvasList = new ArrayList<EJCanvasProperties>();
+        
+        Iterator<EJCanvasProperties> allCanvases = formProperties.getCanvasContainer().getAllCanvasProperties().iterator();
+        while (allCanvases.hasNext())
+        {
+            EJCanvasProperties canvas = allCanvases.next();
+            canvasList.add(canvas);
+            if (canvas.getType() == EJCanvasType.POPUP)
+            {
+                continue;
+            }
+            else if (canvas.getType() == EJCanvasType.TAB)
+            {
+                Iterator<EJTabPageProperties> allTabPages = canvas.getTabPageContainer().getAllTabPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    addCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.DRAWER)
+            {
+                Iterator<EJDrawerPageProperties> allTabPages = canvas.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    addCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.STACKED)
+            {
+                Iterator<EJStackedPageProperties> allStackedPages = canvas.getStackedPageContainer().getAllStackedPageProperties().iterator();
+                while (allStackedPages.hasNext())
+                {
+                    addCanvasesFromContainer(formProperties, allStackedPages.next().getContainedCanvases(), canvasList);
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.GROUP)
+            {
+                addCanvasesFromContainer(formProperties, canvas.getGroupCanvasContainer(), canvasList);
+            }
+            else if (canvas.getType() == EJCanvasType.SPLIT)
+            {
+                addCanvasesFromContainer(formProperties, canvas.getSplitCanvasContainer(), canvasList);
+            }
+        }
+        
+        return canvasList;
+    }
     
     public static Collection<EJCanvasProperties> retriveAllBlockCanvasesAssignedTabPage(EJPluginFormProperties formProperties, EJPluginTabPageProperties page)
     {
         ArrayList<EJCanvasProperties> bloclList = new ArrayList<EJCanvasProperties>();
         ArrayList<EJCanvasProperties> canvasList = new ArrayList<EJCanvasProperties>();
         EJPluginTabPageCanvasContainer containedCanvases = page.getContainedCanvases();
+        addBlockCanvasesFromContainer(formProperties, containedCanvases, canvasList);
+        
+        for (EJCanvasProperties canvas : canvasList)
+        {
+            if (hasBlockBeenAssignedToCanvas(formProperties, canvas.getName()))
+            {
+                bloclList.add(canvas);
+            }
+        }
+        
+        return bloclList;
+    }
+    public static Collection<EJCanvasProperties> retriveAllBlockCanvasesAssignedDrawerPage(EJPluginFormProperties formProperties, EJPluginDrawerPageProperties page)
+    {
+        ArrayList<EJCanvasProperties> bloclList = new ArrayList<EJCanvasProperties>();
+        ArrayList<EJCanvasProperties> canvasList = new ArrayList<EJCanvasProperties>();
+        EJPluginDrawerPageCanvasContainer containedCanvases = page.getContainedCanvases();
         addBlockCanvasesFromContainer(formProperties, containedCanvases, canvasList);
         
         for (EJCanvasProperties canvas : canvasList)
@@ -183,6 +252,14 @@ public class EJPluginCanvasRetriever
                     addBlockCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);
                 }
             }
+            else if (canvas.getType() == EJCanvasType.DRAWER)
+            {
+                Iterator<EJDrawerPageProperties> allTabPages = canvas.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    addBlockCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);
+                }
+            }
             else if (canvas.getType() == EJCanvasType.STACKED)
             {
                 Iterator<EJStackedPageProperties> allStackedPages = canvas.getStackedPageContainer().getAllStackedPageProperties().iterator();
@@ -217,6 +294,14 @@ public class EJPluginCanvasRetriever
             else if (canvas.getType() == EJCanvasType.TAB)
             {
                 Iterator<EJTabPageProperties> allTabPages = canvas.getTabPageContainer().getAllTabPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    addCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.DRAWER)
+            {
+                Iterator<EJDrawerPageProperties> allTabPages = canvas.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
                 while (allTabPages.hasNext())
                 {
                     addCanvasesFromContainer(formProperties, allTabPages.next().getContainedCanvases(), canvasList);

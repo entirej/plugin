@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,10 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.interfaces;
 
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
 import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
@@ -167,5 +169,11 @@ public interface EJPluginScreenItemProperties extends EJScreenItemProperties, EJ
     public void setHint(String hint);
     
     public EJFrameworkExtensionProperties getBlockRendererRequiredProperties();
+
+    public void setSeparatorLineStyle(EJLineStyle value);
+
+    public void setSeparatorOrientation(EJSeparatorOrientation value);
+
+    public void setSeparator(boolean value);
     
 }

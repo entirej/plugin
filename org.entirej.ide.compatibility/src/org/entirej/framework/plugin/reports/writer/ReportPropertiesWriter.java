@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.reports.writer;
 
@@ -24,7 +24,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.writer.AbstractXmlWriter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
@@ -44,7 +43,6 @@ import org.entirej.framework.plugin.reports.containers.EJReportBlockContainer.Bl
 import org.entirej.framework.plugin.reports.containers.EJReportBlockItemContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportColumnContainer;
 import org.entirej.framework.plugin.reports.containers.EJReportScreenItemContainer;
-import org.entirej.framework.plugin.utils.EJPluginLogger;
 import org.entirej.framework.report.enumerations.EJReportScreenType;
 
 public class ReportPropertiesWriter extends AbstractXmlWriter
@@ -147,7 +145,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
         }
         catch (Exception e)
         {
-            EJPluginLogger.logError(EntireJFrameworkPlugin.getSharedInstance(), "Unable to save report: " + form.getName());
+            e.printStackTrace();
         }
     }
     
@@ -248,6 +246,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
             writeStringTAG(buffer, "headerColHeight", layoutScreenProperties.getHeaderColumnHeight() + "");
             writeStringTAG(buffer, "detailColHeight", layoutScreenProperties.getDetailColumnHeight() + "");
             writeStringTAG(buffer, "footerColHeight", layoutScreenProperties.getFooterColumnHeight() + "");
+            writeStringTAG(buffer, "newPage", layoutScreenProperties.isNewPage() + "");
+            writeStringTAG(buffer, "fitToPage", layoutScreenProperties.isFitToPage() + "");
             // Now add the block items
             startTAG(buffer, "itemList");
             {
@@ -355,6 +355,29 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     endTAG(buffer, "columnitem");
                 }
                 endTAG(buffer, "screenColumnList");
+                
+                BlockGroup group = layoutScreenProperties.getSubBlocks();
+                startOpenTAG(buffer, "blockGroup");
+                {
+                    
+                    closeOpenTAG(buffer);
+                    List<EJPluginReportBlockProperties> allBlockProperties = group.getAllBlockProperties();
+                    for (EJPluginReportBlockProperties blockProps : allBlockProperties)
+                    {
+                        
+                        if (blockProps.isReferenceBlock())
+                        {
+                            // FIXME
+                            // addReferencedBlockProperties(blockProps, buffer);
+                        }
+                        else
+                        {
+                            addBlockProperties(blockProps, buffer);
+                        }
+                        continue;
+                    }
+                }
+                endTAG(buffer, "blockGroup");
             }
             else if (layoutScreenProperties.getScreenType() == EJReportScreenType.CHART_LAYOUT)
             {
@@ -364,7 +387,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 startOpenTAG(buffer, "config");
                 {
                     writePROPERTY(buffer, "type", properties.getChartType().name());
-                    writePROPERTY(buffer, "use3dView", properties.isUse3dView()+"");
+                    writePROPERTY(buffer, "use3dView", properties.isUse3dView() + "");
                     writePROPERTY(buffer, "categoryItem", properties.getCategoryItem());
                     writePROPERTY(buffer, "labelItem", properties.getLabelItem());
                     writePROPERTY(buffer, "seriesItem", properties.getSeriesItem());
@@ -398,6 +421,8 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                 closeOpenTAG(buffer);
                 writeStringTAG(buffer, "x", itemProps.getX() + "");
                 writeStringTAG(buffer, "y", itemProps.getY() + "");
+                if (itemProps.getLeftPadding() > -1) writeStringTAG(buffer, "leftPadding", itemProps.getLeftPadding() + "");
+                if (itemProps.getRightPadding() > -1) writeStringTAG(buffer, "rightPadding", itemProps.getRightPadding() + "");
                 writeStringTAG(buffer, "width", itemProps.getWidth() + "");
                 writeStringTAG(buffer, "height", itemProps.getHeight() + "");
                 writeStringTAG(buffer, "widthAsPercentage", String.valueOf(itemProps.isWidthAsPercentage()));
@@ -425,6 +450,17 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                     
                     writeStringTAG(buffer, "hAlignment", item.getHAlignment().name());
                     writeStringTAG(buffer, "vAlignment", item.getVAlignment().name());
+                    
+                    EJPluginReportBorderProperties borderProperties = item.getBorderProperties();
+                    writeStringTAG(buffer, "showTopLine", borderProperties.isShowTopLine() + "");
+                    writeStringTAG(buffer, "showBottomLine", borderProperties.isShowBottomLine() + "");
+                    writeStringTAG(buffer, "showLeftLine", borderProperties.isShowLeftLine() + "");
+                    writeStringTAG(buffer, "showRightLine", borderProperties.isShowRightLine() + "");
+                    writeStringTAG(buffer, "lineWidth", borderProperties.getLineWidth() + "");
+                    writeStringTAG(buffer, "lineStyle", borderProperties.getLineStyle().name());
+                    writeStringTAG(buffer, "lineVA", borderProperties.getVisualAttributeName());
+                    
+                    
                 }
                 if (itemProps instanceof EJPluginReportScreenItemProperties.RotatableItem)
                 {
@@ -464,7 +500,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "localeFormat", number.getLocaleFormat().name());
                     }
                         break;
-                    
+                        
                     case DATE:
                     {
                         final EJPluginReportScreenItemProperties.Date number = (EJPluginReportScreenItemProperties.Date) itemProps;
@@ -478,7 +514,7 @@ public class ReportPropertiesWriter extends AbstractXmlWriter
                         writeStringTAG(buffer, "defaultImage", number.getDefaultImage());
                     }
                         break;
-                    
+                        
                     default:
                         break;
                 }

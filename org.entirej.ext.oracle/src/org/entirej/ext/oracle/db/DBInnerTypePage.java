@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ext.oracle.db;
 
@@ -130,6 +130,29 @@ public abstract class DBInnerTypePage extends WizardPage
         }
 
     }
+    protected void init( ObjectArgument collectionType)
+    {
+        List<String> addedInner = new ArrayList<String>();
+        typeMappers.clear();
+        if (collectionType != null)
+        {
+            
+            for (Argument argument : collectionType.getArguments())
+            {
+                
+                
+                if (argument instanceof ObjectArgument)
+                {
+                    ObjectArgument objectArgument = (ObjectArgument) argument;
+                    
+                    collectTypes(objectArgument,addedInner);
+                }
+            }
+            
+        }
+       
+        
+    }
 
     boolean skipPage()
     {
@@ -144,6 +167,22 @@ public abstract class DBInnerTypePage extends WizardPage
                 return mapper.mapedClass;
         }
         return null;
+    }
+    
+    String toCamelCase(String s)
+    {
+        String[] parts = s.split("_");
+        String camelCaseString = "";
+        for (String part : parts)
+        {
+            camelCaseString = camelCaseString + toProperCase(part);
+        }
+        return camelCaseString;
+    }
+    
+    String toProperCase(String s)
+    {
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
     @Override
@@ -249,7 +288,7 @@ public abstract class DBInnerTypePage extends WizardPage
                 {
                     TypeMapper mapper = (TypeMapper) node;
                     IType type = JavaAccessUtils.selectClassType(getShell(), getProject().getResource(), (mapper.mapedClass != null ? mapper.mapedClass
-                            : "*"), null);
+                            : toCamelCase(mapper.type.objName)), null);
                     if (type != null)
                     {
                         mapper.mapedClass = type.getFullyQualifiedName('$');

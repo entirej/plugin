@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.entirej.ext.oracle;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Category: %Bundle-Category
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.ui,
  org.entirej.ide.compatibility,
  org.entirej.ide.ui
 Bundle-ClassPath: .,
- extlibs/ojdbc6.jar
+ lib/ojdbc8.jar
 Bundle-Activator: org.entirej.ext.oracle.EJExtOraclePlugin
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy

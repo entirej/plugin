@@ -9,12 +9,6 @@
    </extension>
   
     
-    <extension
-         point="org.entirej.ide.core.spi.clientframework.exportProvider">
-      <provider
-            class="org.entirej.ide.cf.rwt.RWTTabrisClientFrameworkProvider">
-      </provider>
-   </extension>
   
 <extension
        point="org.eclipse.jdt.core.classpathContainerInitializer">
@@ -84,6 +78,37 @@
           name="EntireJ RWT/RAP Extension"
           class="org.entirej.ide.cf.rwt.lib.rap.RWTRapRuntimeContainerPage"/>
    </extension>
+<extension
+       point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="org.eclipse.rwt.runtime.EJCF_RWT_SPRING_CONTAINER"
+          class="org.entirej.ide.cf.rwt.lib.spring.RWTSpringRuntimeClasspathContainerInitializer"/>
+   </extension>   
+<extension 
+       point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+          id="org.eclipse.rwt.runtime.EJCF_RWT_SPRING_CONTAINER"
+          name="EntireJ RWT/Spring Security Extension"
+          class="org.entirej.ide.cf.rwt.lib.spring.RWTSpringRuntimeContainerPage"/>
+   </extension>
+<extension
+      point="org.entirej.ide.core.spi.clientframework.exportProvider">
+   <provider
+         class="org.entirej.ide.cf.rwt.RWTSpringClientFrameworkProvider"></provider>
+</extension>
+<extension
+      point="org.entirej.ide.core.spi.clientframework.exportProvider">
+   <provider
+         class="org.entirej.ide.cf.rwt.ReactClientFrameworkProvider"></provider>
+</extension>
+<extension
+      point="org.entirej.ide.core.spi.featureconfig.provider">
+   <provider
+         class="org.entirej.ide.cf.rwt.SpringFeatureConfigProvider">
+   </provider>
+   <provider
+         class="org.entirej.ide.cf.rwt.SpringKerberosFeatureConfigProvider"></provider>
+</extension>
 
         
 </plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 /*
  * Created on Nov 5, 2005
@@ -37,6 +37,7 @@ import org.entirej.framework.core.properties.containers.interfaces.EJCanvasPrope
 import org.entirej.framework.core.properties.containers.interfaces.EJItemGroupPropertiesContainer;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
+import org.entirej.framework.core.properties.interfaces.EJDrawerPageProperties;
 import org.entirej.framework.core.properties.interfaces.EJFormProperties;
 import org.entirej.framework.core.properties.interfaces.EJItemGroupProperties;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
@@ -71,6 +72,8 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
     
     private List<EJPluginApplicationParameter> _formParameters;
     private HashMap<String, String>            _applicationProperties;
+    
+    private String                                 _firstNavigableBlock      = "";
     
     // Display Properties
     private int                                _formWidth;
@@ -299,6 +302,18 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
             else if (canvas.getType() == EJCanvasType.TAB)
             {
                 Iterator<EJTabPageProperties> allTabPages = canvas.getTabPageContainer().getAllTabPageProperties().iterator();
+                while (allTabPages.hasNext())
+                {
+                    EJCanvasProperties tabPageChildCanvas = getCanvasProps(allTabPages.next().getContainedCanvases(), canvasName);
+                    if (tabPageChildCanvas != null && tabPageChildCanvas.getName().equalsIgnoreCase(canvasName))
+                    {
+                        return tabPageChildCanvas;
+                    }
+                }
+            }
+            else if (canvas.getType() == EJCanvasType.DRAWER)
+            {
+                Iterator<EJDrawerPageProperties> allTabPages = canvas.getDrawerPageContainer().getAllDrawerPageProperties().iterator();
                 while (allTabPages.hasNext())
                 {
                     EJCanvasProperties tabPageChildCanvas = getCanvasProps(allTabPages.next().getContainedCanvases(), canvasName);
@@ -775,5 +790,16 @@ public class EJPluginFormProperties implements EJFormProperties, Comparable<EJPl
         }
         
         return buffer.toString();
+    }
+    
+    @Override
+    public String getFirstNavigableBlock()
+    {
+        return _firstNavigableBlock;
+    }
+    
+    public void setFirstNavigableBlock(String firstNavigableBlock)
+    {
+        _firstNavigableBlock = firstNavigableBlock;
     }
 }

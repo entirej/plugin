@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.cf.rwt.lib.rap;
 
@@ -37,7 +37,7 @@ public class RWTRapRuntimeClasspathContainer implements IClasspathContainer
     public RWTRapRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-rap/"));
-        description = "EntireJ RWT/RAP [3.2.0] Extension Libraries.";
+        description = "EntireJ RWT/RAP [5.1.0] Extension Libraries.";
     }
 
     final String           description;

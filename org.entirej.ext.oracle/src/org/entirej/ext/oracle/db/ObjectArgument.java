@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ext.oracle.db;
 
@@ -27,16 +27,16 @@ class ObjectArgument extends Argument
     final String                objName;
     private ArrayList<Argument> _arguments = new ArrayList<Argument>();
 
-    public ObjectArgument(String tableName, String objName, String name, String dataType)
+    public ObjectArgument(String tableName, String objName, String name, String dataType,int typeInt)
     {
-        super(name, dataType);
+        super(name, dataType,typeInt);
         this.tableName = tableName;
         this.objName = objName;
     }
 
-    public ObjectArgument(String name, String type)
+    public ObjectArgument(String name, String type,int typeInt)
     {
-        this(null, null, name, type);
+        this(null, null, name, type,typeInt);
     }
 
     public void addArgument(Argument arg)

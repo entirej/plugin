@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.nodes;
 
@@ -65,7 +65,7 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
             @Override
             public void run()
             {
-                buildUI();
+                buildUI(false);
             }
 
         };
@@ -83,6 +83,12 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
         return new AbstractDescriptor<?>[0];
     }
 
+    
+    @Override
+    public Object getInput()
+    {
+        return selectedNode;
+    }
     @Override
     public String getSectionTitle()
     {
@@ -106,7 +112,7 @@ public class NodeDescriptorPart extends AbstractDescriptorPart implements INodeD
     public void showDetails(AbstractNode<?> node)
     {
         selectedNode = node;
-        buildUI();
+        buildUI(false);
 
     }
 

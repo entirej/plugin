@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ext.oracle;
 
@@ -38,16 +38,7 @@ import org.entirej.ide.core.spi.DBConnectivityProvider;
 public class OracleDBConnectivityProvider implements DBConnectivityProvider
 {
     private static final String ORACLE_CONNECTION_FILE        = "/templates/oracleOptions/Connection.properties";
-    private static final String ORACLE_STMT_EXECUTOR          = "/templates/oracleOptions/OracleStatementExecutor.java";
-    private static final String ORACLE_REPORT_STMT_EXECUTOR          = "/templates/oracleOptions/OracleReportStatementExecutor.java";
-    private static final String ORACLE_TYPE_SERVICE_GENERATOR = "/templates/oracleOptions/EJFormOracleServiceGenerator.java";
-    private static final String ORACLE_TYPE_REPORT_SERVICE_GENERATOR = "/templates/oracleOptions/EJReportOracleServiceGenerator.java";
-    private static final String ORACLE_TYPE_POJO_GENERATOR    = "/templates/oracleOptions/EJFormOraclePojoGenerator.java";
-    private static final String ORACLE_TYPE_REPORT_POJO_GENERATOR    = "/templates/oracleOptions/EJReportOraclePojoGenerator.java";
-    private static final String ORACLE_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJStatementParameterArray.java";
-    private static final String ORACLE_STMT_PARAMETER_STRUCT   = "/templates/oracleOptions/EJStatementParameterStruct.java";
-    private static final String ORACLE_REPORT_STMT_PARAMETER_ARRAY   = "/templates/oracleOptions/EJReportStatementParameterArray.java";
-    private static final String ORACLE_REPORT_STMT_PARAMETER_STRUCT   = "/templates/oracleOptions/EJReportStatementParameterStruct.java";
+  
     private static final String ORACLE_SQL_INPUT              = "/templates/oracleOptions/EJSQLInput.java";
 
     public void addEntireJNature(ClientFrameworkProvider cf, IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
@@ -57,18 +48,7 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
             CFProjectHelper.verifySourceContainer(project, "src");
 
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_CONNECTION_FILE, "src/Connection.properties");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_EXECUTOR, "src/org/entirej/OracleStatementExecutor.java");
-
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_PARAMETER_ARRAY,
-                    "src/org/entirej/EJStatementParameterArray.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_STMT_PARAMETER_STRUCT,
-                    "src/org/entirej/EJStatementParameterStruct.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_SQL_INPUT, "src/org/entirej/EJSQLInput.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_POJO_GENERATOR,
-                    "src/org/entirej/generators/EJFormOraclePojoGenerator.java");
-
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_SERVICE_GENERATOR,
-                    "src/org/entirej/generators/EJFormOracleServiceGenerator.java");
+           
 
             CFProjectHelper.addToClasspath(project,
                     JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID, new IAccessRule[0], cf.getClasspathAttributes(), true));
@@ -103,19 +83,7 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
             CFProjectHelper.verifySourceContainer(project, "src");
             
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_CONNECTION_FILE, "src/Connection.properties");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_REPORT_STMT_EXECUTOR, "src/org/entirej/OracleReportStatementExecutor.java");
-            
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_REPORT_STMT_PARAMETER_ARRAY,
-                    "src/org/entirej/EJReportStatementParameterArray.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_REPORT_STMT_PARAMETER_STRUCT,
-                    "src/org/entirej/EJReportStatementParameterStruct.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_SQL_INPUT, "src/org/entirej/EJSQLInput.java");
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_REPORT_POJO_GENERATOR,
-                    "src/org/entirej/generators/EJReportOraclePojoGenerator.java");
-            
-            CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_TYPE_REPORT_SERVICE_GENERATOR,
-                    "src/org/entirej/generators/EJReportOracleServiceGenerator.java");
-            
+          
             CFProjectHelper.addToClasspath(project,
                     JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID,true));
             

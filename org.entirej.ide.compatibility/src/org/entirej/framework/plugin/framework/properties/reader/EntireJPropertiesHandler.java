@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.reader;
 
@@ -28,43 +28,43 @@ import org.xml.sax.SAXException;
 
 public class EntireJPropertiesHandler extends EntireJTagHandler
 {
-    private EJPluginEntireJProperties      _properties;
-    
-    private static final String            VERSION                           = "version";
-    private static final String            FRAMEWORK                         = "entirejFramework";
-    private static final String            APPLICATION_MANAGER_DEFCLASS_NAME = "applicationManagerDefinition";
-    private static final String            REUSABLE_BLOCK_LOC                = "reusableBlocksLocation";
-    private static final String            REUSABLE_LOV_LOV                  = "reusableLovDefinitionLocation";
-    private static final String            OBJECT_GROUP_LOV                  = "objectGroupDefinitionLocation";
-    
-    private static final String            APPLICATION_PROPERTIES            = "applicationDefinedProperties";
-    
-    private static final String            CONNECTION_FACTORY_CLASS_NAME     = "connectionFactoryClassName";
-    private static final String            TRANSLATOR_CLASS_NAME             = "translatorClassName";
-    private static final String            APPLICATION_LEVEL_PARAMETER       = "appicationLevelParameter";
-    private static final String            FORMS_PACKAGE                     = "formsPackage";
-    
-    private static final String            FORM_RENDERERS                    = "formRenderers";
-    private static final String            BLOCK_RENDERERS                   = "blockRenderers";
-    private static final String            ITEM_RENDERERS                    = "itemRenderers";
-    private static final String            LOV_RENDERERS                     = "lovRenderers";
-    private static final String            MENU_RENDERERS                    = "menuRenderers";
-    private static final String            APP_COMP_RENDERERS                = "appCompRenderers";
-    private static final String            RENDERER                          = "renderer";
-    private static final String            APP_MENU                          = "applicationMenu";
-    
-    private static final String            VISUAL_ATTRIBUTE                  = "visualAttribute";
-    private static final String            APP_LAYOUT                        = "applicationLayout";
-    
-    private boolean                        _selectingFormRenderers           = false;
-    private boolean                        _selectingMenuRenderers           = false;
-    private boolean                        _selectingAppCompRenderers        = false;
-    private boolean                        _selectingBlockRenderers          = false;
-    private boolean                        _selectingItemRenderers           = false;
-    private boolean                        _selectingLovRenderers            = false;
-    
-    
-    
+    private EJPluginEntireJProperties _properties;
+                                      
+    private static final String       VERSION                                 = "version";
+    private static final String       FRAMEWORK                               = "entirejFramework";
+    private static final String       APPLICATION_MANAGER_DEFCLASS_NAME       = "applicationManagerDefinition";
+    private static final String       REUSABLE_BLOCK_LOC                      = "reusableBlocksLocation";
+    private static final String       REUSABLE_LOV_LOV                        = "reusableLovDefinitionLocation";
+    private static final String       OBJECT_GROUP_LOV                        = "objectGroupDefinitionLocation";
+                                                                              
+    private static final String       APPLICATION_PROPERTIES                  = "applicationDefinedProperties";
+                                                                              
+    private static final String       CONNECTION_FACTORY_CLASS_NAME           = "connectionFactoryClassName";
+                                                                              
+    protected static final String     APPLICATION_ACTION_PROCESSOR_CLASS_NAME = "applicationActionProcessor";
+    private static final String       TRANSLATOR_CLASS_NAME                   = "translatorClassName";
+    private static final String       APPLICATION_LEVEL_PARAMETER             = "appicationLevelParameter";
+    private static final String       FORMS_PACKAGE                           = "formsPackage";
+                                                                              
+    private static final String       FORM_RENDERERS                          = "formRenderers";
+    private static final String       BLOCK_RENDERERS                         = "blockRenderers";
+    private static final String       ITEM_RENDERERS                          = "itemRenderers";
+    private static final String       LOV_RENDERERS                           = "lovRenderers";
+    private static final String       MENU_RENDERERS                          = "menuRenderers";
+    private static final String       APP_COMP_RENDERERS                      = "appCompRenderers";
+    private static final String       RENDERER                                = "renderer";
+    private static final String       APP_MENU                                = "applicationMenu";
+                                                                              
+    private static final String       VISUAL_ATTRIBUTE                        = "visualAttribute";
+    private static final String       APP_LAYOUT                              = "applicationLayout";
+                                                                              
+    private boolean                   _selectingFormRenderers                 = false;
+    private boolean                   _selectingMenuRenderers                 = false;
+    private boolean                   _selectingAppCompRenderers              = false;
+    private boolean                   _selectingBlockRenderers                = false;
+    private boolean                   _selectingItemRenderers                 = false;
+    private boolean                   _selectingLovRenderers                  = false;
+                                                                              
     public EntireJPropertiesHandler(EJPluginEntireJProperties properties)
     {
         
@@ -77,9 +77,6 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
         _properties.getAllApplicationLevelParameters().clear();
     }
     
- 
-    
-  
     public EJPluginEntireJProperties getProperties()
     {
         return _properties;
@@ -128,7 +125,7 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
             String dataTypeName = attributes.getValue("dataType");
             String defaultValue = attributes.getValue("defaultValue");
             
-            _properties.addApplicationLevelParameter(new EJPluginApplicationParameter(paramName, dataTypeName,defaultValue));
+            _properties.addApplicationLevelParameter(new EJPluginApplicationParameter(paramName, dataTypeName, defaultValue));
         }
         else if (name.equals(FORMS_PACKAGE))
         {
@@ -181,7 +178,6 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
     @Override
     public void endLocalElement(String name, String value, String untrimmedValue) throws SAXException
     {
-
         
         if (name.endsWith(FRAMEWORK))
         {
@@ -198,6 +194,10 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
         else if (name.equals(CONNECTION_FACTORY_CLASS_NAME))
         {
             _properties.setConnectionFactoryClassName(value);
+        }
+        else if (name.equals(APPLICATION_ACTION_PROCESSOR_CLASS_NAME))
+        {
+            _properties.setApplicationActionProcessorClassName(value);
         }
         else if (name.equals(TRANSLATOR_CLASS_NAME))
         {
@@ -313,8 +313,6 @@ public class EntireJPropertiesHandler extends EntireJTagHandler
         
         _properties.getItemRendererContainer().addRendererAssignment(def);
     }
-    
-    
     
     private void addLovRenderer(Attributes attributes)
     {

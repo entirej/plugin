@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2013 Mojave Innovations GmbH
+    Copyright 2013 CRESOFT AG
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
 	limitations under the License.
 
 	Contributors:
-    	Mojave Innovations GmbH - initial API and implementation
+    	CRESOFT AG - initial API and implementation
 -->
 <feature
       id="org.entirej.ide.feature"
       label="EntireJ Tools"
-      version="3.2.0.qualifier"
-      provider-name="Mojave Innovations GmbH"
+      version="5.1.0.qualifier"
+      provider-name="CRESOFT AG"
       plugin="org.entirej.ide.core">
 
    <description url="http://www.entirej.com/">
@@ -224,7 +224,7 @@ the developer guide provided by EntireJ.
       same &quot;printed page&quot; as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2013 Mojave Innovations GmbH
+   Copyright 2013 CRESOFT AG
 
    Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
    you may not use this file except in compliance with the License.
@@ -428,7 +428,7 @@ the developer guide provided by EntireJ.
       same &quot;printed page&quot; as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2013 Mojave Innovations GmbH
+   Copyright 2013 CRESOFT AG
 
    Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
    you may not use this file except in compliance with the License.
@@ -451,7 +451,6 @@ the developer guide provided by EntireJ.
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.ui.workbench"/>
@@ -463,6 +462,7 @@ the developer guide provided by EntireJ.
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
+      <import feature="org.eclipse.gef" version="3.10.1.201508170204"/>
    </requires>
 
    <plugin
@@ -512,6 +512,19 @@ the developer guide provided by EntireJ.
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="org.entirej.ide.ui.form"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.entirej.ide.ui.report"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.entirej.ext.jasper"

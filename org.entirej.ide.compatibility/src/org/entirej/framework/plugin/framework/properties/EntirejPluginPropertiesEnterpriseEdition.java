@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
@@ -84,7 +84,7 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         FormHandler formHandler = new FormHandler(getJavaProject(), blockName);
         
         EntireJFormReader reader = new EntireJFormReader();
-        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(), inStream);
+        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(),file, inStream);
         
         EJPluginBlockProperties blockProperties = formProperties.getBlockContainer().getBlockProperties(blockName);
         if (blockProperties == null && !formProperties.getBlockContainer().isEmpty())
@@ -150,7 +150,7 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         
         FormHandler formHandler = new FormHandler(getJavaProject(), definitionName);
         EntireJFormReader reader = new EntireJFormReader();
-        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(), inStream);
+        EJPluginFormProperties formProperties = reader.readForm(formHandler, getJavaProject(),file, inStream);
         
         try
         {
@@ -211,7 +211,7 @@ public class EntirejPluginPropertiesEnterpriseEdition extends EJPluginEntireJPro
         EJPluginObjectGroupProperties formProperties = new EJPluginObjectGroupProperties(definitionName, getJavaProject());
         FormHandler formHandler = new FormHandler(formProperties);
         EntireJFormReader reader = new EntireJFormReader();
-        reader.readForm(formHandler, getJavaProject(), inStream);
+        reader.readForm(formHandler, getJavaProject(),file, inStream);
         formProperties.setInitialized(true);
         try
         {

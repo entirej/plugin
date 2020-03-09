@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.editors.descriptors;
 
@@ -32,7 +32,7 @@ public abstract class AbstractTypeDescriptor extends AbstractDescriptor<String>
     private String                     baseClass;
     private String                     defaultClass;
     private boolean                    defaultClassOpen;
-    private int                        scope = IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES;
+    private int                        scope = IJavaElementSearchConstants.CONSIDER_ALL_TYPES;
 
     public AbstractTypeDescriptor(IJavaProjectProvider projectProvider)
     {

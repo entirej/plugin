@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.cf.rwt.lib.tabris;
 
@@ -37,7 +37,7 @@ public class RWTCFRuntimeClasspathContainer implements IClasspathContainer
     public RWTCFRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFRwtPlugin.getDefault().getBundle(), new Path("/extlibs-tmt/"));
-        description = "EntireJ Tabris CF [3.2.0]  Libraries.";
+        description = "EntireJ Tabris CF [4.0.0]  Libraries.";
     }
 
     final String           description;

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.entirej.ide.report.feature_5.1.0.qualifier.jar" id="org.entirej.ide.report.feature" version="5.1.0.qualifier">
+      <category name="entirej_report_features"/>
+   </feature>
+   <category-def name="entirej_report_features" label="EntireJ Reports Support"/>
+</site>

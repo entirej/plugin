@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 
 package org.entirej.framework.plugin.framework.properties.reader;
@@ -55,6 +55,13 @@ public class EJRWTRendererConfigFix
         mappingBlock.add(new Entry("HTMLMultiRecord", "org.entirej.applicationframework.rwt.renderers.html.EJRWTHtmlTableBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTHtmlTableBlockRendererDefinition"));
         
+        mappingBlock.add(new Entry("LineChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTLineChartRecordBlockRenderer",
+                "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTLineChartRecordBlockDefinition"));
+        mappingBlock.add(new Entry("PieChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTPieChartRecordBlockRenderer",
+                "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTPieChartRecordBlockDefinition"));
+        mappingBlock.add(new Entry("BarChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTBarChartRecordBlockRenderer",
+                "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTBarChartRecordBlockDefinition"));
+        
         // items
         mappingItem.add(new Entry("ListItem", "org.entirej.applicationframework.rwt.renderers.item.EJRWTListItemRenderer",
                 "org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTListBoxRendererDefinition"));
@@ -63,17 +70,38 @@ public class EJRWTRendererConfigFix
                 "org.entirej.applicationframework.rwt.renderers.item.definition.EJRWTStackedItemRendererDefinition"));
     }
     
+    
+    String getBlockRenderGroup(String id)
+    {
+        
+        if("SingleRecord".equals(id)||"MultiRecord".equals(id)||"TreeTableRecord".equals(id)||"HTMLMultiRecord".equals(id)||"TreeRecord".equals(id))
+        {
+            return "Standard Renderers";
+        }
+        if("LineChartRecord".equals(id)||"PieChartRecord".equals(id)||"BarChartRecord".equals(id))
+        {
+            return "Graph Renderers";
+        }
+       
+        return "User Defined";
+                
+    }
+    
+    
     public boolean config(EJPluginEntireJProperties properties)
     {
         boolean confied = false;
         // check block
         Collection<EJPluginRenderer> blockRenderers = properties.getBlockRendererContainer().getAllRenderers();
         
+        
+        
         BLOCK_ENTRES: 
         for (Entry entry : mappingBlock)
         {
             for (EJPluginRenderer renderer : blockRenderers)
             {
+                
                 if (renderer.getRendererDefinitionClassName().equals(entry.def))
                 {
                     
@@ -84,6 +112,17 @@ public class EJRWTRendererConfigFix
             properties.getBlockRendererContainer().addRendererAssignment(
                     new EJPluginRenderer(properties, entry.name, EJRendererType.BLOCK, entry.def, entry.renderer));
             confied = true;
+        }
+        
+        blockRenderers = properties.getBlockRendererContainer().getAllRenderers();
+        for (EJPluginRenderer renderer : blockRenderers)
+        {
+            String group = getBlockRenderGroup(renderer.getAssignedName());
+            if (!group.equals(renderer.getGroup()))
+            {
+                renderer.setGroup(group);
+                confied = true;
+            }
         }
         //check items
         Collection<EJPluginRenderer> itemRenderers = properties.getItemRendererContainer().getAllRenderers();
@@ -107,7 +146,7 @@ public class EJRWTRendererConfigFix
         
         if(confied)
         {
-            properties.setVersion("2.2");
+            properties.setVersion("2.6");
         }
         return confied;
     }
@@ -116,7 +155,13 @@ public class EJRWTRendererConfigFix
     {
         
         return "org.entirej.applicationframework.rwt.renderers.application.EJRWTApplicationDefinition".equals(properties
-                .getApplicationManagerDefinitionClassName()) && (properties.getVersion().equals("1.0") || properties.getVersion().equals("2.0"));
+                .getApplicationManagerDefinitionClassName()) && (properties.getVersion().equals("1.0") 
+                        || properties.getVersion().equals("2.0") 
+                        || properties.getVersion().equals("2.1")
+                        ||  properties.getVersion().equals("2.2")
+                        ||  properties.getVersion().equals("2.3")
+                        ||  properties.getVersion().equals("2.4")
+                        ||  properties.getVersion().equals("2.5"));
     }
     
 }

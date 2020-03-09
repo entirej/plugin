@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.cf.fx.lib;
 
@@ -37,7 +37,7 @@ public class FXCFRuntimeClasspathContainer implements IClasspathContainer
     public FXCFRuntimeClasspathContainer(IPath path)
     {
         runtimePath = CFProjectHelper.getPathInPlugin(EJCFFXPlugin.getDefault().getBundle(), new Path("/extlibs/"));
-        description = "EntireJ JavaFX CF [3.2.0] Runtime Libraries.";
+        description = "EntireJ JavaFX CF [4.0.0] Runtime Libraries.";
     }
 
     final String           description;

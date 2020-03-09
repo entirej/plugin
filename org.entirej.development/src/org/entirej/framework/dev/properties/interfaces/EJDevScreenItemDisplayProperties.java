@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.dev.properties.interfaces;
+
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 
 public interface EJDevScreenItemDisplayProperties
 {
@@ -31,6 +34,31 @@ public interface EJDevScreenItemDisplayProperties
      * @return
      */
     public boolean isSpacerItem();
+    
+    
+    /**
+     * Returns the orientation of the Separator
+     * 
+     * @return The separator orientation
+     */
+    public EJSeparatorOrientation getSeparatorOrientation();
+    
+    /**
+     * Returns the style of the line
+     * 
+     * @return The line style
+     * 
+     */
+    public EJLineStyle getSeparatorLineStyle();
+    
+    /**
+     * Indicates if this spacer screen item renderer as separator
+     * 
+     * @return <code>true</code> if this spacer item is a separator, otherwise
+     *         <code>false</code>
+     */
+    public boolean isSeparator();
+    
 
     /**
      * Returns the name of the block to which this item belongs

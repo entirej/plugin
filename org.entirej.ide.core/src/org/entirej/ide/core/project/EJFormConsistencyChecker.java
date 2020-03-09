@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.core.project;
 
@@ -73,7 +73,7 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
 
                 // see if this is it
                 IFile candidate = (IFile) resource;
-                if (isFormFile(candidate))
+                if (candidate.exists() && isFormFile(candidate))
                 {
                     // That's it, but only check it if it has been added or
                     // changed
@@ -91,15 +91,24 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
                     }
                     else if (isRefFormFile(candidate))
                     {
+//                        try
+//                        {
+//                            clean(monitor);
+//                            validateFormsIn(getProject(), getValidateProviders(), monitor,new ArrayList<IFile>());
+//                        }
+//                        catch (CoreException e)
+//                        {
+//                            EJCoreLog.logException(e);
+//                        }
                         try
                         {
-                            clean(monitor);
-                            validateFormsIn(getProject(), getValidateProviders(), monitor);
+                            candidate.deleteMarkers(EJMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
                         }
                         catch (CoreException e)
                         {
-                            EJCoreLog.logException(e);
+                            EJCoreLog.log(e);
                         }
+                        validateFile(candidate, getValidateProviders(), monitor);
                     }
                 }
             }
@@ -149,10 +158,11 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
                 EJPluginEntireJClassLoader.reload(project);
                 IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
 
+                List<IFile> forms = new ArrayList<IFile>();
                 for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots)
                 {
                     if (iPackageFragmentRoot.getResource() instanceof IContainer)
-                        validateFormsIn((IContainer) iPackageFragmentRoot.getResource(), getValidateProviders(), monitor);
+                        validateFormsIn((IContainer) iPackageFragmentRoot.getResource(), getValidateProviders(), monitor,forms);
                 }
             }
         }
@@ -241,7 +251,7 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
         monitor.done();
     }
 
-    private void validateFormsIn(IContainer container, List<EJFormValidateProvider> providers, IProgressMonitor monitor) throws CoreException
+    private void validateFormsIn(IContainer container, List<EJFormValidateProvider> providers, IProgressMonitor monitor,List<IFile> forms) throws CoreException
     {
         if (providers.isEmpty())
             return;
@@ -251,10 +261,16 @@ public class EJFormConsistencyChecker extends IncrementalProjectBuilder
         {
             IResource member = members[i];
             if (member instanceof IContainer)
-                validateFormsIn((IContainer) member, providers, monitor);
+                validateFormsIn((IContainer) member, providers, monitor,forms);
             else if (member instanceof IFile && isFormFile((IFile) member))
             {
-                validateFile((IFile) member, providers, monitor);
+                if(!forms.contains(member))
+                {
+                    IFile file = (IFile) member;
+                    validateFile(file, providers, monitor);
+                    forms.add(file);
+                }
+               
             }
         }
         monitor.done();

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entirejFramework>
+    <renderer>
+        <formRenderers>
+            <renderer name="Form" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.EJSBFormRendererDefinition"/>
+        </formRenderers>
+        <blockRenderers>
+            <renderer name="FormLayout" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.EJSBFormLayoutBlockDefinition"/>
+            <renderer name="TableLayout" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.EJSBTableLayoutBlockDefinition"/>
+        </blockRenderers>
+        <itemRenderers>
+            <renderer name="Text" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.item.EJSBTextItemRendererDefinition">
+            </renderer>
+            <renderer name="Date" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.item.EJSBDateItemRendererDefinition">
+            </renderer>
+            <renderer name="Button" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.item.EJSBButtonItemRendererDefinition">
+            </renderer>
+            <renderer name="Selection" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.item.EJSBSelectionItemRendererDefinition">
+            </renderer>
+            <renderer name="Number" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.item.EJSBNumberItemRendererDefinition">
+            </renderer>
+        </itemRenderers>
+        <lovRenderers>
+            <renderer name="EMPTY " group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.lov.EmptyLovRendererDef"/>
+            <renderer name="Standard" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.lov.StandardLovRendererDef"/>
+        </lovRenderers>
+        <menuRenderers>
+        </menuRenderers>
+        <appCompRenderers>
+            <renderer name="Menu" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.EJSBMenuRendererDefinition"/>
+            <renderer name="TabFormContainer" group="User Defined" rendererDefinitionClassName="org.entirej.runtime.sb.renderers.application.EJSBTabFormContainerRendererDefinition"/>
+        </appCompRenderers>
+    </renderer>
+</entirejFramework>

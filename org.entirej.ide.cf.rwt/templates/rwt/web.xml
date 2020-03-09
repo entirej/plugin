@@ -13,6 +13,16 @@
   <listener>
     <listener-class>org.eclipse.rap.rwt.engine.RWTServletContextListener</listener-class>
   </listener>
+  
+  <filter>
+        <filter-name>CompressingFilter</filter-name>
+        <filter-class>com.github.ziplet.filter.compression.CompressingFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+        <filter-name>CompressingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+  </filter-mapping>
  
   <servlet>
     <servlet-name>rwtServlet</servlet-name>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ide.ui.wizards.custom;
 
@@ -24,9 +24,13 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.entirej.framework.core.service.EJFormPojoGenerator;
+import org.entirej.framework.core.service.EJFormServiceGenerator;
 import org.entirej.framework.core.service.EJPojoGeneratorType;
 import org.entirej.framework.core.service.EJServiceGeneratorType;
+import org.entirej.framework.report.service.EJReportPojoGenerator;
 import org.entirej.framework.report.service.EJReportPojoGeneratorType;
+import org.entirej.framework.report.service.EJReportServiceGenerator;
 import org.entirej.framework.report.service.EJReportServiceGeneratorType;
 import org.entirej.ide.core.spi.BlockServiceContentProvider;
 
@@ -61,6 +65,12 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
     {
         return new BlockServiceWizardProvider()
         {
+            public boolean skipMainPojo()
+            {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
             private CustomFieldsPage columnSelectionPage = new CustomFieldsPage();
 
             public void init(GeneratorContext context)
@@ -68,10 +78,21 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
                 columnSelectionPage.init(context.getProject());
 
             }
+            
+            public String getPojoSuggest()
+            {
+                return "";
+            }
+            
+            public String getServiceSuggest()
+            {
+                return "";
+            }
+
             public void init(ReportGeneratorContext context)
             {
                 columnSelectionPage.init(context.getProject());
-                
+
             }
 
             public boolean canFinish(IWizardPage page)
@@ -89,10 +110,40 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
                 return Arrays.<IWizardPage> asList(columnSelectionPage);
             }
 
+            public List<IWizardPage> getOptionalPages()
+            {
+                return Arrays.asList();
+            }
+
             public void createRequiredResources(IProgressMonitor monitor)
             {
                 // ignore
 
+            }
+
+            public String getPogoGenerator()
+            {
+                return EJFormPojoGenerator.class.getName();
+            }
+
+            public String getServiceGenerator()
+            {
+
+                return EJFormServiceGenerator.class.getName();
+
+            }
+            
+            
+            public String getReportPogoGenerator()
+            {
+                return EJReportPojoGenerator.class.getName();
+            }
+            
+            public String getReportServiceGenerator()
+            {
+                
+                return EJReportServiceGenerator.class.getName();
+                
             }
 
             public BlockServiceContent getContent()
@@ -107,13 +158,14 @@ public class CustomBlockServiceContentProvider implements BlockServiceContentPro
                 }
                 return null;
             }
+
             public ReportBlockServiceContent getReportContent()
             {
                 if (columnSelectionPage.isPageComplete())
                 {
                     EJReportServiceGeneratorType serviceGeneratorType = new EJReportServiceGeneratorType();
                     EJReportPojoGeneratorType pojoGeneratorType = new EJReportPojoGeneratorType();
-                    
+
                     pojoGeneratorType.setColumnNames(columnSelectionPage.getReportColumns());
                     return new ReportBlockServiceContent(serviceGeneratorType, pojoGeneratorType);
                 }

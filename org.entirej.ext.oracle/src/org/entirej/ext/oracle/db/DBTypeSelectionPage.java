@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.ext.oracle.db;
 
@@ -22,8 +22,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -37,6 +40,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -54,6 +58,7 @@ import org.entirej.ext.oracle.db.Argument.Type;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.preferences.EntirejConnectionPreferencePage;
 import org.entirej.ide.core.EJCoreLog;
+import org.entirej.ide.core.spi.BlockServiceContentProvider.GeneratorContext;
 import org.entirej.ide.ui.EJUIImages;
 import org.entirej.ide.ui.EJUIPlugin;
 import org.entirej.ide.ui.utils.ProjectConnectionFactory;
@@ -65,11 +70,16 @@ public class DBTypeSelectionPage extends WizardPage
     private CheckboxTableViewer  listViewer;
 
     private Procedure            selectedProcedure;
+    private ObjectArgument       selectedObjectArgument;
 
     private String               dbError;
     private Connection           conn;
     private DBContentProvider    contentProvider;
     private LabelProvider        labelProvider;
+    private Map<String,ObjectArgument>  types = new HashMap<String, ObjectArgument>();
+    private Map<String, String>  typesCodes = new HashMap<String, String>();
+    
+    private DBTypeSelectionPageContext context;
 
     public DBTypeSelectionPage()
     {
@@ -77,6 +87,21 @@ public class DBTypeSelectionPage extends WizardPage
         setTitle("Oracle Funtion/Procedure Selection");
         setDescription("Select columns from Type/Funtion/Procedure.");
     }
+    
+    static interface DBTypeSelectionPageContext
+    {
+        boolean skipService();
+    }
+    
+    void setGeneratorContext(DBTypeSelectionPageContext context)
+    {
+        this.context = context;
+    }
+    
+    
+    
+
+    
 
     public ITreeContentProvider getContentProvider()
     {
@@ -88,8 +113,121 @@ public class DBTypeSelectionPage extends WizardPage
         return labelProvider;
     }
 
+    
+    public static int getDataTypeIntForOraType(String jdbcType)
+    {
+        
+       if("VARCHAR".equals(jdbcType))
+       {
+           return Types.VARCHAR;
+       }
+       if("BINARY_INTEGER".equals(jdbcType))
+       {
+           return Types.BINARY;
+       }
+       if("NATURAL".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("NATURALN".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("PLS_INTEGER".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("POSITIVE".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("SIGNTYPE".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("INTEGER".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("INT".equals(jdbcType))
+       {
+           return Types.INTEGER;
+       }
+       if("SMALLINT".equals(jdbcType))
+       {
+           return Types.SMALLINT;
+       }
+       if("BIGINT".equals(jdbcType))
+       {
+           return Types.BIGINT;
+       }
+       if("DECIMAL".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       if("DEC".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       if("NUMBER".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       if("NUMERIC".equals(jdbcType))
+       {
+           return Types.DECIMAL;
+       }
+       
+       
+       if("DOUBLE".equals(jdbcType))
+       {
+           return Types.DOUBLE;
+       }
+       if("PRECISION".equals(jdbcType))
+       {
+           return Types.DOUBLE;
+       }
+       if("FLOAT".equals(jdbcType))
+       {
+           return Types.FLOAT;
+       }
+       if("DATE".equals(jdbcType))
+       {
+           return Types.DATE;
+       }
+       if("TIMESTAMP".equals(jdbcType))
+       {
+           return Types.TIMESTAMP;
+       }
+       if("REAL".equals(jdbcType))
+       {
+           return Types.REAL;
+       }
+        
+        
+        
+       
+        
+       
+        if ("BOOLEAN".equals(jdbcType))
+            return Types.BOOLEAN;
+        if ("OBJECT".equals(jdbcType))
+            return Types.ARRAY;
+        if ("TABLE".equals(jdbcType))
+            return Types.ARRAY;
+        if ("CLOB".equals(jdbcType))
+            return Types.CLOB;
+        if ("BLOB".equals(jdbcType))
+            return Types.BLOB;
+        if ("STRUCT".equals(jdbcType))
+            return Types.STRUCT;
+        
+        return Types.VARCHAR;
+    }
+    
     protected void init(IJavaProject javaProject)
     {
+        types.clear();
         try
         {
             if (conn != null && !conn.isClosed())
@@ -129,6 +267,18 @@ public class DBTypeSelectionPage extends WizardPage
             if (dbfilteredTree != null)
                 dbfilteredTree.getViewer().setInput(getDBInput());
             doUpdateStatus();
+            
+            if(context.skipService())
+            {
+                setTitle("Oracle Types Selection");
+                setDescription("Select columns from Type/Funtion/Procedure.");
+            }
+            
+            else
+            {
+                setTitle("Oracle Funtion/Procedure Selection");
+                setDescription("Select the type to use to create your pojo.");
+            }
         }
 
     }
@@ -136,6 +286,7 @@ public class DBTypeSelectionPage extends WizardPage
     @Override
     public void dispose()
     {
+        types.clear();
         try
         {
             if (conn != null && !conn.isClosed())
@@ -151,10 +302,7 @@ public class DBTypeSelectionPage extends WizardPage
         super.dispose();
     }
 
-    public Procedure getProcedure()
-    {
-        return selectedProcedure;
-    }
+  
 
     public void createControl(Composite parent)
     {
@@ -256,6 +404,7 @@ public class DBTypeSelectionPage extends WizardPage
                     node = strutruredSelection.getFirstElement();
                 }
                 selectedProcedure = null;
+                selectedObjectArgument = null;
                 if (listViewer != null)
                 {
                     listViewer.setInput(node);
@@ -264,6 +413,11 @@ public class DBTypeSelectionPage extends WizardPage
                 {
                     selectedProcedure = (Procedure) node;
 
+                }
+                if (node instanceof ObjectArgument)
+                {
+                    selectedObjectArgument = (ObjectArgument) node;
+                    
                 }
                 doUpdateStatus();
             }
@@ -275,6 +429,21 @@ public class DBTypeSelectionPage extends WizardPage
         setPageComplete(validatePage());
     }
 
+    
+    ObjectArgument getObjectArgument()
+    {
+        if(context.skipService())
+        {
+            return selectedObjectArgument;
+        }
+       
+        if (selectedProcedure != null)
+        {
+            return selectedProcedure.getCollectionType();
+        }
+        return  null;
+    }
+    
     protected boolean validatePage()
     {
         if (dbError != null)
@@ -282,20 +451,36 @@ public class DBTypeSelectionPage extends WizardPage
             setErrorMessage(dbError);
             return false;
         }
-        if (selectedProcedure == null)
+        if(context.skipService())
         {
-            setErrorMessage("Function/Procedure not selected.");
-            return false;
+             if (selectedObjectArgument == null)
+            {
+                setErrorMessage("Type not selected.");
+                return false;
+            }
+             
         }
         else
         {
-            boolean foundCollectionType = selectedProcedure.getCollectionType() != null;
-            if (!foundCollectionType)
+            if (selectedProcedure == null)
             {
-                setErrorMessage("Selected Function/Procedure not provide collection type.");
+                setErrorMessage("Function/Procedure not selected.");
                 return false;
             }
+            
+            else
+            {
+                boolean foundCollectionType = selectedProcedure.getCollectionType() != null;
+                if (!foundCollectionType)
+                {
+                    setErrorMessage("Selected Function/Procedure not provide collection type.");
+                    return false;
+                }
+            }
         }
+        
+       
+       
 
         setErrorMessage(null);
         setMessage(null);
@@ -327,6 +512,10 @@ public class DBTypeSelectionPage extends WizardPage
             {
                 ObjectArgument argument = (ObjectArgument) element;
                 String name = argument._name != null ? argument._name : argument.objName;
+                if(name.isEmpty())
+                {
+                    return argument.getObjName();
+                }
                 String typeDef = argument.tableName != null ? String.format("%s [ %s ]", argument.tableName, name) : name;
                 return argument.type != Type.IN_OUT ? String.format("%s --> %s", typeDef, argument.type.name()) : typeDef;
             }
@@ -381,6 +570,7 @@ public class DBTypeSelectionPage extends WizardPage
     private class DBContentProvider extends AbstractFilteredTree.FilteredContentProvider
     {
         private Object[] objects;
+        private boolean checkForTypes = false;
 
         public void dispose()
         {
@@ -392,6 +582,50 @@ public class DBTypeSelectionPage extends WizardPage
         {
 
         }
+        
+        
+        
+        public List<ObjectArgument> getTypes(Connection con) throws SQLException
+        {
+            List<ObjectArgument> packages = new ArrayList<ObjectArgument>();
+
+            Statement statement = con.createStatement();
+            ResultSet rset = statement.executeQuery("SELECT TYPE_NAME, TYPECODE FROM ALL_TYPES WHERE OWNER = USER");
+            try
+            {
+                while (rset.next())
+                {
+                    
+                    String typeName =  rset.getString("TYPE_NAME");
+                   String dataType =  rset.getString("TYPECODE");
+                    
+                    
+                   ObjectArgument argument = null;
+                    if ("COLLECTION".equals(dataType))
+                    {
+                        argument = createObjectArgumentFromTableType(con, typeName, "");
+
+                    }
+                    else if ("OBJECT".equals(dataType))
+                    {
+                        argument = createObjectArgument(con, typeName, "");
+                    }
+                    packages.add(argument);
+                    
+                }
+
+                return packages;
+            }
+            finally
+            {
+                rset.close();
+                statement.close();
+            }
+        }
+        
+        
+        
+        
 
         public List<Group> getPackages(Connection con) throws SQLException
         {
@@ -530,6 +764,9 @@ public class DBTypeSelectionPage extends WizardPage
             }
         }
 
+        
+        
+        
         public List<Procedure> getPackagedElements(Connection con, String pkgName) throws SQLException
         {
             List<Procedure> procedures = new ArrayList<Procedure>();
@@ -568,10 +805,11 @@ public class DBTypeSelectionPage extends WizardPage
                             }
                             else
                             {
-                                returnArg = new Argument(argName, dataType);
+                                returnArg = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                             }
                             if(argName==null)
                             {
+                               
                                 returnArg.type = Type.RETURN;
                             }else {
                                 returnArg.type = Type.OUT;
@@ -603,7 +841,7 @@ public class DBTypeSelectionPage extends WizardPage
                     }
                     else
                     {
-                        argument = new Argument(argName, dataType);
+                        argument = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                     }
                     if ("IN/OUT".equals(inOut))
                         argument.type = Type.IN_OUT;
@@ -611,6 +849,11 @@ public class DBTypeSelectionPage extends WizardPage
                         argument.type = argName==null?Type.RETURN :Type.OUT;
                     else
                         argument.type = Type.IN;
+                    
+                    if(argName==null)
+                    {
+                        
+                    }
 
                     if(proc!=null)
                         proc.addArgument(argument);
@@ -661,7 +904,7 @@ public class DBTypeSelectionPage extends WizardPage
                             }
                             else
                             {
-                                returnArg = new Argument(argName, dataType);
+                                returnArg = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                                 returnArg.type = Type.OUT;
                             }
                             proc = new Function(objectName, returnArg);
@@ -684,7 +927,7 @@ public class DBTypeSelectionPage extends WizardPage
                     }
                     else
                     {
-                        argument = new Argument(argName, dataType);
+                        argument = new Argument(argName, dataType,getDataTypeIntForOraType(dataType));
                     }
                     if ("IN/OUT".equals(inOut))
                         argument.type = Type.IN_OUT;
@@ -709,20 +952,40 @@ public class DBTypeSelectionPage extends WizardPage
 
         public ObjectArgument createObjectArgumentFromTableType(Connection con, String TableType, String argName) throws SQLException
         {
+            
+            
+            ObjectArgument tab = types.get(TableType);
+            if(tab!=null)
+            {
+                ObjectArgument  argument = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
+                argument.getArguments().addAll(tab.getArguments());
+                return argument;
+            }
+            
+           
+            
+            
+            
+            
+             tab = new ObjectArgument(TableType, TableType, argName, "TABLE",Types.ARRAY);
+            types.put(TableType, tab);
+            
+            
             Statement statement = con.createStatement();
             ResultSet rset = statement.executeQuery("SELECT ELEM_TYPE_NAME FROM USER_COLL_TYPES WHERE TYPE_NAME = '" + TableType + "'");
             try
             {
-                String objectName = null;
+                String objectType = null;
+             
                 while (rset.next())
                 {
-                    objectName = rset.getString("ELEM_TYPE_NAME");
+                    objectType = rset.getString("ELEM_TYPE_NAME");
                     break;
                 }
 
-                if (objectName != null)
+                if (objectType != null)
                 {
-                    return createObjectArgument(con, TableType, objectName, argName);
+                    tab.addArgument(createObjectArgument(con, objectType, objectType));
                 }
             }
             finally
@@ -731,17 +994,28 @@ public class DBTypeSelectionPage extends WizardPage
                 statement.close();
             }
 
-            return null;
+            return tab;
         }
 
         public ObjectArgument createObjectArgument(Connection con, String objectName, String argName) throws SQLException
         {
-            return createObjectArgument(con, null, objectName, argName);
+           
+            ObjectArgument objectArgument = types.get(objectName);
+            if(objectArgument!=null)
+            {
+                ObjectArgument argument = new ObjectArgument(null, objectName, argName, "OBJECT",Types.STRUCT);
+                argument.getArguments().addAll(objectArgument.getArguments());
+                return argument;
+            }
+            
+            objectArgument = createObjectArgument(con, null, objectName, argName);
+            types.put(objectName, objectArgument);
+            return objectArgument;
         }
 
         public ObjectArgument createObjectArgument(Connection con, String tableName, String objectName, String argName) throws SQLException
         {
-            ObjectArgument argument = new ObjectArgument(tableName, objectName, argName, "OBJECT");
+            ObjectArgument argument = new ObjectArgument(tableName, objectName, argName, "OBJECT",Types.STRUCT);
             Statement statement = con.createStatement();
             ResultSet rset = statement.executeQuery("SELECT * FROM USER_TYPE_ATTRS WHERE TYPE_NAME = '" + objectName + "' ORDER BY ATTR_NO");
             try
@@ -766,21 +1040,36 @@ public class DBTypeSelectionPage extends WizardPage
         public Argument createAttributeArgument(Connection con, String attrName, String attrTypeName) throws SQLException
         {
 
-            Statement statement = con.createStatement();
-            ResultSet rset = statement.executeQuery("SELECT TYPECODE FROM ALL_TYPES WHERE TYPE_NAME = '" + attrTypeName + "' ");
-            String type = null;
-            try
+            int code = getDataTypeIntForOraType(attrTypeName);
+            
+            if(!(code==Types.VARCHAR && !"VARCHAR".equals(attrTypeName)))
             {
-                while (rset.next())
-                {
-                    type = rset.getString("TYPECODE");
-                    break;
-                }
+                return new Argument(attrName, attrTypeName,code);
             }
-            finally
+            
+            
+            
+           
+            String type = typesCodes.get(attrTypeName) ;
+            
+            if(type==null)
             {
-                rset.close();
-                statement.close();
+                Statement statement = con.createStatement();
+                ResultSet rset = statement.executeQuery("SELECT TYPECODE FROM ALL_TYPES WHERE TYPE_NAME = '" + attrTypeName + "' ");
+                try
+                {
+                    while (rset.next())
+                    {
+                        type = rset.getString("TYPECODE");
+                        typesCodes.put(attrTypeName, type);
+                        break;
+                    }
+                }
+                finally
+                {
+                    rset.close();
+                    statement.close();
+                }
             }
             if ("OBJECT".equals(type))
             {
@@ -790,7 +1079,7 @@ public class DBTypeSelectionPage extends WizardPage
             {
                 return createObjectArgumentFromTableType(con, attrTypeName, attrName);
             }
-            return new Argument(attrName, attrTypeName);
+            return new Argument(attrName, attrTypeName,getDataTypeIntForOraType(attrTypeName));
         }
 
         private String prevObjectName = null;
@@ -850,9 +1139,81 @@ public class DBTypeSelectionPage extends WizardPage
 
         public Object[] getElements(Object inputElement)
         {
-            if (objects != null)
+            if (objects != null && checkForTypes == (context!=null && context.skipService()))
                 return objects;
+            checkForTypes = context!=null && context.skipService();
+            if(checkForTypes)
+            {
+                Group packages = new Group("Types")
+                {
+                    private Object[] subObjects;
 
+                    @Override
+                    public Object[] getItems()
+                    {
+                        if (subObjects != null)
+                            return filterItem(subObjects);
+                        final List<ObjectArgument> schemas = new ArrayList<ObjectArgument>();
+
+                        IRunnableWithProgress loadSchemas = new IRunnableWithProgress()
+                        {
+                            public void run(IProgressMonitor monitor)
+
+                            {
+                                try
+                                {
+
+                                    monitor.beginTask("Loading database types...", 3);
+
+                                    if (conn != null && !conn.isClosed())
+                                    {
+
+                                        monitor.worked(1);
+                                        schemas.addAll(getTypes(conn));
+                                        monitor.worked(1);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    dbError = e.getMessage();
+
+                                }
+                                finally
+                                {
+                                    monitor.done();
+                                    doUpdateStatus();
+                                }
+                            }
+                        };
+
+                        setPageComplete(false);
+                        try
+                        {
+                            getContainer().run(false, false, loadSchemas);
+                        }
+                        catch (Exception e)
+                        {
+                            dbError = e.getMessage();
+
+                        }
+                        finally
+                        {
+                            doUpdateStatus();
+                        }
+
+                        return filterItem(subObjects = schemas.toArray());
+                    }
+
+                    @Override
+                    public Image getImage()
+                    {
+                        return EJUIImages.SHARED_CLASS;
+                    }
+                };
+                
+                return objects = new Object[] { packages };
+            }
+            
             Group packages = new Group("Packages")
             {
                 private Object[] subObjects;
@@ -1090,6 +1451,14 @@ public class DBTypeSelectionPage extends WizardPage
                         }
                         continue;
                     }
+                    if (context.skipService() && object instanceof ObjectArgument)
+                    {
+                        if (((ObjectArgument) object).getObjName().toLowerCase().contains(filter.toLowerCase()))
+                        {
+                            fitems.add(object);
+                        }
+                        continue;
+                    }
                 }
 
                 return fitems.toArray();
@@ -1141,5 +1510,10 @@ public class DBTypeSelectionPage extends WizardPage
             return false;
         }
 
+    }
+
+    public Procedure getProcedure()
+    {
+        return selectedProcedure;
     }
 }

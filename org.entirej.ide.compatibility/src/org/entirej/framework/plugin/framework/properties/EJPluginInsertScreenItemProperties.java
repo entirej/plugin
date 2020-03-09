@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,10 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
+import org.entirej.framework.core.enumerations.EJLineStyle;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.EJCoreVisualAttributeProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.dev.properties.interfaces.EJDevBlockItemDisplayProperties;
@@ -44,6 +46,9 @@ public class EJPluginInsertScreenItemProperties implements EJDevInsertScreenItem
     private boolean                        _validateFromLov       = true;
     private String                         _actionCommand         = "";
     private boolean                        _isSpacerItem          = false;
+    private boolean                         _isSeparator           = false;
+    private EJLineStyle                     _separatorLineStyle    = EJLineStyle.SOLID;
+    private EJSeparatorOrientation          _separatorOrientation  = EJSeparatorOrientation.HORIZONTAL;
     
     public EJPluginInsertScreenItemProperties(EJPluginItemGroupProperties itemGroupProperties, boolean addDefaults, boolean isSpacerItem)
     {
@@ -379,6 +384,40 @@ public class EJPluginInsertScreenItemProperties implements EJDevInsertScreenItem
         return null;
     }
     
+    
+    @Override
+    public EJLineStyle getSeparatorLineStyle()
+    {
+        return _separatorLineStyle;
+    }
+
+    @Override
+    public EJSeparatorOrientation getSeparatorOrientation()
+    {
+        return _separatorOrientation;
+    }
+
+    @Override
+    public boolean isSeparator()
+    {
+        return _isSeparator;
+    }
+
+    public void setSeparatorLineStyle(EJLineStyle separatorLineStyle)
+    {
+        _separatorLineStyle = separatorLineStyle;
+    }
+
+    public void setSeparatorOrientation(EJSeparatorOrientation separatorOrientation)
+    {
+        _separatorOrientation = separatorOrientation;
+    }
+
+    public void setSeparator(boolean isSeparator)
+    {
+        _isSeparator = isSeparator;
+    }
+    
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -392,6 +431,13 @@ public class EJPluginInsertScreenItemProperties implements EJDevInsertScreenItem
         buffer.append(_editAllowed);
         
         return buffer.toString();
+    }
+
+    @Override
+    public void enableLovValidation(boolean arg0)
+    {
+        // TODO Auto-generated method stub
+        
     }
     
 }

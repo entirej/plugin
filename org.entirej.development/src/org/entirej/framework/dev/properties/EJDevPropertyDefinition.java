@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  * Contributors:
- *     Mojave Innovations GmbH - initial API and implementation
+ *     CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.dev.properties;
 
@@ -45,6 +45,7 @@ public class EJDevPropertyDefinition implements EJPropertyDefinition
     private boolean                       _multilingual            = false;
     private boolean                       _canBeSetProgramatically = false;
     private String                        _defaultValue;
+    private String                        _classParent;
     private boolean                       _loadValidValuesDynamically;
     private boolean                       _notifyWhenChanged       = false;
     private LinkedHashMap<String, String> _validValues;
@@ -281,6 +282,16 @@ public class EJDevPropertyDefinition implements EJPropertyDefinition
     public void setGrabExcessVerticalSpace()
     {
         _grabExcessVerticalSpace = true;
+    }
+
+    public void setClassParent(String classParent)
+    {
+        this._classParent = classParent;
+    }
+
+    public String getClassParent()
+    {
+        return _classParent;
     }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties.containers;
 
@@ -92,10 +92,7 @@ public class EJPluginLovMappingContainer
         {
             _lovMappingProperties.add(lovMappingProperties);
             
-            for (EJPluginBlockProperties mirrorBlock : _blockProperties.getMirrorChildren())
-            {
-                mirrorBlock.getLovMappingContainer().addLovMappingProperties(lovMappingProperties.makeCopy(mirrorBlock));
-            }
+           
         }
     }
     
@@ -105,10 +102,7 @@ public class EJPluginLovMappingContainer
         {
             _lovMappingProperties.add(index, lovMappingProperties);
             
-            for (EJPluginBlockProperties mirrorBlock : _blockProperties.getMirrorChildren())
-            {
-                mirrorBlock.getLovMappingContainer().addLovMappingProperties(index, lovMappingProperties.makeCopy(mirrorBlock));
-            }
+           
         }
     }
     
@@ -128,10 +122,7 @@ public class EJPluginLovMappingContainer
             }
         }
         
-        for (EJPluginBlockProperties mirrorBlock : _blockProperties.getMirrorChildren())
-        {
-            mirrorBlock.getLovMappingContainer().removeLovMappingProperties(name);
-        }
+       
     }
     
     public int removeLovMappingProperties(EJPluginLovMappingProperties props)

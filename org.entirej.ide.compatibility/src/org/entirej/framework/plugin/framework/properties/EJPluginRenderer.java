@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Mojave Innovations GmbH
+ * Copyright 2013 CRESOFT AG
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Contributors: Mojave Innovations GmbH - initial API and implementation
+ * Contributors: CRESOFT AG - initial API and implementation
  ******************************************************************************/
 package org.entirej.framework.plugin.framework.properties;
 
@@ -50,9 +50,10 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
     /**
      * 
      */
-    private static final long serialVersionUID = 4632592074671794254L;
+    private static final long         serialVersionUID = 4632592074671794254L;
     private EJPluginEntireJProperties _entireJProperties;
     private String                    _name;
+    private String                    _group;
     private String                    _rendererDefinitionClassName;
     private String                    _rendererClassName;
     private EJRendererType            _rendererType;
@@ -65,6 +66,16 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
         _name = name;
         _dataTypeNames = new ArrayList<String>();
         _rendererType = rendererType;
+    }
+    
+    public void setGroup(String _group)
+    {
+        this._group = _group;
+    }
+    
+    public String getGroup()
+    {
+        return _group;
     }
     
     public EJPluginRenderer(EJPluginEntireJProperties entireJProperties, String name, EJRendererType rendererType, String rendererDefClassName,
@@ -387,9 +398,9 @@ public class EJPluginRenderer implements EJRendererAssignment, Comparable<EJPlug
         }
         catch (ClassNotFoundException e)
         {
-            EJCoreLog.logWarnningMessage("Unable to load class: " + e.getMessage()
-                    + ".\nPlease ensure the class path has been set correctly and the given class exists");
-            
+//            EJCoreLog.logWarnningMessage(
+//                    "Unable to load class: " + e.getMessage() + ".\nPlease ensure the class path has been set correctly and the given class exists");
+//            
         }
         return rendererDefinitionClass;
     }

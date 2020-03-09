@@ -18,7 +18,9 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
     private String                        _visualAttributeName;
     
     private int                           x, y, width, height;
-    
+
+    private int                                 rightPadding      = -1;
+    private int                                 leftPadding       = -1;
     
 
     private boolean                     widthAsPercentage, heightAsPercentage;
@@ -44,6 +46,28 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         
     }
     
+    
+    
+    public int getRightPadding()
+    {
+        return rightPadding;
+    }
+
+    public void setRightPadding(int rightPadding)
+    {
+        this.rightPadding = rightPadding;
+    }
+
+    public int getLeftPadding()
+    {
+        return leftPadding;
+    }
+
+    public void setLeftPadding(int leftPadding)
+    {
+        this.leftPadding = leftPadding;
+    }
+
     @Override
     public int getWidth()
     {
@@ -339,6 +363,8 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         private EJReportScreenAlignment hAlignment = EJReportScreenAlignment.LEFT;
         private EJReportScreenAlignment vAlignment = EJReportScreenAlignment.CENTER;
         
+        private EJPluginReportBorderProperties borderProperties = new EJPluginReportBorderProperties();
+        
         public AlignmentBaseItem(EJPluginReportBlockProperties blockProperties)
         {
             super(blockProperties);
@@ -363,6 +389,14 @@ public abstract class EJPluginReportScreenItemProperties implements EJReportScre
         {
             this.vAlignment = vAlignment;
         }
+        
+        public EJPluginReportBorderProperties getBorderProperties()
+        {
+            return borderProperties;
+        }
+        
+        
+        
         
     }
     public static abstract class ValueBaseItem extends AlignmentBaseItem
