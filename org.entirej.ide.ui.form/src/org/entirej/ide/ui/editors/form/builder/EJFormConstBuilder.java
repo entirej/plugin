@@ -79,6 +79,7 @@ import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRender
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevInsertScreenRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemRendererDefinition;
+import org.entirej.framework.dev.renderer.definition.interfaces.EJDevLovRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevUpdateScreenRendererDefinition;
 import org.entirej.framework.plugin.EJPluginConstants;
@@ -743,7 +744,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
                     if (rendererDefinition != null && rendererProperties != null)
                     {
 
-                        addActionsFromRendererProperties(formProperties, null, rendererDefinition.getFormPropertyDefinitionGroup(), rendererProperties, actions);
+                        addActionsFromRendererProperties(formProperties,(EJPluginBlockProperties) null, rendererDefinition.getFormPropertyDefinitionGroup(), rendererProperties, actions);
 
                     }
                 }
@@ -893,7 +894,18 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
             {
                 if (definitionProperties.getName() != null && definitionProperties.getName().length() > 0)
                 {
-                    createLovCode(definitionProperties, builder);
+                    createLovCode(definitionProperties, builder,actions);
+                    
+                    EJDevLovRendererDefinition rendererDefinition = definitionProperties.getRendererDefinition();
+                    EJFrameworkExtensionProperties rendererProperties = definitionProperties.getLovRendererProperties();
+                    if (rendererDefinition != null && rendererProperties != null)
+                    {
+
+                        addActionsFromRendererProperties(formProperties, definitionProperties, rendererDefinition.getLovPropertyDefinitionGroup(), rendererProperties,
+                                actions);
+                        
+                    }
+                    
                 }
             }
 
@@ -1236,7 +1248,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         builder.append("\n");
     }
 
-    private static void createLovCode(EJPluginLovDefinitionProperties blockProperties, StringBuilder builder)
+    private static void createLovCode(EJPluginLovDefinitionProperties blockProperties, StringBuilder builder,Set<String> actions)
     {
         builder.append("\n");
         builder.append("public static class ");
@@ -1388,6 +1400,14 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         if (definitionGroup != null && rendererProperties != null)
         {
             addActionsFromPropertyDefinitionGroup(formProperties, blockProperties, rendererProperties, definitionGroup, actions);
+        }
+    }
+    static void addActionsFromRendererProperties(EJPluginFormProperties formProperties, EJPluginLovDefinitionProperties definitionProperties,
+            EJPropertyDefinitionGroup definitionGroup, EJFrameworkExtensionProperties rendererProperties, Set<String> actions)
+    {
+        if (definitionGroup != null && rendererProperties != null)
+        {
+            addActionsFromPropertyDefinitionGroup(formProperties, definitionProperties.getBlockProperties(), rendererProperties, definitionGroup, actions);
         }
     }
 
