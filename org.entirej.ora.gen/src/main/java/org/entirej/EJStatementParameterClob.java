@@ -62,7 +62,7 @@ public class EJStatementParameterClob extends EJStatementParameter
 						super.setValue(out.toString());
 
 					} finally {
-
+						((Clob) value).free();
 					}
 				}
 			} catch (Exception e) {

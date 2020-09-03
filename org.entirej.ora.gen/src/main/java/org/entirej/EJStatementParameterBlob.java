@@ -54,6 +54,13 @@ public class EJStatementParameterBlob extends EJStatementParameter {
 				super.setValue(outputStream.toByteArray());
 			} catch (SQLException | IOException e) {
 				throw new EJApplicationException(e);
+			} 
+			finally {
+				try {
+					((Blob) value).free();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		} else
 			throw new IllegalArgumentException("Type not valid" + value.getClass().getName());
