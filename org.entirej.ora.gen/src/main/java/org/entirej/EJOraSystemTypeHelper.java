@@ -16,7 +16,7 @@ public class EJOraSystemTypeHelper
     public static Object toJDBCStruct(Connection conn, String sqlName, Object[] data) throws SQLException
     {
 
-        EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.getConnection();
+        EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.newConnection();
         try
         {
             return ((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class)).createStruct(sqlName, data);
@@ -29,7 +29,7 @@ public class EJOraSystemTypeHelper
 
     public static Object toJDBCArray(Connection conn, String sqlName, Object[] data) throws SQLException
     {
-        EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.getConnection();
+        EJManagedFrameworkConnection con = org.entirej.framework.core.EJSystemConnectionHelper.newConnection();
         try
         {
             Object[] convertedData = new Object[data.length];

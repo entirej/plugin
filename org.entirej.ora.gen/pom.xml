@@ -9,12 +9,12 @@
 		<dependency>
 			<groupId>org.entirej</groupId>
 			<artifactId>entirej-core</artifactId>
-			<version>DEVELOPMENT</version>
+			<version>DEVELOPMENT-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.entirej</groupId>
 			<artifactId>entirej-report</artifactId>
-			<version>DEVELOPMENT</version>
+			<version>DEVELOPMENT-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

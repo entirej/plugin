@@ -13,7 +13,7 @@ public class EJReportOraSystemTypeHelper {
 	public static Object toJDBCStruct(Connection conn, String sqlName, Object[] data) throws SQLException
 	{
 
-		EJReportManagedFrameworkConnection con = EJReportConnectionHelper.getConnection();
+		EJReportManagedFrameworkConnection con = EJReportConnectionHelper.newConnection();
 		try
 		{
 			return ((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class))
@@ -25,7 +25,7 @@ public class EJReportOraSystemTypeHelper {
 
 	public static Object toJDBCArray(Connection conn, String sqlName, Object[] data) throws SQLException
 	{
-		EJReportManagedFrameworkConnection con = EJReportConnectionHelper.getConnection();
+		EJReportManagedFrameworkConnection con = EJReportConnectionHelper.newConnection();
 		try
 		{
 			Object[] convertedData = new Object[data.length];

@@ -20,15 +20,8 @@ public abstract class EJReportOraCollectionType implements OracleData, OracleDat
     {
         if (o instanceof oracle.jdbc.OracleData)
         {
-            EJReportManagedFrameworkConnection con = EJReportConnectionHelper.getConnection();
-            try
-            {
-                return ((oracle.jdbc.OracleData) o).toJDBCObject(((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class)));
-            }
-            finally
-            {
-                con.close();
-            }
+           return ((oracle.jdbc.OracleData) o).toJDBCObject(((OracleConnection)conn.unwrap(OracleConnection.class)));
+            
         }
         return o;
     }
