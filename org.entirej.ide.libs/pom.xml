@@ -103,7 +103,7 @@
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-development</artifactId>
-							<version>${VERSION.CORE}</version>
+							<version>DEVELOPMENT</version>
 							<type>jar</type>
 							 
 							<outputDirectory>../org.entirej.core.runtime/extlibs-dev</outputDirectory>
@@ -112,7 +112,7 @@
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-development</artifactId>
-							<version>${VERSION.CORE}</version>
+							<version>DEVELOPMENT</version>
 							<type>jar</type>
 							<classifier>javadoc</classifier>
 							 
@@ -122,7 +122,7 @@
 						<artifactItem>
 							<groupId>org.entirej</groupId>
 							<artifactId>entirej-development</artifactId>
-							<version>${VERSION.CORE}</version>
+							<version>DEVELOPMENT</version>
 							<type>jar</type>
 							<classifier>sources</classifier>
 							 
@@ -238,8 +238,8 @@
 	</build>
 
 	<properties>
-		<VERSION.CORE>DEVELOPMENT</VERSION.CORE>
-		<VERSION.RWT>DEVELOPMENT</VERSION.RWT>
+		<VERSION.CORE>DEVELOPMENT-SNAPSHOT</VERSION.CORE>
+		<VERSION.RWT>DEVELOPMENT-SNAPSHOT</VERSION.RWT>
 		<VERSION.TMT>DEVELOPMENT</VERSION.TMT>
 		<VERSION.FX>DEVELOPMENT</VERSION.FX>
 		<VERSION.REPORT>DEVELOPMENT</VERSION.REPORT>
