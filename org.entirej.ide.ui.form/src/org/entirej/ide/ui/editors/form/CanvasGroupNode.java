@@ -510,7 +510,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 @Override
                 public Boolean getValue()
                 {
-                    return !messagePaneProperties.getCustomFormatting();
+                    return messagePaneProperties.getCustomFormatting();
                 }
                 
                 @Override
@@ -523,7 +523,7 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
                 @Override
                 public void setValue(Boolean value)
                 {
-                    messagePaneProperties.setCustomFormatting(!value.booleanValue());
+                    messagePaneProperties.setCustomFormatting(value.booleanValue());
                     editor.setDirty(true);
                 }
                 
