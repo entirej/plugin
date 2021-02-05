@@ -8,39 +8,30 @@ import org.entirej.framework.report.EJReportManagedFrameworkConnection;
 
 import oracle.jdbc.OracleConnection;
 
-public class EJReportOraSystemTypeHelper {
+public class EJReportOraSystemTypeHelper
+{
 
-	public static Object toJDBCStruct(Connection conn, String sqlName, Object[] data) throws SQLException
-	{
+    public static Object toJDBCStruct(Connection conn, String sqlName, Object[] data) throws SQLException
+    {
 
-		EJReportManagedFrameworkConnection con = EJReportConnectionHelper.newConnection();
-		try
-		{
-			return ((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class))
-					.createStruct(sqlName, data);
-		} finally {
-			con.close();
-		}
-	}
+        return ((OracleConnection) (conn).unwrap(OracleConnection.class)).createStruct(sqlName, data);
 
-	public static Object toJDBCArray(Connection conn, String sqlName, Object[] data) throws SQLException
-	{
-		EJReportManagedFrameworkConnection con = EJReportConnectionHelper.newConnection();
-		try
-		{
-			Object[] convertedData = new Object[data.length];
-			
-			for (int i = 0; i < data.length; i++)
+    }
+
+    public static Object toJDBCArray(Connection conn, String sqlName, Object[] data) throws SQLException
+    {
+
+        Object[] convertedData = new Object[data.length];
+
+        for (int i = 0; i < data.length; i++)
+        {
+            if (data[i] instanceof EJReportOraCollectionType)
             {
-                if(data[i] instanceof EJReportOraCollectionType) {
-                	EJReportOraCollectionType type = (EJReportOraCollectionType) data[i];
-                	convertedData[i] = type.toJDBC(type, conn);
-                }
+                EJReportOraCollectionType type = (EJReportOraCollectionType) data[i];
+                convertedData[i] = type.toJDBC(type, conn);
             }
-			return ((OracleConnection) ((Connection) con.getConnectionObject()).unwrap(OracleConnection.class))
-					.createOracleArray(sqlName, convertedData);
-		} finally {
-			con.close();
-		}
-	}
+        }
+        return ((OracleConnection) (conn).unwrap(OracleConnection.class)).createOracleArray(sqlName, convertedData);
+
+    }
 }

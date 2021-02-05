@@ -3,9 +3,6 @@ package org.entirej;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.entirej.framework.report.EJReportConnectionHelper;
-import org.entirej.framework.report.EJReportManagedFrameworkConnection;
-
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleData;
 import oracle.jdbc.OracleDataFactory;
