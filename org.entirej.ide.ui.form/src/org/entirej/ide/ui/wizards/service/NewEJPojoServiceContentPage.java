@@ -774,8 +774,9 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
     private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
     {
-
-        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
+        if(true)
+            return;
+        CompilationUnit unit = cu.reconcile(AST.JLS11, false, null, new NullProgressMonitor());
         Class<?> importClass = null;
         try
         {

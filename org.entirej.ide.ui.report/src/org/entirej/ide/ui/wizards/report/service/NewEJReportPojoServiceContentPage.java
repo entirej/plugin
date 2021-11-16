@@ -106,6 +106,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     private List<IWizardPage>                      pages           = new ArrayList<IWizardPage>();
 
     private List<IWizardPage>                      opPages         = new ArrayList<IWizardPage>();
+	private Object object;
 
     public NewEJReportPojoServiceContentPage(NewEJReportPojoServiceSelectPage pojoServiceSelectPage)
     {
@@ -623,8 +624,10 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
     private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
     {
+        if(true)
+            return;
 
-        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
+        CompilationUnit unit = cu.reconcile(AST.JLS11, false, null, new NullProgressMonitor());
         Class<?> importClass = null;
         try
         {
