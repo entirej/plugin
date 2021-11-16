@@ -80,6 +80,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
     {
         contentPage.createPojoService(pojoServiceSelectPage, servicePage, monitor);
         serviceTypeName = servicePage != null ? servicePage.getTypeName() : null;
+        monitor.done();
     }
 
     @Override

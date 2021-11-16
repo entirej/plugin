@@ -79,6 +79,7 @@ public class NewEJReportPojoServiceWizard extends NewWizard implements IExecutab
     {
         contentPage.createPojoService(pojoServiceSelectPage, servicePage, monitor);
         serviceTypeName = servicePage != null ? servicePage.getTypeName() : null;
+        monitor.done();
     }
 
     @Override
