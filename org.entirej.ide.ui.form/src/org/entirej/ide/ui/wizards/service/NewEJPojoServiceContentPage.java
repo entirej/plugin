@@ -776,7 +776,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
     {
         if(true)
             return;
-        CompilationUnit unit = cu.reconcile(AST.JLS11, false, null, new NullProgressMonitor());
+        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
         Class<?> importClass = null;
         try
         {
