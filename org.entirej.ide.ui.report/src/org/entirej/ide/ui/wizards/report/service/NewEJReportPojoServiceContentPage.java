@@ -746,8 +746,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             {
                 connectedCU.discardWorkingCopy();
             }
-            IJavaProject javaProject = getJavaProject();
-            javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+            
         }
 
     }
@@ -763,6 +762,8 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         serviceGeneratorType.setServiceName(serviceClassName);
         if (pojoClassName != null)
         {
+            IJavaProject javaProject = getJavaProject();
+            javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
         }
