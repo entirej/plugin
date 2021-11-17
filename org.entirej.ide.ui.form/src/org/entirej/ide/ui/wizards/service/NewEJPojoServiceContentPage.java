@@ -736,10 +736,11 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
             EJCoreLog.logInfoMessage("start organizeImports - > ");
-            organizeImports(connectedCU, monitor);
+           
             EJCoreLog.logInfoMessage("end organizeImports - > ");
             EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
@@ -802,7 +803,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             try
             {
                 constructor = importClass.getDeclaredConstructors()[0];
-                Object newInstance = constructor.newInstance(cu, unit, true, false, true, null);
+                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
                 Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
                 method.invoke(newInstance, monitor);
@@ -876,9 +877,9 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             buffer.setContents(fileContents);
 
-            organizeImports(connectedCU, monitor);
+            
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-
+            organizeImports(connectedCU, monitor);
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()

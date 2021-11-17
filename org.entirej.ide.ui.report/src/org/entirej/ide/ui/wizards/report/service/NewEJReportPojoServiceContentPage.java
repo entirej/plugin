@@ -627,8 +627,8 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             return;
 
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
-//         OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
-//         true, false, true, null);
+        // OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
+        // true, false, true, null);
         // op.run(monitor);
         Class<?> importClass = null;
         try
@@ -652,7 +652,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             try
             {
                 constructor = importClass.getDeclaredConstructors()[0];
-                Object newInstance = constructor.newInstance(cu, unit, true, false, true, null);
+                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
                 Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
                 method.invoke(newInstance, monitor);
@@ -725,9 +725,9 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
-            organizeImports(connectedCU, monitor);
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
 
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            organizeImports(connectedCU, monitor);
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -813,8 +813,8 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
             buffer.setContents(fileContents);
 
-            organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            organizeImports(connectedCU, monitor);
 
             getShell().getDisplay().asyncExec(new Runnable()
             {
