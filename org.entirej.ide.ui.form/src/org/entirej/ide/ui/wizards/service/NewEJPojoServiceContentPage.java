@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -680,8 +681,8 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         EJPojoContentGenerator pojoContentGenerator = (EJPojoContentGenerator) pojoGeneratorClass.newInstance();
 
         pojoGeneratorType.setPackageName(pojoPage.getPackageText());
-        
-        EJCoreLog.logInfoMessage("pkg - > "+pojoPage.getPackageText());
+
+        EJCoreLog.logInfoMessage("pkg - > " + pojoPage.getPackageText());
 
         IPackageFragmentRoot root = getPackageFragmentRoot();
         IPackageFragment pack = root.getPackageFragment(pojoGeneratorType.getPackageName());
@@ -701,27 +702,27 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         }
         pojoGeneratorType.setPackageName(pack.getElementName());
         ICompilationUnit connectedCU = null;
-       
+
         try
         {
-            EJCoreLog.logInfoMessage("start class - > "+pojoGeneratorType.getClassName());
+            EJCoreLog.logInfoMessage("start class - > " + pojoGeneratorType.getClassName());
             ICompilationUnit parentCU = pack.createCompilationUnit(pojoGeneratorType.getClassName() + ".java", "", true, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
             // create a working copy with a new owner
             parentCU.becomeWorkingCopy(new SubProgressMonitor(monitor, 1));
             connectedCU = parentCU;
-            EJCoreLog.logInfoMessage("end class - > "+pojoGeneratorType.getClassName());
+            EJCoreLog.logInfoMessage("end class - > " + pojoGeneratorType.getClassName());
 
             IBuffer buffer = parentCU.getBuffer();
 
-            EJCoreLog.logInfoMessage("start FTLEngine - > "+pojoGeneratorType);
-            EJCoreLog.logInfoMessage("start FTLEngine src- > "+ pojoContentGenerator.getTemplate());
+            EJCoreLog.logInfoMessage("start FTLEngine - > " + pojoGeneratorType);
+            EJCoreLog.logInfoMessage("start FTLEngine src- > " + pojoContentGenerator.getTemplate());
             String fileContents = FTLEngine.genrateFormPojo(pojoContentGenerator.getTemplate(), pojoGeneratorType);
 
             if (fileContents == null)
             {
                 throw new IllegalArgumentException("No content provided by chosen pojo generator.");
             }
-            EJCoreLog.logInfoMessage("end FTLEngine - > "+fileContents);
+            EJCoreLog.logInfoMessage("end FTLEngine - > " + fileContents);
 
             EJCoreLog.logInfoMessage("start CodeFormatter - > ");
             CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(getProject().getOptions(true));
@@ -732,12 +733,12 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 edit.apply(doc);
                 fileContents = doc.get();
             }
-            EJCoreLog.logInfoMessage("END CodeFormatter - > "+fileContents);
+            EJCoreLog.logInfoMessage("END CodeFormatter - > " + fileContents);
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
             EJCoreLog.logInfoMessage("start organizeImports - > ");
-            organizeImports(connectedCU);
+            organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end organizeImports - > ");
             EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
@@ -756,7 +757,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
                 }
             });
-            EJCoreLog.logInfoMessage("return - > "+createdType.getFullyQualifiedName('$'));
+            EJCoreLog.logInfoMessage("return - > " + createdType.getFullyQualifiedName('$'));
             return createdType.getFullyQualifiedName('$');
         }
         finally
@@ -765,52 +766,59 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             {
                 connectedCU.discardWorkingCopy();
             }
-           // IJavaProject javaProject = getJavaProject();
-           // javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+            // IJavaProject javaProject = getJavaProject();
+            // javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+            // monitor);
         }
 
     }
 
-
-    private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
+    private void organizeImports(ICompilationUnit cu, IProgressMonitor monitor) throws OperationCanceledException, CoreException
     {
-        if(true)
+        if (true)
             return;
-        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
-        Class<?> importClass = null;
-        try
-        {
-            importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
-        }
-        catch (ClassNotFoundException e)
-        {
-            try
-            {
-                importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
-            }
-            catch (ClassNotFoundException ex)
-            {
-                System.err.println("NO OrganizeImportsOperation found");
-            }
-        }
-        if (importClass != null)
-        {
-            Constructor<?> constructor;
-            try
-            {
-                constructor = importClass.getDeclaredConstructors()[0];
-                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
 
-                Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
-                method.invoke(newInstance, new NullProgressMonitor());
-            }
-
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
-
-        }
+        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
+        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
+        op.run(monitor);
+        // Class<?> importClass = null;
+        // try
+        // {
+        // importClass =
+        // this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
+        // }
+        // catch (ClassNotFoundException e)
+        // {
+        // try
+        // {
+        // importClass =
+        // this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
+        // }
+        // catch (ClassNotFoundException ex)
+        // {
+        // System.err.println("NO OrganizeImportsOperation found");
+        // }
+        // }
+        // if (importClass != null)
+        // {
+        // Constructor<?> constructor;
+        // try
+        // {
+        // constructor = importClass.getDeclaredConstructors()[0];
+        // Object newInstance = constructor.newInstance(cu, unit, true, true,
+        // true, null);
+        //
+        // Method method = importClass.getMethod("run",
+        // org.eclipse.core.runtime.IProgressMonitor.class);
+        // method.invoke(newInstance, new NullProgressMonitor());
+        // }
+        //
+        // catch (Throwable e)
+        // {
+        // e.printStackTrace();
+        // }
+        //
+        // }
 
     }
 
@@ -873,7 +881,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             buffer.setContents(fileContents);
 
-            organizeImports(connectedCU);
+            organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
 
             getShell().getDisplay().asyncExec(new Runnable()

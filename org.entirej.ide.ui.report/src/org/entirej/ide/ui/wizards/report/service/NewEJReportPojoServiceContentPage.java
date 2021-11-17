@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -106,7 +107,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     private List<IWizardPage>                      pages           = new ArrayList<IWizardPage>();
 
     private List<IWizardPage>                      opPages         = new ArrayList<IWizardPage>();
-	private Object object;
+    private Object                                 object;
 
     public NewEJReportPojoServiceContentPage(NewEJReportPojoServiceSelectPage pojoServiceSelectPage)
     {
@@ -622,49 +623,54 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         }
     }
 
-    private void organizeImports(ICompilationUnit cu) throws OperationCanceledException, CoreException
+    private void organizeImports(ICompilationUnit cu, IProgressMonitor monitor) throws OperationCanceledException, CoreException
     {
-        if(true)
+        if (true)
             return;
 
-        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, new NullProgressMonitor());
-        Class<?> importClass = null;
-        try
-        {
-            importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
-        }
-        catch (ClassNotFoundException e)
-        {
-            try
-            {
-                importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
-            }
-            catch (ClassNotFoundException ex)
-            {
-                System.err.println("NO OrganizeImportsOperation found");
-            }
-        }
-        if (importClass != null)
-        {
-            Constructor<?> constructor;
-            try
-            {
-                constructor = importClass.getDeclaredConstructors()[0];
-                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
-
-                Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
-                method.invoke(newInstance, new NullProgressMonitor());
-            }
-
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
-
-        }
+        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
+        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
+        op.run(monitor);
+        // Class<?> importClass = null;
+        // try
+        // {
+        // importClass =
+        // this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
+        // }
+        // catch (ClassNotFoundException e)
+        // {
+        // try
+        // {
+        // importClass =
+        // this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
+        // }
+        // catch (ClassNotFoundException ex)
+        // {
+        // System.err.println("NO OrganizeImportsOperation found");
+        // }
+        // }
+        // if (importClass != null)
+        // {
+        // Constructor<?> constructor;
+        // try
+        // {
+        // constructor = importClass.getDeclaredConstructors()[0];
+        // Object newInstance = constructor.newInstance(cu, unit, true, true,
+        // true, null);
+        //
+        // Method method = importClass.getMethod("run",
+        // org.eclipse.core.runtime.IProgressMonitor.class);
+        // method.invoke(newInstance, new NullProgressMonitor());
+        // }
+        //
+        // catch (Throwable e)
+        // {
+        // e.printStackTrace();
+        // }
+        //
+        // }
 
     }
-
 
     public String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
     {
@@ -724,7 +730,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
-            organizeImports(connectedCU);
+            organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
 
             getShell().getDisplay().asyncExec(new Runnable()
@@ -749,7 +755,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             {
                 connectedCU.discardWorkingCopy();
             }
-            
+
         }
 
     }
@@ -812,7 +818,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
             buffer.setContents(fileContents);
 
-            organizeImports(connectedCU);
+            organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
 
             getShell().getDisplay().asyncExec(new Runnable()
