@@ -779,8 +779,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
     private void organizeImports(ICompilationUnit cu, IProgressMonitor monitor) throws OperationCanceledException, CoreException
     {
-        if (true)
-            return;
+        
 
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
         // OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
@@ -808,7 +807,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             try
             {
                 constructor = importClass.getDeclaredConstructors()[0];
-                Object newInstance = constructor.newInstance(cu, unit, true, true, true, null);
+                Object newInstance = constructor.newInstance(cu, unit, true, false, true, null);
 
                 Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
                 method.invoke(newInstance, monitor);
