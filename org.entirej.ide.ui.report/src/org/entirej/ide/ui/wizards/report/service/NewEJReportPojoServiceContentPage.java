@@ -728,6 +728,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             organizeImports(connectedCU, monitor);
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -816,6 +817,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             organizeImports(connectedCU, monitor);
 
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()

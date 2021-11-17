@@ -735,12 +735,17 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
-            EJCoreLog.logInfoMessage("start organizeImports - > ");
            
+           
+           
+            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
+            EJCoreLog.logInfoMessage("start organizeImports - > ");
+            organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end organizeImports - > ");
             EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
@@ -880,6 +885,8 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             organizeImports(connectedCU, monitor);
+
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
