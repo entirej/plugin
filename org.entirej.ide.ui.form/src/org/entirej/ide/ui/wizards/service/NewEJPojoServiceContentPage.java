@@ -31,7 +31,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -46,7 +45,6 @@ import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
-import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -779,46 +777,43 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             return;
 
         CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
-        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
-        op.run(monitor);
-        // Class<?> importClass = null;
-        // try
-        // {
-        // importClass =
-        // this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
-        // }
-        // catch (ClassNotFoundException e)
-        // {
-        // try
-        // {
-        // importClass =
-        // this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
-        // }
-        // catch (ClassNotFoundException ex)
-        // {
-        // System.err.println("NO OrganizeImportsOperation found");
-        // }
-        // }
-        // if (importClass != null)
-        // {
-        // Constructor<?> constructor;
-        // try
-        // {
-        // constructor = importClass.getDeclaredConstructors()[0];
-        // Object newInstance = constructor.newInstance(cu, unit, true, true,
-        // true, null);
-        //
-        // Method method = importClass.getMethod("run",
-        // org.eclipse.core.runtime.IProgressMonitor.class);
-        // method.invoke(newInstance, new NullProgressMonitor());
-        // }
-        //
-        // catch (Throwable e)
-        // {
-        // e.printStackTrace();
-        // }
-        //
-        // }
+        // OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
+        // true, false, true, null);
+        // op.run(monitor);
+        Class<?> importClass = null;
+        try
+        {
+            importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
+        }
+        catch (ClassNotFoundException e)
+        {
+            try
+            {
+                importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
+            }
+            catch (ClassNotFoundException ex)
+            {
+                System.err.println("NO OrganizeImportsOperation found");
+            }
+        }
+        if (importClass != null)
+        {
+            Constructor<?> constructor;
+            try
+            {
+                constructor = importClass.getDeclaredConstructors()[0];
+                Object newInstance = constructor.newInstance(cu, unit, true, false, true, null);
+
+                Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
+                method.invoke(newInstance, monitor);
+            }
+
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+            }
+
+        }
 
     }
 

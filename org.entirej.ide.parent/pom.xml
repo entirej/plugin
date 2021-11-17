@@ -46,8 +46,8 @@
 
 	<repositories>
 		<repository>
-			<id>update41</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.14</url>
+			<id>update37</id>
+			<url>http://download.eclipse.org/eclipse/updates/3.7</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
