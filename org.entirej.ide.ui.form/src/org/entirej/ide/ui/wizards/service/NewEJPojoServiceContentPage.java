@@ -738,9 +738,9 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
            
            
            
-            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
+//            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
+//            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+//            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
             EJCoreLog.logInfoMessage("start organizeImports - > ");
             organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end organizeImports - > ");
@@ -883,7 +883,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             buffer.setContents(fileContents);
 
             
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+//            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             organizeImports(connectedCU, monitor);
 
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));

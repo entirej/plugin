@@ -726,7 +726,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
 
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+           // connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             getShell().getDisplay().asyncExec(new Runnable()
