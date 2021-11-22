@@ -740,12 +740,14 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             // SubProgressMonitor(monitor, 1));
             // EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
 
-            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
-            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
             EJCoreLog.logInfoMessage("start organizeImports - > ");
             organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end organizeImports - > ");
+            
+            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
+            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
+           
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -769,9 +771,8 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             {
                 connectedCU.discardWorkingCopy();
             }
-            // IJavaProject javaProject = getJavaProject();
-            // javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
-            // monitor);
+            IJavaProject javaProject = getJavaProject();
+            javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
         }
 
     }
@@ -797,8 +798,6 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         if (pojoClassName != null)
         {
-            IJavaProject javaProject = getJavaProject();
-            javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
         }
@@ -846,9 +845,6 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            EJCoreLog.logInfoMessage("start organizeImports - > ");
-           
-            EJCoreLog.logInfoMessage("end organizeImports - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
