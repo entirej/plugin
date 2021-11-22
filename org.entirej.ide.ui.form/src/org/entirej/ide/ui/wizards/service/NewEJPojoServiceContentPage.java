@@ -769,10 +769,11 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         {
             if (connectedCU != null)
             {
+                connectedCU.close();
                 connectedCU.discardWorkingCopy();
             }
             IJavaProject javaProject = getJavaProject();
-            javaProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+            javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
         }
 
     }
