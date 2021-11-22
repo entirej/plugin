@@ -844,9 +844,10 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             buffer.setContents(fileContents);
 
+            organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             EJCoreLog.logInfoMessage("start organizeImports - > ");
-            organizeImports(connectedCU, monitor);
+           
             EJCoreLog.logInfoMessage("end organizeImports - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
