@@ -38,7 +38,7 @@
 	</modules>
 
 	<properties>
-		<tycho-version>0.20.0</tycho-version>
+		<tycho-version>1.4.0</tycho-version>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 		<BUILD.SIGN.PATH></BUILD.SIGN.PATH>
 		<BUILD.SIGN.PASS></BUILD.SIGN.PASS>
@@ -46,13 +46,13 @@
 
 	<repositories>
 		<repository>
-			<id>update37</id>
-			<url>http://download.eclipse.org/eclipse/updates/3.7</url>
+			<id>update4.11</id>
+			<url>http://download.eclipse.org/eclipse/updates/4.11</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
-			<id>update37-gef</id>
-			<url>http://www.eclipse.org/modeling/amalgam/downloads/package/modeling/mars/</url>
+			<id>update4.1-gef</id>
+			<url>http://download.eclipse.org/tools/gef/updates/legacy/releases</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

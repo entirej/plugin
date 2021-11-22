@@ -18,9 +18,7 @@
  ******************************************************************************/
 package org.entirej.ide.ui.wizards.service;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +43,7 @@ import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -735,18 +734,18 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             buffer.setContents(fileContents);
             final IType createdType = parentCU.getType(pojoGeneratorType.getClassName());
-           
-           
-           
-//            EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
-//            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-//            EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
-            EJCoreLog.logInfoMessage("start organizeImports - > ");
-            organizeImports(connectedCU, monitor);
-            EJCoreLog.logInfoMessage("end organizeImports - > ");
+
+            // EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
+            // connectedCU.commitWorkingCopy(true, new
+            // SubProgressMonitor(monitor, 1));
+            // EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
+
             EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
+            EJCoreLog.logInfoMessage("start organizeImports - > ");
+            organizeImports(connectedCU, monitor);
+            EJCoreLog.logInfoMessage("end organizeImports - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -779,46 +778,10 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
     private void organizeImports(ICompilationUnit cu, IProgressMonitor monitor) throws OperationCanceledException, CoreException
     {
-        
 
-        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
-        // OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit,
-        // true, false, true, null);
-        // op.run(monitor);
-        Class<?> importClass = null;
-        try
-        {
-            importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.core.manipulation.OrganizeImportsOperation");
-        }
-        catch (ClassNotFoundException e)
-        {
-            try
-            {
-                importClass = this.getClass().getClassLoader().loadClass("org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation");
-            }
-            catch (ClassNotFoundException ex)
-            {
-                System.err.println("NO OrganizeImportsOperation found");
-            }
-        }
-        if (importClass != null)
-        {
-            Constructor<?> constructor;
-            try
-            {
-                constructor = importClass.getDeclaredConstructors()[0];
-                Object newInstance = constructor.newInstance(cu, unit, true, false, true, null);
-
-                Method method = importClass.getMethod("run", org.eclipse.core.runtime.IProgressMonitor.class);
-                method.invoke(newInstance, monitor);
-            }
-
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
-
-        }
+        CompilationUnit unit = cu.reconcile(AST.JLS8, false, null, monitor);
+        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
+        op.run(monitor);
 
     }
 
@@ -881,11 +844,10 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             buffer.setContents(fileContents);
 
-            
-//            connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            organizeImports(connectedCU, monitor);
-
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+            EJCoreLog.logInfoMessage("start organizeImports - > ");
+            organizeImports(connectedCU, monitor);
+            EJCoreLog.logInfoMessage("end organizeImports - > ");
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
