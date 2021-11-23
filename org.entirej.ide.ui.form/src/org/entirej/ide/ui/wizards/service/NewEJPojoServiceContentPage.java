@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -648,8 +649,16 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
             if (isCreateSerivce())
             {
+                
                 createServiceClass(blockServiceContent, pojoClassName, servicePage, monitor);
             }
+            getShell().getDisplay().asyncExec(new Runnable()
+            {
+                public void run()
+                {
+                    build(new NullProgressMonitor());
+                }
+            });
         }
         catch (final Throwable e)
         {

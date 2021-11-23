@@ -78,7 +78,7 @@ public class NewEJPojoServiceWizard extends NewWizard implements IExecutableExte
     @Override
     protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException
     {
-        contentPage.createPojoService(pojoServiceSelectPage, servicePage,true, monitor);
+        contentPage.createPojoService(pojoServiceSelectPage, servicePage,false, monitor);
         serviceTypeName = servicePage != null ? servicePage.getTypeName() : null;
         monitor.done();
     }
