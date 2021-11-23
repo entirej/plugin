@@ -624,7 +624,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
     }
 
-    public void createPojoService(NewEJPojoServiceSelectPage pojoPage, NewEJGenServicePage servicePage, IProgressMonitor monitor)
+    public void createPojoService(NewEJPojoServiceSelectPage pojoPage, NewEJGenServicePage servicePage, boolean build, IProgressMonitor monitor)
     {
         try
         {
@@ -644,7 +644,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             pojoGeneratorType.setClassName(pojoPage.getTypeName());
             String pojoClassName = null;
             if (!wizardProvider.skipMainPojo())
-                pojoClassName = createPojoClass(pojoGeneratorType, monitor);
+                pojoClassName = createPojoClass(pojoGeneratorType, build, monitor);
 
             if (isCreateSerivce())
             {
@@ -665,7 +665,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         }
     }
 
-    public String createPojoClass(EJPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception, CoreException
+    public String createPojoClass(EJPojoGeneratorType pojoGeneratorType, boolean build, IProgressMonitor monitor) throws Exception, CoreException
     {
 
         EJCoreLog.logInfoMessage("Start - > createPojoClass");
@@ -743,11 +743,11 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
             EJCoreLog.logInfoMessage("start organizeImports - > ");
             organizeImports(connectedCU, monitor);
             EJCoreLog.logInfoMessage("end organizeImports - > ");
-            
+
             EJCoreLog.logInfoMessage("start commitWorkingCopy - > ");
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
             EJCoreLog.logInfoMessage("end commitWorkingCopy - > ");
-           
+
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
@@ -772,8 +772,25 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 connectedCU.close();
                 connectedCU.discardWorkingCopy();
             }
-            IJavaProject javaProject = getJavaProject();
+            if (build)
+            {
+                IJavaProject javaProject = getJavaProject();
+                javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
+            }
+        }
+
+    }
+
+    public void build(IProgressMonitor monitor)
+    {
+        IJavaProject javaProject = getJavaProject();
+        try
+        {
             javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
+        }
+        catch (CoreException e)
+        {
+            e.printStackTrace();
         }
 
     }

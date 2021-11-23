@@ -47,38 +47,40 @@ public interface BlockServiceContentProvider
     public interface BlockServiceWizardProvider
     {
         void init(GeneratorContext context);
+
         void init(ReportGeneratorContext context);
 
         List<IWizardPage> getPages();
+
         List<IWizardPage> getOptionalPages();
 
         boolean canFinish(IWizardPage page);
 
         boolean skipPage(IWizardPage page);
-        
+
         boolean skipMainPojo();
-        
+
         String getPojoSuggest();
+
         String getServiceSuggest();
 
         void createRequiredResources(IProgressMonitor monitor);
 
         BlockServiceContent getContent();
-        
+
         String getPogoGenerator();
+
         String getServiceGenerator();
-        
+
         String getReportPogoGenerator();
+
         String getReportServiceGenerator();
-        
-        //TODO : report
-        
-        
+
+        // TODO : report
+
         ReportBlockServiceContent getReportContent();
     }
 
-    
-    
     public interface GeneratorContext
     {
         IPackageFragmentRoot getPackageFragmentRoot();
@@ -87,16 +89,19 @@ public interface BlockServiceContentProvider
 
         boolean skipService();
 
-        String createPojoClass(EJPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception;
+        String createPojoClass(EJPojoGeneratorType pojoGeneratorType, boolean build, IProgressMonitor monitor) throws Exception;
+
+        void build(IProgressMonitor monitor);
     }
+
     public interface ReportGeneratorContext
     {
         IPackageFragmentRoot getPackageFragmentRoot();
-        
+
         IJavaProject getProject();
-        
+
         boolean skipService();
-        
+
         String createPojoClass(EJReportPojoGeneratorType pojoGeneratorType, IProgressMonitor monitor) throws Exception;
     }
 
@@ -121,24 +126,23 @@ public interface BlockServiceContentProvider
             return pojoGeneratorType;
         }
     }
-    
-    
+
     public class ReportBlockServiceContent
     {
         private final EJReportServiceGeneratorType serviceGeneratorType;
         private final EJReportPojoGeneratorType    pojoGeneratorType;
-        
+
         public ReportBlockServiceContent(EJReportServiceGeneratorType serviceGeneratorType, EJReportPojoGeneratorType pojoGeneratorType)
         {
             this.serviceGeneratorType = serviceGeneratorType;
             this.pojoGeneratorType = pojoGeneratorType;
         }
-        
+
         public EJReportServiceGeneratorType getServiceGeneratorType()
         {
             return serviceGeneratorType;
         }
-        
+
         public EJReportPojoGeneratorType getpPojoGeneratorType()
         {
             return pojoGeneratorType;
