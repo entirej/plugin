@@ -825,6 +825,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         if (pojoClassName != null)
         {
+            build(monitor);
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
         }
