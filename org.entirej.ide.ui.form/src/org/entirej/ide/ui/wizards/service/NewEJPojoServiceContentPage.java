@@ -652,13 +652,6 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 
                 createServiceClass(blockServiceContent, pojoClassName, servicePage, monitor);
             }
-            getShell().getDisplay().asyncExec(new Runnable()
-            {
-                public void run()
-                {
-                    build(new NullProgressMonitor());
-                }
-            });
         }
         catch (final Throwable e)
         {
