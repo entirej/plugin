@@ -764,7 +764,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                                     e.printStackTrace();
                                 }
                             }
-                            context.build(monitor);
+                            //context.build(monitor);
                             
                         }
 
