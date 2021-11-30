@@ -776,8 +776,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 connectedCU.close();
                 connectedCU.discardWorkingCopy();
             }
-            if (build)
-            {
+            
                 IJavaProject javaProject = getJavaProject();
 
                 IProjectDescription description = javaProject.getProject().getDescription();
@@ -814,7 +813,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                     e.printStackTrace();
                 }
 
-            }
+            
         }
 
     }
@@ -854,7 +853,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         if (pojoClassName != null)
         {
-            build(monitor);
+            
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
         }

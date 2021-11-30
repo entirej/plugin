@@ -755,7 +755,7 @@ public class OraTypeBlockServiceContentProvider implements BlockServiceContentPr
                                 try
                                 {
                                     reValidateDataTypes(inner);
-                                    String clazz = context.createPojoClass(inner, false, monitor);
+                                    String clazz = context.createPojoClass(inner, true, monitor);
                                     innerClass.put(objName, clazz);
                                 }
                                 catch (Exception e)
