@@ -42,6 +42,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -104,6 +105,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
      */
     private List<IWizardPage>           pages           = new ArrayList<IWizardPage>();
     private List<IWizardPage>           opPages         = new ArrayList<IWizardPage>();
+    private List<Runnable>              postActions     = new ArrayList<Runnable>();
     private NewEJPojoServiceSelectPage  pojoPage;
 
     public NewEJPojoServiceContentPage(NewEJPojoServiceSelectPage pojoServiceSelectPage)
@@ -669,6 +671,17 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
         }
     }
 
+    public void runPostActions()
+    {
+        List<Runnable> _postActions = new ArrayList<Runnable>(postActions);
+        postActions.clear();
+
+        for (Runnable runnable : _postActions)
+        {
+            Display.getDefault().asyncExec(runnable);
+        }
+    }
+
     public String createPojoClass(EJPojoGeneratorType pojoGeneratorType, boolean build, IProgressMonitor monitor) throws Exception, CoreException
     {
 
@@ -776,44 +789,43 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                 connectedCU.close();
                 connectedCU.discardWorkingCopy();
             }
-            
-                IJavaProject javaProject = getJavaProject();
 
-                IProjectDescription description = javaProject.getProject().getDescription();
-                String[] natures = description.getNatureIds();
-                boolean updateNatures = false;
+            IJavaProject javaProject = getJavaProject();
+
+            IProjectDescription description = javaProject.getProject().getDescription();
+            String[] natures = description.getNatureIds();
+            boolean updateNatures = false;
+            try
+            {
+
+                List<String> newNatures = new ArrayList<String>(Arrays.asList(natures));
                 try
                 {
-
-                    List<String> newNatures = new ArrayList<String>(Arrays.asList(natures));
-                    try
+                    if (newNatures.contains("org.eclipse.m2e.core.maven2Nature"))
                     {
-                        if (newNatures.contains("org.eclipse.m2e.core.maven2Nature"))
-                        {
-                            updateNatures = true;
-                            newNatures.remove("org.eclipse.m2e.core.maven2Nature");
-                            description.setNatureIds(newNatures.toArray(new String[0]));
-                            javaProject.getProject().setDescription(description, null);
-                        }
-
-                        javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
-
+                        updateNatures = true;
+                        newNatures.remove("org.eclipse.m2e.core.maven2Nature");
+                        description.setNatureIds(newNatures.toArray(new String[0]));
+                        javaProject.getProject().setDescription(description, null);
                     }
-                    finally
-                    {
-                        if (updateNatures)
-                        {
-                            description.setNatureIds(natures);
-                            javaProject.getProject().setDescription(description, null);
-                        }
-                    }
+
+                    javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
+
                 }
-                catch (CoreException e)
+                finally
                 {
-                    e.printStackTrace();
+                    if (updateNatures)
+                    {
+                        description.setNatureIds(natures);
+                        javaProject.getProject().setDescription(description, null);
+                    }
                 }
+            }
+            catch (CoreException e)
+            {
+                e.printStackTrace();
+            }
 
-            
         }
 
     }
@@ -832,12 +844,36 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
     }
 
-    private void organizeImports(ICompilationUnit cu, IProgressMonitor monitor) throws OperationCanceledException, CoreException
+    private void organizeImports(final ICompilationUnit cu, final IProgressMonitor monitor) throws OperationCanceledException, CoreException
     {
 
-        CompilationUnit unit = cu.reconcile(AST.JLS8, false, null, monitor);
-        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
-        op.run(monitor);
+        postActions.add(new Runnable()
+        {
+
+            public void run()
+            {
+                CompilationUnit unit;
+                try
+                {
+                    unit = cu.reconcile(AST.JLS8, false, null, monitor);
+                    OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
+                    op.run(monitor);
+                }
+                catch (JavaModelException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (OperationCanceledException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (CoreException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 
@@ -853,7 +889,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
         if (pojoClassName != null)
         {
-            
+
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
         }
