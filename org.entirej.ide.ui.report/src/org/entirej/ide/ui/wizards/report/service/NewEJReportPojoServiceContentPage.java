@@ -22,11 +22,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -720,7 +722,40 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
                 connectedCU.discardWorkingCopy();
             }
             IJavaProject javaProject = getJavaProject();
-            javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
+
+            IProjectDescription description = javaProject.getProject().getDescription();
+            String[] natures = description.getNatureIds();
+            boolean updateNatures = false;
+            try
+            {
+
+                List<String> newNatures = new ArrayList<String>(Arrays.asList(natures));
+                try
+                {
+                    if (newNatures.contains("org.eclipse.m2e.core.maven2Nature"))
+                    {
+                        updateNatures = true;
+                        newNatures.remove("org.eclipse.m2e.core.maven2Nature");
+                        description.setNatureIds(newNatures.toArray(new String[0]));
+                        javaProject.getProject().setDescription(description, null);
+                    }
+
+                    javaProject.getProject().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
+
+                }
+                finally
+                {
+                    if (updateNatures)
+                    {
+                        description.setNatureIds(natures);
+                        javaProject.getProject().setDescription(description, null);
+                    }
+                }
+            }
+            catch (CoreException e)
+            {
+                e.printStackTrace();
+            }
         }
 
     }
