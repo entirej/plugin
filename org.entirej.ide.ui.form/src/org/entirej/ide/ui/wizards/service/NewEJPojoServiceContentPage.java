@@ -656,6 +656,7 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
 
                 createServiceClass(blockServiceContent, pojoClassName, servicePage, monitor);
             }
+            runPostActions();
         }
         catch (final Throwable e)
         {
