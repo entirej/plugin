@@ -859,6 +859,8 @@ public class NewEJPojoServiceContentPage extends NewTypeWizardPage implements Bl
                     unit = cu.reconcile(AST.JLS8, false, null, monitor);
                     OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
                     op.run(monitor);
+                    
+                    cu.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
                 }
                 catch (JavaModelException e)
                 {
