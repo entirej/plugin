@@ -43,6 +43,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -108,6 +109,8 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
     private List<IWizardPage>                      pages           = new ArrayList<IWizardPage>();
 
     private List<IWizardPage>                      opPages         = new ArrayList<IWizardPage>();
+
+    private List<Runnable>                         postActions     = new ArrayList<Runnable>();
     private Object                                 object;
 
     public NewEJReportPojoServiceContentPage(NewEJReportPojoServiceSelectPage pojoServiceSelectPage)
@@ -610,6 +613,8 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             {
                 createServiceClass(blockServiceContent, pojoClassName, servicePage, monitor);
             }
+            
+            runPostActions();
         }
         catch (final Exception e)
         {
@@ -623,13 +628,50 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
             throw new RuntimeException(e);
         }
     }
+    
+    public void runPostActions()
+    {
+        List<Runnable> _postActions = new ArrayList<Runnable>(postActions);
+        postActions.clear();
 
-    private void organizeImports(ICompilationUnit cu, IProgressMonitor monitor) throws OperationCanceledException, CoreException
+        for (Runnable runnable : _postActions)
+        {
+            Display.getDefault().asyncExec(runnable);
+        }
+    }
+
+    private void organizeImports(final ICompilationUnit cu, final IProgressMonitor monitor) throws OperationCanceledException, CoreException
     {
 
-        CompilationUnit unit = cu.reconcile(AST.JLS4, false, null, monitor);
-        OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
-        op.run(monitor);
+        postActions.add(new Runnable()
+        {
+
+            public void run()
+            {
+                CompilationUnit unit;
+                try
+                {
+                    unit = cu.reconcile(AST.JLS8, false, null, monitor);
+                    OrganizeImportsOperation op = new OrganizeImportsOperation(cu, unit, true, true, true, null);
+                    op.run(monitor);
+
+                    cu.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+                }
+                catch (JavaModelException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (OperationCanceledException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (CoreException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 
@@ -771,7 +813,7 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
         serviceGeneratorType.setServiceName(serviceClassName);
         if (pojoClassName != null)
         {
-            
+
             Class<?> pojoClass = EJPluginEntireJClassLoader.loadClass(servicePage.getJavaProject(), pojoClassName);
             serviceGeneratorType.setPojo(pojoClass);
         }
@@ -817,10 +859,9 @@ public class NewEJReportPojoServiceContentPage extends NewTypeWizardPage impleme
 
             buffer.setContents(fileContents);
 
-            
             organizeImports(connectedCU, monitor);
             connectedCU.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-            
+
             getShell().getDisplay().asyncExec(new Runnable()
             {
                 public void run()
