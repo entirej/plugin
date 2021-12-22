@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.equinox.preferences,
  org.eclipse.ui.workbench
 Plugin-Class: org.entirej.framework.plugin.EntireJFrameworkPlugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.entirej.framework.plugin,
  org.entirej.framework.plugin.framework.properties,
  org.entirej.framework.plugin.framework.properties.containers,
