@@ -70,9 +70,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
 
     protected EJPluginFormProperties getFormProperties(AbstractEJFormEditor editor)
     {
-        return  editor.getFormProperties();
+        return editor.getFormProperties();
     }
-    
+
     public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
     {
         // layout canvas preview
@@ -187,36 +187,33 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
         layoutBody.setLayoutData(createGridData(component));
         layoutBody.setLayout(new GridLayout());
         Label spaceLabel = new Label(layoutBody, SWT.NONE);
-        spaceLabel.setText(String.format("<%s>",
-                (component.getPluginBlockProperties() == null || component.getPluginBlockProperties().getName().length() == 0) ? "<block>" : component
-                        .getPluginBlockProperties().getName()));
+        spaceLabel.setText(
+                String.format("<%s>", (component.getPluginBlockProperties() == null || component.getPluginBlockProperties().getName().length() == 0) ? "<block>"
+                        : component.getPluginBlockProperties().getName()));
         spaceLabel.setLayoutData(createGridData(component));
         setPreviewBackground(spaceLabel, COLOR_LIGHT_RED);
         spaceLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
         setPreviewBackground(layoutBody, COLOR_LIGHT_RED);
 
     }
+
     protected void createSeparator(Composite parent, EJPluginCanvasProperties component)
     {
-        
+
         int style = SWT.SEPARATOR;
-        
-        if(component.getSplitOrientation()==EJCanvasSplitOrientation.HORIZONTAL)
+
+        if (component.getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL)
         {
-            style = style| SWT.HORIZONTAL;
+            style = style | SWT.HORIZONTAL;
         }
         else
         {
-            style = style| SWT.VERTICAL;
+            style = style | SWT.VERTICAL;
         }
-                    
-        
+
         Label layoutBody = new Label(parent, style);
         layoutBody.setLayoutData(createGridData(component));
-      
-      
-        
-        
+
     }
 
     protected void createSplitLayout(Composite parent, EJPluginCanvasProperties group)
@@ -236,11 +233,14 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                 if (canvas.getType() == EJCanvasType.BLOCK && canvas.getBlockProperties() != null
                         && canvas.getBlockProperties().getMainScreenProperties() != null)
                 {
-                    int width = canvas.getSplitOrientation() ==EJCanvasSplitOrientation.HORIZONTAL ?canvas.getBlockProperties().getMainScreenProperties().getWidth():canvas.getBlockProperties().getMainScreenProperties().getHeight();
+                    int width = canvas.getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL
+                            ? canvas.getBlockProperties().getMainScreenProperties().getWidth()
+                            : canvas.getBlockProperties().getMainScreenProperties().getHeight();
                     weights[items.indexOf(canvas)] = width + 1;
                 }
                 else
-                    weights[items.indexOf(canvas)] = (canvas.getSplitOrientation() ==EJCanvasSplitOrientation.HORIZONTAL ? canvas.getWidth():canvas.getHeight()) + 1;
+                    weights[items.indexOf(
+                            canvas)] = (canvas.getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? canvas.getWidth() : canvas.getHeight()) + 1;
                 switch (canvas.getType())
                 {
                     case GROUP:
@@ -262,7 +262,7 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         createStackLayout(layoutBody, canvas);
                         break;
                     case SEPARATOR:
-                        createSeparator(layoutBody, canvas);  
+                        createSeparator(layoutBody, canvas);
                         break;
                     default:
                         createComponent(layoutBody, canvas);
@@ -391,9 +391,9 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         createStackLayout(composite, canvas);
                         break;
                     case SEPARATOR:
-                        createSeparator(composite, canvas);  
-                        break;    
-                        
+                        createSeparator(composite, canvas);
+                        break;
+
                     default:
                         createComponent(composite, canvas);
                         break;
@@ -404,29 +404,28 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
             layoutBody.setSelection(0);
 
     }
+
     protected void createDrawerLayout(Composite parent, EJPluginCanvasProperties group)
     {
         Composite layoutBody = new Composite(parent, SWT.BORDER | (group.getTabPosition() == EJCanvasTabPosition.TOP ? SWT.TOP : SWT.BOTTOM));
-        
+
         layoutBody.setLayoutData(createGridData(group));
         layoutBody.setLayout(new GridLayout(1, false));
         setPreviewBackground(layoutBody, COLOR_LIGHT_YELLOW);
         List<EJPluginDrawerPageProperties> items = group.getDrawerPageContainer().getDrawerPageProperties();
-        
+
         boolean addSep = false;
         for (EJPluginDrawerPageProperties item : items)
         {
-            if(addSep)
+            if (addSep)
                 new Label(layoutBody, SWT.SEPARATOR | SWT.HORIZONTAL);
             TabButton tabItem = new TabButton(layoutBody, SWT.NONE);
-           
+
             tabItem.setText((item.getPageTitle() != null && item.getPageTitle().length() > 0) ? item.getPageTitle() : "<title>: " + item.getName());
-            
-           
+
             addSep = true;
         }
-        
-        
+
     }
 
     protected void createStackLayout(Composite parent, EJPluginCanvasProperties group)
@@ -497,13 +496,11 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
     {
         return "preview the defined canvas layout in form.";
     }
-    
-    
-    
+
     class TabButton extends Canvas
     {
         private int     mouse         = 0;
-        private boolean selection           = false;
+        private boolean selection     = false;
         private String  text          = "";
         float           rotatingAngle = 270F;
         int             index         = 0;
@@ -541,7 +538,7 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
                         notifyListeners(SWT.Selection, new Event());
                 }
             });
-            
+
         }
 
         public void setSelection(boolean selection)
@@ -549,8 +546,7 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
             this.selection = selection;
             redraw();
         }
-        
-        
+
         public void setText(String string)
         {
             this.text = string;
@@ -560,7 +556,7 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
             getParent().layout(true);
             redraw();
         }
-        
+
         public float getAvgCharWidth(Font font)
         {
             GC gc = new GC(Display.getCurrent());
@@ -582,27 +578,30 @@ public class FormCanvasPreviewImpl implements IFormPreviewProvider
 
             Transform tr = null;
             tr = new Transform(e.display);
-            
-            Rectangle rectangle = getParent().getBounds();
-            Rectangle r = getBounds();
-            e.width = rectangle.width;
-            
-            
-            
-            // e.gc.setAntialias(SWT.ON);
-            Point p = e.gc.stringExtent(text);
-            
-            tr.translate((rectangle.width / 2), (r.height / 2));
-            tr.rotate(rotatingAngle);
-            e.gc.setTransform(tr);
-
-           
-            
-            e.gc.drawString(text, (r.height / 2) * -1, ((rectangle.width / 2) * -1) + (p.y / 2),true);
-            if(selection)
+            try
             {
-                e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-                e.gc.fillRectangle(0,0,r.height,r.width);
+
+                Rectangle rectangle = getParent().getBounds();
+                Rectangle r = getBounds();
+                e.width = rectangle.width;
+
+                // e.gc.setAntialias(SWT.ON);
+                Point p = e.gc.stringExtent(text);
+
+                tr.translate((rectangle.width / 2), (r.height / 2));
+                tr.rotate(rotatingAngle);
+                e.gc.setTransform(tr);
+
+                e.gc.drawString(text, (r.height / 2) * -1, ((rectangle.width / 2) * -1) + (p.y / 2), true);
+                if (selection)
+                {
+                    e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+                    e.gc.fillRectangle(0, 0, r.height, r.width);
+                }
+            }
+            finally
+            {
+                tr.dispose();
             }
         }
     }
