@@ -61,6 +61,8 @@ public class EJRWTRendererConfigFix
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTPieChartRecordBlockDefinition"));
         mappingBlock.add(new Entry("BarChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTBarChartRecordBlockRenderer",
                 "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTBarChartRecordBlockDefinition"));
+        mappingBlock.add(new Entry("RadarChartRecord", "org.entirej.applicationframework.rwt.renderers.chart.EJRWTRadarChartRecordBlockRenderer",
+                "org.entirej.applicationframework.rwt.renderers.block.definition.EJRWTRadarChartRecordBlockDefinition"));
         
         // items
         mappingItem.add(new Entry("ListItem", "org.entirej.applicationframework.rwt.renderers.item.EJRWTListItemRenderer",
@@ -78,7 +80,7 @@ public class EJRWTRendererConfigFix
         {
             return "Standard Renderers";
         }
-        if("LineChartRecord".equals(id)||"PieChartRecord".equals(id)||"BarChartRecord".equals(id))
+        if("LineChartRecord".equals(id)||"PieChartRecord".equals(id)||"BarChartRecord".equals(id)||"RadarChartRecord".equals(id))
         {
             return "Graph Renderers";
         }
@@ -146,7 +148,7 @@ public class EJRWTRendererConfigFix
         
         if(confied)
         {
-            properties.setVersion("2.6");
+            properties.setVersion("2.7");
         }
         return confied;
     }
@@ -161,7 +163,11 @@ public class EJRWTRendererConfigFix
                         ||  properties.getVersion().equals("2.2")
                         ||  properties.getVersion().equals("2.3")
                         ||  properties.getVersion().equals("2.4")
-                        ||  properties.getVersion().equals("2.5"));
+                        ||  properties.getVersion().equals("2.5")
+                        ||  properties.getVersion().equals("2.5")
+                        ||  properties.getVersion().equals("2.6")
+                        
+                        );
     }
     
 }
