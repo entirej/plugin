@@ -44,6 +44,7 @@ public class EmptyClientFrameworkProvider implements ClientFrameworkProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), "/templates/empty/pom.xml", "pom.xml");
             CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), EMPTY_PROJECT_PROPERTIES_FILE, "src/application.ejprop");
 
             CFProjectHelper.addEntireJBaseLibraries(project);

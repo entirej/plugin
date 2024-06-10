@@ -51,6 +51,7 @@ public class RWTClientFrameworkProvider implements ClientFrameworkProvider
     private static final String RWT_PROJECT_PROPERTIES_FILE = "/templates/rwt/application.ejprop";
     private static final String RWT_PROJECT_RENDERER_FILE   = "/templates/rwt/renderers.ejprop";
     private static final String RWT_APP_LAUNCHER            = "/templates/rwt/ApplicationLauncher.java";
+    private static final String RWT_POM                  = "/templates/rwt/pom.xml";
     private static final String RWT_WEB_DD                  = "/templates/rwt/web.xml";
     private static final String RWT_WEB_INDEX               = "/templates/rwt/index.html";
 
@@ -59,6 +60,7 @@ public class RWTClientFrameworkProvider implements ClientFrameworkProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_POM, "pom.xml");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_PROPERTIES_FILE, "src/application.ejprop");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_PROJECT_RENDERER_FILE, "src/renderers.ejprop");
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_APP_LAUNCHER, "src/org/entirej/ApplicationLauncher.java");
@@ -71,9 +73,10 @@ public class RWTClientFrameworkProvider implements ClientFrameworkProvider
 
             IClasspathAttribute[] attributes = getClasspathAttributes();
             CFProjectHelper.addEntireJBaseLibraries(project, attributes);
-            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTCFRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
-            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTCoreRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
-            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTRapRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
+//            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTCFRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
+//            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTCoreRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
+//            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTRapRuntimeClasspathContainer.ID, new IAccessRule[0], attributes, true));
+//            
             CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jst.j2ee.internal.web.container")));
             CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jst.j2ee.internal.module.container")));
 
@@ -143,17 +146,20 @@ public class RWTClientFrameworkProvider implements ClientFrameworkProvider
         try
         {
             /*
-             * <nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
-             * <nature>org
-             * .eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-             * <nature>org.eclipse.wst.common.project.facet.core.nature</nature>
-             * <nature>org.eclipse.wst.jsdt.core.jsNature</nature>
+<nature>org.eclipse.m2e.core.maven2Nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
+		<nature>org.entirej.ide.EJNature</nature>
              */
             IProjectDescription description = project.getProject().getDescription();
             String[] natures = description.getNatureIds();
             List<String> newNatures = new ArrayList<String>(Arrays.asList(natures));
+            newNatures.add("org.eclipse.m2e.core.maven2Nature");
+            newNatures.add("org.eclipse.jdt.core.javanature");
             newNatures.add("org.eclipse.jem.workbench.JavaEMFNature");
-            newNatures.add("org.eclipse.wst.common.modulecore.ModuleCoreNature");
             newNatures.add("org.eclipse.wst.common.project.facet.core.nature");
             newNatures.add("org.eclipse.wst.jsdt.core.jsNature");
             description.setNatureIds(newNatures.toArray(new String[0]));

@@ -22,7 +22,7 @@
 		<module>../org.entirej.ide.ui.form</module>
 		<module>../org.entirej.ide.ui.report</module>
 		<module>../org.entirej.ide.cf.rwt</module>
-		<module>../org.entirej.ide.cf.fx</module>
+<!-- 		<module>../org.entirej.ide.cf.fx</module> -->
 		<module>../org.entirej.ext.mysql</module>
 		<module>../org.entirej.ext.hsql</module>
 		<module>../org.entirej.ext.jasper</module>
@@ -30,7 +30,7 @@
 		<module>../org.entirej.ext.oracle</module>
 
 		<module>../org.entirej.ide.feature</module>
-		<module>../org.entirej.fx.feature</module>
+<!-- 		<module>../org.entirej.fx.feature</module> -->
 		<module>../org.entirej.ide.report.feature</module>
 		<module>../org.entirej.ide.site</module>
 		<module>../org.entirej.ide.report.site</module>

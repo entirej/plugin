@@ -138,8 +138,10 @@ public class EJProject extends PlatformObject implements IProjectNature
 
     public void configure() throws CoreException
     {
+        addToBuildSpec("org.eclipse.m2e.core.maven2Builder", true);
         addToBuildSpec(EJConstants.EJ_FORM_CONST_BUILDER_ID, true);
         addToBuildSpec(EJConstants.EJ_PROPERTIES_BUILDER_ID, false);
+        addToBuildSpec(EJConstants.EJ_FORM_BUILDER_ID, false);
         addToBuildSpec(EJConstants.EJ_FORM_BUILDER_ID, false);
     }
 

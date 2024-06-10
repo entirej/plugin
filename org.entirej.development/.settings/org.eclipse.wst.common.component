@@ -3,7 +3,6 @@
     <wb-module deploy-name="entirej-development">
                 
         <wb-resource deploy-path="/" source-path="/src"/>
-        <wb-resource deploy-path="/" source-path="/tests"/>
             
     </wb-module>
     
