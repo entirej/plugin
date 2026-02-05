@@ -15,269 +15,523 @@ This project provides Eclipse RCP plugins for the EntireJ Framework - a model-dr
 ## Build Requirements
 
 - **Java:** JDK 17+ (required)
-- **Maven:** 3.6+ (Maven wrapper included for 3.9.6)
+- **Maven:** 3.9+ (Maven wrapper included for 3.9.6)
 - **Build System:** Apache Maven with Eclipse Tycho 4.0.8
 - **Target Platform:** Eclipse 4.33 (2024-09)
 
 ## Quick Start
 
-### Full Build (using Maven wrapper)
 ```bash
+# Full build using Maven wrapper (recommended)
 ./mvnw clean install
-```
 
-### Full Build (from parent directory)
-```bash
-cd org.entirej.ide.parent
-mvn clean install
-```
+# Skip tests
+./mvnw clean install -DskipTests
 
-### Build with JAR Signing (Release)
-```bash
+# Build with JAR signing (release)
 ./mvnw clean install -Prelease-sign -DBUILD.SIGN.PATH=/path/to/keystore -DBUILD.SIGN.PASS=password
 ```
 
-### Update External Libraries
-```bash
-cd org.entirej.ide.libs
-mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:copy
+---
+
+## Architecture Overview
+
+The EntireJ Eclipse plugin follows a **modular SPI (Service Provider Interface)** pattern with clearly defined extension points for extensibility.
+
+### Core Components
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Update Sites                                  │
+│   org.entirej.ide.site          org.entirej.ide.report.site         │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+┌─────────────────────────────────────────────────────────────────────┐
+│                          Features                                    │
+│   org.entirej.ide.feature       org.entirej.ide.report.feature      │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+┌─────────────────────────────────────────────────────────────────────┐
+│                        UI Layer                                      │
+│  ┌──────────────┐  ┌──────────────────┐  ┌────────────────────┐    │
+│  │org.entirej.  │  │org.entirej.ide.  │  │org.entirej.ide.    │    │
+│  │ide.ui        │  │ui.form           │  │ui.report           │    │
+│  │(Perspectives,│  │(Form Editor,     │  │(Report Editor,     │    │
+│  │ Wizards)     │  │ GEF Canvas)      │  │ GEF Preview)       │    │
+│  └──────────────┘  └──────────────────┘  └────────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Core Layer                                      │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ org.entirej.ide.core                                          │   │
+│  │ - Project Natures (EJNature, EJReportNature)                  │   │
+│  │ - Builders (5 consistency checkers)                           │   │
+│  │ - Classpath Containers                                        │   │
+│  │ - SPI Extension Points (8 defined)                            │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+┌─────────────────────────────────────────────────────────────────────┐
+│                   Provider Layer (SPI Implementations)               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │
+│  │Client       │  │Database     │  │Block Service│                 │
+│  │Frameworks   │  │Providers    │  │Providers    │                 │
+│  │- RWT        │  │- MySQL      │  │- Table      │                 │
+│  │- Swing      │  │- Oracle     │  │- Statement  │                 │
+│  │- JavaFX     │  │- H2/HSQL    │  │- Custom     │                 │
+│  └─────────────┘  └─────────────┘  └─────────────┘                 │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Runtime Layer                                   │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ org.entirej.core.runtime                                      │   │
+│  │ - entirej-core.jar                                            │   │
+│  │ - entirej-development.jar                                     │   │
+│  │ - entirej-report.jar                                          │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## Project Structure
 
 ```
 plugin/
 ├── org.entirej.ide.parent/          # Parent POM (build entry point)
-├── org.entirej.ide.libs/            # External dependency management
 ├── org.entirej.ide.target/          # Eclipse target platform definition
+├── org.entirej.ide.libs/            # External dependency management
 │
 ├── CORE PLUGINS
-│   ├── org.entirej.core.runtime/    # Core runtime framework & bundled JARs
-│   ├── org.entirej.ide.core/        # IDE core - natures, builders, extension points
-│   ├── org.entirej.ide.compatibility/# Legacy framework compatibility layer
-│   ├── org.entirej.ide.ui/          # Main UI plugin - editors, views
-│   ├── org.entirej.ide.ui.form/     # Form editor components
-│   └── org.entirej.ide.ui.report/   # Report editor components
+│   ├── org.entirej.core.runtime/    # Core runtime framework JARs
+│   ├── org.entirej.ide.core/        # Natures, builders, SPI extension points
+│   ├── org.entirej.ide.compatibility/# FreeMarker compatibility layer
+│   ├── org.entirej.ide.ui/          # Main UI - perspectives, wizards
+│   ├── org.entirej.ide.ui.form/     # Form editor with GEF canvas
+│   └── org.entirej.ide.ui.report/   # Report editor with GEF preview
 │
-├── CLIENT FRAMEWORK PLUGINS
-│   ├── org.entirej.ide.cf.rwt/      # RAP/RWT web client support
-│   ├── org.entirej.ide.cf.fx/       # JavaFX client support (disabled)
-│   └── org.entirej.ide.cf.swing/    # Swing client support
+├── CLIENT FRAMEWORK PROVIDERS
+│   ├── org.entirej.ide.cf.rwt/      # Eclipse RAP/RWT web client
+│   ├── org.entirej.ide.cf.fx/       # JavaFX client (not in default build)
+│   └── org.entirej.ide.cf.swing/    # Swing desktop client
 │
-├── DATABASE EXTENSIONS
-│   ├── org.entirej.ext.oracle/      # Oracle DB support (OJDBC8)
-│   ├── org.entirej.ext.mysql/       # MySQL support (Connector 5.1.22)
-│   └── org.entirej.ext.hsql/        # H2/HSQL support
-│
-├── REPORT EXTENSIONS
-│   └── org.entirej.ext.jasper/      # JasperReports integration
+├── DATABASE PROVIDERS
+│   ├── org.entirej.ext.oracle/      # Oracle DB support
+│   ├── org.entirej.ext.mysql/       # MySQL support
+│   └── org.entirej.ext.hsql/        # H2/HSQL embedded DB
 │
 ├── FEATURES & UPDATE SITES
 │   ├── org.entirej.ide.feature/     # Main IDE feature
 │   ├── org.entirej.ide.report.feature/ # Report feature
-│   ├── org.entirej.ide.site/        # P2 update site (IDE tools)
-│   └── org.entirej.ide.report.site/ # P2 update site (reports)
+│   ├── org.entirej.ide.site/        # P2 update site
+│   └── org.entirej.ide.report.site/ # Report update site
 │
 └── UTILITIES
-    ├── org.entirej.ide.upload/      # Deployment utilities
-    ├── org.entirej.ide.report.upload/
-    ├── org.entirej.ora.gen/         # Oracle generation tools
-    └── org.entirej.development/     # Development framework
+    ├── org.entirej.ext.jasper/      # JasperReports integration
+    └── org.entirej.ora.gen/         # Oracle PL/SQL generation
 ```
 
-## Module Details
+---
 
-### Core Plugins
+## Core Plugin Details
 
-| Module | Description | Packaging |
-|--------|-------------|-----------|
-| `org.entirej.core.runtime` | Bundles core JARs (entirej-core, entirej-development, entirej-report) | eclipse-plugin |
-| `org.entirej.ide.core` | Defines project natures, builders, classpath containers, extension points | eclipse-plugin |
-| `org.entirej.ide.compatibility` | Compatibility layer with Freemarker 2.3.23 for template processing | eclipse-plugin |
-| `org.entirej.ide.ui` | GEF-based editors, Eclipse perspectives, form wizards | eclipse-plugin |
-| `org.entirej.ide.ui.form` | Form-specific editors (.form, .block, .objgroup, .lovdef) | eclipse-plugin |
-| `org.entirej.ide.ui.report` | Report-specific editors and views | eclipse-plugin |
+### org.entirej.ide.core
 
-### Eclipse Extension Points
+The foundation plugin providing project infrastructure.
 
-The project defines several SPI extension points in `org.entirej.ide.core`:
+#### Project Natures
 
-- `org.entirej.ide.core.spi.clientframework.exportProvider` - Client framework implementations
-- `org.entirej.ide.core.spi.databaseconnectivity.exportProvider` - Database connectivity providers
-- `org.entirej.ide.core.spi.blockservicecontent.provider` - Block service content providers
-- `org.entirej.ide.core.spi.ejpropertiesvalidate.provider` - Properties validation
-- `org.entirej.ide.core.spi.ejformvalidate.provider` - Form validation
-- `org.entirej.ide.core.spi.ejreportpropertiesvalidate.provider` - Report properties validation
-- `org.entirej.ide.core.spi.ejreportvalidate.provider` - Report validation
-- `org.entirej.ide.core.spi.featureconfig.provider` - Feature configuration
+| Nature | ID | Purpose |
+|--------|-----|---------|
+| **EJNature** | `org.entirej.ide.EJNature` | Form projects - adds form builders |
+| **EJReportNature** | `org.entirej.ide.EJReportNature` | Report projects - adds report builders |
 
-### Classpath Containers
+**EJNature Configuration:**
+- Adds builders: Maven2Builder, EJFormConstBuilder, EJPropertiesBuilder, EJFormBuilder
+- Default properties file: `src/application.ejprop`
+- Default renderer file: `src/renderers.ejprop`
 
-- `EJ_CORE_CONTAINER` - EntireJ Core libraries
-- `EJ_REPORT_CONTAINER` - EntireJ Report libraries
-- `EJ_DEV_CONTAINER` - EntireJ Development libraries
+**EJReportNature Configuration:**
+- Adds builders: Maven2Builder, EJReportPropertiesBuilder, EJReportConstBuilder, EJReportBuilder
+- Default properties file: `src/report.ejprop`
 
-### Project Natures
+#### Builders
 
-- `EJNature` - EntireJ Form Project
-- `EJReportNature` - EntireJ Report Project
+| Builder ID | Purpose |
+|------------|---------|
+| `org.entirej.ide.EJPropertiesBuilder` | Validates application.ejprop |
+| `org.entirej.ide.EJFormBuilder` | Validates .form files |
+| `org.entirej.ide.EJFormConstBuilder` | Generates form constants |
+| `org.entirej.ide.EJReportPropertiesBuilder` | Validates report.ejprop |
+| `org.entirej.ide.EJReportBuilder` | Validates .ejreport files |
+| `org.entirej.ide.EJReportConstBuilder` | Generates report constants |
 
-## P2 Repositories (Target Platform)
+#### Classpath Containers
+
+| Container ID | Purpose |
+|--------------|---------|
+| `EJ_CORE_CONTAINER` | EntireJ core runtime libraries |
+| `EJ_REPORT_CONTAINER` | Report-specific libraries |
+| `EJ_DEV_CONTAINER` | Development runtime libraries |
+
+#### SPI Extension Points
 
 ```xml
-<repository location="https://download.eclipse.org/releases/2024-09"/>
-<repository location="https://download.eclipse.org/tools/gef/classic/release/latest"/>
+<!-- Client Framework Provider -->
+org.entirej.ide.core.spi.clientframework.exportProvider
+  Interface: ClientFrameworkProvider
+  Methods: addEntireJNature(), getProviderName(), getProviderId()
+
+<!-- Database Connectivity Provider -->
+org.entirej.ide.core.spi.databaseconnectivity.exportProvider
+  Interface: DBConnectivityProvider
+  Methods: addEntireJNature(), addEntireJReportNature()
+
+<!-- Block Service Content Provider -->
+org.entirej.ide.core.spi.blockservicecontent.provider
+  Interface: BlockServiceContentProvider
+  Implementations: Table, Statement, Custom
+
+<!-- Validation Providers -->
+org.entirej.ide.core.spi.ejpropertiesvalidate.provider
+org.entirej.ide.core.spi.ejformvalidate.provider
+org.entirej.ide.core.spi.ejreportpropertiesvalidate.provider
+org.entirej.ide.core.spi.ejreportvalidate.provider
+
+<!-- Feature Configuration Provider -->
+org.entirej.ide.core.spi.featureconfig.provider
+  Implementations: SpringFeatureConfigProvider, SpringKerberosFeatureConfigProvider
 ```
 
-**GEF Version:** 3.14.0+ (GEF Classic)
+---
 
-## Maven Repositories
+### org.entirej.ide.ui & org.entirej.ide.ui.form
 
-| Repository | URL | Purpose |
-|------------|-----|---------|
-| EntireJ Maven | https://raw.github.com/entirej/mavenrepo/gh-pages/maven/development/ | Framework artifacts |
-| Sonatype Snapshots | https://oss.sonatype.org/content/repositories/snapshots/ | Snapshot dependencies |
+Form editing environment with visual canvas.
 
-## Build Artifacts
+#### Perspective
 
-After a successful build:
+- **EJPerspective** (`org.entirej.ide.ui.perspective`) - Main form development perspective
 
-- **Update Site (IDE):** `org.entirej.ide.site/target/site/`
-- **Update Site (Reports):** `org.entirej.ide.report.site/target/site/`
-- **Distribution ZIP:** `org.entirej.ide.site/target/org.entirej.site-5.1.0-SNAPSHOT-site.zip`
-- **Plugin JARs:** `[module]/target/[module]-5.1.0-SNAPSHOT.jar`
+#### Editors
 
-## File Extensions Handled
+| Editor ID | Extension | Purpose |
+|-----------|-----------|---------|
+| `org.entirej.ide.ui.editors.ej.properties` | `application.ejprop` | Application properties |
+| `org.entirej.ide.ui.editors.ej.form` | `.form` | Form definitions |
+| `org.entirej.ide.ui.editors.ej.block` | `.block` | Block references |
+| `org.entirej.ide.ui.editors.ej.objgroup` | `.objgroup` | Object groups |
+| `org.entirej.ide.ui.editors.ej.lov` | `.lovdef` | LOV definitions |
 
-| Extension | Editor | Description |
-|-----------|--------|-------------|
-| `.ej.properties` | EJ Properties Editor | EntireJ project configuration |
-| `.form` | EJ Form Editor | Form definitions |
-| `.block` | EJ Block Reference Editor | Block references |
-| `.objgroup` | EJ Object Group Editor | Object group definitions |
-| `.lovdef` | EJ LOV Reference Editor | List of Values definitions |
+#### Form Editor Structure
 
-## Development Setup
-
-### Import into Eclipse
-
-1. Install Eclipse IDE for RCP Developers (2024-09 or compatible)
-2. Install GEF Classic SDK 3.14.0+
-3. Import as existing Maven projects
-4. Set target platform from `org.entirej.ide.target/entirej-2024-09.target`
-
-### Running the Build
-
-The build uses Maven Tycho which requires specific configuration:
-
-```bash
-# Using Maven wrapper (recommended)
-./mvnw clean install
-
-# Standard build (from parent directory)
-mvn clean install -f org.entirej.ide.parent/pom.xml
-
-# Skip tests
-./mvnw clean install -DskipTests
-
-# Verbose output
-./mvnw clean install -X
+```
+EJFormEditor (Multi-page)
+├── Tree View Page (FormDesignTreeSection)
+│   ├── BlockGroupNode
+│   │   └── BlockItemsGroupNode
+│   ├── LovGroupNode
+│   ├── RelationsGroupNode
+│   └── ObjectGroupNode
+├── Canvas Visual Editor (CanvasGroupNode + GEF)
+├── Form Reference Page
+└── Form Usage Page
 ```
 
-### Common Build Issues
+#### Wizards
 
-1. **Platform-dependent warnings:** The build shows warnings about missing explicit target runtime. This is expected and doesn't affect the build.
+| Wizard | Purpose |
+|--------|---------|
+| NewEntireJProjectWizard | Create EntireJ form project |
+| NewEntireJFormWizard | Add new form |
+| NewEntireJRefBlockWizard | Create reusable block |
+| NewEJPojoServiceWizard | Create service class |
+| NewEntireJRefLovWizard | Create reusable LOV |
+| NewEntireJObjectGroupWizard | Create object group |
 
-2. **Missing Tycho plugin versions:** Warnings about `tycho-packaging-plugin` and `tycho-p2-plugin` missing versions in site modules - these inherit from parent.
+#### Refactoring Support
 
-3. **Locally built units:** Warning about locally built FX feature units when resolving site dependencies - requires prior FX feature build if FX support is needed.
+11 rename/move/delete participants ensure metadata stays synchronized with Java code changes.
 
-## Key Dependencies
+---
 
-### EntireJ Framework Libraries
-- `entirej-core.jar` - Core framework
-- `entirej-development.jar` - Development tools
-- `entirej-report.jar` - Report framework
-- `entirej-rwt.jar` - RWT client
-- `entirej-tabris.jar` - Tabris mobile client
-- `entirej-fx.jar` - JavaFX client
+### org.entirej.ide.ui.report
 
-### Third-Party
-- FreeMarker 2.3.23 (template engine)
-- SLF4J API 1.7.3 (logging facade)
-- Oracle OJDBC8 (Oracle driver)
-- MySQL Connector 5.1.22
-- H2 Database 1.3.169
-- JFXtras Controls/Common (JavaFX extras)
+Report editing environment with GEF preview.
 
-## Version Management
+#### Perspective
 
-Version is defined in `org.entirej.ide.parent/pom.xml`:
+- **EJReportPerspective** (`org.entirej.ide.ui.report.perspective`)
+
+#### Editors
+
+| Editor ID | Extension | Purpose |
+|-----------|-----------|---------|
+| `org.entirej.ide.ui.editors.ej.report` | `.ejreport` | Report definitions |
+| `org.entirej.ide.ui.editors.ej.report.properties` | `report.ejprop` | Report properties |
+
+#### GEF Integration
+
+```
+ReportEditPartFactory
+├── ReportCanvasPart (main container)
+├── ReportBlockSectionCanvasPart
+├── ReportBlockPart
+├── ReportBlockColumnPart
+├── ReportFormScreenPart
+├── ReportTableScreenCanvasPart
+└── ReportFormScreenItemPart
+
+Policies (Edit behavior):
+├── ColumnResizableEditPolicy
+├── ReportBlockResizableEditPolicy
+├── ScreenItemResizableEditPolicy
+└── ScreenResizableEditPolicy
+
+Ruler Support:
+├── ReportRuler / ReportRulerProvider
+└── Guide commands (Create, Delete, Move)
+```
+
+---
+
+### org.entirej.ide.cf.rwt
+
+RWT (Eclipse RAP) client framework provider.
+
+#### Providers
+
+| Provider | ID | Description |
+|----------|-----|-------------|
+| RWTClientFrameworkProvider | `org.entirej.framework.cf.rwt_rap` | Eclipse RAP web apps |
+| RWTSpringClientFrameworkProvider | - | Spring-integrated RAP |
+| ReactClientFrameworkProvider | - | React frontend |
+
+#### Project Creation Process
+
+1. Creates `src` directory
+2. Copies templates:
+   - `application.ejprop` - RWT app config
+   - `renderers.ejprop` - RAP renderer definitions
+   - `ApplicationLauncher.java` - App launcher
+   - `pom.xml` - Maven POM with Jakarta EE dependencies
+   - `web.xml` - Servlet configuration (Jakarta EE 6.0)
+   - `index.html` - Web entry point
+3. Configures WEB module facets
+4. Adds natures: Maven2, Java, JEM, ModuleCore
+5. Sets up classpath containers
+
+#### Templates Location
+
+```
+templates/rwt/
+├── application.ejprop
+├── renderers.ejprop
+├── ApplicationLauncher.java
+├── pom.xml                    # Jakarta Servlet API 6.1.0
+├── web.xml                    # Jakarta EE 6.0 namespace
+├── web.tabris.xml
+├── index.html
+├── login.html
+├── 403.html
+├── LoginServlet.java          # jakarta.servlet imports
+├── AccessDeniedServlet.java   # jakarta.servlet imports
+├── EJSecurityConfig.java
+└── EJAuthenticationProvider.java
+```
+
+---
+
+### Database Providers
+
+#### MySQL (org.entirej.ext.mysql)
+
+- **Provider ID:** `org.entirej.framework.dbn.mysql`
+- **Container:** `EJ_MYSQL_CONTAINER`
+- **Template:** `/templates/mysqlOptions/Connection.properties`
+
+#### Oracle (org.entirej.ext.oracle)
+
+- **Provider ID:** `org.entirej.framework.dbn.oracle`
+- **Container:** `EJ_ORACLE_CONTAINER`
+- **Template:** `/templates/oracleOptions/Connection.properties`
+- **Extra:** OraTypeBlockServiceContentProvider for PL/SQL packages
+
+#### H2/HSQL (org.entirej.ext.hsql)
+
+- **Provider ID:** `org.entirej.framework.dbn.hsql`
+- **Container:** `EJ_HSQL_CONTAINER`
+- **Template:** `/templates/hsqlOptions/Connection.properties`
+- **Extra:** Embedded database demo file
+
+---
+
+## File Formats
+
+### application.ejprop
+
 ```xml
-<version>5.1.0-SNAPSHOT</version>
+<?xml version="1.0" encoding="UTF-8"?>
+<entirejFramework>
+  <version>2.2</version>
+  <applicationManager>org.entirej...EJRWTApplicationManager</applicationManager>
+  <connectionFactoryClassName>...</connectionFactoryClassName>
+  <reusableBlocksLocation>...</reusableBlocksLocation>
+  <reusableLovDefinitionLocation>...</reusableLovDefinitionLocation>
+  <applicationDefinedProperties>
+    <property name="..." multilingual="boolean" propertyType="TYPE"/>
+    <propertyGroup name="...">...</propertyGroup>
+  </applicationDefinedProperties>
+  <renderer>...</renderer>
+</entirejFramework>
 ```
 
-All modules inherit this version. The OSGi qualifier is auto-generated during build (e.g., `5.1.0.202602051532`).
+### .form Files
 
-## Release Process
+XML containing:
+- Form metadata and structure
+- Block definitions with items
+- LOV mappings
+- Relations between blocks
+- Service class references
+- Canvas layout information
 
-1. Update version in parent POM
-2. Update `MANIFEST.MF` Bundle-Version in all plugins
-3. Update `feature.xml` versions in features
-4. Build with signing profile:
-   ```bash
-   mvn clean install -Prelease-sign -DBUILD.SIGN.PATH=/path/to/keystore -DBUILD.SIGN.PASS=password
-   ```
-5. Deploy update site ZIP to distribution server
+### .block Files
 
-## Architecture Notes
+Reusable block definition:
+- Block properties (name, type, service)
+- Item definitions
+- Database query configuration
 
-- **Model-Driven Design:** UI definitions stored in XML, interpreted at runtime
-- **SWT/JFace Based:** All Eclipse-native UI components
-- **GEF Integration:** Graphical editing capabilities for form design
-- **OSGi Compliant:** Full OSGi bundle metadata with lazy activation
-- **Extension Point Architecture:** Pluggable database connectors, client frameworks, validators
+### .lovdef Files
+
+List of Values definition:
+- LOV name and type
+- Return/display value mappings
+- Data source configuration
+
+---
+
+## Build System
+
+### Maven/Tycho Configuration
+
+```xml
+<tycho-version>4.0.8</tycho-version>
+<target>entirej-2024-09.target</target>
+```
+
+### Target Platform
+
+File: `org.entirej.ide.target/entirej-2024-09.target`
+- Eclipse 2024-09 (4.33)
+- GEF Classic 3.14.0+
+- Multi-platform: Windows, Linux, macOS (x86_64, aarch64)
+
+### P2 Repositories
+
+```
+https://download.eclipse.org/releases/2024-09
+https://download.eclipse.org/tools/gef/classic/release/latest
+```
+
+### Build Artifacts
+
+```
+org.entirej.ide.site/target/
+├── site/                              # P2 repository
+└── org.entirej.site-5.1.0-SNAPSHOT-site.zip
+
+org.entirej.ide.report.site/target/
+├── site/                              # Report P2 repository
+└── org.entirej.report.site-5.1.0-SNAPSHOT-site.zip
+```
+
+---
+
+## Key Classes Reference
+
+### Core Infrastructure
+
+| Class | Package | Purpose |
+|-------|---------|---------|
+| `EJCorePlugin` | `org.entirej.ide.core` | Plugin activator |
+| `EJCoreLog` | `org.entirej.ide.core` | Logging utility |
+| `CFProjectHelper` | `org.entirej.ide.core.cf` | Project configuration utility |
+| `EJPluginEntireJClassLoader` | `org.entirej.ide.core` | Custom classloader |
+
+### Form Editor
+
+| Class | Package | Purpose |
+|-------|---------|---------|
+| `AbstractEJFormEditor` | `org.entirej.ide.ui.editors.form` | Base form editor |
+| `FormDesignTreeSection` | `org.entirej.ide.ui.editors.form` | Tree explorer (105KB) |
+| `CanvasGroupNode` | `org.entirej.ide.ui.editors.form` | Visual canvas (187KB) |
+| `FormCanvasPreviewImpl` | `org.entirej.ide.ui.editors.form` | Runtime preview |
+
+### Report Editor
+
+| Class | Package | Purpose |
+|-------|---------|---------|
+| `AbstractEJReportEditor` | `org.entirej.ide.ui.editors.report` | Base report editor |
+| `ReportDesignTreeSection` | `org.entirej.ide.ui.editors.report` | Tree explorer (58KB) |
+| `ReportEditPartFactory` | `org.entirej.ide.ui.editors.report.gef` | GEF part factory |
+
+### Validation
+
+| Class | Package | Purpose |
+|-------|---------|---------|
+| `EJPropertiesValidateImpl` | `org.entirej.ide.ui` | Properties validation |
+| `EJFormValidateImpl` | `org.entirej.ide.ui.form` | Form validation (72KB) |
+| `EJReportValidateImpl` | `org.entirej.ide.ui.report` | Report validation (18KB) |
+
+---
+
+## Upgrade History
+
+### Jakarta EE Migration (February 2026)
+
+- Templates updated from `javax.servlet` to `jakarta.servlet`
+- web.xml updated to Jakarta EE 6.0 namespace
+- Removed deprecated CompressingFilter
+- JavaFX modules removed from default build (source preserved)
+
+### Java 17 & Eclipse 2024-09 Upgrade (February 2026)
+
+- Tycho: 1.4.0 → 4.0.8
+- Target platform: Eclipse 4.11 → 4.33 (2024-09)
+- Java: 11 → 17
+- GEF: 3.10.1 (legacy) → GEF Classic 3.14.0+
+- Added Maven wrapper (3.9.6)
+
+**GEF API Fixes:**
+- `ZoomListener` moved to `org.eclipse.draw2d.zoom`
+- `createSelectionHandles()` return type changed to `List<Handle>`
+
+---
 
 ## Troubleshooting
 
 ### Build Fails with Resolution Errors
-Ensure target platform repositories are accessible:
-- https://download.eclipse.org/releases/2024-09
-- https://download.eclipse.org/tools/gef/classic/release/latest
 
-### Missing Core Libraries
-Run the library copy task first:
-```bash
-cd org.entirej.ide.libs
-./mvnw dependency:copy
+Ensure repositories are accessible:
+```
+https://download.eclipse.org/releases/2024-09
+https://download.eclipse.org/tools/gef/classic/release/latest
 ```
 
 ### Eclipse Import Issues
+
 1. Clean all projects
 2. Update Maven projects (Alt+F5)
 3. Reload target platform
 4. Rebuild workspace
 
-## Upgrade History
+### Missing Libraries
 
-### Java 17 & Eclipse 2024-09 Upgrade (February 2026)
-
-The project was upgraded from Java 11/Eclipse 4.11 to Java 17/Eclipse 2024-09:
-
-**Changes Made:**
-- Tycho version: 1.4.0 → 4.0.8
-- Target platform: Eclipse 4.11 → Eclipse 4.33 (2024-09)
-- Java version: 11 → 17
-- GEF: 3.10.1 (legacy) → GEF Classic 3.14.0+
-- Added Maven wrapper (version 3.9.6)
-
-**API Compatibility Fixes:**
-- `ZoomListener` moved from `org.eclipse.gef.editparts` to `org.eclipse.draw2d.zoom`
-- `createSelectionHandles()` return type changed from `List<?>` to `List<Handle>` in GEF
-
-**Files Modified:**
-- All MANIFEST.MF files: `Bundle-RequiredExecutionEnvironment: JavaSE-17`
-- `org.entirej.ide.parent/pom.xml`: Updated Tycho and repository configuration
-- `org.entirej.ide.target/entirej-2024-09.target`: New target platform definition
-- `feature.xml` files: Updated GEF import version
-- GEF policy classes: Fixed API compatibility issues
+```bash
+cd org.entirej.ide.libs
+./mvnw dependency:copy
+```
