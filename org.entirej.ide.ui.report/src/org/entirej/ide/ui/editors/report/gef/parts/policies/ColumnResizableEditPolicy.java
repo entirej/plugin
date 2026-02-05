@@ -25,6 +25,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.handles.NonResizableHandleKit;
 import org.eclipse.gef.handles.ResizableHandleKit;
+import org.eclipse.gef.Handle;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.entirej.framework.plugin.reports.EJPluginReportColumnProperties;
@@ -43,17 +44,18 @@ public class ColumnResizableEditPolicy extends ResizableEditPolicy
     }
 
     @Override
-    protected List<?> createSelectionHandles()
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected List<Handle> createSelectionHandles()
     {
         setDragAllowed(false);
         if (getResizeDirections() == PositionConstants.NONE)
         {
             // non resizable, so delegate to super implementation
-            return super.createSelectionHandles();
+            return new ArrayList<>(super.createSelectionHandles());
         }
 
         // resizable in at least one direction
-        List<?> list = new ArrayList<Object>();
+        List list = new ArrayList();
        // createMoveHandle(list);
         createResizeHandle(list, PositionConstants.EAST);
         createResizeHandle(list, PositionConstants.WEST);

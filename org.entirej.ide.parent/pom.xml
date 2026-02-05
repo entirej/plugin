@@ -15,6 +15,7 @@
 	<packaging>pom</packaging>
 	<name>Entirej Development Tool</name>
 	<modules>
+		<module>../org.entirej.ide.target</module>
 		<module>../org.entirej.core.runtime</module>
 		<module>../org.entirej.ide.core</module>
 		<module>../org.entirej.ide.compatibility</module>
@@ -34,27 +35,18 @@
 		<module>../org.entirej.ide.report.feature</module>
 		<module>../org.entirej.ide.site</module>
 		<module>../org.entirej.ide.report.site</module>
-		
+
 	</modules>
 
 	<properties>
-		<tycho-version>1.4.0</tycho-version>
+		<tycho-version>3.0.5</tycho-version>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 		<BUILD.SIGN.PATH></BUILD.SIGN.PATH>
 		<BUILD.SIGN.PASS></BUILD.SIGN.PASS>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<repositories>
-		<repository>
-			<id>update4.11</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.11</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>update4.1-gef</id>
-			<url>http://download.eclipse.org/tools/gef/updates/legacy/releases</url>
-			<layout>p2</layout>
-		</repository>
 		<repository>
 			<id>entirej-mvn-repo</id>
 			<url>https://raw.github.com/entirej/mavenrepo/gh-pages/maven/${MAVEN.REPO.PATH}/</url>
@@ -77,11 +69,34 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
+				<configuration>
+					<target>
+						<file>../org.entirej.ide.target/entirej-2024-09.target</file>
+					</target>
+					<environments>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>aarch64</arch>
+						</environment>
+					</environments>
+				</configuration>
 			</plugin>
-
-
-
-
 		</plugins>
 	</build>
     <profiles>	
@@ -93,7 +108,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-jarsigner-plugin</artifactId>
-							<version>1.2</version>
+							<version>3.0.0</version>
 							<executions>
 								<execution>
 									<id>sign</id>
@@ -109,9 +124,9 @@
 								<keypass>${BUILD.SIGN.PASS}</keypass>
 								<arguments>
 									<arg>-digestalg</arg>
-									<arg>SHA1</arg>
+									<arg>SHA-256</arg>
 									<arg>-sigalg</arg>
-									<arg>SHA1withRSA</arg>
+									<arg>SHA256withRSA</arg>
 								</arguments>
 							</configuration>
 						</plugin>
