@@ -16,7 +16,7 @@ This project provides Eclipse RCP plugins for the EntireJ Framework - a model-dr
 
 - **Java:** JDK 17+ (required)
 - **Maven:** 3.6+ (Maven wrapper included for 3.9.6)
-- **Build System:** Apache Maven with Eclipse Tycho 3.0.5
+- **Build System:** Apache Maven with Eclipse Tycho 4.0.8
 - **Target Platform:** Eclipse 4.33 (2024-09)
 
 ## Quick Start
@@ -265,7 +265,7 @@ cd org.entirej.ide.libs
 The project was upgraded from Java 11/Eclipse 4.11 to Java 17/Eclipse 2024-09:
 
 **Changes Made:**
-- Tycho version: 1.4.0 → 3.0.5
+- Tycho version: 1.4.0 → 4.0.8
 - Target platform: Eclipse 4.11 → Eclipse 4.33 (2024-09)
 - Java version: 11 → 17
 - GEF: 3.10.1 (legacy) → GEF Classic 3.14.0+

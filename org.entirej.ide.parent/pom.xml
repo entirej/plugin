@@ -39,7 +39,7 @@
 	</modules>
 
 	<properties>
-		<tycho-version>3.0.5</tycho-version>
+		<tycho-version>4.0.8</tycho-version>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 		<BUILD.SIGN.PATH></BUILD.SIGN.PATH>
 		<BUILD.SIGN.PASS></BUILD.SIGN.PASS>
