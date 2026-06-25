@@ -14,10 +14,10 @@ This project provides Eclipse RCP plugins for the EntireJ Framework - a model-dr
 
 ## Build Requirements
 
-- **Java:** JDK 17+ (required)
-- **Maven:** 3.9+ (Maven wrapper included for 3.9.6)
-- **Build System:** Apache Maven with Eclipse Tycho 4.0.8
-- **Target Platform:** Eclipse 4.33 (2024-09)
+- **Java:** JDK 21+ (required)
+- **Maven:** 3.9.9+ (Maven wrapper included)
+- **Build System:** Apache Maven with Eclipse Tycho 5.0.3
+- **Target Platform:** Eclipse 4.40 (2026-06)
 
 ## Quick Start
 
@@ -419,33 +419,32 @@ List of Values definition:
 ### Maven/Tycho Configuration
 
 ```xml
-<tycho-version>4.0.8</tycho-version>
-<target>entirej-2024-09.target</target>
+<tycho-version>5.0.3</tycho-version>
+<target>org.entirej.ide.target.target</target>
 ```
 
 ### Target Platform
 
-File: `org.entirej.ide.target/entirej-2024-09.target`
-- Eclipse 2024-09 (4.33)
-- GEF Classic 3.14.0+
+File: `org.entirej.ide.target/org.entirej.ide.target.target`
+- Eclipse 2026-06 (4.40)
+- GEF Classic 3.28.0+
 - Multi-platform: Windows, Linux, macOS (x86_64, aarch64)
 
 ### P2 Repositories
 
 ```
-https://download.eclipse.org/releases/2024-09
-https://download.eclipse.org/tools/gef/classic/release/latest
+https://download.eclipse.org/releases/2026-06
 ```
 
 ### Build Artifacts
 
 ```
 org.entirej.ide.site/target/
-├── site/                              # P2 repository
+├── repository/                        # P2 repository
 └── org.entirej.site-5.1.0-SNAPSHOT-site.zip
 
 org.entirej.ide.report.site/target/
-├── site/                              # Report P2 repository
+├── repository/                        # Report P2 repository
 └── org.entirej.report.site-5.1.0-SNAPSHOT-site.zip
 ```
 
@@ -510,6 +509,15 @@ org.entirej.ide.report.site/target/
 - `ZoomListener` moved to `org.eclipse.draw2d.zoom`
 - `createSelectionHandles()` return type changed to `List<Handle>`
 
+### Java 21 & Eclipse 2026-06 Upgrade (June 2026)
+
+- Tycho: 4.0.8 -> 5.0.3
+- Target platform: Eclipse 4.33 (2024-09) -> 4.40 (2026-06)
+- Java: 17 -> 21
+- Maven wrapper: 3.9.6 -> 3.9.9
+- Update sites: legacy deployable feature packaging -> `eclipse-repository`
+- GEF feature import now resolves from the 2026-06 target platform
+
 ---
 
 ## Troubleshooting
@@ -518,8 +526,7 @@ org.entirej.ide.report.site/target/
 
 Ensure repositories are accessible:
 ```
-https://download.eclipse.org/releases/2024-09
-https://download.eclipse.org/tools/gef/classic/release/latest
+https://download.eclipse.org/releases/2026-06
 ```
 
 ### Eclipse Import Issues

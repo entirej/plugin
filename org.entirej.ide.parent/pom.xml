@@ -37,7 +37,7 @@
 	</modules>
 
 	<properties>
-		<tycho-version>4.0.8</tycho-version>
+		<tycho-version>5.0.3</tycho-version>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 		<BUILD.SIGN.PATH></BUILD.SIGN.PATH>
 		<BUILD.SIGN.PASS></BUILD.SIGN.PASS>
@@ -69,7 +69,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<target>
-						<file>../org.entirej.ide.target/entirej-2024-09.target</file>
+						<file>../org.entirej.ide.target/org.entirej.ide.target.target</file>
 					</target>
 					<environments>
 						<environment>

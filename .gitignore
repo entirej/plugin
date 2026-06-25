@@ -33,3 +33,9 @@
 /org.entirej.fx.feature/target
 /org.entirej.ide.report.site/target
 
+/.m2/
+/.maven-user/
+/.mavenbase-*/
+/.mavenbase*.log
+/.mavenbase.zip
+

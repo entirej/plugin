@@ -52,7 +52,7 @@
 							<tasks>
 								<ftp server="${SITE.URL}" remotedir="${SITE.PATH}"
 									userid="${SITE.USER}" password="${SITE.PWD}" passive="true">
-									<fileset dir="../org.entirej.ide.site/target/site" />
+									<fileset dir="../org.entirej.ide.site/target/repository" />
 								</ftp>
 							</tasks>
 						</configuration>
