@@ -18,6 +18,7 @@
 package org.entirej.ide.ui.editors.form.preview;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
@@ -177,8 +178,8 @@ public class FormPreviewModelBuilder
         {
             int preferredWidth = size(block.getMainScreenProperties().getWidth(), blockDescriptor.getPreferredWidth());
             int preferredHeight = size(block.getMainScreenProperties().getHeight(), blockDescriptor.getPreferredHeight());
-            return buildRendererPlaceholderPreview(form, source(selectedSource, block), blockDescriptor, preferredWidth, preferredHeight, availableWidth,
-                    availableHeight);
+            return buildRendererPlaceholderPreview(form, source(selectedSource, block), block, blockDescriptor, preferredWidth, preferredHeight,
+                    availableWidth, availableHeight);
         }
 
         PreviewNode root = createSelectedRoot(form, source(selectedSource, block), block.getMainScreenProperties().getNumCols(), block
@@ -236,18 +237,22 @@ public class FormPreviewModelBuilder
         addFlatItemGroups(root, container);
         if (root.getChildren().isEmpty())
         {
-            return buildRendererPlaceholderPreview(form, source(selectedSource, block), descriptor, width, height, availableWidth, availableHeight);
+            return buildRendererPlaceholderPreview(form, source(selectedSource, block), block, descriptor, width, height, availableWidth, availableHeight);
         }
         new PreviewGridLayoutSolver().layout(root);
         return root;
     }
 
-    private PreviewNode buildRendererPlaceholderPreview(EJPluginFormProperties form, Object source, EJDevPreviewDescriptor descriptor, int preferredWidth,
-            int preferredHeight, int availableWidth, int availableHeight)
+    private PreviewNode buildRendererPlaceholderPreview(EJPluginFormProperties form, Object source, EJPluginBlockProperties block,
+            EJDevPreviewDescriptor descriptor, int preferredWidth, int preferredHeight, int availableWidth, int availableHeight)
     {
         PreviewNode root = createSelectedRoot(form, source, 1, preferredWidth, preferredHeight, availableWidth, availableHeight);
         PreviewNode rendererNode = new PreviewNode(source, descriptor);
         rendererNode.setPaintBorder(false);
+        if (isColumnarRenderer(descriptor.getKind()))
+        {
+            rendererNode.setColumnLabels(blockColumnLabels(block));
+        }
         rendererNode.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(1).setPreferredWidth(preferredWidth)
                 .setPreferredHeight(preferredHeight).setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true).setGrabVertical(true));
         root.addChild(rendererNode);
@@ -341,6 +346,47 @@ public class FormPreviewModelBuilder
     private Object source(Object selectedSource, Object fallback)
     {
         return selectedSource == null ? fallback : selectedSource;
+    }
+
+    private boolean isColumnarRenderer(EJDevPreviewKind kind)
+    {
+        return kind == EJDevPreviewKind.TABLE || kind == EJDevPreviewKind.TREE;
+    }
+
+    private List<String> blockColumnLabels(EJPluginBlockProperties block)
+    {
+        List<String> labels = new ArrayList<String>();
+        if (block != null)
+        {
+            collectColumnLabels(labels, block.getMainScreenItemGroupDisplayContainer());
+        }
+        return labels;
+    }
+
+    private void collectColumnLabels(List<String> labels, EJPluginItemGroupContainer container)
+    {
+        if (container == null)
+        {
+            return;
+        }
+        for (EJPluginItemGroupProperties itemGroup : container.getItemGroups())
+        {
+            if (!itemGroup.isSeparator())
+            {
+                for (EJScreenItemProperties itemProperties : itemGroup.getAllItemProperties())
+                {
+                    if (itemProperties instanceof EJPluginScreenItemProperties)
+                    {
+                        EJPluginScreenItemProperties item = (EJPluginScreenItemProperties) itemProperties;
+                        if (item.isVisible() && !item.isSpacerItem() && !item.isSeparator())
+                        {
+                            labels.add(value(item.getLabel(), item.getReferencedItemName()));
+                        }
+                    }
+                }
+            }
+            collectColumnLabels(labels, itemGroup.getChildItemGroupContainer());
+        }
     }
 
     private void addFlatItemGroups(PreviewNode parent, EJPluginItemGroupContainer container)

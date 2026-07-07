@@ -33,6 +33,7 @@ public class PreviewNode
     private final PreviewBounds     bounds     = new PreviewBounds();
     private final List<PreviewNode> children   = new ArrayList<PreviewNode>();
     private final List<String>      tabLabels  = new ArrayList<String>();
+    private final List<String>      columnLabels = new ArrayList<String>();
     private int                     columns    = 1;
     private int                     selectedTabIndex;
     private boolean                 compactLayout;
@@ -179,6 +180,26 @@ public class PreviewNode
     public List<String> getTabLabels()
     {
         return Collections.unmodifiableList(tabLabels);
+    }
+
+    public void setColumnLabels(List<String> labels)
+    {
+        columnLabels.clear();
+        if (labels != null)
+        {
+            for (String label : labels)
+            {
+                if (label != null && label.trim().length() > 0)
+                {
+                    columnLabels.add(label.trim());
+                }
+            }
+        }
+    }
+
+    public List<String> getColumnLabels()
+    {
+        return Collections.unmodifiableList(columnLabels);
     }
 
     public int getSelectedTabIndex()

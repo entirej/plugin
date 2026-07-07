@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.entirej.ide.ui.editors.preview;
 
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
@@ -162,19 +164,7 @@ public class PreviewNodeFigure extends Figure
             case TABLE:
             case TREE:
             case LIST:
-                drawTitle(graphics, area, text);
-                drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
-                graphics.drawLine(area.x, area.y + 39, area.x + area.width, area.y + 39);
-                if (kind != EJDevPreviewKind.LIST)
-                {
-                    graphics.drawLine(area.x + area.width / 3, area.y + 18, area.x + area.width / 3, area.y + area.height - 2);
-                    graphics.drawLine(area.x + (area.width * 2) / 3, area.y + 18, area.x + (area.width * 2) / 3, area.y + area.height - 2);
-                }
-                else
-                {
-                    graphics.drawLine(area.x + 6, area.y + 54, area.x + area.width - 8, area.y + 54);
-                    graphics.drawLine(area.x + 6, area.y + 69, area.x + area.width - 8, area.y + 69);
-                }
+                drawTableLikeRenderer(graphics, area, kind, text);
                 break;
             case IMAGE:
                 drawTitle(graphics, area, text);
@@ -331,6 +321,60 @@ public class PreviewNodeFigure extends Figure
         graphics.drawLine(area.x, tabY + 21, area.x + area.width, tabY + 21);
     }
 
+    private void drawTableLikeRenderer(Graphics graphics, Rectangle area, EJDevPreviewKind kind, String text)
+    {
+        List<String> labels = model.getColumnLabels();
+        if (labels.isEmpty())
+        {
+            drawTitle(graphics, area, text);
+            drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
+            graphics.drawLine(area.x, area.y + 39, area.x + area.width, area.y + 39);
+            if (kind != EJDevPreviewKind.LIST)
+            {
+                graphics.drawLine(area.x + area.width / 3, area.y + 18, area.x + area.width / 3, area.y + area.height - 2);
+                graphics.drawLine(area.x + (area.width * 2) / 3, area.y + 18, area.x + (area.width * 2) / 3, area.y + area.height - 2);
+            }
+            else
+            {
+                graphics.drawLine(area.x + 6, area.y + 54, area.x + area.width - 8, area.y + 54);
+                graphics.drawLine(area.x + 6, area.y + 69, area.x + area.width - 8, area.y + 69);
+            }
+            return;
+        }
+
+        int tableHeight = Math.max(36, area.height);
+        int headerHeight = 28;
+        int rowHeight = 22;
+        int right = area.x + Math.max(1, area.width) - 1;
+        int bottom = area.y + tableHeight - 1;
+
+        drawInsetBox(graphics, area.x, area.y, area.width, tableHeight);
+
+        graphics.setForegroundColor(ColorConstants.lightGray);
+        graphics.drawLine(area.x, area.y + headerHeight, right, area.y + headerHeight);
+        for (int y = area.y + headerHeight + rowHeight; y < bottom; y += rowHeight)
+        {
+            graphics.drawLine(area.x, y, right, y);
+        }
+
+        graphics.setForegroundColor(ColorConstants.gray);
+        int count = Math.max(1, labels.size());
+        for (int i = 1; i < count; i++)
+        {
+            int x = area.x + (area.width * i) / count;
+            graphics.drawLine(x, area.y, x, bottom);
+        }
+
+        graphics.setForegroundColor(ColorConstants.black);
+        for (int i = 0; i < labels.size(); i++)
+        {
+            int left = area.x + (area.width * i) / count;
+            int next = area.x + (area.width * (i + 1)) / count;
+            int maxChars = Math.max(1, (next - left - 12) / 7);
+            graphics.drawText(shortText(labels.get(i), maxChars), left + 7, area.y + 6);
+        }
+    }
+
     public int getTabIndexAt(int x, int y)
     {
         if (model.getKind() != EJDevPreviewKind.TAB_FOLDER && model.getKind() != EJDevPreviewKind.STACKED)
@@ -391,6 +435,23 @@ public class PreviewNodeFigure extends Figure
             return "";
         }
         return label.length() > 3 ? label.substring(0, 3) : label;
+    }
+
+    private String shortText(String text, int maxChars)
+    {
+        if (text == null)
+        {
+            return "";
+        }
+        if (text.length() <= maxChars)
+        {
+            return text;
+        }
+        if (maxChars <= 3)
+        {
+            return text.substring(0, maxChars);
+        }
+        return text.substring(0, maxChars - 3) + "...";
     }
 
     private void drawAppComponent(Graphics graphics, Rectangle area)
