@@ -358,14 +358,23 @@ public class FormPreviewModelBuilder
     private PreviewNode createFlatItemGroupNode(EJPluginItemGroupProperties group)
     {
         PreviewNode node = new PreviewNode(group, resolver.forItemGroup(group));
+        if (group.isSeparator())
+        {
+            node.setColumns(1);
+            node.setCompactLayout(true);
+            node.setPaintBorder(false);
+            node.setPaintContainerTitle(false);
+            node.setPaintControlLabel(false);
+            node.setConstraint(itemGroupConstraint(group, DEFAULT_SEPARATOR_HEIGHT));
+            return node;
+        }
+
         node.setColumns(group.getNumCols());
         node.setLayoutGap(0);
         node.setCompactLayout(true);
         node.setPaintBorder(group.dispayGroupFrame());
         node.setPaintContainerTitle(group.dispayGroupFrame());
-        node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(group.getXspan()).setVerticalSpan(group.getYspan())
-                .setPreferredWidth(group.getWidth()).setPreferredHeight(group.getHeight()).setFillHorizontal(group.canExpandHorizontally())
-                .setFillVertical(group.canExpandVertically()).setGrabHorizontal(group.canExpandHorizontally()).setGrabVertical(group.canExpandVertically()));
+        node.setConstraint(itemGroupConstraint(group, 0));
 
         for (EJScreenItemProperties itemProperties : group.getAllItemProperties())
         {
@@ -588,10 +597,19 @@ public class FormPreviewModelBuilder
     private PreviewNode createItemGroupNode(EJPluginItemGroupProperties group)
     {
         PreviewNode node = new PreviewNode(group, resolver.forItemGroup(group));
+        if (group.isSeparator())
+        {
+            node.setColumns(1);
+            node.setCompactLayout(true);
+            node.setPaintBorder(false);
+            node.setPaintContainerTitle(false);
+            node.setPaintControlLabel(false);
+            node.setConstraint(itemGroupConstraint(group, DEFAULT_SEPARATOR_HEIGHT));
+            return node;
+        }
+
         node.setColumns(group.getNumCols());
-        node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(group.getXspan()).setVerticalSpan(group.getYspan())
-                .setPreferredWidth(group.getWidth()).setPreferredHeight(group.getHeight()).setFillHorizontal(group.canExpandHorizontally())
-                .setFillVertical(group.canExpandVertically()).setGrabHorizontal(group.canExpandHorizontally()).setGrabVertical(group.canExpandVertically()));
+        node.setConstraint(itemGroupConstraint(group, 0));
 
         for (EJScreenItemProperties itemProperties : group.getAllItemProperties())
         {
@@ -602,6 +620,14 @@ public class FormPreviewModelBuilder
         }
         addItemGroups(node, group.getChildItemGroupContainer());
         return node;
+    }
+
+    private PreviewGridConstraint itemGroupConstraint(EJPluginItemGroupProperties group, int fallbackHeight)
+    {
+        int preferredHeight = group.getHeight() > 0 ? group.getHeight() : fallbackHeight;
+        return PreviewGridConstraint.defaults().setHorizontalSpan(group.getXspan()).setVerticalSpan(group.getYspan()).setPreferredWidth(group.getWidth())
+                .setPreferredHeight(preferredHeight).setFillHorizontal(group.canExpandHorizontally()).setFillVertical(group.canExpandVertically())
+                .setGrabHorizontal(group.canExpandHorizontally()).setGrabVertical(group.canExpandVertically());
     }
 
     private PreviewNode createScreenItemNode(EJPluginScreenItemProperties item)

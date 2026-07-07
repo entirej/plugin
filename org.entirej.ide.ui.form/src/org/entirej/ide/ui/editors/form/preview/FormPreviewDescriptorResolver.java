@@ -81,6 +81,11 @@ public class FormPreviewDescriptorResolver
         {
             return EJDevPreviewDescriptor.box(null, "Item Group", null);
         }
+        if (group.isSeparator())
+        {
+            return EJDevPreviewDescriptor.create(EJDevPreviewKind.SEPARATOR, group.getName(), group.getName(), "separator", group.getWidth(), group
+                    .getHeight());
+        }
         return EJDevPreviewDescriptor.create(EJDevPreviewKind.GROUP, group.getName(), value(group.getFrameTitle(), group.getName()), null, group.getWidth(),
                 group.getHeight());
     }
