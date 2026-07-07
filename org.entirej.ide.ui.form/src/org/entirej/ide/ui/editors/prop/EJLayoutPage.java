@@ -75,7 +75,7 @@ public class EJLayoutPage extends AbstractEditorPage implements PageActionHandle
             }
 
         };
-        LayoutPreviewPart layoutPreviewPart = new LayoutPreviewPart(editor, this, body);
+        LayoutPreviewPart layoutPreviewPart = new LayoutPreviewPart(editor, this, body, treeSection);
         managedForm.addPart(treeSection);
         managedForm.addPart(descriptorPart);
         managedForm.addPart(layoutPreviewPart);
