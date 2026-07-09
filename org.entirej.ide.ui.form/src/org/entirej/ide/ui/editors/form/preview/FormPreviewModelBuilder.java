@@ -23,8 +23,13 @@ import java.util.List;
 
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasType;
+import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
+import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
+import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
+import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyListEntry;
 import org.entirej.framework.core.properties.interfaces.EJScreenItemProperties;
+import org.entirej.framework.dev.properties.interfaces.EJDevBlockItemDisplayProperties;
 import org.entirej.framework.dev.renderer.definition.EJDevPreviewDescriptor;
 import org.entirej.framework.dev.renderer.definition.EJDevPreviewKind;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
@@ -33,6 +38,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginDrawerPagePrope
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginInsertScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginItemGroupProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginQueryScreenItemProperties;
@@ -56,6 +62,22 @@ public class FormPreviewModelBuilder
     private static final String DISPLAYED_HEIGHT_PROPERTY   = "DISPLAYED_HEIGHT";
     private static final String LABEL_POSITION_PROPERTY     = "LABEL_POSITION";
     private static final String LABEL_POSITION_RIGHT        = "RIGHT";
+    private static final String LABEL_ORIENTATION_PROPERTY  = "LABEL_ORIENTATION";
+    private static final String ORIENTATION_RIGHT           = "RIGHT";
+    private static final String ORIENTATION_CENTER          = "CENTER";
+    private static final String COLUMN_ALIGNMENT_PROPERTY   = "COL_ALLIGN";
+    private static final String TITLE_BAR_GROUP             = "TITLE_BAR";
+    private static final String TITLE_BAR_TITLE_PROPERTY    = "TITLE";
+    private static final String TITLE_BAR_MODE_PROPERTY     = "TITLE_BAR_MODE";
+    private static final String TITLE_BAR_EXPANDED_PROPERTY = "TITLE_BAR_EXPANDED";
+    private static final String TITLE_BAR_MODE_GROUP        = "GROUP";
+    private static final String TITLE_BAR_MODE_TWISTIE      = "TWISTIE";
+    private static final String TITLE_BAR_MODE_TREE_NODE    = "TREE_NODE";
+    private static final String RADIO_BUTTONS_LIST          = "RADIO_BUTTONS";
+    private static final String RADIO_LABEL_PROPERTY        = "LABEL";
+    private static final String SHOW_BORDER_PROPERTY        = "SHOW_BORDER";
+    private static final String ORIENTATION_PROPERTY        = "ORIENTATION";
+    private static final String ORIENTATION_HORIZONTAL      = "HORIZONTAL";
     private static final String SCREEN_WIDTH_PROPERTY       = "WIDTH";
     private static final String SCREEN_HEIGHT_PROPERTY      = "HEIGHT";
     private static final String SCREEN_NUMCOLS_PROPERTY     = "NUMCOLS";
@@ -66,6 +88,9 @@ public class FormPreviewModelBuilder
     private static final int    DEFAULT_SEPARATOR_HEIGHT    = 4;
     private static final int    DEFAULT_SELECTED_WIDTH      = 300;
     private static final int    DEFAULT_SELECTED_HEIGHT     = 300;
+    /** Approximates the average character width/height the SWT preview derives from the font. */
+    private static final int    CHAR_WIDTH                  = 8;
+    private static final int    CHAR_HEIGHT                 = 18;
 
     private final FormPreviewDescriptorResolver resolver;
 
@@ -113,9 +138,16 @@ public class FormPreviewModelBuilder
 
     private PreviewNode buildSelectedPreview(EJPluginFormProperties form, Object selectedSource, int availableWidth, int availableHeight)
     {
-        if (selectedSource == null || selectedSource instanceof EJPluginFormProperties)
+        if (selectedSource == null || selectedSource == form)
         {
             return null;
+        }
+
+        // An object group is itself a form (EJPluginObjectGroupProperties extends
+        // EJPluginFormProperties); preview its own canvases, not the enclosing form's.
+        if (selectedSource instanceof EJPluginFormProperties)
+        {
+            return buildCanvasPreview((EJPluginFormProperties) selectedSource, selectedSource);
         }
 
         if (selectedSource instanceof EJPluginCanvasProperties)
@@ -143,6 +175,12 @@ public class FormPreviewModelBuilder
         if (selectedSource instanceof EJPluginBlockProperties)
         {
             return buildMainScreenPreview(form, selectedSource, (EJPluginBlockProperties) selectedSource, availableWidth, availableHeight);
+        }
+        if (selectedSource instanceof EJPluginLovDefinitionProperties)
+        {
+            EJPluginLovDefinitionProperties lov = (EJPluginLovDefinitionProperties) selectedSource;
+            return buildMainScreenPreview(form, selectedSource, lov.getBlockProperties(), size(lov.getWidth(), availableWidth), size(lov.getHeight(),
+                    availableHeight));
         }
 
         EJPluginItemGroupProperties itemGroup = reflectedItemGroup(selectedSource);
@@ -182,13 +220,20 @@ public class FormPreviewModelBuilder
                     availableWidth, availableHeight);
         }
 
-        PreviewNode root = createSelectedRoot(form, source(selectedSource, block), block.getMainScreenProperties().getNumCols(), block
-                .getMainScreenProperties().getWidth(), block.getMainScreenProperties().getHeight(), availableWidth, availableHeight);
-        addFlatItemGroups(root, block.getMainScreenItemGroupDisplayContainer());
-        if (root.getChildren().isEmpty())
+        // A single-record block with no item groups has nothing to show; fall back to the canvas
+        // preview. (Checked on the model, not on the built node, because the block body may be
+        // wrapped in a title-bar section node.)
+        if (block.getMainScreenItemGroupDisplayContainer() == null || block.getMainScreenItemGroupDisplayContainer().getItemGroups().isEmpty())
         {
             return null;
         }
+
+        PreviewNode root = createSelectedRoot(form, source(selectedSource, block), 1, block.getMainScreenProperties().getWidth(), block
+                .getMainScreenProperties().getHeight(), availableWidth, availableHeight);
+        PreviewNode content = createBlockContentNode(block);
+        content.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(1).setFillHorizontal(true).setFillVertical(true)
+                .setGrabHorizontal(true).setGrabVertical(true));
+        root.addChild(content);
         new PreviewGridLayoutSolver().layout(root);
         return root;
     }
@@ -252,6 +297,7 @@ public class FormPreviewModelBuilder
         if (isColumnarRenderer(descriptor.getKind()))
         {
             rendererNode.setColumnLabels(blockColumnLabels(block));
+            rendererNode.setColumnAlignments(blockColumnAlignments(block));
         }
         rendererNode.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(1).setPreferredWidth(preferredWidth)
                 .setPreferredHeight(preferredHeight).setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true).setGrabVertical(true));
@@ -272,19 +318,6 @@ public class FormPreviewModelBuilder
         root.setPaintBorder(false);
 
         addCanvasContainer(root, popup.getPopupCanvasContainer(), popup);
-        new PreviewGridLayoutSolver().layout(root);
-        return root;
-    }
-
-    private PreviewNode buildItemGroupPreview(EJPluginFormProperties form, EJPluginItemGroupProperties itemGroup)
-    {
-        if (itemGroup == null)
-        {
-            return null;
-        }
-
-        PreviewNode root = createFlatRoot(form, itemGroup.getBlockProperties(), 1);
-        root.addChild(createFlatItemGroupNode(itemGroup));
         new PreviewGridLayoutSolver().layout(root);
         return root;
     }
@@ -363,7 +396,26 @@ public class FormPreviewModelBuilder
         return labels;
     }
 
+    private List<Integer> blockColumnAlignments(EJPluginBlockProperties block)
+    {
+        List<Integer> alignments = new ArrayList<Integer>();
+        if (block != null)
+        {
+            collectColumnItems(block.getMainScreenItemGroupDisplayContainer(), null, alignments);
+        }
+        return alignments;
+    }
+
     private void collectColumnLabels(List<String> labels, EJPluginItemGroupContainer container)
+    {
+        collectColumnItems(container, labels, null);
+    }
+
+    /**
+     * Walks the main-screen item groups in display order, collecting the header label and column
+     * alignment for each item that becomes a table/tree column.
+     */
+    private void collectColumnItems(EJPluginItemGroupContainer container, List<String> labels, List<Integer> alignments)
     {
         if (container == null)
         {
@@ -380,13 +432,34 @@ public class FormPreviewModelBuilder
                         EJPluginScreenItemProperties item = (EJPluginScreenItemProperties) itemProperties;
                         if (item.isVisible() && !item.isSpacerItem() && !item.isSeparator())
                         {
-                            labels.add(value(item.getLabel(), item.getReferencedItemName()));
+                            if (labels != null)
+                            {
+                                labels.add(value(item.getLabel(), item.getReferencedItemName()));
+                            }
+                            if (alignments != null)
+                            {
+                                alignments.add(Integer.valueOf(columnAlignment(requiredProperties(item))));
+                            }
                         }
                     }
                 }
             }
-            collectColumnLabels(labels, itemGroup.getChildItemGroupContainer());
+            collectColumnItems(itemGroup.getChildItemGroupContainer(), labels, alignments);
         }
+    }
+
+    private int columnAlignment(EJFrameworkExtensionProperties requiredProperties)
+    {
+        String alignment = stringProperty(requiredProperties, COLUMN_ALIGNMENT_PROPERTY);
+        if (ORIENTATION_RIGHT.equalsIgnoreCase(alignment))
+        {
+            return PreviewNode.TEXT_ALIGN_RIGHT;
+        }
+        if (ORIENTATION_CENTER.equalsIgnoreCase(alignment))
+        {
+            return PreviewNode.TEXT_ALIGN_CENTER;
+        }
+        return PreviewNode.TEXT_ALIGN_LEFT;
     }
 
     private void addFlatItemGroups(PreviewNode parent, EJPluginItemGroupContainer container)
@@ -406,20 +479,30 @@ public class FormPreviewModelBuilder
         PreviewNode node = new PreviewNode(group, resolver.forItemGroup(group));
         if (group.isSeparator())
         {
+            boolean vertical = isVerticalSeparator(group);
             node.setColumns(1);
             node.setCompactLayout(true);
             node.setPaintBorder(false);
             node.setPaintContainerTitle(false);
             node.setPaintControlLabel(false);
-            node.setConstraint(itemGroupConstraint(group, DEFAULT_SEPARATOR_HEIGHT));
+            node.setVerticalOrientation(vertical);
+            node.setConstraint(itemGroupConstraint(group, vertical ? DEFAULT_CONTROL_HEIGHT : DEFAULT_SEPARATOR_HEIGHT));
             return node;
         }
 
         node.setColumns(group.getNumCols());
         node.setLayoutGap(0);
         node.setCompactLayout(true);
-        node.setPaintBorder(group.dispayGroupFrame());
-        node.setPaintContainerTitle(group.dispayGroupFrame());
+        // EJRWTBlockPreviewerCreator#addItemGroup: a frameless group, or a framed group with no
+        // frame title, is a plain Composite with no border at all. Only a framed + titled group
+        // becomes either an etched Group or an expandable Section.
+        boolean titled = group.dispayGroupFrame() && value(group.getFrameTitle()) != null;
+        node.setPaintBorder(titled);
+        node.setPaintContainerTitle(titled);
+        if (titled)
+        {
+            applyTitleBar(node, group.getRendererProperties());
+        }
         node.setConstraint(itemGroupConstraint(group, 0));
 
         for (EJScreenItemProperties itemProperties : group.getAllItemProperties())
@@ -473,10 +556,74 @@ public class FormPreviewModelBuilder
                 value(item.getLabel(), item.getReferencedItemName()), "label", 0, 0));
         node.setPaintBorder(false);
         node.setPaintControlLabel(false);
-        node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(intProperty(requiredProperties, YSPAN_PROPERTY, 1))
-                .setPreferredWidth(labelWidth(item)).setPreferredHeight(DEFAULT_CONTROL_HEIGHT).setFillHorizontal(false).setFillVertical(false)
-                .setGrabHorizontal(false).setGrabVertical(false));
+        node.setTextAlignment(labelTextAlignment(requiredProperties));
+        // SWT (createBlockLableGridData): GridData(FILL_HORIZONTAL) with grabExcessHorizontalSpace
+        // = false. Vertically the label is centred in its cell, except that it is pinned to the top
+        // when it spans rows or its item expands vertically.
+        int verticalSpan = intProperty(requiredProperties, YSPAN_PROPERTY, 1);
+        boolean top = verticalSpan > 1 || booleanProperty(requiredProperties, EXPAND_Y_PROPERTY, false);
+        node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(verticalSpan)
+                .setPreferredWidth(labelWidth(item)).setPreferredHeight(DEFAULT_CONTROL_HEIGHT).setFillHorizontal(true).setFillVertical(false)
+                .setGrabHorizontal(false).setGrabVertical(false)
+                .setVerticalAlignment(top ? PreviewGridConstraint.Alignment.BEGINNING : PreviewGridConstraint.Alignment.CENTER));
         return node;
+    }
+
+    /**
+     * Applies the expandable-section chrome the renderer asks for via its TITLE_BAR_MODE property.
+     * Any mode other than GROUP (and other than "absent") produces an Eclipse Forms Section, with
+     * TWISTIE / TREE_NODE adding an expand affordance. Mirrors EJRWTBlockPreviewerCreator and
+     * EJRWTSingleRecordBlockDefinition.
+     */
+    private void applyTitleBar(PreviewNode node, EJFrameworkExtensionProperties titleBarProperties)
+    {
+        String mode = stringProperty(titleBarProperties, TITLE_BAR_MODE_PROPERTY);
+        if (mode == null || TITLE_BAR_MODE_GROUP.equals(mode))
+        {
+            node.setTitleBarMode(PreviewNode.TITLE_BAR_NONE);
+            return;
+        }
+
+        if (TITLE_BAR_MODE_TWISTIE.equals(mode))
+        {
+            node.setTitleBarMode(PreviewNode.TITLE_BAR_TWISTIE);
+        }
+        else if (TITLE_BAR_MODE_TREE_NODE.equals(mode))
+        {
+            node.setTitleBarMode(PreviewNode.TITLE_BAR_TREE_NODE);
+        }
+        else
+        {
+            node.setTitleBarMode(PreviewNode.TITLE_BAR_PLAIN);
+        }
+        node.setTitleBarExpanded(booleanProperty(titleBarProperties, TITLE_BAR_EXPANDED_PROPERTY, true));
+    }
+
+    /**
+     * Radio groups render their configured RADIO_BUTTONS entries, laid out horizontally or
+     * vertically, optionally inside a titled frame. See EJRWTRadioGroupItemRendererDefinition.
+     */
+    private void applyRadioGroup(PreviewNode node, EJPluginScreenItemProperties item)
+    {
+        EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
+        EJFrameworkExtensionProperties rendererProperties = blockItem == null ? null : blockItem.getItemRendererProperties();
+        node.setOptionsFramed(booleanProperty(rendererProperties, SHOW_BORDER_PROPERTY, false));
+        node.setVerticalOrientation(!isHorizontalRadioGroup(item));
+        node.setOptionLabels(radioOptionLabels(item));
+    }
+
+    private int labelTextAlignment(EJFrameworkExtensionProperties requiredProperties)
+    {
+        String orientation = stringProperty(requiredProperties, LABEL_ORIENTATION_PROPERTY);
+        if (ORIENTATION_RIGHT.equalsIgnoreCase(orientation))
+        {
+            return PreviewNode.TEXT_ALIGN_RIGHT;
+        }
+        if (ORIENTATION_CENTER.equalsIgnoreCase(orientation))
+        {
+            return PreviewNode.TEXT_ALIGN_CENTER;
+        }
+        return PreviewNode.TEXT_ALIGN_LEFT;
     }
 
     private PreviewNode createFlatControlNode(EJPluginScreenItemProperties item, EJFrameworkExtensionProperties requiredProperties, int maximumSpan)
@@ -484,6 +631,11 @@ public class FormPreviewModelBuilder
         PreviewNode node = new PreviewNode(item, resolver.forScreenItem(item));
         node.setPaintBorder(false);
         node.setPaintControlLabel(false);
+        node.setVerticalOrientation(isVerticalSeparator(item));
+        if (node.getKind() == EJDevPreviewKind.RADIO_GROUP)
+        {
+            applyRadioGroup(node, item);
+        }
 
         int horizontalSpan = Math.min(Math.max(1, maximumSpan), intProperty(requiredProperties, XSPAN_PROPERTY, 1));
         int verticalSpan = intProperty(requiredProperties, YSPAN_PROPERTY, 1);
@@ -492,9 +644,14 @@ public class FormPreviewModelBuilder
         int preferredWidth = preferredControlWidth(item, requiredProperties, expandHorizontally);
         int preferredHeight = preferredControlHeight(item, requiredProperties);
 
+        // EJRWTSingleRecordBlockRenderer#createBlockItemGridData: FILL_VERTICAL, plus
+        // FILL_HORIZONTAL when the item expands horizontally, but verticalAlignment is forced to
+        // CENTER whenever the item does not grab vertical space. (The SWT *preview* omits that
+        // last step, so it stretches short controls; the runtime centres them.)
         node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(horizontalSpan).setVerticalSpan(verticalSpan)
                 .setPreferredWidth(preferredWidth).setPreferredHeight(preferredHeight).setFillHorizontal(expandHorizontally)
-                .setFillVertical(expandVertically).setGrabHorizontal(expandHorizontally).setGrabVertical(expandVertically));
+                .setFillVertical(expandVertically).setGrabHorizontal(expandHorizontally).setGrabVertical(expandVertically)
+                .setVerticalAlignment(PreviewGridConstraint.Alignment.CENTER));
         return node;
     }
 
@@ -516,29 +673,42 @@ public class FormPreviewModelBuilder
 
     private PreviewNode createCanvasNode(EJPluginCanvasProperties canvas, Object selectedSource)
     {
+        EJCanvasType type = canvas.getType();
+        if (type == EJCanvasType.BLOCK)
+        {
+            return createCanvasBlockNode(canvas);
+        }
+
         PreviewNode node = new PreviewNode(canvas, canvasDescriptor(canvas));
         node.setColumns(canvas.getNumCols());
         node.setConstraint(canvasConstraint(canvas));
         node.setCompactLayout(true);
 
-        EJCanvasType type = canvas.getType();
-        if (type == EJCanvasType.BLOCK || type == EJCanvasType.FORM)
+        if (type == EJCanvasType.FORM)
         {
             return node;
         }
+        else if (type == EJCanvasType.SEPARATOR)
+        {
+            node.setPaintBorder(false);
+            node.setPaintContainerTitle(false);
+            node.setPaintControlLabel(false);
+            node.setVerticalOrientation(canvas.getSplitOrientation() != EJCanvasSplitOrientation.HORIZONTAL);
+        }
         else if (type == EJCanvasType.GROUP)
         {
+            // SWT only titles a group canvas when it asks for a frame and supplies a title.
+            node.setPaintContainerTitle(Boolean.TRUE.equals(canvas.getDisplayGroupFrame()) && value(canvas.getGroupFrameTitle()) != null);
             addCanvasContainer(node, canvas.getGroupCanvasContainer(), selectedSource);
         }
         else if (type == EJCanvasType.SPLIT)
         {
-            node.setColumns(canvas.getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL ? Math.max(1, canvas.getSplitCanvasContainer()
-                    .getCanvasProperties().size()) : 1);
+            boolean horizontal = canvas.getSplitOrientation() == EJCanvasSplitOrientation.HORIZONTAL;
+            node.setVerticalOrientation(!horizontal);
+            node.setColumns(horizontal ? Math.max(1, canvas.getSplitCanvasContainer().getCanvasProperties().size()) : 1);
+            node.setPaintContainerTitle(canvas.getSplitCanvasContainer().getCanvasProperties().isEmpty());
             addCanvasContainer(node, canvas.getSplitCanvasContainer(), selectedSource);
-        }
-        else if (type == EJCanvasType.POPUP)
-        {
-            addCanvasContainer(node, canvas.getPopupCanvasContainer(), selectedSource);
+            normalizeSplitChildren(node);
         }
         else if (type == EJCanvasType.TAB)
         {
@@ -546,6 +716,7 @@ public class FormPreviewModelBuilder
         }
         else if (type == EJCanvasType.DRAWER)
         {
+            // Parity note: the SWT preview draws only the drawer's tab buttons, never page content.
             addDrawerPages(node, canvas);
         }
         else if (type == EJCanvasType.STACKED)
@@ -554,6 +725,112 @@ public class FormPreviewModelBuilder
         }
 
         return node;
+    }
+
+    /**
+     * A SashForm gives every pane one slot and stretches it; spans would otherwise wrap panes onto
+     * extra rows/columns. The per-pane size hints are preserved because the solver turns them into
+     * sash weights (see PreviewGridLayoutSolver#splitWeight).
+     */
+    private void normalizeSplitChildren(PreviewNode split)
+    {
+        for (PreviewNode child : split.getChildren())
+        {
+            child.getConstraint().setHorizontalSpan(1).setVerticalSpan(1).setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true)
+                    .setGrabVertical(true).setHorizontalAlignment(PreviewGridConstraint.Alignment.BEGINNING).setVerticalAlignment(
+                            PreviewGridConstraint.Alignment.BEGINNING);
+        }
+    }
+
+    /**
+     * Renders a block canvas with its real main-screen content, matching the SWT preview's
+     * <code>addBlockControlToCanvas</code> path. Falls back to a labelled placeholder box when the
+     * canvas has no resolvable block.
+     */
+    private PreviewNode createCanvasBlockNode(EJPluginCanvasProperties canvas)
+    {
+        EJPluginBlockProperties block = canvas.getPluginBlockProperties();
+        if (block == null || block.getMainScreenProperties() == null)
+        {
+            PreviewNode placeholder = new PreviewNode(canvas, canvasBlockDescriptor(canvas));
+            placeholder.setColumns(canvas.getNumCols());
+            placeholder.setConstraint(canvasConstraint(canvas));
+            placeholder.setCompactLayout(true);
+            return placeholder;
+        }
+
+        PreviewNode node = createBlockContentNode(block);
+        node.setConstraint(canvasConstraint(canvas));
+        // Selecting either the canvas or its block in the tree should highlight this node.
+        node.setAliasSource(canvas);
+        return node;
+    }
+
+    /**
+     * The block's main screen as the block renderer would draw it: item groups and items for a
+     * single-record block, a column header strip for table/tree renderers, a chart body otherwise.
+     */
+    private PreviewNode createBlockContentNode(EJPluginBlockProperties block)
+    {
+        EJPluginMainScreenProperties mainScreen = block.getMainScreenProperties();
+        EJDevPreviewDescriptor descriptor = resolver.forBlock(block);
+        boolean frame = mainScreen.getDisplayFrame();
+        String frameTitle = value(mainScreen.getFrameTitle());
+        if (frame && frameTitle != null)
+        {
+            descriptor = descriptor.withLabel(frameTitle);
+        }
+
+        PreviewNode node = new PreviewNode(block, descriptor);
+        node.setColumns(mainScreen.getNumCols());
+        node.setCompactLayout(true);
+        // Only a framed main screen gets a Group box; table/tree renderers draw their own border.
+        node.setPaintBorder(frame);
+
+        if (descriptor.getKind() == EJDevPreviewKind.BLOCK)
+        {
+            node.setPaintContainerTitle(frame && frameTitle != null);
+            addFlatItemGroups(node, block.getMainScreenItemGroupDisplayContainer());
+        }
+        else
+        {
+            node.setPaintContainerTitle(false);
+            if (isColumnarRenderer(descriptor.getKind()))
+            {
+                node.setColumnLabels(blockColumnLabels(block));
+                node.setColumnAlignments(blockColumnAlignments(block));
+            }
+        }
+        return wrapInBlockTitleBar(block, node);
+    }
+
+    /**
+     * Single- and multi-record blocks may wrap their body in an Eclipse Forms Section carrying a
+     * title bar (see EJRWTSingleRecordBlockDefinition#addBlockControlToCanvas). Model that as an
+     * outer container node so both the title bar and the inner frame survive.
+     */
+    private PreviewNode wrapInBlockTitleBar(EJPluginBlockProperties block, PreviewNode body)
+    {
+        EJFrameworkExtensionProperties rendererProperties = block.getBlockRendererProperties();
+        EJFrameworkExtensionProperties titleBar = rendererProperties == null ? null : rendererProperties.getPropertyGroup(TITLE_BAR_GROUP);
+        String mode = stringProperty(titleBar, TITLE_BAR_MODE_PROPERTY);
+        if (mode == null || TITLE_BAR_MODE_GROUP.equals(mode))
+        {
+            return body;
+        }
+
+        String title = value(stringProperty(titleBar, TITLE_BAR_TITLE_PROPERTY), block.getName());
+        PreviewNode section = new PreviewNode(block, EJDevPreviewDescriptor.create(EJDevPreviewKind.BLOCK, block.getName(), title,
+                block.getBlockRendererName(), 0, 0));
+        section.setColumns(1);
+        section.setCompactLayout(true);
+        section.setPaintBorder(false);
+        section.setPaintContainerTitle(true);
+        applyTitleBar(section, titleBar);
+
+        body.setConstraint(PreviewGridConstraint.defaults().setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true).setGrabVertical(true));
+        section.addChild(body);
+        return section;
     }
 
     private EJDevPreviewDescriptor canvasDescriptor(EJPluginCanvasProperties canvas)
@@ -585,100 +862,49 @@ public class FormPreviewModelBuilder
                 canvas.getHeight());
     }
 
-    private PreviewNode createBlockNode(EJPluginBlockProperties block)
-    {
-        PreviewNode node = new PreviewNode(block, resolver.forBlock(block));
-        EJPluginMainScreenProperties mainScreen = block.getMainScreenProperties();
-        node.setColumns(mainScreen.getNumCols());
-        node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(mainScreen.getHorizontalSpan()).setVerticalSpan(mainScreen.getVerticalSpan())
-                .setPreferredWidth(mainScreen.getWidth()).setPreferredHeight(mainScreen.getHeight()).setFillHorizontal(mainScreen.canExpandHorizontally())
-                .setFillVertical(mainScreen.canExpandVertically()).setGrabHorizontal(mainScreen.canExpandHorizontally())
-                .setGrabVertical(mainScreen.canExpandVertically()));
-
-        addItemGroups(node, block.getMainScreenItemGroupDisplayContainer());
-        addBlockScreens(node, block);
-        return node;
-    }
-
-    private void addBlockScreens(PreviewNode blockNode, EJPluginBlockProperties block)
-    {
-        if (block.isInsertAllowed() && !block.getInsertScreenItemGroupDisplayContainer().isEmpty())
-        {
-            blockNode.addChild(createScreenNode(block, resolver.forInsertScreen(block), block.getInsertScreenRendererProperties(),
-                    block.getInsertScreenItemGroupDisplayContainer()));
-        }
-        if (block.isUpdateAllowed() && !block.getUpdateScreenItemGroupDisplayContainer().isEmpty())
-        {
-            blockNode.addChild(createScreenNode(block, resolver.forUpdateScreen(block), block.getUpdateScreenRendererProperties(),
-                    block.getUpdateScreenItemGroupDisplayContainer()));
-        }
-        if (block.isQueryAllowed() && !block.getQueryScreenItemGroupDisplayContainer().isEmpty())
-        {
-            blockNode.addChild(createScreenNode(block, resolver.forQueryScreen(block), block.getQueryScreenRendererProperties(),
-                    block.getQueryScreenItemGroupDisplayContainer()));
-        }
-    }
-
-    private PreviewNode createScreenNode(EJPluginBlockProperties block, EJDevPreviewDescriptor descriptor, EJFrameworkExtensionProperties rendererProperties,
-            EJPluginItemGroupContainer container)
-    {
-        PreviewNode node = new PreviewNode(block, descriptor);
-        node.setColumns(screenColumns(rendererProperties));
-        node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(1)
-                .setPreferredWidth(descriptor.getPreferredWidth()).setPreferredHeight(descriptor.getPreferredHeight()).setFillHorizontal(true)
-                .setFillVertical(false).setGrabHorizontal(true).setGrabVertical(false));
-        addItemGroups(node, container);
-        return node;
-    }
-
-    private void addItemGroups(PreviewNode parent, EJPluginItemGroupContainer container)
-    {
-        List<EJPluginItemGroupProperties> itemGroups = container.getItemGroups();
-        for (EJPluginItemGroupProperties group : itemGroups)
-        {
-            parent.addChild(createItemGroupNode(group));
-        }
-    }
-
-    private PreviewNode createItemGroupNode(EJPluginItemGroupProperties group)
-    {
-        PreviewNode node = new PreviewNode(group, resolver.forItemGroup(group));
-        if (group.isSeparator())
-        {
-            node.setColumns(1);
-            node.setCompactLayout(true);
-            node.setPaintBorder(false);
-            node.setPaintContainerTitle(false);
-            node.setPaintControlLabel(false);
-            node.setConstraint(itemGroupConstraint(group, DEFAULT_SEPARATOR_HEIGHT));
-            return node;
-        }
-
-        node.setColumns(group.getNumCols());
-        node.setConstraint(itemGroupConstraint(group, 0));
-
-        for (EJScreenItemProperties itemProperties : group.getAllItemProperties())
-        {
-            if (itemProperties instanceof EJPluginScreenItemProperties)
-            {
-                node.addChild(createScreenItemNode((EJPluginScreenItemProperties) itemProperties));
-            }
-        }
-        addItemGroups(node, group.getChildItemGroupContainer());
-        return node;
-    }
-
+    /**
+     * Mirrors EJRWTBlockPreviewerCreator#createItemGroupGridData: the group always starts from
+     * FILL_BOTH, expand flags only control grabbing, and an explicit alignment overrides the fill
+     * on that axis (and forces a grab, as SWT does).
+     */
     private PreviewGridConstraint itemGroupConstraint(EJPluginItemGroupProperties group, int fallbackHeight)
     {
         int preferredHeight = group.getHeight() > 0 ? group.getHeight() : fallbackHeight;
-        return PreviewGridConstraint.defaults().setHorizontalSpan(group.getXspan()).setVerticalSpan(group.getYspan()).setPreferredWidth(group.getWidth())
-                .setPreferredHeight(preferredHeight).setFillHorizontal(group.canExpandHorizontally()).setFillVertical(group.canExpandVertically())
-                .setGrabHorizontal(group.canExpandHorizontally()).setGrabVertical(group.canExpandVertically());
+        boolean grabHorizontal = group.canExpandHorizontally();
+        boolean grabVertical = group.canExpandVertically();
+
+        PreviewGridConstraint constraint = PreviewGridConstraint.defaults().setHorizontalSpan(group.getXspan()).setVerticalSpan(group.getYspan())
+                .setPreferredWidth(group.getWidth()).setPreferredHeight(preferredHeight).setFillHorizontal(true).setFillVertical(true)
+                .setMinimumWidth(grabHorizontal ? group.getWidth() : 0).setMinimumHeight(grabVertical ? preferredHeight : 0);
+
+        EJItemGroupAlignment horizontal = group.getHorizontalAlignment();
+        if (horizontal != null && horizontal != EJItemGroupAlignment.FILL)
+        {
+            constraint.setFillHorizontal(false).setHorizontalAlignment(alignment(horizontal));
+            grabHorizontal = grabHorizontal || horizontal != EJItemGroupAlignment.BEGINNING;
+        }
+
+        EJItemGroupAlignment vertical = group.getVerticalAlignment();
+        if (vertical != null && vertical != EJItemGroupAlignment.FILL)
+        {
+            constraint.setFillVertical(false).setVerticalAlignment(alignment(vertical));
+            grabVertical = grabVertical || vertical != EJItemGroupAlignment.BEGINNING;
+        }
+
+        return constraint.setGrabHorizontal(grabHorizontal).setGrabVertical(grabVertical);
     }
 
-    private PreviewNode createScreenItemNode(EJPluginScreenItemProperties item)
+    private PreviewGridConstraint.Alignment alignment(EJItemGroupAlignment alignment)
     {
-        return new PreviewNode(item, resolver.forScreenItem(item));
+        switch (alignment)
+        {
+            case CENTER:
+                return PreviewGridConstraint.Alignment.CENTER;
+            case END:
+                return PreviewGridConstraint.Alignment.END;
+            default:
+                return PreviewGridConstraint.Alignment.BEGINNING;
+        }
     }
 
     private boolean hasLabel(EJPluginScreenItemProperties item)
@@ -706,19 +932,44 @@ public class FormPreviewModelBuilder
         }
     }
 
+    /**
+     * Whether DISPLAYED_WIDTH/HEIGHT are character counts (scaled by the font) or literal pixels.
+     * Mirrors EJDevItemRendererDefinitionControl#useFontDimensions: the RAP definitions clear the
+     * flag for image, HTML, check box, radio group, button and help renderers, and the block
+     * previewer always passes <code>false</code> for spacer items.
+     */
+    private boolean usesFontDimensions(EJPluginScreenItemProperties item, EJDevPreviewKind kind)
+    {
+        if (item.isSpacerItem())
+        {
+            return false;
+        }
+        switch (kind)
+        {
+            case IMAGE:
+            case HTML:
+            case CHECKBOX:
+            case RADIO_GROUP:
+            case BUTTON:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     private int preferredControlWidth(EJPluginScreenItemProperties item, EJFrameworkExtensionProperties requiredProperties, boolean expandHorizontally)
     {
+        EJDevPreviewKind kind = resolver.forScreenItem(item).getKind();
         int displayedWidth = intProperty(requiredProperties, DISPLAYED_WIDTH_PROPERTY, 0);
         if (displayedWidth > 0)
         {
-            return displayedWidth * 8;
+            return usesFontDimensions(item, kind) ? (displayedWidth + 1) * CHAR_WIDTH : displayedWidth;
         }
         if (item.isSpacerItem())
         {
-            return item.isSeparator() ? DEFAULT_CONTROL_WIDTH : 1;
+            return item.isSeparator() && !isVerticalSeparator(item) ? DEFAULT_CONTROL_WIDTH : (item.isSeparator() ? DEFAULT_SEPARATOR_HEIGHT : 1);
         }
 
-        EJDevPreviewKind kind = resolver.forScreenItem(item).getKind();
         if (kind == EJDevPreviewKind.BUTTON)
         {
             return Math.max(34, textWidth(value(item.getLabel(), item.getReferencedItemName())) + 14);
@@ -728,17 +979,17 @@ public class FormPreviewModelBuilder
 
     private int preferredControlHeight(EJPluginScreenItemProperties item, EJFrameworkExtensionProperties requiredProperties)
     {
+        EJDevPreviewKind kind = resolver.forScreenItem(item).getKind();
         int displayedHeight = intProperty(requiredProperties, DISPLAYED_HEIGHT_PROPERTY, 0);
         if (displayedHeight > 0)
         {
-            return displayedHeight * 18;
+            return usesFontDimensions(item, kind) ? (displayedHeight + 1) * CHAR_HEIGHT : displayedHeight;
         }
         if (item.isSpacerItem())
         {
-            return item.isSeparator() ? DEFAULT_SEPARATOR_HEIGHT : 1;
+            return item.isSeparator() && isVerticalSeparator(item) ? DEFAULT_CONTROL_HEIGHT : (item.isSeparator() ? DEFAULT_SEPARATOR_HEIGHT : 1);
         }
 
-        EJDevPreviewKind kind = resolver.forScreenItem(item).getKind();
         switch (kind)
         {
             case TEXT_AREA:
@@ -746,9 +997,50 @@ public class FormPreviewModelBuilder
                 return DEFAULT_TEXT_AREA_HEIGHT;
             case BUTTON:
                 return DEFAULT_BUTTON_HEIGHT;
+            case RADIO_GROUP:
+                // Title/frame band plus one row per option when stacked vertically.
+                return 20 + (16 * (isHorizontalRadioGroup(item) ? 1 : Math.max(1, radioOptionLabels(item).size())));
             default:
                 return DEFAULT_CONTROL_HEIGHT;
         }
+    }
+
+    private boolean isHorizontalRadioGroup(EJPluginScreenItemProperties item)
+    {
+        EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
+        EJFrameworkExtensionProperties rendererProperties = blockItem == null ? null : blockItem.getItemRendererProperties();
+        return ORIENTATION_HORIZONTAL.equals(stringProperty(rendererProperties, ORIENTATION_PROPERTY));
+    }
+
+    private List<String> radioOptionLabels(EJPluginScreenItemProperties item)
+    {
+        List<String> labels = new ArrayList<String>();
+        EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
+        EJFrameworkExtensionProperties rendererProperties = blockItem == null ? null : blockItem.getItemRendererProperties();
+        if (rendererProperties == null)
+        {
+            return labels;
+        }
+        EJFrameworkExtensionPropertyList radioButtons = rendererProperties.getPropertyList(RADIO_BUTTONS_LIST);
+        if (radioButtons == null)
+        {
+            return labels;
+        }
+        for (EJFrameworkExtensionPropertyListEntry entry : radioButtons.getAllListEntries())
+        {
+            labels.add(entry.getProperty(RADIO_LABEL_PROPERTY));
+        }
+        return labels;
+    }
+
+    private boolean isVerticalSeparator(EJPluginScreenItemProperties item)
+    {
+        return item.isSeparator() && item.getSeparatorOrientation() == EJSeparatorOrientation.VERTICAL;
+    }
+
+    private boolean isVerticalSeparator(EJPluginItemGroupProperties group)
+    {
+        return group.isSeparator() && group.getSeparatorOrientation() == EJSeparatorOrientation.VERTICAL;
     }
 
     private int labelWidth(EJPluginScreenItemProperties item)

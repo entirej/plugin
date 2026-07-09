@@ -32,6 +32,7 @@ public class PreviewGridLayoutSolver
     private static final int TAB_MARGIN          = 8;
     private static final int TAB_TOP_MARGIN      = 30;
     private static final int TAB_TITLE_HEIGHT    = 18;
+    private static final int TITLE_HEIGHT        = 18;
 
     public void layout(PreviewNode root)
     {
@@ -73,13 +74,17 @@ public class PreviewGridLayoutSolver
             int height = heightSpan(rowHeights, placement.row, placement.rowSpan) + (gap * (placement.rowSpan - 1));
 
             PreviewGridConstraint constraint = placement.node.getConstraint();
+            int cellWidth = width;
+            int cellHeight = height;
             if (!constraint.isFillHorizontal())
             {
                 width = Math.min(width, preferredWidth(placement.node));
+                x += align(cellWidth - width, constraint.getHorizontalAlignment());
             }
             if (!constraint.isFillVertical())
             {
                 height = Math.min(height, preferredHeight(placement.node));
+                y += align(cellHeight - height, constraint.getVerticalAlignment());
             }
 
             placement.node.setBounds(x, y, width, height);
@@ -117,9 +122,34 @@ public class PreviewGridLayoutSolver
         {
             case TAB_FOLDER:
             case STACKED:
+                if (parent.isTabsAtBottom())
+                {
+                    return parent.isPaintContainerTitle() ? TAB_MARGIN + TAB_TITLE_HEIGHT : TAB_MARGIN;
+                }
                 return parent.isPaintContainerTitle() ? TAB_TOP_MARGIN + TAB_TITLE_HEIGHT : TAB_TOP_MARGIN;
-            default:
+            case DRAWER:
                 return margin(parent);
+            default:
+                // A painted container title occupies a band across the top of the client area
+                // (see PreviewNodeFigure#drawTitle); reserve it so children do not sit under it.
+                return margin(parent) + (parent.isPaintContainerTitle() ? TITLE_HEIGHT : 0);
+        }
+    }
+
+    private int align(int slack, PreviewGridConstraint.Alignment alignment)
+    {
+        if (slack <= 0 || alignment == null)
+        {
+            return 0;
+        }
+        switch (alignment)
+        {
+            case CENTER:
+                return slack / 2;
+            case END:
+                return slack;
+            default:
+                return 0;
         }
     }
 
@@ -129,7 +159,7 @@ public class PreviewGridLayoutSolver
         {
             case TAB_FOLDER:
             case STACKED:
-                return TAB_MARGIN;
+                return parent.isTabsAtBottom() ? TAB_TOP_MARGIN : TAB_MARGIN;
             default:
                 return margin(parent);
         }
@@ -137,6 +167,10 @@ public class PreviewGridLayoutSolver
 
     private int margin(PreviewNode parent)
     {
+        if (parent.getLayoutMargin() >= 0)
+        {
+            return parent.getLayoutMargin();
+        }
         return parent.isCompactLayout() ? COMPACT_MARGIN : MARGIN;
     }
 
@@ -531,28 +565,22 @@ public class PreviewGridLayoutSolver
             int columnSpan = Math.min(columns, Math.max(1, constraint.getHorizontalSpan()));
             int rowSpan = Math.max(1, constraint.getVerticalSpan());
 
-            boolean found = false;
-            while (!found)
+            // Scan cell by cell, wrapping to column 0 of the next row. Advancing the row must
+            // always reset the column, otherwise a fully occupied row leaves the column past the
+            // limit and the wrap check below skips the following row entirely.
+            while (true)
             {
-                ensureRows(occupied, row + rowSpan, columns);
                 if (column > columns - columnSpan)
                 {
                     row++;
                     column = 0;
-                    continue;
                 }
-                for (; column <= columns - columnSpan; column++)
+                ensureRows(occupied, row + rowSpan, columns);
+                if (isFree(occupied, row, column, rowSpan, columnSpan))
                 {
-                    if (isFree(occupied, row, column, rowSpan, columnSpan))
-                    {
-                        found = true;
-                        break;
-                    }
+                    break;
                 }
-                if (!found)
-                {
-                    row++;
-                }
+                column++;
             }
 
             mark(occupied, row, column, rowSpan, columnSpan);

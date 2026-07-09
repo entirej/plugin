@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.XYLayout;
@@ -32,6 +33,8 @@ import org.entirej.framework.dev.renderer.definition.EJDevPreviewKind;
 
 public class PreviewNodeFigure extends Figure
 {
+    private static final List<String> DEFAULT_OPTIONS = java.util.Arrays.asList("Option", "Option");
+
     private PreviewNode model;
     private Color       appComponentBackground;
 
@@ -74,12 +77,25 @@ public class PreviewNodeFigure extends Figure
             graphics.drawRectangle(area.x, area.y, area.width - 1, area.height - 1);
         }
 
+        paintKind(graphics, contentArea(area), kind);
+        if (kind == EJDevPreviewKind.SPLIT)
+        {
+            drawSplitDividers(graphics, area);
+        }
+    }
+
+    /**
+     * The rectangle {@link #paintKind} draws into. Kept in one place so that hit testing
+     * (see {@link #getTabIndexAt}) uses exactly the same geometry as painting.
+     */
+    private Rectangle contentArea(Rectangle area)
+    {
         Rectangle content = area.getCopy();
         if (model.isPaintBorder())
         {
             content.shrink(5, 5);
         }
-        paintKind(graphics, content, kind);
+        return content;
     }
 
     private void paintKind(Graphics graphics, Rectangle area, EJDevPreviewKind kind)
@@ -139,11 +155,7 @@ public class PreviewNodeFigure extends Figure
                 graphics.drawText(text, area.x + 20, area.y);
                 break;
             case RADIO_GROUP:
-                drawTitle(graphics, area, text);
-                graphics.drawOval(area.x + 2, area.y + 22, 10, 10);
-                graphics.drawText("Option", area.x + 18, area.y + 19);
-                graphics.drawOval(area.x + 2, area.y + 38, 10, 10);
-                graphics.drawText("Option", area.x + 18, area.y + 35);
+                drawRadioGroup(graphics, area, text);
                 break;
             case BUTTON:
                 if (model.isPaintControlLabel())
@@ -159,7 +171,7 @@ public class PreviewNodeFigure extends Figure
                 }
                 break;
             case LABEL:
-                graphics.drawText(text, area.x, area.y + 3);
+                graphics.drawText(text, alignedTextX(area, text), area.y + 3);
                 break;
             case TABLE:
             case TREE:
@@ -179,6 +191,8 @@ public class PreviewNodeFigure extends Figure
                 int baseLine = area.y + area.height - 8;
                 graphics.drawLine(area.x + 10, baseLine, area.x + area.width - 8, baseLine);
                 graphics.drawLine(area.x + 10, area.y + 28, area.x + 10, baseLine);
+                // drawInsetBox leaves the background white; the bars would be invisible without this.
+                graphics.setBackgroundColor(ColorConstants.lightGray);
                 graphics.fillRectangle(area.x + 22, baseLine - 20, 14, 20);
                 graphics.fillRectangle(area.x + 46, baseLine - 34, 14, 34);
                 graphics.fillRectangle(area.x + 70, baseLine - 26, 14, 26);
@@ -187,7 +201,10 @@ public class PreviewNodeFigure extends Figure
                 if (shouldPaintContainerTitle())
                 {
                     drawTitle(graphics, area, text);
-                    graphics.drawLine(area.x + area.width / 2, area.y + 19, area.x + area.width / 2, area.y + area.height - 1);
+                }
+                if (model.getChildren().isEmpty())
+                {
+                    drawEmptySplitDivider(graphics, area);
                 }
                 break;
             case TAB_FOLDER:
@@ -195,11 +212,11 @@ public class PreviewNodeFigure extends Figure
                 {
                     drawTitle(graphics, area, text);
                 }
-                drawTabs(graphics, area, shouldPaintContainerTitle() ? 18 : 0);
+                drawTabs(graphics, area, tabStripOffset());
                 break;
             case STACKED:
                 drawTitle(graphics, area, "<STACKED_COMPONENT>");
-                drawTabs(graphics, area, 18);
+                drawTabs(graphics, area, tabStripOffset());
                 break;
             case DRAWER:
                 drawDrawer(graphics, area);
@@ -210,7 +227,14 @@ public class PreviewNodeFigure extends Figure
             case BLOCK:
                 if (shouldPaintContainerTitle())
                 {
-                    drawTitle(graphics, area, text);
+                    if (model.getTitleBarMode() == PreviewNode.TITLE_BAR_NONE)
+                    {
+                        drawTitle(graphics, area, text);
+                    }
+                    else
+                    {
+                        drawSectionTitleBar(graphics, area, text);
+                    }
                 }
                 break;
             case TAB_PAGE:
@@ -230,6 +254,12 @@ public class PreviewNodeFigure extends Figure
                 {
                     graphics.drawText(text, area.x, area.y);
                     graphics.drawLine(area.x, area.y + 18, area.x + area.width, area.y + 18);
+                }
+                else if (model.isVerticalOrientation())
+                {
+                    int x = area.x + Math.max(0, area.width / 2);
+                    graphics.setForegroundColor(ColorConstants.gray);
+                    graphics.drawLine(x, area.y, x, area.y + area.height);
                 }
                 else
                 {
@@ -266,6 +296,106 @@ public class PreviewNodeFigure extends Figure
         graphics.drawText(text, area.x + 2, area.y + 1);
     }
 
+    /**
+     * An Eclipse Forms Section title bar: the expand affordance (twistie triangle or tree-node
+     * plus/minus box), the title, and the rule under it.
+     */
+    private void drawSectionTitleBar(Graphics graphics, Rectangle area, String text)
+    {
+        int textX = area.x + 2;
+        int mode = model.getTitleBarMode();
+        boolean expanded = model.isTitleBarExpanded();
+
+        if (mode == PreviewNode.TITLE_BAR_TWISTIE)
+        {
+            int top = area.y + 3;
+            graphics.setForegroundColor(ColorConstants.darkGray);
+            graphics.setBackgroundColor(ColorConstants.darkGray);
+            int[] points = expanded ? new int[] { area.x + 2, top + 2, area.x + 12, top + 2, area.x + 7, top + 9 }
+                    : new int[] { area.x + 3, top, area.x + 10, top + 5, area.x + 3, top + 10 };
+            graphics.fillPolygon(points);
+            textX = area.x + 16;
+        }
+        else if (mode == PreviewNode.TITLE_BAR_TREE_NODE)
+        {
+            graphics.setForegroundColor(ColorConstants.gray);
+            graphics.drawRectangle(area.x + 2, area.y + 3, 10, 10);
+            graphics.setForegroundColor(ColorConstants.black);
+            graphics.drawLine(area.x + 4, area.y + 8, area.x + 10, area.y + 8);
+            if (!expanded)
+            {
+                graphics.drawLine(area.x + 7, area.y + 5, area.x + 7, area.y + 11);
+            }
+            textX = area.x + 16;
+        }
+
+        graphics.setForegroundColor(ColorConstants.black);
+        graphics.drawText(text, textX, area.y + 1);
+        graphics.setForegroundColor(ColorConstants.buttonDarker);
+        graphics.drawLine(area.x, area.y + 16, area.x + area.width, area.y + 16);
+    }
+
+    /**
+     * The radio group's real choices when the renderer supplied them, honouring the horizontal or
+     * vertical row layout and the optional titled frame.
+     */
+    private void drawRadioGroup(Graphics graphics, Rectangle area, String text)
+    {
+        Rectangle body = area.getCopy();
+        if (model.isOptionsFramed())
+        {
+            graphics.setForegroundColor(ColorConstants.gray);
+            graphics.drawRectangle(area.x, area.y + 6, Math.max(1, area.width - 1), Math.max(1, area.height - 7));
+            if (text != null)
+            {
+                graphics.setBackgroundColor(background(model.getKind()));
+                graphics.fillRectangle(area.x + 6, area.y, textWidth(text) + 4, 12);
+                graphics.setForegroundColor(ColorConstants.black);
+                graphics.drawText(text, area.x + 8, area.y);
+            }
+            body.shrink(6, 0);
+            body.y += 12;
+        }
+        else
+        {
+            drawTitle(graphics, area, text);
+            body.y += 18;
+        }
+
+        List<String> options = model.getOptionLabels();
+        if (options.isEmpty())
+        {
+            options = DEFAULT_OPTIONS;
+        }
+
+        boolean horizontal = !model.isVerticalOrientation();
+        int x = body.x + 2;
+        int y = body.y;
+        for (String option : options)
+        {
+            if (horizontal && x + 14 + textWidth(option) > body.x + body.width)
+            {
+                break;
+            }
+            if (!horizontal && y + 12 > body.y + body.height)
+            {
+                break;
+            }
+            graphics.setForegroundColor(ColorConstants.gray);
+            graphics.drawOval(x, y + 2, 10, 10);
+            graphics.setForegroundColor(ColorConstants.black);
+            graphics.drawText(option, x + 16, y);
+            if (horizontal)
+            {
+                x += 16 + textWidth(option) + 10;
+            }
+            else
+            {
+                y += 16;
+            }
+        }
+    }
+
     private void applyBorder()
     {
         setBorder(model != null && model.isPaintBorder() ? new LineBorder(ColorConstants.gray) : null);
@@ -284,10 +414,31 @@ public class PreviewNodeFigure extends Figure
         return model.isPaintContainerTitle();
     }
 
+    /**
+     * Vertical offset of the tab strip from the top of the content area. STACKED always draws a
+     * title above its tabs; TAB_FOLDER only when it paints a container title.
+     */
+    private int tabStripOffset()
+    {
+        if (model.getKind() == EJDevPreviewKind.STACKED)
+        {
+            return 18;
+        }
+        return shouldPaintContainerTitle() ? 18 : 0;
+    }
+
+    /**
+     * Y coordinate of the simulated tab strip. Shared by painting and hit testing.
+     */
+    private int tabStripY(Rectangle area, int offset)
+    {
+        return model.isTabsAtBottom() ? area.y + Math.max(0, area.height - 21) : area.y + offset;
+    }
+
     private void drawTabs(Graphics graphics, Rectangle area, int offset)
     {
         int tabX = area.x;
-        int tabY = area.y + offset;
+        int tabY = tabStripY(area, offset);
         int maxRight = area.x + area.width - 1;
         int selectedIndex = model.getSelectedTabIndex();
         for (int i = 0; i < model.getTabLabels().size(); i++)
@@ -307,8 +458,10 @@ public class PreviewNodeFigure extends Figure
             graphics.drawText(label, tabX + 6, tabY + 3);
             if (selected)
             {
+                // Erase the folder edge under (or above) the active tab so it reads as connected.
+                int edgeY = model.isTabsAtBottom() ? tabY : tabY + 20;
                 graphics.setForegroundColor(ColorConstants.white);
-                graphics.drawLine(tabX + 1, tabY + 20, tabX + width - 1, tabY + 20);
+                graphics.drawLine(tabX + 1, edgeY, tabX + width - 1, edgeY);
             }
             tabX += width - 1;
         }
@@ -318,7 +471,81 @@ public class PreviewNodeFigure extends Figure
             graphics.drawText("Tab", area.x + 8, tabY + 3);
         }
         graphics.setForegroundColor(ColorConstants.gray);
-        graphics.drawLine(area.x, tabY + 21, area.x + area.width, tabY + 21);
+        int edgeY = model.isTabsAtBottom() ? tabY - 1 : tabY + 21;
+        graphics.drawLine(area.x, edgeY, area.x + area.width, edgeY);
+    }
+
+    /**
+     * Draws a sash line in the gutter between each pair of adjacent panes, mirroring the
+     * SashForm the SWT preview builds. Child bounds are model-absolute, so they are mapped
+     * onto the figure's client area via the parent's model origin.
+     */
+    private void drawSplitDividers(Graphics graphics, Rectangle area)
+    {
+        List<PreviewNode> children = model.getVisibleChildren();
+        if (children.size() < 2)
+        {
+            return;
+        }
+
+        boolean horizontal = model.getColumns() > 1;
+        int originX = model.getBounds().getX();
+        int originY = model.getBounds().getY();
+
+        graphics.setForegroundColor(ColorConstants.buttonDarker);
+        for (int i = 0; i < children.size() - 1; i++)
+        {
+            PreviewBounds before = children.get(i).getBounds();
+            PreviewBounds after = children.get(i + 1).getBounds();
+            if (horizontal)
+            {
+                int endOfBefore = before.getX() + before.getWidth();
+                int x = area.x + ((endOfBefore + after.getX()) / 2) - originX;
+                graphics.drawLine(x, area.y, x, area.y + area.height);
+            }
+            else
+            {
+                int endOfBefore = before.getY() + before.getHeight();
+                int y = area.y + ((endOfBefore + after.getY()) / 2) - originY;
+                graphics.drawLine(area.x, y, area.x + area.width, y);
+            }
+        }
+    }
+
+    private void drawEmptySplitDivider(Graphics graphics, Rectangle area)
+    {
+        graphics.setForegroundColor(ColorConstants.gray);
+        int top = shouldPaintContainerTitle() ? area.y + 19 : area.y;
+        if (model.isVerticalOrientation())
+        {
+            int y = top + Math.max(0, (area.y + area.height - top) / 2);
+            graphics.drawLine(area.x, y, area.x + area.width, y);
+        }
+        else
+        {
+            int x = area.x + area.width / 2;
+            graphics.drawLine(x, top, x, area.y + area.height - 1);
+        }
+    }
+
+    private int alignedTextX(Rectangle area, String text)
+    {
+        if (text == null || model.getTextAlignment() == PreviewNode.TEXT_ALIGN_LEFT)
+        {
+            return area.x;
+        }
+        int slack = Math.max(0, area.width - textWidth(text));
+        return model.getTextAlignment() == PreviewNode.TEXT_ALIGN_CENTER ? area.x + (slack / 2) : area.x + slack;
+    }
+
+    private int textWidth(String text)
+    {
+        if (text == null)
+        {
+            return 0;
+        }
+        // getFont() is only guaranteed once the figure is attached to a viewer.
+        return getFont() == null ? text.length() * 7 : FigureUtilities.getTextWidth(text, getFont());
     }
 
     private void drawTableLikeRenderer(Graphics graphics, Rectangle area, EJDevPreviewKind kind, String text)
@@ -371,7 +598,22 @@ public class PreviewNodeFigure extends Figure
             int left = area.x + (area.width * i) / count;
             int next = area.x + (area.width * (i + 1)) / count;
             int maxChars = Math.max(1, (next - left - 12) / 7);
-            graphics.drawText(shortText(labels.get(i), maxChars), left + 7, area.y + 6);
+            String label = shortText(labels.get(i), maxChars);
+            int slack = Math.max(0, (next - left) - 14 - textWidth(label));
+            int offset;
+            switch (model.getColumnAlignment(i))
+            {
+                case PreviewNode.TEXT_ALIGN_CENTER:
+                    offset = slack / 2;
+                    break;
+                case PreviewNode.TEXT_ALIGN_RIGHT:
+                    offset = slack;
+                    break;
+                default:
+                    offset = 0;
+                    break;
+            }
+            graphics.drawText(label, left + 7 + offset, area.y + 6);
         }
     }
 
@@ -382,9 +624,9 @@ public class PreviewNodeFigure extends Figure
             return -1;
         }
 
-        Rectangle area = getClientArea().getCopy().shrink(5, 5);
+        Rectangle area = contentArea(getClientArea().getCopy());
         int tabX = area.x;
-        int tabY = area.y + (shouldPaintContainerTitle() ? 18 : 0);
+        int tabY = tabStripY(area, tabStripOffset());
         if (y < tabY || y > tabY + 20)
         {
             return -1;

@@ -147,6 +147,10 @@ public class PreviewEditControl extends Composite
         {
             sourceMap.put(node.getSource(), node);
         }
+        if (node.getAliasSource() != null && !sourceMap.containsKey(node.getAliasSource()))
+        {
+            sourceMap.put(node.getAliasSource(), node);
+        }
         for (PreviewNode child : node.getChildren())
         {
             index(child);

@@ -19,16 +19,30 @@ package org.entirej.ide.ui.editors.preview;
 
 public class PreviewGridConstraint
 {
-    private int     horizontalSpan = 1;
-    private int     verticalSpan   = 1;
-    private int     preferredWidth;
-    private int     preferredHeight;
-    private int     minimumWidth;
-    private int     minimumHeight;
-    private boolean fillHorizontal = true;
-    private boolean fillVertical   = true;
-    private boolean grabHorizontal = true;
-    private boolean grabVertical   = true;
+    /**
+     * Placement of a node inside its grid cell along one axis, mirroring the SWT
+     * <code>GridData</code> alignment constants. Only consulted when the node does not fill
+     * that axis.
+     */
+    public enum Alignment
+    {
+        BEGINNING,
+        CENTER,
+        END
+    }
+
+    private int       horizontalSpan      = 1;
+    private int       verticalSpan        = 1;
+    private int       preferredWidth;
+    private int       preferredHeight;
+    private int       minimumWidth;
+    private int       minimumHeight;
+    private boolean   fillHorizontal      = true;
+    private boolean   fillVertical        = true;
+    private boolean   grabHorizontal      = true;
+    private boolean   grabVertical        = true;
+    private Alignment horizontalAlignment = Alignment.BEGINNING;
+    private Alignment verticalAlignment   = Alignment.BEGINNING;
 
     public static PreviewGridConstraint defaults()
     {
@@ -142,6 +156,28 @@ public class PreviewGridConstraint
     public PreviewGridConstraint setGrabVertical(boolean grabVertical)
     {
         this.grabVertical = grabVertical;
+        return this;
+    }
+
+    public Alignment getHorizontalAlignment()
+    {
+        return horizontalAlignment;
+    }
+
+    public PreviewGridConstraint setHorizontalAlignment(Alignment horizontalAlignment)
+    {
+        this.horizontalAlignment = horizontalAlignment == null ? Alignment.BEGINNING : horizontalAlignment;
+        return this;
+    }
+
+    public Alignment getVerticalAlignment()
+    {
+        return verticalAlignment;
+    }
+
+    public PreviewGridConstraint setVerticalAlignment(Alignment verticalAlignment)
+    {
+        this.verticalAlignment = verticalAlignment == null ? Alignment.BEGINNING : verticalAlignment;
         return this;
     }
 }

@@ -105,20 +105,29 @@ public class AppLayoutPreviewModelBuilder
             LayoutGroup group = (LayoutGroup) item;
             node.setColumns(group.getColumns());
             node.setPaintContainerTitle(group.getItems().isEmpty());
+            // SWT zeroes the GridLayout margins for a hide-margin group.
+            if (group.isHideMargin())
+            {
+                node.setLayoutMargin(0);
+            }
             addContainerChildren(properties, node, group, selectedSource);
         }
         else if (item instanceof SplitGroup)
         {
             SplitGroup split = (SplitGroup) item;
-            node.setColumns(split.getOrientation() == SplitGroup.ORIENTATION.HORIZONTAL ? Math.max(1, split.getItems().size()) : 1);
+            boolean horizontal = split.getOrientation() == SplitGroup.ORIENTATION.HORIZONTAL;
+            node.setColumns(horizontal ? Math.max(1, split.getItems().size()) : 1);
+            node.setVerticalOrientation(!horizontal);
             node.setPaintContainerTitle(split.getItems().isEmpty());
             addContainerChildren(properties, node, split, selectedSource);
+            normalizeSplitChildren(node);
         }
         else if (item instanceof TabGroup)
         {
             TabGroup tab = (TabGroup) item;
             node.setColumns(1);
             node.setPaintContainerTitle(false);
+            node.setTabsAtBottom(tab.getOrientation() != TabGroup.ORIENTATION.TOP);
             node.setTabLabels(tabLabels(tab));
             node.setSelectedTabIndex(selectedTabIndex(tab, selectedSource));
             for (EJCoreLayoutItem tabItem : tab.getItems())
@@ -128,6 +137,19 @@ public class AppLayoutPreviewModelBuilder
         }
 
         return node;
+    }
+
+    /**
+     * A SashForm gives every pane one slot and stretches it; spans would otherwise wrap panes onto
+     * extra rows/columns. Size hints survive as sash weights.
+     */
+    private void normalizeSplitChildren(PreviewNode split)
+    {
+        for (PreviewNode child : split.getChildren())
+        {
+            child.getConstraint().setHorizontalSpan(1).setVerticalSpan(1).setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true)
+                    .setGrabVertical(true);
+        }
     }
 
     private EJDevPreviewDescriptor forLayoutComponent(LayoutComponent component)
