@@ -43,9 +43,22 @@ public interface EJDevBlockRendererDefinition extends EJBlockRendererDefinition
      * @param formToolkit
      *            The toolkit to use for the creation of the block widget
      * @return The block renderer definition control for this block
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. The plugin now renders a GEF preview which is
+     *             driven by
+     *             {@link org.entirej.framework.dev.renderer.definition.EJDevPreviewDescriptor}s.
+     *             Implement {@link EJDevBlockPreviewProvider} to describe this
+     *             block explicitly; renderers that do not are given a
+     *             descriptor inferred from their renderer name.
      */
-    public EJDevBlockRendererDefinitionControl addBlockControlToCanvas(EJMainScreenProperties mainScreenProperties,
-            EJDevBlockDisplayProperties blockDisplayProperties, Composite parent, FormToolkit formToolkit);
+    @Deprecated
+    default EJDevBlockRendererDefinitionControl addBlockControlToCanvas(EJMainScreenProperties mainScreenProperties,
+            EJDevBlockDisplayProperties blockDisplayProperties, Composite parent, FormToolkit formToolkit)
+    {
+        return null;
+    }
 
     /**
      * Used to return the control for a spacer item using the specified display
@@ -62,9 +75,18 @@ public interface EJDevBlockRendererDefinition extends EJBlockRendererDefinition
      * @param formToolkit
      *            The toolkit to use for the creation of the spacer item widget
      * @return The spacer items plugin GUI widget
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. Spacer items are rendered by the GEF preview
+     *             directly.
      */
-    public EJDevItemRendererDefinitionControl getSpacerItemControl(EJDevScreenItemDisplayProperties screenDisplayProperties, Composite parent,
-            FormToolkit formToolkit);
+    @Deprecated
+    default EJDevItemRendererDefinitionControl getSpacerItemControl(EJDevScreenItemDisplayProperties screenDisplayProperties, Composite parent,
+            FormToolkit formToolkit)
+    {
+        return null;
+    }
 
     public EJDevQueryScreenRendererDefinition getQueryScreenRendererDefinition();
 

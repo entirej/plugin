@@ -27,14 +27,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -48,10 +44,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.containers.EJPluginObjectGroupContainer;
@@ -268,50 +261,6 @@ public class ObjectGroupNode extends AbstractNode<EJPluginObjectGroupContainer> 
                 return adapter.cast(validator);
             }
 
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                return adapter.cast(new FormCanvasPreviewImpl()
-                {
-                    @Override
-                    protected void setPreviewBackground(Control control, Color color)
-                    {
-                        // IGNORE
-                    }
-
-                    @Override
-                    protected EJPluginFormProperties getFormProperties(AbstractEJFormEditor editor)
-                    {
-                        return source;
-                    }
-
-                    @Override
-                    public String getDescription()
-                    {
-                        return "preview the defined layout in ObjectGroup.";
-                    }
-
-                    @Override
-                    protected void createComponent(Composite parent, EJPluginCanvasProperties component)
-                    {
-                        if (component.getPluginBlockProperties() != null)
-                        {
-                            EJPluginMainScreenProperties mainScreenProperties = component.getPluginBlockProperties().getMainScreenProperties();
-
-                            Composite layoutBody = new Composite(parent, SWT.NONE);
-
-                            layoutBody.setLayout(new FillLayout());
-
-                            layoutBody.setLayoutData(createGridData(component));
-                            component.getPluginBlockProperties().getBlockRendererDefinition()
-                                    .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit());
-                        }
-                        else
-                        {
-                            super.createComponent(parent, component);
-                        }
-                    }
-                });
-            }
             return null;
         }
 

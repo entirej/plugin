@@ -26,17 +26,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -55,42 +49,12 @@ import org.entirej.ide.ui.nodes.INodeDescriptorViewer;
 
 public class FormPreviewPart extends AbstractDescriptorPart implements INodeDescriptorViewer, FormPreviewer
 {
-    private final AbstractEJFormEditor   editor;
-    private final AtomicBoolean          autoRefrsh           = new AtomicBoolean(true);
-    private final FormPreviewModelBuilder modelBuilder        = new FormPreviewModelBuilder();
+    private final AbstractEJFormEditor    editor;
+    private final AtomicBoolean           autoRefrsh   = new AtomicBoolean(true);
+    private final FormPreviewModelBuilder modelBuilder = new FormPreviewModelBuilder();
 
-    private CTabFolder                   previewTabs;
-    private CTabItem                     gefPreviewTab;
-    private CTabItem                     swtPreviewTab;
-    private Composite                    gefPreviewBody;
-    private Composite                    swtPreviewBody;
-
-    private PreviewEditControl           gefPreviewControl;
-    private ScrolledComposite            swtPreviewComposite;
-    private IFormPreviewProvider         swtPreviewProvider;
-    private String                       swtPreviewDescription = "select ui element to preview.";
-    private AbstractNode<?>              selectedNode;
-
-    private final IFormPreviewProvider   defaultPreviewProvider = new IFormPreviewProvider()
-    {
-        public void dispose()
-        {
-            // Nothing to dispose.
-        }
-
-        public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-        {
-            if (swtPreviewBody != null && !swtPreviewBody.isDisposed())
-            {
-                previewComposite.setBackground(swtPreviewBody.getBackground());
-            }
-        }
-
-        public String getDescription()
-        {
-            return "select ui element to preview.";
-        }
-    };
+    private PreviewEditControl            previewControl;
+    private AbstractNode<?>               selectedNode;
 
     public FormPreviewPart(AbstractEJFormEditor editor, FormPage page, Composite parent)
     {
@@ -103,9 +67,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
     public void dispose()
     {
         selectedNode = null;
-        gefPreviewControl = null;
-        disposeSwtPreviewProvider();
-        defaultPreviewProvider.dispose();
+        previewControl = null;
         super.dispose();
     }
 
@@ -209,10 +171,8 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
         getSection().setRedraw(false);
         try
         {
-            ensurePreviewTabs();
-            refreshGefPreview();
-            refreshSwtPreview();
-            updateSectionDescription();
+            refreshPreview();
+            getSection().setDescription(getSectionDescription());
             body.layout(true, true);
         }
         finally
@@ -222,9 +182,31 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
         }
     }
 
-    private void ensurePreviewTabs()
+    private void refreshPreview()
     {
-        if (previewTabs != null && !previewTabs.isDisposed())
+        try
+        {
+            ensurePreviewControl();
+
+            Rectangle area = body.getClientArea();
+            PreviewNode model = modelBuilder.build(editor.getFormProperties(), selectedNode == null ? null : selectedNode.getSource(), area.width,
+                    area.height);
+            previewControl.setModel(model);
+            if (selectedNode != null)
+            {
+                previewControl.selectSource(selectedNode.getSource());
+            }
+            body.layout(true, true);
+        }
+        catch (Throwable e)
+        {
+            showError(e);
+        }
+    }
+
+    private void ensurePreviewControl()
+    {
+        if (previewControl != null && !previewControl.isDisposed())
         {
             return;
         }
@@ -234,76 +216,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
             child.dispose();
         }
 
-        previewTabs = new CTabFolder(body, SWT.BOTTOM | SWT.FLAT);
-        previewTabs.setSimple(false);
-        editor.getToolkit().adapt(previewTabs, true, true);
-
-        gefPreviewBody = editor.getToolkit().createComposite(previewTabs);
-        gefPreviewBody.setLayout(new FillLayout());
-        gefPreviewTab = new CTabItem(previewTabs, SWT.NONE);
-        gefPreviewTab.setText("GEF Preview");
-        gefPreviewTab.setControl(gefPreviewBody);
-
-        swtPreviewBody = editor.getToolkit().createComposite(previewTabs);
-        swtPreviewBody.setLayout(new FillLayout());
-        swtPreviewTab = new CTabItem(previewTabs, SWT.NONE);
-        swtPreviewTab.setText("SWT Preview");
-        swtPreviewTab.setControl(swtPreviewBody);
-
-        previewTabs.setSelection(gefPreviewTab);
-        previewTabs.addSelectionListener(new SelectionAdapter()
-        {
-            @Override
-            public void widgetSelected(SelectionEvent e)
-            {
-                updateSectionDescription();
-            }
-        });
-        body.setTabList(new Control[] { previewTabs });
-    }
-
-    private void refreshGefPreview()
-    {
-        try
-        {
-            gefPreviewBody.setLayout(new FillLayout());
-            ensureGefPreviewControl();
-
-            org.eclipse.swt.graphics.Rectangle area = gefPreviewBody.getClientArea();
-            if ((area.width <= 0 || area.height <= 0) && previewTabs != null && !previewTabs.isDisposed())
-            {
-                area = previewTabs.getClientArea();
-            }
-
-            PreviewNode model = modelBuilder.build(editor.getFormProperties(), selectedNode == null ? null : selectedNode.getSource(), area.width,
-                    area.height);
-            gefPreviewControl.setModel(model);
-            if (selectedNode != null)
-            {
-                gefPreviewControl.selectSource(selectedNode.getSource());
-            }
-            gefPreviewTab.setText("GEF Preview");
-            gefPreviewBody.layout(true, true);
-        }
-        catch (Throwable e)
-        {
-            showGefError(e);
-        }
-    }
-
-    private void ensureGefPreviewControl()
-    {
-        if (gefPreviewControl != null && !gefPreviewControl.isDisposed())
-        {
-            return;
-        }
-
-        for (Control child : gefPreviewBody.getChildren())
-        {
-            child.dispose();
-        }
-
-        gefPreviewControl = new PreviewEditControl(gefPreviewBody, new PreviewSelectionHandler()
+        previewControl = new PreviewEditControl(body, new PreviewSelectionHandler()
         {
             public void select(Object source)
             {
@@ -315,136 +228,21 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
         });
     }
 
-    private void showGefError(Throwable e)
+    private void showError(Throwable e)
     {
-        for (Control child : gefPreviewBody.getChildren())
+        for (Control child : body.getChildren())
         {
             child.dispose();
         }
-        gefPreviewControl = null;
-        gefPreviewTab.setText("GEF Preview *");
-        createErrorText(gefPreviewBody, e);
-        gefPreviewBody.layout(true, true);
-        EJCoreLog.log(e);
-    }
+        previewControl = null;
 
-    private void refreshSwtPreview()
-    {
-        swtPreviewDescription = getSectionDescription();
-        disposeSwtPreviewComposite();
-        disposeSwtPreviewProvider();
-
-        swtPreviewBody.setLayout(new GridLayout());
-        swtPreviewComposite = createSwtPreviewComposite();
-
-        if (selectedNode != null)
-        {
-            swtPreviewProvider = selectedNode.getAdapter(IFormPreviewProvider.class);
-        }
-
-        try
-        {
-            IFormPreviewProvider provider = swtPreviewProvider == null ? defaultPreviewProvider : swtPreviewProvider;
-            provider.buildPreview(editor, swtPreviewComposite);
-            swtPreviewDescription = provider.getDescription();
-            swtPreviewTab.setText("SWT Preview");
-        }
-        catch (Throwable e)
-        {
-            showSwtError(e);
-        }
-
-        swtPreviewBody.layout(true, true);
-    }
-
-    private ScrolledComposite createSwtPreviewComposite()
-    {
-        ScrolledComposite previewComposite = new ScrolledComposite(swtPreviewBody, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        GridData layoutData = new GridData(GridData.FILL_BOTH);
-        layoutData.widthHint = 100;
-        layoutData.heightHint = 100;
-        previewComposite.setLayoutData(layoutData);
-        return previewComposite;
-    }
-
-    private void showSwtError(Throwable e)
-    {
-        if (swtPreviewComposite != null && !swtPreviewComposite.isDisposed())
-        {
-            swtPreviewComposite.dispose();
-        }
-        swtPreviewComposite = createSwtPreviewComposite();
-        swtPreviewDescription = "error occurred on SWT preview.";
-        swtPreviewTab.setText("SWT Preview *");
-        Text content = createErrorText(swtPreviewComposite, e);
-        swtPreviewComposite.setContent(content);
-        swtPreviewComposite.setExpandHorizontal(true);
-        swtPreviewComposite.setExpandVertical(true);
-        disposeSwtPreviewProvider();
-        EJCoreLog.log(e);
-    }
-
-    private Text createErrorText(Composite parent, Throwable e)
-    {
         final Writer result = new StringWriter();
         e.printStackTrace(new PrintWriter(result));
-        Text content = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+        Text content = new Text(body, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
         content.setText(result.toString());
-        return content;
-    }
 
-    private void disposeSwtPreviewProvider()
-    {
-        if (swtPreviewProvider != null)
-        {
-            swtPreviewProvider.dispose();
-            swtPreviewProvider = null;
-        }
-    }
-
-    private void disposeSwtPreviewComposite()
-    {
-        if (swtPreviewComposite == null)
-        {
-            return;
-        }
-
-        if (swtPreviewComposite.isDisposed())
-        {
-            swtPreviewComposite = null;
-            return;
-        }
-
-        final Composite drop = swtPreviewComposite;
-        final Shell shell = new Shell(drop.getDisplay());
-        drop.setParent(shell);
-        drop.getDisplay().asyncExec(new Runnable()
-        {
-            public void run()
-            {
-                if (!drop.isDisposed())
-                {
-                    drop.dispose();
-                }
-                if (!shell.isDisposed())
-                {
-                    shell.dispose();
-                }
-            }
-        });
-        swtPreviewComposite = null;
-    }
-
-    private void updateSectionDescription()
-    {
-        if (previewTabs != null && !previewTabs.isDisposed() && previewTabs.getSelection() == swtPreviewTab)
-        {
-            getSection().setDescription(swtPreviewDescription);
-        }
-        else
-        {
-            getSection().setDescription(getSectionDescription());
-        }
+        body.layout(true, true);
+        EJCoreLog.log(e);
     }
 
     public void buildUI()
@@ -460,7 +258,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
         toolkit.paintBordersFor(body);
         section.setClient(body);
-        ensurePreviewTabs();
+        ensurePreviewControl();
         section.layout();
     }
 }

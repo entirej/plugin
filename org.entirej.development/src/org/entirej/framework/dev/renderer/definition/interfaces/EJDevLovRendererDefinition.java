@@ -41,9 +41,18 @@ public interface EJDevLovRendererDefinition extends EJLovRendererDefinition
      * @param formToolkit
      *            The toolkit to use for the creation of the lov widget
      * @return The lov renderer definition control for this block
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. The LOV is previewed in GEF through the
+     *             block renderer definition of its underlying block.
      */
-    public EJDevLovRendererDefinitionControl addLovControlToCanvas(EJDevLovDefinitionDisplayProperties lovDisplayProperties, Composite parent,
-            FormToolkit formToolkit);
+    @Deprecated
+    default EJDevLovRendererDefinitionControl addLovControlToCanvas(EJDevLovDefinitionDisplayProperties lovDisplayProperties, Composite parent,
+            FormToolkit formToolkit)
+    {
+        return null;
+    }
 
     /**
      * If the lov renderer allows a user query, then a

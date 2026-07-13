@@ -30,12 +30,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
@@ -113,10 +108,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
     public <S> S getAdapter(Class<S> adapter)
     {
-        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-        {
-            return adapter.cast(new FormCanvasPreviewImpl());
-        }
         return null;
     }
 
@@ -379,9 +370,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public <S> S getAdapter(Class<S> adapter)
         {
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                return parent.getAdapter(adapter);
-
             return super.getAdapter(adapter);
         }
 
@@ -2543,73 +2531,6 @@ public class CanvasGroupNode extends AbstractNode<EJPluginCanvasContainer> imple
 
         public <S> S getAdapter(Class<S> adapter)
         {
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                return adapter.cast(new FormCanvasPreviewImpl()
-                {
-
-                    public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                    {
-                        // layout canvas preview
-                        Composite pContent = new Composite(previewComposite, SWT.NONE);
-
-                        EJPluginCanvasContainer container = source.getPopupCanvasContainer();
-                        int width = source.getWidth();
-                        int height = source.getHeight();
-                        previewComposite.setContent(pContent);
-                        setPreviewBackground(previewComposite, COLOR_LIGHT_YELLOW);
-                        previewComposite.setExpandHorizontal(true);
-                        previewComposite.setExpandVertical(true);
-
-                        pContent.setLayout(new GridLayout());
-                        setPreviewBackground(pContent, COLOR_LIGHT_YELLOW);
-
-                        Composite layoutBody = new Composite(pContent, SWT.NONE);
-                        layoutBody.setLayout(new GridLayout(source.getNumCols(), false));
-
-                        GridData sectionData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-
-                        sectionData.widthHint = width;
-                        sectionData.heightHint = height;
-                        layoutBody.setLayoutData(sectionData);
-                        setPreviewBackground(layoutBody, COLOR_LIGHT_YELLOW);
-
-                        List<EJPluginCanvasProperties> items = container.getCanvasProperties();
-                        for (EJPluginCanvasProperties canvas : items)
-                        {
-                            switch (canvas.getType())
-                            {
-                                case GROUP:
-                                    createGroupLayout(layoutBody, canvas);
-                                    break;
-                                case SPLIT:
-                                    createSplitLayout(layoutBody, canvas);
-                                    break;
-                                case POPUP:
-                                    // ignore
-                                    break;
-                                case TAB:
-                                    createTabLayout(layoutBody, canvas);
-                                    break;
-                                case DRAWER:
-                                    createDrawerLayout(layoutBody, canvas);
-                                    break;
-                                case STACKED:
-                                    createStackLayout(layoutBody, canvas);
-                                    break;
-                                default:
-                                    createComponent(layoutBody, canvas);
-                                    break;
-                            }
-                        }
-                        if (width > 0 && height > 0)
-                            previewComposite.setMinSize(width, height);
-                        else
-                            previewComposite.setMinSize(pContent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-                    }
-                });
-            }
             return parent.getAdapter(adapter);
         }
 
