@@ -118,8 +118,28 @@ public class PreviewNodeFigure extends Figure
                 }
                 break;
             case TEXT_AREA:
-            case HTML:
                 if (model.isPaintControlLabel())
+                {
+                    drawTitle(graphics, area, text);
+                    drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(34, area.height - 20));
+                    drawLine(graphics, area.x + 6, area.y + 31, area.x + area.width - 8, area.y + 31);
+                    drawLine(graphics, area.x + 6, area.y + 43, area.x + area.width - 24, area.y + 43);
+                }
+                else
+                {
+                    drawInsetBox(graphics, area.x, area.y, area.width, Math.max(34, area.height));
+                    drawLine(graphics, area.x + 6, area.y + 13, area.x + area.width - 8, area.y + 13);
+                    drawLine(graphics, area.x + 6, area.y + 25, area.x + area.width - 24, area.y + 25);
+                }
+                break;
+            case HTML:
+                if (isHtmlViewRenderer())
+                {
+                    drawInsetBox(graphics, area.x, area.y, area.width, Math.max(34, area.height));
+                    graphics.setForegroundColor(ColorConstants.black);
+                    graphics.drawText(text, area.x + 5, area.y + 5);
+                }
+                else if (model.isPaintControlLabel())
                 {
                     drawTitle(graphics, area, text);
                     drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(34, area.height - 20));
@@ -280,13 +300,22 @@ public class PreviewNodeFigure extends Figure
                 }
                 break;
             default:
-                drawTitle(graphics, area, text);
-                String renderer = model.getDescriptor().getRendererName();
-                if (renderer != null && renderer.trim().length() > 0)
-                {
-                    graphics.drawText(renderer, area.x + 2, area.y + 18);
-                }
+                drawUnknownRenderer(graphics, area, text);
                 break;
+        }
+    }
+
+    private void drawUnknownRenderer(Graphics graphics, Rectangle area, String text)
+    {
+        drawInsetBox(graphics, area.x, area.y, Math.max(1, area.width), Math.max(24, area.height));
+        graphics.setForegroundColor(ColorConstants.black);
+        graphics.drawText(text, area.x + 5, area.y + 5);
+
+        String renderer = model.getDescriptor().getRendererName();
+        if (renderer != null && renderer.trim().length() > 0 && !renderer.equals(text))
+        {
+            graphics.setForegroundColor(ColorConstants.darkGray);
+            graphics.drawText(renderer, area.x + 5, area.y + 21);
         }
     }
 
@@ -548,21 +577,26 @@ public class PreviewNodeFigure extends Figure
         return getFont() == null ? text.length() * 7 : FigureUtilities.getTextWidth(text, getFont());
     }
 
+    private boolean isHtmlViewRenderer()
+    {
+        String renderer = model.getDescriptor().getRendererName();
+        if (renderer == null)
+        {
+            return false;
+        }
+        String normalized = renderer.toLowerCase();
+        return normalized.indexOf("htmlview") > -1 || normalized.indexOf("html view") > -1 || normalized.indexOf("exthtmlview") > -1;
+    }
+
     private void drawTableLikeRenderer(Graphics graphics, Rectangle area, EJDevPreviewKind kind, String text)
     {
         List<String> labels = model.getColumnLabels();
         if (labels.isEmpty())
         {
             drawTitle(graphics, area, text);
-            drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
-            graphics.drawLine(area.x, area.y + 39, area.x + area.width, area.y + 39);
-            if (kind != EJDevPreviewKind.LIST)
+            if (kind == EJDevPreviewKind.LIST)
             {
-                graphics.drawLine(area.x + area.width / 3, area.y + 18, area.x + area.width / 3, area.y + area.height - 2);
-                graphics.drawLine(area.x + (area.width * 2) / 3, area.y + 18, area.x + (area.width * 2) / 3, area.y + area.height - 2);
-            }
-            else
-            {
+                drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
                 graphics.drawLine(area.x + 6, area.y + 54, area.x + area.width - 8, area.y + 54);
                 graphics.drawLine(area.x + 6, area.y + 69, area.x + area.width - 8, area.y + 69);
             }

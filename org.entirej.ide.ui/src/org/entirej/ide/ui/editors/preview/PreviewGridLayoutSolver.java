@@ -276,12 +276,9 @@ public class PreviewGridLayoutSolver
             {
                 heights[i] = Math.max(heights[i], heightPerRow);
             }
-            if (placement.node.getConstraint().isGrabVertical())
+            if (placement.rowSpan == 1)
             {
-                for (int i = placement.row; i < placement.row + placement.rowSpan && i < grabRows.length; i++)
-                {
-                    grabRows[i] = true;
-                }
+                markGrabRows(grabRows, placement);
             }
         }
         for (int i = 0; i < heights.length; i++)
@@ -292,8 +289,50 @@ public class PreviewGridLayoutSolver
             }
         }
 
+        for (Placement placement : placements)
+        {
+            if (placement.rowSpan > 1)
+            {
+                markSpanningGrabRows(grabRows, placement);
+            }
+        }
+
         distributeExtra(heights, grabRows, availableHeight);
         return heights;
+    }
+
+    private void markGrabRows(boolean[] grabRows, Placement placement)
+    {
+        if (!placement.node.getConstraint().isGrabVertical())
+        {
+            return;
+        }
+        for (int i = placement.row; i < placement.row + placement.rowSpan && i < grabRows.length; i++)
+        {
+            grabRows[i] = true;
+        }
+    }
+
+    private void markSpanningGrabRows(boolean[] grabRows, Placement placement)
+    {
+        if (!placement.node.getConstraint().isGrabVertical())
+        {
+            return;
+        }
+
+        int end = Math.min(grabRows.length, placement.row + placement.rowSpan);
+        for (int i = placement.row; i < end && i < grabRows.length; i++)
+        {
+            if (grabRows[i])
+            {
+                return;
+            }
+        }
+
+        for (int i = placement.row; i < end && i < grabRows.length; i++)
+        {
+            grabRows[i] = true;
+        }
     }
 
     private boolean isHorizontalSplit(PreviewNode parent, int columns)

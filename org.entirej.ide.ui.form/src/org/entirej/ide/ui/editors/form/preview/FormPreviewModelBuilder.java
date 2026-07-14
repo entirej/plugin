@@ -294,7 +294,7 @@ public class FormPreviewModelBuilder
         PreviewNode root = createSelectedRoot(form, source, 1, preferredWidth, preferredHeight, availableWidth, availableHeight);
         PreviewNode rendererNode = new PreviewNode(source, descriptor);
         rendererNode.setPaintBorder(false);
-        if (isColumnarRenderer(descriptor.getKind()))
+        if (isMultiTableRenderer(block, descriptor))
         {
             rendererNode.setColumnLabels(blockColumnLabels(block));
             rendererNode.setColumnAlignments(blockColumnAlignments(block));
@@ -381,9 +381,22 @@ public class FormPreviewModelBuilder
         return selectedSource == null ? fallback : selectedSource;
     }
 
-    private boolean isColumnarRenderer(EJDevPreviewKind kind)
+    private boolean isMultiTableRenderer(EJPluginBlockProperties block, EJDevPreviewDescriptor descriptor)
     {
-        return kind == EJDevPreviewKind.TABLE || kind == EJDevPreviewKind.TREE;
+        if (descriptor == null || descriptor.getKind() != EJDevPreviewKind.TABLE || block == null)
+        {
+            return false;
+        }
+
+        String rendererName = normalized(block.getBlockRendererName());
+        if (contains(rendererName, "multirecord", "multi record", "multi_record", "multitable", "multi table", "multi_table"))
+        {
+            return true;
+        }
+
+        Object definition = block.getBlockRendererDefinition();
+        String definitionName = definition == null ? null : normalized(definition.getClass().getSimpleName());
+        return contains(definitionName, "multirecordblockdefinition", "multitableblockdefinition");
     }
 
     private List<String> blockColumnLabels(EJPluginBlockProperties block)
@@ -644,14 +657,12 @@ public class FormPreviewModelBuilder
         int preferredWidth = preferredControlWidth(item, requiredProperties, expandHorizontally);
         int preferredHeight = preferredControlHeight(item, requiredProperties);
 
-        // EJRWTSingleRecordBlockRenderer#createBlockItemGridData: FILL_VERTICAL, plus
-        // FILL_HORIZONTAL when the item expands horizontally, but verticalAlignment is forced to
-        // CENTER whenever the item does not grab vertical space. (The SWT *preview* omits that
-        // last step, so it stretches short controls; the runtime centres them.)
+        // Keep controls pinned to the top of their preview cell. The old SWT preview did not
+        // center controls in tall block rows, and expanded blocks should preserve that placement.
         node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(horizontalSpan).setVerticalSpan(verticalSpan)
                 .setPreferredWidth(preferredWidth).setPreferredHeight(preferredHeight).setFillHorizontal(expandHorizontally)
                 .setFillVertical(expandVertically).setGrabHorizontal(expandHorizontally).setGrabVertical(expandVertically)
-                .setVerticalAlignment(PreviewGridConstraint.Alignment.CENTER));
+                .setVerticalAlignment(PreviewGridConstraint.Alignment.BEGINNING));
         return node;
     }
 
@@ -795,7 +806,7 @@ public class FormPreviewModelBuilder
         else
         {
             node.setPaintContainerTitle(false);
-            if (isColumnarRenderer(descriptor.getKind()))
+            if (isMultiTableRenderer(block, descriptor))
             {
                 node.setColumnLabels(blockColumnLabels(block));
                 node.setColumnAlignments(blockColumnAlignments(block));
@@ -1290,6 +1301,27 @@ public class FormPreviewModelBuilder
         return source == reflectedFieldValue(selectedSource, "properties");
     }
 
+    private String normalized(String value)
+    {
+        return value == null ? "" : value.toLowerCase();
+    }
+
+    private boolean contains(String value, String... fragments)
+    {
+        if (value == null)
+        {
+            return false;
+        }
+        for (String fragment : fragments)
+        {
+            if (value.indexOf(fragment) > -1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private PreviewGridConstraint canvasConstraint(EJPluginCanvasProperties canvas)
     {
         if (canvas.getType() == EJCanvasType.BLOCK && canvas.getPluginBlockProperties() != null
@@ -1299,8 +1331,8 @@ public class FormPreviewModelBuilder
             return PreviewGridConstraint.defaults().setHorizontalSpan(screen.getHorizontalSpan()).setVerticalSpan(screen.getVerticalSpan())
                     .setPreferredWidth(screen.getWidth()).setPreferredHeight(screen.getHeight()).setMinimumWidth(screen.canExpandHorizontally() ? screen
                             .getWidth() : 0).setMinimumHeight(screen.canExpandVertically() ? screen.getHeight() : 0)
-                    .setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(screen.canExpandHorizontally())
-                    .setGrabVertical(screen.canExpandVertically());
+                    .setFillHorizontal(screen.canExpandHorizontally()).setFillVertical(screen.canExpandVertically()).setGrabHorizontal(screen
+                            .canExpandHorizontally()).setGrabVertical(screen.canExpandVertically());
         }
         return PreviewGridConstraint.defaults().setHorizontalSpan(canvas.getHorizontalSpan()).setVerticalSpan(canvas.getVerticalSpan())
                 .setPreferredWidth(canvas.getWidth()).setPreferredHeight(canvas.getHeight()).setFillHorizontal(canvas.canExpandHorizontally())

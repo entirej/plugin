@@ -248,17 +248,17 @@ public class FormPreviewDescriptorResolver
     private EJDevPreviewKind inferBlockKind(String rendererName, Object definition)
     {
         String name = normalized(rendererName, definition);
+        if (contains(name, "chart", "pie", "bar", "line", "radar", "diagram"))
+        {
+            return EJDevPreviewKind.CHART;
+        }
         if (contains(name, "tree"))
         {
             return EJDevPreviewKind.TREE;
         }
-        if (contains(name, "table", "multi"))
+        if (contains(name, "table", "multirecord", "multi record", "multi_record", "multitable", "multi table", "multi_table"))
         {
             return EJDevPreviewKind.TABLE;
-        }
-        if (contains(name, "chart", "pie", "bar", "line", "radar", "diagram"))
-        {
-            return EJDevPreviewKind.CHART;
         }
         return EJDevPreviewKind.BLOCK;
     }
