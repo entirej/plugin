@@ -388,15 +388,7 @@ public class FormPreviewModelBuilder
             return false;
         }
 
-        String rendererName = normalized(block.getBlockRendererName());
-        if (contains(rendererName, "multirecord", "multi record", "multi_record", "multitable", "multi table", "multi_table"))
-        {
-            return true;
-        }
-
-        Object definition = block.getBlockRendererDefinition();
-        String definitionName = definition == null ? null : normalized(definition.getClass().getSimpleName());
-        return contains(definitionName, "multirecordblockdefinition", "multitableblockdefinition");
+        return PreviewRendererNames.isMultiRecordRenderer(block.getBlockRendererName(), block.getBlockRendererDefinition());
     }
 
     private List<String> blockColumnLabels(EJPluginBlockProperties block)
@@ -1299,27 +1291,6 @@ public class FormPreviewModelBuilder
             return true;
         }
         return source == reflectedFieldValue(selectedSource, "properties");
-    }
-
-    private String normalized(String value)
-    {
-        return value == null ? "" : value.toLowerCase();
-    }
-
-    private boolean contains(String value, String... fragments)
-    {
-        if (value == null)
-        {
-            return false;
-        }
-        for (String fragment : fragments)
-        {
-            if (value.indexOf(fragment) > -1)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     private PreviewGridConstraint canvasConstraint(EJPluginCanvasProperties canvas)

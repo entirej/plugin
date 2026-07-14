@@ -248,7 +248,10 @@ public class FormPreviewDescriptorResolver
     private EJDevPreviewKind inferBlockKind(String rendererName, Object definition)
     {
         String name = normalized(rendererName, definition);
-        if (contains(name, "chart", "pie", "bar", "line", "radar", "diagram"))
+        // "chart" covers bar/line/pie/radar charts, which all carry it in their name. Matching those
+        // words on their own would be too loose: "bar" also hits toolbar and barcode, "line" hits
+        // inline and timeline, and this check runs first, so it would shadow tree and table.
+        if (contains(name, "chart", "diagram"))
         {
             return EJDevPreviewKind.CHART;
         }
@@ -256,7 +259,7 @@ public class FormPreviewDescriptorResolver
         {
             return EJDevPreviewKind.TREE;
         }
-        if (contains(name, "table", "multirecord", "multi record", "multi_record", "multitable", "multi table", "multi_table"))
+        if (contains(name, "table") || PreviewRendererNames.isMultiRecordRenderer(rendererName, definition))
         {
             return EJDevPreviewKind.TABLE;
         }
@@ -361,17 +364,7 @@ public class FormPreviewDescriptorResolver
 
     private String normalized(String rendererName, Object definition)
     {
-        StringBuilder builder = new StringBuilder();
-        if (rendererName != null)
-        {
-            builder.append(rendererName);
-        }
-        if (definition != null)
-        {
-            builder.append(' ');
-            builder.append(definition.getClass().getSimpleName());
-        }
-        return builder.toString().toLowerCase();
+        return PreviewRendererNames.normalized(rendererName, definition);
     }
 
     private EJDevPreviewDescriptor applyScreenIdentity(EJDevPreviewDescriptor descriptor, EJPluginBlockProperties block, String suffix,
@@ -390,14 +383,7 @@ public class FormPreviewDescriptorResolver
 
     private boolean contains(String value, String... fragments)
     {
-        for (String fragment : fragments)
-        {
-            if (value.indexOf(fragment) > -1)
-            {
-                return true;
-            }
-        }
-        return false;
+        return PreviewRendererNames.contains(value, fragments);
     }
 
     private String value(String... values)

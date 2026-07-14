@@ -594,11 +594,17 @@ public class PreviewNodeFigure extends Figure
         if (labels.isEmpty())
         {
             drawTitle(graphics, area, text);
+            drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
             if (kind == EJDevPreviewKind.LIST)
             {
-                drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
                 graphics.drawLine(area.x + 6, area.y + 54, area.x + area.width - 8, area.y + 54);
                 graphics.drawLine(area.x + 6, area.y + 69, area.x + area.width - 8, area.y + 69);
+            }
+            else
+            {
+                graphics.drawLine(area.x, area.y + 39, area.x + area.width, area.y + 39);
+                graphics.drawLine(area.x + area.width / 3, area.y + 18, area.x + area.width / 3, area.y + area.height - 2);
+                graphics.drawLine(area.x + (area.width * 2) / 3, area.y + 18, area.x + (area.width * 2) / 3, area.y + area.height - 2);
             }
             return;
         }

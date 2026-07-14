@@ -56,8 +56,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
@@ -96,23 +94,6 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
     protected ReportPreviewer                     reportPreviewer;
 
     protected AbstractNode<?>                     baseNode;
-    protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
-                                                                 {
-
-                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                     {
-                                                                         if (arg0 != null)
-                                                                         {
-
-                                                                             Object findNode = (arg0);
-                                                                             if (findNode != null)
-                                                                             {
-                                                                                 selectNodes(true, findNode);
-                                                                             }
-                                                                         }
-
-                                                                     }
-                                                                 };
 
     public ReportDesignTreeSection(AbstractEJReportEditor editor, FormPage page, Composite parent)
     {
@@ -312,38 +293,6 @@ public class ReportDesignTreeSection extends AbstractNodeTreeSection
             if (NodeValidateProvider.class.isAssignableFrom(adapter))
             {
                 return adapter.cast(validator);
-            }
-            if (IReportPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                /*
-                 * return adapter.cast(new FormCanvasPreviewImpl() {
-                 * 
-                 * @Override protected void setPreviewBackground(Control
-                 * control, Color color) { // IGNORE }
-                 * 
-                 * @Override public String getDescription() { return
-                 * "preview the defined layout in form."; }
-                 * 
-                 * @Override protected void createComponent(Composite parent,
-                 * EJPluginCanvasProperties component) { if
-                 * (component.getPluginBlockProperties() != null) {
-                 * EJPluginMainScreenProperties mainScreenProperties =
-                 * component.
-                 * getPluginBlockProperties().getMainScreenProperties();
-                 * 
-                 * Composite layoutBody = new Composite(parent, SWT.NONE);
-                 * 
-                 * layoutBody.setLayout(new FillLayout());
-                 * 
-                 * layoutBody.setLayoutData(createGridData(component));
-                 * component
-                 * .getPluginBlockProperties().getBlockRendererDefinition()
-                 * .addBlockControlToCanvas(mainScreenProperties,
-                 * component.getPluginBlockProperties(), layoutBody,
-                 * editor.getToolkit())
-                 * .addItemWidgetChosenListener(chosenListener); } else {
-                 * super.createComponent(parent, component); } } });
-                 */
             }
             return null;
         }
