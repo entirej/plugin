@@ -24,6 +24,7 @@ import java.util.List;
 import org.entirej.framework.core.enumerations.EJCanvasSplitOrientation;
 import org.entirej.framework.core.enumerations.EJCanvasType;
 import org.entirej.framework.core.enumerations.EJItemGroupAlignment;
+import org.entirej.framework.core.enumerations.EJScreenType;
 import org.entirej.framework.core.enumerations.EJSeparatorOrientation;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionProperties;
 import org.entirej.framework.core.properties.definitions.interfaces.EJFrameworkExtensionPropertyList;
@@ -33,6 +34,7 @@ import org.entirej.framework.dev.properties.interfaces.EJDevBlockItemDisplayProp
 import org.entirej.framework.dev.renderer.definition.EJDevPreviewDescriptor;
 import org.entirej.framework.dev.renderer.definition.EJDevPreviewKind;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
+import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginDrawerPageProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
@@ -172,6 +174,10 @@ public class FormPreviewModelBuilder
             return buildMainScreenPreview(form, selectedSource, ((EJPluginMainScreenProperties) selectedSource).getBlockProperties(), availableWidth,
                     availableHeight);
         }
+        if (selectedSource instanceof EJPluginBlockItemProperties)
+        {
+            return buildBlockItemPreview(form, (EJPluginBlockItemProperties) selectedSource, availableWidth, availableHeight);
+        }
         if (selectedSource instanceof EJPluginBlockProperties)
         {
             return buildMainScreenPreview(form, selectedSource, (EJPluginBlockProperties) selectedSource, availableWidth, availableHeight);
@@ -201,6 +207,29 @@ public class FormPreviewModelBuilder
             return buildContainerScreenPreview(form, selectedSource, container, availableWidth, availableHeight);
         }
         return null;
+    }
+
+    private PreviewNode buildBlockItemPreview(EJPluginFormProperties form, EJPluginBlockItemProperties blockItem, int availableWidth,
+            int availableHeight)
+    {
+        EJPluginBlockProperties block = blockItem.getBlockProperties();
+        EJScreenType[] screenTypes = { EJScreenType.MAIN, EJScreenType.INSERT, EJScreenType.UPDATE, EJScreenType.QUERY };
+        for (EJScreenType screenType : screenTypes)
+        {
+            EJScreenItemProperties screenItem = block.getScreenItemProperties(screenType, blockItem.getName());
+            if (screenItem instanceof EJPluginScreenItemProperties)
+            {
+                EJPluginScreenItemProperties pluginScreenItem = (EJPluginScreenItemProperties) screenItem;
+                EJPluginItemGroupProperties itemGroup = pluginScreenItem.getItemGroupProperties();
+                PreviewNode preview = buildContainerScreenPreview(form, pluginScreenItem,
+                        itemGroup == null ? null : itemGroup.getParentItemGroupContainer(), availableWidth, availableHeight);
+                if (preview != null)
+                {
+                    return preview;
+                }
+            }
+        }
+        return buildMainScreenPreview(form, blockItem, block, availableWidth, availableHeight);
     }
 
     private PreviewNode buildMainScreenPreview(EJPluginFormProperties form, Object selectedSource, EJPluginBlockProperties block, int availableWidth,
@@ -293,6 +322,10 @@ public class FormPreviewModelBuilder
     {
         PreviewNode root = createSelectedRoot(form, source, 1, preferredWidth, preferredHeight, availableWidth, availableHeight);
         PreviewNode rendererNode = new PreviewNode(source, descriptor);
+        if (source instanceof EJPluginScreenItemProperties)
+        {
+            rendererNode.setAliasSource(((EJPluginScreenItemProperties) source).getBlockItemDisplayProperties());
+        }
         rendererNode.setPaintBorder(false);
         if (isMultiTableRenderer(block, descriptor))
         {
@@ -634,6 +667,7 @@ public class FormPreviewModelBuilder
     private PreviewNode createFlatControlNode(EJPluginScreenItemProperties item, EJFrameworkExtensionProperties requiredProperties, int maximumSpan)
     {
         PreviewNode node = new PreviewNode(item, resolver.forScreenItem(item));
+        node.setAliasSource(item.getBlockItemDisplayProperties());
         node.setPaintBorder(false);
         node.setPaintControlLabel(false);
         node.setVerticalOrientation(isVerticalSeparator(item));
