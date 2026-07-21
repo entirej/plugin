@@ -91,7 +91,7 @@ public class AppLayoutPreviewModelBuilder
         PreviewNode node;
         if (item instanceof LayoutComponent)
         {
-            node = new PreviewNode(item, forLayoutComponent((LayoutComponent) item));
+            node = new PreviewNode(item, resolver.forApplicationComponent(properties, (LayoutComponent) item));
         }
         else
         {
@@ -150,14 +150,6 @@ public class AppLayoutPreviewModelBuilder
             child.getConstraint().setHorizontalSpan(1).setVerticalSpan(1).setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true)
                     .setGrabVertical(true);
         }
-    }
-
-    private EJDevPreviewDescriptor forLayoutComponent(LayoutComponent component)
-    {
-        String renderer = component.getRenderer();
-        String label = String.format("<%s>", value(renderer, "<component>"));
-        return EJDevPreviewDescriptor.create(EJDevPreviewKind.APP_COMPONENT, component.getName(), label, renderer, component.getHintWidth(),
-                component.getHintHeight());
     }
 
     private List<String> tabLabels(TabGroup tab)

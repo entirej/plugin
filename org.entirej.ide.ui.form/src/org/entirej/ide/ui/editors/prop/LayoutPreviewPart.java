@@ -149,14 +149,7 @@ public class LayoutPreviewPart extends AbstractDescriptorPart implements INodeDe
     public void showDetails(AbstractNode<?> node)
     {
         selectedNode = node;
-        if (previewControl != null && !previewControl.isDisposed() && selectedNode != null)
-        {
-            previewControl.selectSource(selectedNode.getSource());
-        }
-        else
-        {
-            previewLayout();
-        }
+        previewLayout();
     }
 
     private void previewLayout()

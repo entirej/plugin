@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class PreviewEditControl extends Composite
 {
@@ -102,12 +101,12 @@ public class PreviewEditControl extends Composite
             return;
         }
         final PreviewNode node = sourceMap.get(source);
-        if (node == null)
+        if (node == null || !isVisible(node) || viewer.getControl() == null || viewer.getControl().isDisposed())
         {
             return;
         }
 
-        Display.getDefault().asyncExec(new Runnable()
+        viewer.getControl().getDisplay().asyncExec(new Runnable()
         {
             public void run()
             {
@@ -122,6 +121,7 @@ public class PreviewEditControl extends Composite
                     {
                         selectionEvents.set(false);
                         viewer.setSelection(new StructuredSelection(editPart));
+                        viewer.reveal((EditPart) editPart);
                     }
                     finally
                     {
@@ -155,5 +155,21 @@ public class PreviewEditControl extends Composite
         {
             index(child);
         }
+    }
+
+    private boolean isVisible(PreviewNode node)
+    {
+        PreviewNode child = node;
+        PreviewNode parent = child.getParent();
+        while (parent != null)
+        {
+            if (!parent.getVisibleChildren().contains(child))
+            {
+                return false;
+            }
+            child = parent;
+            parent = child.getParent();
+        }
+        return true;
     }
 }

@@ -26,6 +26,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -37,6 +38,7 @@ public class PreviewNodeFigure extends Figure
 
     private PreviewNode model;
     private Color       appComponentBackground;
+    private boolean     selected;
 
     public PreviewNodeFigure(PreviewNode model)
     {
@@ -51,6 +53,15 @@ public class PreviewNodeFigure extends Figure
         this.model = model;
         applyBorder();
         repaint();
+    }
+
+    public void setSelected(boolean selected)
+    {
+        if (this.selected != selected)
+        {
+            this.selected = selected;
+            repaint();
+        }
     }
 
     @Override
@@ -81,6 +92,29 @@ public class PreviewNodeFigure extends Figure
         if (kind == EJDevPreviewKind.SPLIT)
         {
             drawSplitDividers(graphics, area);
+        }
+    }
+
+    @Override
+    protected void paintBorder(Graphics graphics)
+    {
+        super.paintBorder(graphics);
+        if (!selected)
+        {
+            return;
+        }
+
+        Rectangle area = getBounds().getCopy().shrink(1, 1);
+        graphics.pushState();
+        try
+        {
+            graphics.setForegroundColor(Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION));
+            graphics.setLineWidth(2);
+            graphics.drawRectangle(area);
+        }
+        finally
+        {
+            graphics.popState();
         }
     }
 
@@ -599,12 +633,6 @@ public class PreviewNodeFigure extends Figure
             {
                 graphics.drawLine(area.x + 6, area.y + 54, area.x + area.width - 8, area.y + 54);
                 graphics.drawLine(area.x + 6, area.y + 69, area.x + area.width - 8, area.y + 69);
-            }
-            else
-            {
-                graphics.drawLine(area.x, area.y + 39, area.x + area.width, area.y + 39);
-                graphics.drawLine(area.x + area.width / 3, area.y + 18, area.x + area.width / 3, area.y + area.height - 2);
-                graphics.drawLine(area.x + (area.width * 2) / 3, area.y + 18, area.x + (area.width * 2) / 3, area.y + area.height - 2);
             }
             return;
         }

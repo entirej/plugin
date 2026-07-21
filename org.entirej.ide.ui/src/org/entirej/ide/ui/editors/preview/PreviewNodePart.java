@@ -25,7 +25,9 @@ import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.editpolicies.SelectionEditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -55,7 +57,25 @@ public class PreviewNodePart extends AbstractGraphicalEditPart
     @Override
     protected void createEditPolicies()
     {
-        // Read-only preview for the first GEF migration slice.
+        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new SelectionEditPolicy()
+        {
+            @Override
+            protected void hideSelection()
+            {
+                selectionFigure().setSelected(false);
+            }
+
+            @Override
+            protected void showSelection()
+            {
+                selectionFigure().setSelected(true);
+            }
+        });
+    }
+
+    private PreviewNodeFigure selectionFigure()
+    {
+        return (PreviewNodeFigure) getFigure();
     }
 
     @Override
