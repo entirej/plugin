@@ -233,11 +233,7 @@ public class PreviewNodeFigure extends Figure
                 drawTableLikeRenderer(graphics, area, kind, text);
                 break;
             case IMAGE:
-                drawTitle(graphics, area, text);
-                drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
-                graphics.drawLine(area.x + 8, area.y + area.height - 8, area.x + area.width / 2, area.y + 42);
-                graphics.drawLine(area.x + area.width / 2, area.y + 42, area.x + area.width - 8, area.y + area.height - 8);
-                graphics.drawOval(area.x + area.width - 30, area.y + 26, 12, 12);
+                drawImagePlaceholder(graphics, area);
                 break;
             case CHART:
                 drawTitle(graphics, area, text);
@@ -470,6 +466,36 @@ public class PreviewNodeFigure extends Figure
         graphics.fillRectangle(x, y, Math.max(1, width), Math.max(1, height));
         graphics.setForegroundColor(ColorConstants.gray);
         graphics.drawRectangle(x, y, Math.max(1, width) - 1, Math.max(1, height) - 1);
+    }
+
+    private void drawImagePlaceholder(Graphics graphics, Rectangle area)
+    {
+        int width = Math.max(1, area.width);
+        int height = Math.max(1, area.height);
+        drawInsetBox(graphics, area.x, area.y, width, height);
+
+        if (width < 6 || height < 6)
+        {
+            return;
+        }
+
+        int inset = Math.max(2, Math.min(8, Math.min(width, height) / 5));
+        int left = area.x + inset;
+        int right = area.x + width - inset - 1;
+        int top = area.y + inset;
+        int bottom = area.y + height - inset - 1;
+        int peakX = area.x + width / 2;
+        int peakY = area.y + height / 2;
+
+        graphics.setForegroundColor(ColorConstants.gray);
+        graphics.drawLine(left, bottom, peakX, peakY);
+        graphics.drawLine(peakX, peakY, right, bottom);
+
+        if (width >= 12 && height >= 12)
+        {
+            int diameter = Math.max(2, Math.min(6, (Math.min(width, height) - 4) / 2));
+            graphics.drawOval(right - diameter, top, diameter, diameter);
+        }
     }
 
     private boolean shouldPaintContainerTitle()
