@@ -139,6 +139,7 @@ public class EJReportProject extends PlatformObject implements IProjectNature
     public void configure() throws CoreException
     {
         // addToBuildSpec(EJConstants.EJ_FORM_CONST_BUILDER_ID, true);
+        addToBuildSpec("org.eclipse.m2e.core.maven2Builder", true);
         addToBuildSpec(EJConstants.EJ_REPORT_PROPERTIES_BUILDER_ID, false);
          addToBuildSpec(EJConstants.EJ_REPORT_CONST_BUILDER_ID, false);
          addToBuildSpec(EJConstants.EJ_REPORT_BUILDER_ID, false);

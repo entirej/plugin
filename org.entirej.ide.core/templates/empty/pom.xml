@@ -1,0 +1,112 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.entirej</groupId>
+  <artifactId>app</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Empty</name>
+  
+  <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.entirej</groupId>
+                <artifactId>entirej-rap-bom</artifactId>
+                <version>7.0.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+  
+ <build>
+        
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>tests</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>tests</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+
+    </build>
+    <dependencies>
+
+
+        
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-report</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-report-runners</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-development</artifactId>
+            <scope>compile</scope>
+        </dependency>
+       
+
+
+
+       
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+       
+
+        
+        
+       <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+        </dependency>
+
+
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>entirej-mvn-repo</id>
+            <url>https://raw.github.com/entirej/mavenrepo/gh-pages/maven/${MAVEN.REPO.PATH}/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <properties>
+        
+        <MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
+    </properties>
+
+</project>

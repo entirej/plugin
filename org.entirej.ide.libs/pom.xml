@@ -135,102 +135,14 @@
 						<artifactItem>
 							<groupId>org.slf4j</groupId>
 							<artifactId>slf4j-api</artifactId>
-							<version>1.7.3</version>
+							<version>2.0.16</version>
 							<type>jar</type>
 							 
 							<outputDirectory>../org.entirej.core.runtime/extlibs</outputDirectory>
 						</artifactItem>
 						
 						
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-fx</artifactId>
-							<version>${VERSION.FX}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
-							<destFileName>entirej-fx-appframework.jar</destFileName>
-						</artifactItem>
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-fx-def</artifactId>
-							<version>${VERSION.FX}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
-							<destFileName>entirej-fx-renderer-defs.jar</destFileName>
-						</artifactItem>
-						
-						<artifactItem>
-
-							  <groupId>org.jfxtras</groupId>
-							  <artifactId>jfxtras-controls</artifactId>
-							  <version>8.0-r1</version>
-
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
-							<destFileName>jfxtras-controls-8.0-r1.jar</destFileName>
-						</artifactItem>
-						<artifactItem>
-
-							  <groupId>org.jfxtras</groupId>
-							  <artifactId>jfxtras-common</artifactId>
-							  <version>8.0-r1</version>
-
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.fx/extlibs</outputDirectory>
-							<destFileName>jfxtras-common-8.0-r1.jar</destFileName>
-						</artifactItem>
-						<!-- RWT_BASE -->
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-rwt</artifactId>
-							<version>${VERSION.RWT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs</outputDirectory>
-							<destFileName>entirej-rwt-appframework.jar</destFileName>
-						</artifactItem>
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-rwt-def</artifactId>
-							<version>${VERSION.RWT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs</outputDirectory>
-							<destFileName>entirej-rwt-renderer-defs.jar</destFileName>
-						</artifactItem>
-						<!-- RWT_EXT -->
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-rwt-rap</artifactId>
-							<version>${VERSION.RWT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-rap</outputDirectory>
-							<destFileName>entirej-rwt-appframework-rap.jar</destFileName>
-						</artifactItem>
-						<!-- TMT_BASE -->
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-tabris</artifactId>
-							<version>${VERSION.TMT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-tmt</outputDirectory>
-							<destFileName>entirej-tmt-appframework.jar</destFileName>
-						</artifactItem>
-						<artifactItem>
-							<groupId>org.entirej</groupId>
-							<artifactId>entirej-tabris-def</artifactId>
-							<version>${VERSION.TMT}</version>
-							<type>jar</type>
-							 
-							<outputDirectory>../org.entirej.ide.cf.rwt/extlibs-tmt</outputDirectory>
-							<destFileName>entirej-tmt-renderer-defs.jar</destFileName>
-						</artifactItem>
+					
 					</artifactItems>
 				</configuration>
 			</plugin>
@@ -241,7 +153,6 @@
 		<VERSION.CORE>DEVELOPMENT-SNAPSHOT</VERSION.CORE>
 		<VERSION.RWT>DEVELOPMENT-SNAPSHOT</VERSION.RWT>
 		<VERSION.TMT>DEVELOPMENT</VERSION.TMT>
-		<VERSION.FX>DEVELOPMENT</VERSION.FX>
 		<VERSION.REPORT>DEVELOPMENT</VERSION.REPORT>
 		<MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
 	</properties>

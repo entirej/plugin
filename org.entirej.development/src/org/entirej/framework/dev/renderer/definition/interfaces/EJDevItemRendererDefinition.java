@@ -33,7 +33,7 @@ public interface EJDevItemRendererDefinition extends EJItemRendererDefinition
      * <p>
      * The item should be added to the given <code>Control</code> and returned
      * from this method
-     * 
+     *
      * @param parent
      *            The <code>Composite</code> that will contain this item
      * @param screenDisplayProperties
@@ -42,15 +42,29 @@ public interface EJDevItemRendererDefinition extends EJItemRendererDefinition
      * @param formToolkit
      *            The toolkit to use for the creation of the item widget
      * @return This items, plugin GUI widget
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. The plugin now renders a GEF preview which is
+     *             driven by
+     *             {@link org.entirej.framework.dev.renderer.definition.EJDevPreviewDescriptor}s.
+     *             Implement {@link EJDevItemPreviewProvider} to describe this item
+     *             explicitly; renderers that do not are given a descriptor
+     *             inferred from their renderer name.
      */
-    public EJDevItemRendererDefinitionControl getItemControl(EJDevScreenItemDisplayProperties screenDisplayProperties, Composite parent, FormToolkit formToolkit);
+    @Deprecated
+    default EJDevItemRendererDefinitionControl getItemControl(EJDevScreenItemDisplayProperties screenDisplayProperties, Composite parent,
+            FormToolkit formToolkit)
+    {
+        return null;
+    }
 
     /**
      * Used to return the label widget for this item
      * <p>
      * If the widget does not display a label, then this method should do
      * nothing and <code>null</code> should be returned
-     * 
+     *
      * @param parent
      *            The <code>Composite</code> upon wich this widgets label will
      *            be displayed
@@ -60,6 +74,14 @@ public interface EJDevItemRendererDefinition extends EJItemRendererDefinition
      *            The toolkit to use for the creation of the label widget
      * @return The label widget or <code>null</code> if this item displays no
      *         label
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. See {@link EJDevItemPreviewProvider}.
      */
-    public Control getLabelControl(EJDevScreenItemDisplayProperties itemProperties, Composite parent, FormToolkit toolkit);
+    @Deprecated
+    default Control getLabelControl(EJDevScreenItemDisplayProperties itemProperties, Composite parent, FormToolkit toolkit)
+    {
+        return null;
+    }
 }

@@ -77,8 +77,8 @@ public class SpringFeatureConfigProvider implements FeatureConfigProvider {
 
 			IClasspathAttribute[] attributes = getClasspathAttributes();
 
-			CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTSpringRuntimeClasspathContainer.ID,
-					new IAccessRule[0], attributes, true));
+//			CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTSpringRuntimeClasspathContainer.ID,
+//					new IAccessRule[0], attributes, true));
 
 			EntirejPluginPropertiesEnterpriseEdition entirejProperties = EntirejPropertiesUtils
 					.retrieveEntirejProperties(project);

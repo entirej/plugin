@@ -32,12 +32,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
@@ -54,15 +49,12 @@ import org.entirej.framework.core.properties.definitions.interfaces.EJPropertyDe
 import org.entirej.framework.core.renderers.definitions.interfaces.EJLovRendererDefinition;
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
-import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevLovRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevQueryScreenRendererDefinition;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
 import org.entirej.framework.plugin.framework.properties.ExtensionsPropertiesFactory;
@@ -103,23 +95,6 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
     private final static Image                  GROUP          = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
     private final static Image                  LOV            = EJUIImages.getImage(EJUIImages.DESC_LOV_DEF);
     private final static Image                  LOV_REF        = EJUIImages.getImage(EJUIImages.DESC_LOV_REF);
-    private final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
-                                                               {
-
-                                                                   public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                   {
-                                                                       if (arg0 != null && treeSection != null)
-                                                                       {
-
-                                                                           Object findNode = (arg0);
-                                                                           if (findNode != null)
-                                                                           {
-                                                                               treeSection.selectNodes(true, findNode);
-                                                                           }
-                                                                       }
-
-                                                                   }
-                                                               };
 
     public LovGroupNode(FormDesignTreeSection treeSection)
     {
@@ -334,55 +309,6 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                 return adapter.cast(validator);
             }
 
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                return adapter.cast(new IFormPreviewProvider()
-
-                {
-
-                    public String getDescription()
-                    {
-                        return "preview the defined layout in LOV screen.";
-                    }
-
-                    public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                    {
-                        Composite pContent = new Composite(previewComposite, SWT.NONE);
-
-                        EJPluginMainScreenProperties mainScreenProperties = source.getBlockProperties().getMainScreenProperties();
-                        int width = mainScreenProperties.getWidth();
-                        int height = mainScreenProperties.getWidth();
-                        previewComposite.setContent(pContent);
-                        previewComposite.setExpandHorizontal(true);
-                        previewComposite.setExpandVertical(true);
-
-                        pContent.setLayout(new GridLayout());
-
-                        Composite layoutBody = new Composite(pContent, SWT.NONE);
-                        layoutBody.setLayout(new GridLayout(mainScreenProperties.getNumCols(), false));
-
-                        GridData sectionData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-
-                        sectionData.widthHint = width;
-                        sectionData.heightHint = height;
-                        layoutBody.setLayoutData(sectionData);
-                        EJDevLovRendererDefinition rendererDefinition = source.getRendererDefinition();
-                        if (rendererDefinition != null)
-                            rendererDefinition.addLovControlToCanvas(source, layoutBody, editor.getToolkit()).addItemWidgetChosenListener(chosenListener);
-
-                        if (width > 0 && height > 0)
-                            previewComposite.setMinSize(width, height);
-                        else
-                            previewComposite.setMinSize(pContent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-                    }
-
-                    public void dispose()
-                    {
-
-                    }
-                });
-            }
             return null;
         }
 
@@ -449,8 +375,6 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                         {
                             return adapter.cast(svalidator);
                         }
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                            return LovNode.this.getAdapter(adapter);
 
                         return super.getAdapter(adapter);
 
@@ -518,38 +442,6 @@ public class LovGroupNode extends AbstractNode<EJPluginLovDefinitionContainer> i
                             if (NodeValidateProvider.class.isAssignableFrom(adapter))
                             {
                                 return adapter.cast(svalidator);
-                            }
-                            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                            {
-                                return adapter.cast(new IFormPreviewProvider()
-
-                                {
-
-                                    public String getDescription()
-                                    {
-                                        return "preview the defined layout in block query screen.";
-                                    }
-
-                                    public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                                    {
-                                        source.getRendererDefinition().getQueryScreenRendererDefinition()
-                                                .addQueryScreenControl(source.getBlockProperties(), previewComposite, editor.getToolkit())
-                                                .addItemWidgetChosenListener(chosenListener);
-                                        Control[] children = previewComposite.getChildren();
-                                        if (children.length > 0)
-                                        {
-                                            previewComposite.setContent(previewComposite.getChildren()[0]);
-                                            previewComposite.setExpandHorizontal(true);
-                                            previewComposite.setExpandVertical(true);
-                                        }
-
-                                    }
-
-                                    public void dispose()
-                                    {
-
-                                    }
-                                });
                             }
                             return null;
                         }

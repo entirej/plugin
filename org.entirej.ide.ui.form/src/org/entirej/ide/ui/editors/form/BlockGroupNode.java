@@ -34,19 +34,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -65,17 +58,12 @@ import org.entirej.framework.core.properties.interfaces.EJTabPageProperties;
 import org.entirej.framework.core.renderers.definitions.interfaces.EJBlockRendererDefinition;
 import org.entirej.framework.core.service.EJBlockService;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
-import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
-import org.entirej.framework.dev.renderer.definition.EJDevBlockRendererDefinitionControl;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockWidgetChosenListener;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockItemProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
@@ -132,21 +120,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
     private final static Image                   BLOCK_NTB                      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
     private final static Image                   BLOCK_NTB_REF                  = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
     private final static Image                   BLOCK_REF                      = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
-    private final EJDevItemWidgetChosenListener  chosenListener                 = new EJDevItemWidgetChosenListener()
-                                                                                {
-
-                                                                                    public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                                    {
-                                                                                        if (arg0 != null && treeSection != null)
-                                                                                        {
-
-                                                                                            treeSection.selectNodes(true, arg0);
-
-                                                                                        }
-
-                                                                                    }
-                                                                                };
-
    
 
     public BlockGroupNode(AbstractNode<?> parent, FormDesignTreeSection treeSection)
@@ -601,76 +574,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                 return adapter.cast(validator);
             }
 
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                return adapter.cast(new IFormPreviewProvider()
-
-                {
-
-                    public String getDescription()
-                    {
-                        return "preview the defined layout in block main screen.";
-                    }
-
-                    public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                    {
-
-                        Composite pContent = new Composite(previewComposite, SWT.NONE);
-
-                        pContent.setLayout(new FillLayout());
-
-                        EJPluginMainScreenProperties mainScreenProperties = source.getMainScreenProperties();
-                        int width = mainScreenProperties.getWidth();
-                        int height = mainScreenProperties.getHeight();
-                        previewComposite.setContent(pContent);
-                        previewComposite.setExpandHorizontal(true);
-                        previewComposite.setExpandVertical(true);
-
-                        EJDevBlockRendererDefinition blockRendererDefinition = source.getBlockRendererDefinition();
-                        if (blockRendererDefinition != null)
-                        {
-                            EJDevBlockRendererDefinitionControl addBlockControlToCanvas = blockRendererDefinition.addBlockControlToCanvas(mainScreenProperties,
-                                    source, pContent, editor.getToolkit());
-                            
-                            if(addBlockControlToCanvas==null)
-                            {
-                                Label dummy = new Label(pContent, SWT.NONE);
-                                dummy.setText("< "+mainScreenProperties.getBlockProperties().getName()+
-                                        "["+mainScreenProperties.getBlockProperties().getBlockRendererName() +"] >");
-                            }
-                            addBlockControlToCanvas.addItemWidgetChosenListener(chosenListener);
-
-                           
-                            MouseAdapter mouseAdapter = new MouseAdapter()
-                            {
-                                @Override
-                                public void mouseDoubleClick(MouseEvent e)
-                                {
-                                    treeSection.selectNodes(true, source);
-                                }
-                            };
-                            
-                            
-                            Control[] children = pContent.getChildren();
-                            for (Control control : children)
-                            {
-                                control.addMouseListener(mouseAdapter);
-                            }
-
-                        }
-                        if (width > 0 && height > 0)
-                            previewComposite.setMinSize(width, height);
-                        else
-                            previewComposite.setMinSize(pContent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-                    }
-
-                    public void dispose()
-                    {
-
-                    }
-                });
-            }
             return null;
         }
 
@@ -754,8 +657,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         {
                             return adapter.cast(svalidator);
                         }
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                            return BlockNode.this.getAdapter(adapter);
 
                         return super.getAdapter(adapter);
 
@@ -826,38 +727,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         {
                             return adapter.cast(svalidator);
                         }
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                        {
-                            return adapter.cast(new IFormPreviewProvider()
-
-                            {
-
-                                public String getDescription()
-                                {
-                                    return "preview the defined layout in block query screen.";
-                                }
-
-                                public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                                {
-                                    source.getQueryScreenRendererDefinition()
-                                            .addQueryScreenControl(BlockNode.this.source, previewComposite, editor.getToolkit())
-                                            .addItemWidgetChosenListener(chosenListener);
-                                    Control[] children = previewComposite.getChildren();
-                                    if (children.length > 0)
-                                    {
-                                        previewComposite.setContent(previewComposite.getChildren()[0]);
-                                        previewComposite.setExpandHorizontal(true);
-                                        previewComposite.setExpandVertical(true);
-                                    }
-
-                                }
-
-                                public void dispose()
-                                {
-
-                                }
-                            });
-                        }
                         return null;
                     }
                 };
@@ -924,38 +793,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         if (NodeValidateProvider.class.isAssignableFrom(adapter))
                         {
                             return adapter.cast(svalidator);
-                        }
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                        {
-                            return adapter.cast(new IFormPreviewProvider()
-
-                            {
-
-                                public String getDescription()
-                                {
-                                    return "preview the defined layout in block insert screen.";
-                                }
-
-                                public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                                {
-                                    source.getInsertScreenRendererDefinition()
-                                            .addInsertScreenControl(BlockNode.this.source, previewComposite, editor.getToolkit())
-                                            .addItemWidgetChosenListener(chosenListener);
-                                    Control[] children = previewComposite.getChildren();
-                                    if (children.length > 0)
-                                    {
-                                        previewComposite.setContent(previewComposite.getChildren()[0]);
-                                        previewComposite.setExpandHorizontal(true);
-                                        previewComposite.setExpandVertical(true);
-                                    }
-
-                                }
-
-                                public void dispose()
-                                {
-
-                                }
-                            });
                         }
                         return null;
                     }
@@ -1024,38 +861,6 @@ public class BlockGroupNode extends AbstractNode<EJPluginBlockContainer> impleme
                         if (NodeValidateProvider.class.isAssignableFrom(adapter))
                         {
                             return adapter.cast(svalidator);
-                        }
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                        {
-                            return adapter.cast(new IFormPreviewProvider()
-
-                            {
-
-                                public String getDescription()
-                                {
-                                    return "preview the defined layout in block update screen.";
-                                }
-
-                                public void buildPreview(AbstractEJFormEditor editor, ScrolledComposite previewComposite)
-                                {
-                                    source.getUpdateScreenRendererDefinition()
-                                            .addUpdateScreenControl(BlockNode.this.source, previewComposite, editor.getToolkit())
-                                            .addItemWidgetChosenListener(chosenListener);
-                                    Control[] children = previewComposite.getChildren();
-                                    if (children.length > 0)
-                                    {
-                                        previewComposite.setContent(previewComposite.getChildren()[0]);
-                                        previewComposite.setExpandHorizontal(true);
-                                        previewComposite.setExpandVertical(true);
-                                    }
-
-                                }
-
-                                public void dispose()
-                                {
-
-                                }
-                            });
                         }
                         return null;
                     }

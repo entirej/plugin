@@ -44,9 +44,20 @@ public interface EJDevInsertScreenRendererDefinition extends EJInsertScreenRende
      *            The toolkit to use for the creation of the item widget
      * @param The
      *            Screen renderer definition control for this insert screen
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. Implement
+     *             {@link EJDevInsertScreenPreviewProvider} to describe this
+     *             screen in the GEF preview; renderers that do not are given a
+     *             descriptor inferred from their renderer name.
      */
-    public EJDevScreenRendererDefinitionControl addInsertScreenControl(EJDevBlockDisplayProperties blockDisplayProperties, Composite parent,
-            FormToolkit formToolkit);
+    @Deprecated
+    default EJDevScreenRendererDefinitionControl addInsertScreenControl(EJDevBlockDisplayProperties blockDisplayProperties, Composite parent,
+            FormToolkit formToolkit)
+    {
+        return null;
+    }
 
     /**
      * Used to return the control for a spacer item using the specified display
@@ -63,7 +74,16 @@ public interface EJDevInsertScreenRendererDefinition extends EJInsertScreenRende
      * @param formToolkit
      *            The toolkit to use for the creation of the spacer item widget
      * @return The spacer items plugin GUI widget
+     *
+     * @deprecated The SWT preview has been removed from the EntireJ Form
+     *             Plugin, so this method is never called and does not need to
+     *             be implemented. Spacer items are rendered by the GEF preview
+     *             directly.
      */
-    public EJDevItemRendererDefinitionControl getSpacerItemControl(EJDevScreenItemDisplayProperties screenDisplayProperties, Composite parent,
-            FormToolkit formToolkit);
+    @Deprecated
+    default EJDevItemRendererDefinitionControl getSpacerItemControl(EJDevScreenItemDisplayProperties screenDisplayProperties, Composite parent,
+            FormToolkit formToolkit)
+    {
+        return null;
+    }
 }

@@ -3,8 +3,8 @@ package org.entirej;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.entirej.applicationframework.rwt.spring.ext.AbstractTemplateServlet;
 

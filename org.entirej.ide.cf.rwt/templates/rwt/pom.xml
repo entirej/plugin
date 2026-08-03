@@ -1,0 +1,169 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.entirej</groupId>
+  <artifactId>app</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>EJ RWT App</name>
+  
+  <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.entirej</groupId>
+                <artifactId>entirej-rap-bom</artifactId>
+                <version>7.0.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+  
+ <build>
+        <finalName>${WAR.NAME}</finalName>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>tests</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>tests</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                    <webXml>WebContent/WEB-INF/web.xml</webXml>
+                    <webResources>
+                        <resource>
+                            <directory>WebContent</directory>
+                            <filtering>false</filtering>
+                        </resource>
+                    </webResources>
+                    <archive>
+                        <manifestEntries>
+                            <temos-version>${APP_VERSION}</temos-version>
+                            <temos-build>${WAR_BUILD_SEQUENCE}</temos-build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+    <dependencies>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-report</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-report-runners</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-development</artifactId>
+            <scope>compile</scope>
+        </dependency>
+       
+
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-rwt-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-rwt-rap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-rwt-def</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.entirej</groupId>
+            <artifactId>entirej-rwt</artifactId>
+
+        </dependency>
+
+       
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+       
+        <dependency>
+            <groupId>org.eclipse.rap.incubator</groupId>
+            <artifactId>org.eclipse.rap.chartjs</artifactId>
+        </dependency>
+        
+        
+       <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.5.0-b01</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>entirej-mvn-repo</id>
+            <url>https://raw.github.com/entirej/mavenrepo/gh-pages/maven/${MAVEN.REPO.PATH}/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <properties>
+        <WAR.NAME>ej.app</WAR.NAME>
+        <MAVEN.REPO.PATH>development</MAVEN.REPO.PATH>
+        <APP_VERSION>1.0</APP_VERSION>
+        <WAR_BUILD_SEQUENCE>dev</WAR_BUILD_SEQUENCE>
+    </properties>
+
+</project>

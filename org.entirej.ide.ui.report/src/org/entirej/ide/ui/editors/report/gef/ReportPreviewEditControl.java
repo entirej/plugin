@@ -16,7 +16,7 @@ import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.gef.editparts.ZoomListener;
+import org.eclipse.draw2d.zoom.ZoomListener;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.RedoAction;
@@ -123,20 +123,8 @@ public class ReportPreviewEditControl extends RulerComposite
         setGraphicalViewer(viewer);
 
         if(vOffset!=0 || hOffset!=0)
-        getZoomManager().addZoomListener(new ZoomListener()
-        {
-            
-            public void zoomChanged(double zoom)
-            {
-                Display.getDefault().asyncExec(new  Runnable()
-                {
-                    public void run()
-                    {
-                        layout(true);
-                    }
-                });
-                
-            }
+        getZoomManager().addZoomListener(zoom -> {
+            Display.getDefault().asyncExec(() -> layout(true));
         });
 
     }

@@ -443,10 +443,6 @@ the developer guide provided by EntireJ.
    </license>
 
    <includes
-         id="org.entirej.fx.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.entirej.ide.feature"
          version="0.0.0"/>
 

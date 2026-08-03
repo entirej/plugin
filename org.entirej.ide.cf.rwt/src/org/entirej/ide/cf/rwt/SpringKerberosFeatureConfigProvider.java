@@ -82,8 +82,8 @@ public class SpringKerberosFeatureConfigProvider implements FeatureConfigProvide
 						params);
 				IClasspathAttribute[] attributes = getClasspathAttributes();
 
-				CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTSpringRuntimeClasspathContainer.ID,
-						new IAccessRule[0], attributes, true));
+//				CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(RWTSpringRuntimeClasspathContainer.ID,
+//						new IAccessRule[0], attributes, true));
 			}
 			
 

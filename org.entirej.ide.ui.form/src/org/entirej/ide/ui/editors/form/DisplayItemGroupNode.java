@@ -432,17 +432,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             List<EJPluginItemGroupProperties> itemGroups = container.getItemGroups();
             for (EJPluginItemGroupProperties groupProperties : itemGroups)
             {
-                ItemGroup itemGroup = new ItemGroup(groupProperties)
-                {
-                    public <S> S getAdapter(Class<S> adapter)
-                    {
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                            return ExtensionDisplayItemGroup.this.getAdapter(adapter);
-
-                        return super.getAdapter(adapter);
-
-                    }
-                };
+                ItemGroup itemGroup = new ItemGroup(groupProperties);
                 nodes.add(new DisplayItemGroupNode(treeSection, node, itemGroup));
             }
 
@@ -657,18 +647,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             List<EJPluginItemGroupProperties> itemGroups = container.getItemGroups();
             for (EJPluginItemGroupProperties groupProperties : itemGroups)
             {
-                ItemGroup itemGroup = new ItemGroup(groupProperties)
-                {
-                    public <S> S getAdapter(Class<S> adapter)
-                    {
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                            return MainDisplayItemGroup.this.getAdapter(adapter);
-
-                        return super.getAdapter(adapter);
-
-                    }
-
-                };
+                ItemGroup itemGroup = new ItemGroup(groupProperties);
                 nodes.add(new DisplayItemGroupNode(treeSection, node, itemGroup)
                 {
                     public String getNodeDescriptorDetails()
@@ -1640,17 +1619,7 @@ public class DisplayItemGroupNode extends AbstractNode<DisplayItemGroup> impleme
             List<EJPluginItemGroupProperties> itemGroups = container.getItemGroups();
             for (EJPluginItemGroupProperties groupProperties : itemGroups)
             {
-                ItemGroup itemGroup = new ItemGroup(groupProperties)
-                {
-                    public <S> S getAdapter(Class<S> adapter)
-                    {
-                        if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-                            return ItemGroup.this.getAdapter(adapter);
-
-                        return super.getAdapter(adapter);
-
-                    }
-                };
+                ItemGroup itemGroup = new ItemGroup(groupProperties);
 
                 nodes.add(new DisplayItemGroupNode(treeSection, node, itemGroup));
             }

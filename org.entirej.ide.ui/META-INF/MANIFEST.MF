@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.entirej.ide.ui;singleton:=true
 Bundle-Version: 5.1.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Category: %Bundle-Category
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench,
  org.eclipse.core.runtime,
@@ -37,6 +37,7 @@ Export-Package: org.entirej.ide.ui,
  org.entirej.ide.ui.editors.descriptors,
  org.entirej.ide.ui.editors.handlers,
  org.entirej.ide.ui.editors.operations,
+ org.entirej.ide.ui.editors.preview,
  org.entirej.ide.ui.editors.preferences,
  org.entirej.ide.ui.nodes,
  org.entirej.ide.ui.nodes.dnd,

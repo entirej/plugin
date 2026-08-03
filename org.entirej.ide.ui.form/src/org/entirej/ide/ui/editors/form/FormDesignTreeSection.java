@@ -68,15 +68,11 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -103,11 +99,7 @@ import org.entirej.framework.core.properties.interfaces.EJCanvasProperties;
 import org.entirej.framework.core.renderers.definitions.interfaces.EJFormRendererDefinition;
 import org.entirej.framework.dev.EJDevConstants;
 import org.entirej.framework.dev.exceptions.EJDevFrameworkException;
-import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
-import org.entirej.framework.dev.renderer.definition.EJDevBlockRendererDefinitionControl;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevBlockRendererDefinition;
 import org.entirej.framework.dev.renderer.definition.interfaces.EJDevFormRendererDefinition;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.framework.properties.EJPluginApplicationParameter;
 import org.entirej.framework.plugin.framework.properties.EJPluginBlockProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginCanvasProperties;
@@ -115,7 +107,6 @@ import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperti
 import org.entirej.framework.plugin.framework.properties.EJPluginFormProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovDefinitionProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginLovMappingProperties;
-import org.entirej.framework.plugin.framework.properties.EJPluginMainScreenProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginObjectGroupProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRelationProperties;
 import org.entirej.framework.plugin.framework.properties.EJPluginRenderer;
@@ -179,23 +170,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
     protected FormPreviewer                       formPreviewer;
 
     protected AbstractNode<?>                     baseNode;
-    protected final EJDevItemWidgetChosenListener chosenListener = new EJDevItemWidgetChosenListener()
-                                                                 {
-
-                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                     {
-                                                                         if (arg0 != null)
-                                                                         {
-
-                                                                             Object findNode = (arg0);
-                                                                             if (findNode != null)
-                                                                             {
-                                                                                 selectNodes(true, findNode);
-                                                                             }
-                                                                         }
-
-                                                                     }
-                                                                 };
 
     public FormDesignTreeSection(AbstractEJFormEditor editor, FormPage page, Composite parent)
     {
@@ -1186,66 +1160,6 @@ public class FormDesignTreeSection extends AbstractNodeTreeSection
             if (NodeValidateProvider.class.isAssignableFrom(adapter))
             {
                 return adapter.cast(validator);
-            }
-            if (IFormPreviewProvider.class.isAssignableFrom(adapter))
-            {
-                return adapter.cast(new FormCanvasPreviewImpl()
-                {
-                    @Override
-                    protected void setPreviewBackground(Control control, Color color)
-                    {
-                        // IGNORE
-                    }
-
-                    @Override
-                    public String getDescription()
-                    {
-                        return "preview the defined layout in form.";
-                    }
-
-                    @Override
-                    protected void createComponent(Composite parent, final EJPluginCanvasProperties component)
-                    {
-                        if (component.getPluginBlockProperties() != null)
-                        {
-                            EJPluginMainScreenProperties mainScreenProperties = component.getPluginBlockProperties().getMainScreenProperties();
-
-                            Composite layoutBody = new Composite(parent, SWT.NONE);
-
-                            layoutBody.setLayout(new FillLayout());
-
-                            layoutBody.setLayoutData(createGridData(component));
-                            EJDevBlockRendererDefinition blockRendererDefinition = component.getPluginBlockProperties().getBlockRendererDefinition();
-                           if(blockRendererDefinition!=null)
-                        {
-                            EJDevBlockRendererDefinitionControl controlToCanvas = blockRendererDefinition
-                                    .addBlockControlToCanvas(mainScreenProperties, component.getPluginBlockProperties(), layoutBody, editor.getToolkit());
-                                    if(controlToCanvas!=null )
-                                        controlToCanvas.addItemWidgetChosenListener(chosenListener);
-                        }
-                           
-                           MouseAdapter mouseAdapter = new MouseAdapter()
-                           {
-                               @Override
-                               public void mouseDoubleClick(MouseEvent e)
-                               {
-                                   selectNodes(true, component.getPluginBlockProperties());
-                               }
-                           };
-                           
-                           
-                           Control[] children = layoutBody.getChildren();
-                           for (Control control : children)
-                           {
-                               control.addMouseListener(mouseAdapter);
-                           }
-                        }
-                        else
-                        {
-                            super.createComponent(parent, component);
-                        }
-                    }
-                });
             }
             return null;
         }

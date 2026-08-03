@@ -40,8 +40,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.entirej.framework.core.actionprocessor.interfaces.EJBlockActionProcessor;
-import org.entirej.framework.dev.properties.interfaces.EJDevScreenItemDisplayProperties;
-import org.entirej.framework.dev.renderer.definition.interfaces.EJDevItemWidgetChosenListener;
 import org.entirej.framework.plugin.reports.EJPluginReportBlockProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportProperties;
 import org.entirej.framework.plugin.reports.EJPluginReportScreenProperties;
@@ -90,23 +88,6 @@ public class ReportBlockGroupNode extends AbstractNode<EJReportBlockContainer> i
     private final static Image                  BLOCK_NTB        = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB);
     private final static Image                  BLOCK_NTB_REF    = EJUIImages.getImage(EJUIImages.DESC_BLOCK_NTB_REF);
     private final static Image                  BLOCK_REF        = EJUIImages.getImage(EJUIImages.DESC_BLOCK_REF);
-    private final EJDevItemWidgetChosenListener chosenListener   = new EJDevItemWidgetChosenListener()
-                                                                 {
-
-                                                                     public void fireRendererChosen(EJDevScreenItemDisplayProperties arg0)
-                                                                     {
-                                                                         if (arg0 != null && treeSection != null)
-                                                                         {
-
-                                                                             Object findNode = (arg0);
-                                                                             if (findNode != null)
-                                                                             {
-                                                                                 treeSection.selectNodes(true, findNode);
-                                                                             }
-                                                                         }
-
-                                                                     }
-                                                                 };
 
     public ReportBlockGroupNode(ReportDesignTreeSection treeSection)
     {

@@ -84,22 +84,28 @@ public class CFProjectHelper
 
     public static void addEntireJBaseLibraries(IJavaProject project) throws JavaModelException
     {
-        addToClasspath(project, JavaCore.newContainerEntry(CoreRuntimeClasspathContainerInitializer.ID, true));
+        
+        //addToClasspath(project, JavaCore.newContainerEntry(CoreRuntimeClasspathContainerInitializer.ID, true));
+        CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER")));
     }
 
     public static void addEntireJBaseLibraries(IJavaProject project, IClasspathAttribute[] attributes) throws JavaModelException
     {
-        addToClasspath(project, JavaCore.newContainerEntry(CoreRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
+        //addToClasspath(project, JavaCore.newContainerEntry(CoreRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
+
+        CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER")));
     }
     public static void addEntireJReportLibraries(IJavaProject project) throws JavaModelException
     {
-        addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, true));
-        addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jasper.runtime.EJ_REPORT_JASPER_CONTAINER"), true));
+       // addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, true));
+       // addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.jasper.runtime.EJ_REPORT_JASPER_CONTAINER"), true));
+
+        CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(new Path("org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER")));
     }
     
     public static void addEntireJReportLibraries(IJavaProject project, IClasspathAttribute[] attributes) throws JavaModelException
     {
-        addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
+       // addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
     }
 
     public static void setClasspathVariable(String var, IPath ejCoreJar) throws JavaModelException

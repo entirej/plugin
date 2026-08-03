@@ -145,9 +145,19 @@ public class PropertyDefinitionGroupPart extends AbstractDescriptorPart
         if (appDef != null)
         {
             EJPropertyDefinitionGroup definitionGroup = appDef.getApplicationPropertyDefinitionGroup();
-            final EJFrameworkExtensionProperties extensionProperties = editor.getEntireJProperties().getApplicationDefinedProperties();
+            EJFrameworkExtensionProperties applicationProperties = editor.getEntireJProperties().getApplicationDefinedProperties();
+            if (applicationProperties == null)
+            {
+                applicationProperties = ExtensionsPropertiesFactory.createApplicationProperties(editor.getEntireJProperties(), true);
+                editor.getEntireJProperties().setApplicationDefinedProperties(applicationProperties);
+            }
+            final EJFrameworkExtensionProperties extensionProperties = applicationProperties;
             if (definitionGroup != null)
             {
+                if (extensionProperties == null)
+                {
+                    return new AbstractDescriptor<?>[0];
+                }
                 return createGroupDescriptors(editor, editor.getEntireJProperties(), definitionGroup, new IExtensionPropertiesAdapter()
                 {
 
