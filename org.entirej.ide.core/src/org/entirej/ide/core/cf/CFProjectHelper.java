@@ -64,6 +64,16 @@ public class CFProjectHelper
         project.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
     }
 
+    public static void configureMavenProject(IJavaProject project, IProgressMonitor monitor) throws CoreException
+    {
+        IFile moduleInfo = project.getProject().getFile("src/module-info.java");
+        if (moduleInfo.exists())
+        {
+            moduleInfo.delete(true, monitor);
+        }
+        project.setOutputLocation(project.getProject().getFullPath().append("target/classes"), monitor);
+    }
+
     public static void addNature(IJavaProject project, String natureId) throws CoreException
     {
         IProjectDescription description = project.getProject().getDescription();

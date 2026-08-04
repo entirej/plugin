@@ -222,6 +222,7 @@ public class NewEJReportProjectConfigPage extends WizardPage
         {
 
             CFProjectHelper.verifySourceContainer(javaProject, "src");
+            CFProjectHelper.configureMavenProject(javaProject, monitor);
             EmptyClientFrameworkProvider.addMavenPom(javaProject);
             CFProjectHelper.addNature(javaProject, "org.eclipse.m2e.core.maven2Nature");
             CFProjectHelper.addEntireJReportLibraries(javaProject);

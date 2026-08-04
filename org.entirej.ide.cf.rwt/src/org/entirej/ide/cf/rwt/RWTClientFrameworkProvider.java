@@ -58,6 +58,7 @@ public class RWTClientFrameworkProvider implements ClientFrameworkProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.configureMavenProject(project, monitor);
             Map<String, String> pomParameters = Map.of("%PROJECT_NAME%",
                     CFProjectHelper.escapeXml(project.getElementName()));
             CFProjectHelper.addFile(project, EJCFRwtPlugin.getDefault().getBundle(), RWT_POM, "pom.xml",

@@ -40,7 +40,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -350,20 +349,30 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
         return EJProject.hasPluginNature(project);
     }
 
-    private void genConstantFile(IFile file, IProgressMonitor monitor)
+    private boolean isSourceResource(IFile file)
     {
-
         try
         {
-            // try to ignore output path
-            IJavaProject project = JavaCore.create(file.getProject());
-            IPath outputLocation = project.getOutputLocation();
-            if (outputLocation.isPrefixOf(file.getFullPath()))
-                return;
+            for (IPackageFragmentRoot root : JavaCore.create(file.getProject()).getPackageFragmentRoots())
+            {
+                if (root.getKind() == IPackageFragmentRoot.K_SOURCE && root.getPath().isPrefixOf(file.getFullPath()))
+                {
+                    return true;
+                }
+            }
         }
         catch (JavaModelException e)
         {
-            // ignore
+            // The Java builder will retry after the classpath is available.
+        }
+        return false;
+    }
+
+    private void genConstantFile(IFile file, IProgressMonitor monitor)
+    {
+        if (!isSourceResource(file))
+        {
+            return;
         }
         IFile propFile = EJProject.getPropertiesFile(file.getProject());
         if (propFile == null || !propFile.exists())
@@ -397,18 +406,9 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
 
     private void genPropertiesConstantFile(IFile file, IProgressMonitor monitor)
     {
-
-        try
+        if (!isSourceResource(file))
         {
-            // try to ignore output path
-            IJavaProject project = JavaCore.create(file.getProject());
-            IPath outputLocation = project.getOutputLocation();
-            if (outputLocation.isPrefixOf(file.getFullPath()))
-                return;
-        }
-        catch (JavaModelException e)
-        {
-            // ignore
+            return;
         }
         IFile propFile = EJProject.getPropertiesFile(file.getProject());
         if (propFile == null || !propFile.exists())
@@ -1126,10 +1126,7 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     public static IFile getFormJavaSource(IFile file, IProgressMonitor monitor, String formID) throws CoreException
     {
         IFolder pkgPath = file.getParent().getFolder(new Path(CONSTANTS_PATH));
-        if (!pkgPath.exists())
-        {
-            pkgPath.create(true, true, monitor);
-        }
+        createFolder(pkgPath, monitor);
         IFile javaFile = pkgPath.getFile(formID + ".java");
         return javaFile;
     }
@@ -1137,12 +1134,22 @@ public class EJFormConstBuilder extends IncrementalProjectBuilder
     public static IFile getPropertiesJavaSource(IFile file, IProgressMonitor monitor, String fileID) throws CoreException
     {
         IFolder pkgPath = file.getParent().getFolder(new Path("org/entirej/constants"));
-        if (!pkgPath.exists())
-        {
-            pkgPath.create(true, true, monitor);
-        }
+        createFolder(pkgPath, monitor);
         IFile javaFile = pkgPath.getFile(fileID + ".java");
         return javaFile;
+    }
+
+    private static void createFolder(IFolder folder, IProgressMonitor monitor) throws CoreException
+    {
+        if (folder.exists())
+        {
+            return;
+        }
+        if (folder.getParent() instanceof IFolder)
+        {
+            createFolder((IFolder) folder.getParent(), monitor);
+        }
+        folder.create(true, true, monitor);
     }
 
     public static String getFormId(String name)

@@ -46,6 +46,7 @@ public class EmptyClientFrameworkProvider implements ClientFrameworkProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.configureMavenProject(project, monitor);
             addMavenPom(project);
             CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), EMPTY_PROJECT_PROPERTIES_FILE, "src/application.ejprop");
 
