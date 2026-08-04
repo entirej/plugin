@@ -25,13 +25,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -59,6 +62,24 @@ public class CFProjectHelper
     public static void refreshProject(IJavaProject project, IProgressMonitor monitor) throws CoreException
     {
         project.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+    }
+
+    public static void addNature(IJavaProject project, String natureId) throws CoreException
+    {
+        IProjectDescription description = project.getProject().getDescription();
+        ArrayList<String> natures = new ArrayList<String>(java.util.Arrays.asList(description.getNatureIds()));
+        if (!natures.contains(natureId))
+        {
+            natures.add(natureId);
+            description.setNatureIds(natures.toArray(new String[0]));
+            project.getProject().setDescription(description, null);
+        }
+    }
+
+    public static String escapeXml(String value)
+    {
+        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+                .replace("'", "&apos;");
     }
 
     public static IPath getPathInPlugin(Bundle bundle, IPath path)
@@ -108,6 +129,36 @@ public class CFProjectHelper
        // addToClasspath(project, JavaCore.newContainerEntry(ReportRuntimeClasspathContainerInitializer.ID, new IAccessRule[0], attributes, true));
     }
 
+    public static void ensureMavenDependency(IJavaProject project, String groupId, String artifactId, String version,
+            String scope, IProgressMonitor monitor) throws CoreException, IOException
+    {
+        IFile pom = project.getProject().getFile("pom.xml");
+        if (!pom.exists())
+        {
+            pom.refreshLocal(IResource.DEPTH_ZERO, monitor);
+        }
+        if (!pom.exists())
+        {
+            throw new IOException("Cannot add " + groupId + ":" + artifactId + " because the project has no pom.xml.");
+        }
+
+        byte[] source;
+        try (InputStream input = pom.getContents())
+        {
+            source = input.readAllBytes();
+        }
+
+        PomDependencyUpdater.Result result = PomDependencyUpdater.ensureDependency(source, groupId, artifactId, version,
+                scope);
+        if (result.changed())
+        {
+            try (ByteArrayInputStream input = new ByteArrayInputStream(result.content()))
+            {
+                pom.setContents(input, IResource.FORCE | IResource.KEEP_HISTORY, monitor);
+            }
+        }
+    }
+
     public static void setClasspathVariable(String var, IPath ejCoreJar) throws JavaModelException
     {
         JavaCore.setClasspathVariable(var, //
@@ -147,7 +198,7 @@ public class CFProjectHelper
     }
     
     static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        java.util.Scanner s = new java.util.Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
     
@@ -160,10 +211,10 @@ public class CFProjectHelper
         
         for (Entry<String, String> entry : params.entrySet())
         {
-            content = content.replaceAll(entry.getKey(), entry.getValue());
+            content = content.replace(entry.getKey(), entry.getValue());
         }
         
-        BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(content.getBytes()));
+        BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
         try
         {
             File tempFile = new File(project.getProject().getLocation().toOSString(), targetFileName);

@@ -19,6 +19,7 @@
 package org.entirej.ide.core.cf;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -38,15 +39,17 @@ public class EmptyClientFrameworkProvider implements ClientFrameworkProvider
 {
 
     private static final String EMPTY_PROJECT_PROPERTIES_FILE = "/templates/empty/application.ejprop";
+    private static final String EMPTY_POM_FILE                 = "/templates/empty/pom.xml";
 
     public void addEntireJNature(IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
     {
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
-            CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), "/templates/empty/pom.xml", "pom.xml");
+            addMavenPom(project);
             CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), EMPTY_PROJECT_PROPERTIES_FILE, "src/application.ejprop");
 
+            CFProjectHelper.addNature(project, "org.eclipse.m2e.core.maven2Nature");
             CFProjectHelper.addEntireJBaseLibraries(project);
 
             // adding Required Generator Files
@@ -79,6 +82,12 @@ public class EmptyClientFrameworkProvider implements ClientFrameworkProvider
     public static void addGeneratorFiles(IJavaProject project, IProgressMonitor monitor) throws IOException
     {
 
+    }
+
+    public static void addMavenPom(IJavaProject project) throws IOException
+    {
+        Map<String, String> parameters = Map.of("%PROJECT_NAME%", CFProjectHelper.escapeXml(project.getElementName()));
+        CFProjectHelper.addFile(project, EJCorePlugin.getDefault().getBundle(), EMPTY_POM_FILE, "pom.xml", parameters);
     }
 
     public String getProviderName()

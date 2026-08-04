@@ -79,7 +79,7 @@ The EntireJ Eclipse plugin follows a **modular SPI (Service Provider Interface)*
 │  │Frameworks   │  │Providers    │  │Providers    │                 │
 │  │- RWT        │  │- MySQL      │  │- Table      │                 │
 │  │- Swing      │  │- Oracle     │  │- Statement  │                 │
-│  │- JavaFX     │  │- H2/HSQL    │  │- Custom     │                 │
+│  │- RAP        │  │- H2/HSQL    │  │- Custom     │                 │
 │  └─────────────┘  └─────────────┘  └─────────────┘                 │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
@@ -114,7 +114,6 @@ plugin/
 │
 ├── CLIENT FRAMEWORK PROVIDERS
 │   ├── org.entirej.ide.cf.rwt/      # Eclipse RAP/RWT web client
-│   ├── org.entirej.ide.cf.fx/       # JavaFX client (not in default build)
 │   └── org.entirej.ide.cf.swing/    # Swing desktop client
 │
 ├── DATABASE PROVIDERS
@@ -306,8 +305,9 @@ RWT (Eclipse RAP) client framework provider.
 | Provider | ID | Description |
 |----------|-----|-------------|
 | RWTClientFrameworkProvider | `org.entirej.framework.cf.rwt_rap` | Eclipse RAP web apps |
-| RWTSpringClientFrameworkProvider | - | Spring-integrated RAP |
-| ReactClientFrameworkProvider | - | React frontend |
+
+Spring and Kerberos support are optional feature configurations applied to the
+single RAP project type.
 
 #### Project Creation Process
 
@@ -321,7 +321,7 @@ RWT (Eclipse RAP) client framework provider.
    - `index.html` - Web entry point
 3. Configures WEB module facets
 4. Adds natures: Maven2, Java, JEM, ModuleCore
-5. Sets up classpath containers
+5. Uses the Maven classpath container and BOM-managed dependencies
 
 #### Templates Location
 
@@ -332,7 +332,6 @@ templates/rwt/
 ├── ApplicationLauncher.java
 ├── pom.xml                    # Jakarta Servlet API 6.1.0
 ├── web.xml                    # Jakarta EE 6.0 namespace
-├── web.tabris.xml
 ├── index.html
 ├── login.html
 ├── 403.html
@@ -495,7 +494,7 @@ org.entirej.ide.report.site/target/
 - Templates updated from `javax.servlet` to `jakarta.servlet`
 - web.xml updated to Jakarta EE 6.0 namespace
 - Removed deprecated CompressingFilter
-- JavaFX modules removed from default build (source preserved)
+- Removed the legacy JavaFX, React, and Tabris project providers
 
 ### Java 17 & Eclipse 2024-09 Upgrade (February 2026)
 

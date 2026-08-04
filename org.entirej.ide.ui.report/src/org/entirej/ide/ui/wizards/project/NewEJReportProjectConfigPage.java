@@ -19,10 +19,8 @@
 package org.entirej.ide.ui.wizards.project;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,6 +47,7 @@ import org.entirej.ide.core.EJConstants;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.EJCorePlugin;
 import org.entirej.ide.core.cf.CFProjectHelper;
+import org.entirej.ide.core.cf.EmptyClientFrameworkProvider;
 import org.entirej.ide.core.spi.DBConnectivityProvider;
 import org.entirej.ide.ui.EJUIMessages;
 import org.entirej.ide.ui.EJUIPlugin;
@@ -222,9 +221,11 @@ public class NewEJReportProjectConfigPage extends WizardPage
         try
         {
 
-            CFProjectHelper.addEntireJReportLibraries(javaProject);
-            
             CFProjectHelper.verifySourceContainer(javaProject, "src");
+            EmptyClientFrameworkProvider.addMavenPom(javaProject);
+            CFProjectHelper.addNature(javaProject, "org.eclipse.m2e.core.maven2Nature");
+            CFProjectHelper.addEntireJReportLibraries(javaProject);
+
             CFProjectHelper.addFile(javaProject, EJCorePlugin.getDefault().getBundle(), "/templates/empty/report.ejprop", "src/report.ejprop");
             CFProjectHelper.addFile(javaProject, EJCorePlugin.getDefault().getBundle(), "/templates/empty/ReportTester.java", "src/org/entirej/ReportTester.java");
 
@@ -233,13 +234,7 @@ public class NewEJReportProjectConfigPage extends WizardPage
                 dbConnectivityProvider.addEntireJReportNature(configElement, javaProject, monitor);
                 EJUIPlugin.getDefault().getPreferenceStore().putValue(DB_PROVIDER_ID, dbConnectivityProvider.getProviderId());
             }
-            // add EJ project nature to add EJ builders
-            IProjectDescription description = javaProject.getProject().getDescription();
-            String[] natures = description.getNatureIds();
-            List<String> newNatures = new ArrayList<String>(Arrays.asList(natures));
-            newNatures.add(EJConstants.EJ_REPORT_NATURE);
-            description.setNatureIds(newNatures.toArray(new String[0]));
-            javaProject.getProject().setDescription(description, null);
+            CFProjectHelper.addNature(javaProject, EJConstants.EJ_REPORT_NATURE);
         }
         catch (Exception e)
         {

@@ -6,7 +6,6 @@ import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.entirej.framework.core.EJFrameworkManager;
 import org.entirej.framework.core.interfaces.EJConnectionFactory;
@@ -32,7 +31,6 @@ public class EmbeddedConnectionFactory implements EJConnectionFactory
 
         return new EJFrameworkConnection()
         {
-            private AtomicBoolean            init = new AtomicBoolean(false);
             Connection connection;
 
             @Override
@@ -56,11 +54,10 @@ public class EmbeddedConnectionFactory implements EJConnectionFactory
 
                 try
                 {
-                    if(!init.get())
+                    if (connection == null || connection.isClosed())
                     {
                         Class.forName("org.h2.Driver");
                         connection = DriverManager.getConnection(String.format("jdbc:h2:%sdb/demo", dbPath), "SA", "");
-                        init.set(true);
                     }
                     return connection;
                 }

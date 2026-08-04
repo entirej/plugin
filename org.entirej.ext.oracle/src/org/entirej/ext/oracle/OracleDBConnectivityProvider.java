@@ -21,15 +21,12 @@ package org.entirej.ext.oracle;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.entirej.ext.oracle.lib.OracleRuntimeClasspathContainer;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.cf.CFProjectHelper;
 import org.entirej.ide.core.spi.ClientFrameworkProvider;
@@ -37,21 +34,16 @@ import org.entirej.ide.core.spi.DBConnectivityProvider;
 
 public class OracleDBConnectivityProvider implements DBConnectivityProvider
 {
-    private static final String ORACLE_CONNECTION_FILE        = "/templates/oracleOptions/Connection.properties";
-  
-    private static final String ORACLE_SQL_INPUT              = "/templates/oracleOptions/EJSQLInput.java";
+    private static final String ORACLE_CONNECTION_FILE = "/templates/oracleOptions/Connection.properties";
 
     public void addEntireJNature(ClientFrameworkProvider cf, IConfigurationElement configElement, IJavaProject project, IProgressMonitor monitor)
     {
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.ensureMavenDependency(project, "com.oracle.ojdbc", "ojdbc8", "19.3.0.0", "runtime", monitor);
 
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_CONNECTION_FILE, "src/Connection.properties");
-           
-
-            CFProjectHelper.addToClasspath(project,
-                    JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID, new IAccessRule[0], cf.getClasspathAttributes(), true));
 
             CFProjectHelper.refreshProject(project, monitor);
             final IFile file = project.getProject().getFile("src/Connection.properties");
@@ -81,11 +73,9 @@ public class OracleDBConnectivityProvider implements DBConnectivityProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
-            
+            CFProjectHelper.ensureMavenDependency(project, "com.oracle.ojdbc", "ojdbc8", "19.3.0.0", "runtime", monitor);
+
             CFProjectHelper.addFile(project, EJExtOraclePlugin.getDefault().getBundle(), ORACLE_CONNECTION_FILE, "src/Connection.properties");
-          
-            CFProjectHelper.addToClasspath(project,
-                    JavaCore.newContainerEntry(OracleRuntimeClasspathContainer.ID,true));
             
             CFProjectHelper.refreshProject(project, monitor);
             final IFile file = project.getProject().getFile("src/Connection.properties");

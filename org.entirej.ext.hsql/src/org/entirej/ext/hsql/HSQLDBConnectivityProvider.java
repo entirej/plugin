@@ -24,11 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
-import org.entirej.ext.hsql.lib.HSQLRuntimeClasspathContainer;
 import org.entirej.framework.plugin.EntireJFrameworkPlugin;
 import org.entirej.framework.plugin.framework.properties.EntirejPluginPropertiesEnterpriseEdition;
 import org.entirej.framework.plugin.framework.properties.reader.EntireJPropertiesReader;
@@ -50,19 +47,18 @@ public class HSQLDBConnectivityProvider implements DBConnectivityProvider
 {
     private static final String HSQL_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedConnectionFactory.java";
     private static final String HSQL_REPORT_CONNECTION_FILE = "/templates/hsqlOptions/EmbeddedReportConnectionFactory.java";
-    private static final String HSQL_CONNECTION_DB   = "/templates/hsqlOptions/demo.h2.db";
+    private static final String HSQL_CONNECTION_DB   = "/templates/hsqlOptions/demo.mv.db";
 
     public void addEntireJReportNature(IConfigurationElement configElement, final IJavaProject project, final IProgressMonitor monitor)
     {
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.ensureMavenDependency(project, "com.h2database", "h2", "2.2.224", "runtime", monitor);
 
             CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_REPORT_CONNECTION_FILE,
                     "src/org/entirej/db/connection/EmbeddedReportConnectionFactory.java");
-            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_DB, "src/db/demo.h2.db");
-
-            CFProjectHelper.addToClasspath(project, JavaCore.newContainerEntry(HSQLRuntimeClasspathContainer.ID, true));
+            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_DB, "src/db/demo.mv.db");
 
             CFProjectHelper.refreshProject(project, monitor);
 
@@ -94,13 +90,13 @@ public class HSQLDBConnectivityProvider implements DBConnectivityProvider
                         try
                         {
                             entirejProperties = EntirejReportPropertiesUtils.retrieveEntirejProperties(project);
-                            entirejProperties.setConnectionFactoryClassName("org.entirej.db.connection.EmbeddedConnectionFactory");
+                            entirejProperties.setConnectionFactoryClassName("org.entirej.db.connection.EmbeddedReportConnectionFactory");
                             EntireJReportPropertiesWriter saver = new EntireJReportPropertiesWriter();
                             saver.saveEntireJProperitesFile(entirejProperties, pfile, monitor);
                         }
                         catch (CoreException e)
                         {
-                            e.printStackTrace();
+                            EJCoreLog.logException(e);
                         }
 
                     }
@@ -119,13 +115,11 @@ public class HSQLDBConnectivityProvider implements DBConnectivityProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.ensureMavenDependency(project, "com.h2database", "h2", "2.2.224", "runtime", monitor);
 
             CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_FILE,
                     "src/org/entirej/db/connection/EmbeddedConnectionFactory.java");
-            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_DB, "src/db/demo.h2.db");
-
-            CFProjectHelper.addToClasspath(project,
-                    JavaCore.newContainerEntry(HSQLRuntimeClasspathContainer.ID, new IAccessRule[0], cf.getClasspathAttributes(), true));
+            CFProjectHelper.addFile(project, EJExtHSQLPlugin.getDefault().getBundle(), HSQL_CONNECTION_DB, "src/db/demo.mv.db");
 
             CFProjectHelper.refreshProject(project, monitor);
 

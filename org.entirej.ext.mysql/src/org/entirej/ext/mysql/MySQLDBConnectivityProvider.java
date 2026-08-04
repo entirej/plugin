@@ -21,15 +21,12 @@ package org.entirej.ext.mysql;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.entirej.ext.mysql.lib.MySQLRuntimeClasspathContainer;
 import org.entirej.ide.core.EJCoreLog;
 import org.entirej.ide.core.cf.CFProjectHelper;
 import org.entirej.ide.core.spi.ClientFrameworkProvider;
@@ -44,11 +41,9 @@ public class MySQLDBConnectivityProvider implements DBConnectivityProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.ensureMavenDependency(project, "mysql", "mysql-connector-java", "8.0.20", "runtime", monitor);
 
             CFProjectHelper.addFile(project, EJExtMySQLPlugin.getDefault().getBundle(), MYSQL_CONNECTION_FILE, "src/Connection.properties");
-
-            CFProjectHelper.addToClasspath(project,
-                    JavaCore.newContainerEntry(MySQLRuntimeClasspathContainer.ID, new IAccessRule[0], cf.getClasspathAttributes(), true));
 
             CFProjectHelper.refreshProject(project, monitor);
             final IFile file = project.getProject().getFile("src/Connection.properties");
@@ -78,11 +73,9 @@ public class MySQLDBConnectivityProvider implements DBConnectivityProvider
         try
         {
             CFProjectHelper.verifySourceContainer(project, "src");
+            CFProjectHelper.ensureMavenDependency(project, "mysql", "mysql-connector-java", "8.0.20", "runtime", monitor);
             
             CFProjectHelper.addFile(project, EJExtMySQLPlugin.getDefault().getBundle(), MYSQL_CONNECTION_FILE, "src/Connection.properties");
-            
-            CFProjectHelper.addToClasspath(project,
-                    JavaCore.newContainerEntry(MySQLRuntimeClasspathContainer.ID, true));
             
             CFProjectHelper.refreshProject(project, monitor);
             final IFile file = project.getProject().getFile("src/Connection.properties");
