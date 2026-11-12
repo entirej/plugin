@@ -18,7 +18,9 @@
 package org.entirej.ide.ui.editors.preview;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.entirej.framework.dev.renderer.definition.EJDevPreviewKind;
 
@@ -33,11 +35,24 @@ public class PreviewGridLayoutSolver
     private static final int TAB_TOP_MARGIN      = 30;
     private static final int TAB_TITLE_HEIGHT    = 18;
     private static final int TITLE_HEIGHT        = 18;
+    private final Map<PreviewNode, Integer> measuredWidths = new IdentityHashMap<PreviewNode, Integer>();
+    private final Map<PreviewNode, Integer> measuredHeights = new IdentityHashMap<PreviewNode, Integer>();
 
     public void layout(PreviewNode root)
     {
+        measuredWidths.clear();
+        measuredHeights.clear();
         if (root != null)
         {
+            // An unspecified form dimension may exceed the preview viewport. Let GEF scroll
+            // the content rather than clipping natural-size groups at the root figure edge.
+            if (root.getKind() == EJDevPreviewKind.FORM_CONTAINER)
+            {
+                PreviewBounds bounds = root.getBounds();
+                int width = root.getDescriptor().getPreferredWidth() > 0 ? bounds.getWidth() : Math.max(bounds.getWidth(), preferredWidth(root));
+                int height = root.getDescriptor().getPreferredHeight() > 0 ? bounds.getHeight() : Math.max(bounds.getHeight(), preferredHeight(root));
+                root.setBounds(bounds.getX(), bounds.getY(), width, height);
+            }
             layoutGrid(root);
         }
     }
@@ -528,8 +543,26 @@ public class PreviewGridLayoutSolver
         PreviewGridConstraint constraint = node.getConstraint();
         int descriptorWidth = node.getDescriptor().getPreferredWidth();
         int configuredWidth = Math.max(constraint.getPreferredWidth(), descriptorWidth);
-        configuredWidth = Math.max(configuredWidth, constraint.getMinimumWidth());
-        return configuredWidth > 0 ? configuredWidth : DEFAULT_CELL_WIDTH;
+        if (configuredWidth > 0)
+        {
+            return Math.max(configuredWidth, constraint.getMinimumWidth());
+        }
+        Integer measured = measuredWidths.get(node);
+        if (measured == null)
+        {
+            List<PreviewNode> children = node.getVisibleChildren();
+            int width = DEFAULT_CELL_WIDTH;
+            if (!children.isEmpty())
+            {
+                int columns = Math.max(1, node.getColumns());
+                int gap = gap(node);
+                int[] widths = columnWidths(node, place(children, columns), columns, 0, gap);
+                width = leftInset(node) + rightInset(node) + widthSpan(widths, 0, columns) + gap * (columns - 1);
+            }
+            measured = Integer.valueOf(width);
+            measuredWidths.put(node, measured);
+        }
+        return Math.max(measured.intValue(), constraint.getMinimumWidth());
     }
 
     private int preferredHeight(PreviewNode node)
@@ -537,8 +570,26 @@ public class PreviewGridLayoutSolver
         PreviewGridConstraint constraint = node.getConstraint();
         int descriptorHeight = node.getDescriptor().getPreferredHeight();
         int configuredHeight = Math.max(constraint.getPreferredHeight(), descriptorHeight);
-        configuredHeight = Math.max(configuredHeight, constraint.getMinimumHeight());
-        return configuredHeight > 0 ? configuredHeight : DEFAULT_CELL_HEIGHT;
+        if (configuredHeight > 0)
+        {
+            return Math.max(configuredHeight, constraint.getMinimumHeight());
+        }
+        Integer measured = measuredHeights.get(node);
+        if (measured == null)
+        {
+            List<PreviewNode> children = node.getVisibleChildren();
+            int height = DEFAULT_CELL_HEIGHT;
+            if (!children.isEmpty())
+            {
+                List<Placement> placements = place(children, Math.max(1, node.getColumns()));
+                int rows = rowCount(placements);
+                int[] heights = rowHeights(node, placements, rows, 0);
+                height = topInset(node) + bottomInset(node) + heightSpan(heights, 0, rows) + gap(node) * (rows - 1);
+            }
+            measured = Integer.valueOf(height);
+            measuredHeights.put(node, measured);
+        }
+        return Math.max(measured.intValue(), constraint.getMinimumHeight());
     }
 
     private int widthBefore(int[] columnWidths, int column)

@@ -335,10 +335,8 @@ public class PreviewNode
         {
             for (String label : labels)
             {
-                if (label != null && label.trim().length() > 0)
-                {
-                    optionLabels.add(label.trim());
-                }
+                // Empty captions still describe real buttons (often labelled by an adjacent item).
+                optionLabels.add(label == null ? "" : label.trim());
             }
         }
     }

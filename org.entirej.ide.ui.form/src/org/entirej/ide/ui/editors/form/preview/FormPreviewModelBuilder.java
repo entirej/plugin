@@ -1007,6 +1007,27 @@ public class FormPreviewModelBuilder
             return item.isSeparator() && !isVerticalSeparator(item) ? DEFAULT_CONTROL_WIDTH : (item.isSeparator() ? DEFAULT_SEPARATOR_HEIGHT : 1);
         }
 
+        if (kind == EJDevPreviewKind.RADIO_GROUP)
+        {
+            List<String> options = radioOptionLabels(item);
+            if (options.isEmpty())
+            {
+                options = java.util.Arrays.asList("Option", "Option");
+            }
+            int optionWidth = 0;
+            for (String option : options)
+            {
+                int width = 16 + (option == null ? 0 : option.length() * CHAR_WIDTH);
+                optionWidth = isHorizontalRadioGroup(item) ? optionWidth + width + 10 : Math.max(optionWidth, width);
+            }
+            optionWidth += isHorizontalRadioGroup(item) ? -6 : 4;
+            if (isRadioGroupFramed(item))
+            {
+                optionWidth = Math.max(optionWidth + 12, textWidth(item.getLabel()) + 20);
+            }
+            return expandHorizontally ? Math.max(DEFAULT_CONTROL_WIDTH, optionWidth) : Math.max(18, optionWidth);
+        }
+
         if (kind == EJDevPreviewKind.BUTTON)
         {
             return Math.max(34, textWidth(value(item.getLabel(), item.getReferencedItemName())) + 14);
@@ -1035,8 +1056,10 @@ public class FormPreviewModelBuilder
             case BUTTON:
                 return DEFAULT_BUTTON_HEIGHT;
             case RADIO_GROUP:
-                // Title/frame band plus one row per option when stacked vertically.
-                return 20 + (16 * (isHorizontalRadioGroup(item) ? 1 : Math.max(1, radioOptionLabels(item).size())));
+                // Unframed radio groups have no caption in the native RAP definition.
+                int optionCount = radioOptionLabels(item).size();
+                int rows = isHorizontalRadioGroup(item) ? 1 : (optionCount == 0 ? 2 : optionCount);
+                return (isRadioGroupFramed(item) ? 18 : 0) + CHAR_HEIGHT * rows + 6;
             default:
                 return DEFAULT_CONTROL_HEIGHT;
         }
@@ -1047,6 +1070,12 @@ public class FormPreviewModelBuilder
         EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
         EJFrameworkExtensionProperties rendererProperties = blockItem == null ? null : blockItem.getItemRendererProperties();
         return ORIENTATION_HORIZONTAL.equals(stringProperty(rendererProperties, ORIENTATION_PROPERTY));
+    }
+
+    private boolean isRadioGroupFramed(EJPluginScreenItemProperties item)
+    {
+        EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
+        return blockItem != null && booleanProperty(blockItem.getItemRendererProperties(), SHOW_BORDER_PROPERTY, false);
     }
 
     private List<String> radioOptionLabels(EJPluginScreenItemProperties item)

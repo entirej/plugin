@@ -413,12 +413,14 @@ public class PreviewNodeFigure extends Figure
                 graphics.drawText(text, area.x + 8, area.y);
             }
             body.shrink(6, 0);
-            body.y += 12;
+            body.y += 18;
+            body.height = Math.max(0, body.height - 18);
         }
-        else
+        else if (model.isPaintControlLabel())
         {
             drawTitle(graphics, area, text);
             body.y += 18;
+            body.height = Math.max(0, body.height - 18);
         }
 
         List<String> options = model.getOptionLabels();
@@ -429,14 +431,14 @@ public class PreviewNodeFigure extends Figure
 
         boolean horizontal = !model.isVerticalOrientation();
         int x = body.x + 2;
-        int y = body.y;
+        int y = body.y + 2;
         for (String option : options)
         {
             if (horizontal && x + 14 + textWidth(option) > body.x + body.width)
             {
                 break;
             }
-            if (!horizontal && y + 12 > body.y + body.height)
+            if (y + Math.max(12, FigureUtilities.getTextExtents(option, getFont()).height) > body.y + body.height)
             {
                 break;
             }
@@ -450,7 +452,7 @@ public class PreviewNodeFigure extends Figure
             }
             else
             {
-                y += 16;
+                y += 18;
             }
         }
     }
