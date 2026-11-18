@@ -35,6 +35,7 @@ import org.entirej.framework.plugin.framework.properties.EJPluginEntireJProperti
 import org.entirej.ide.ui.editors.preview.PreviewGridConstraint;
 import org.entirej.ide.ui.editors.preview.PreviewGridLayoutSolver;
 import org.entirej.ide.ui.editors.preview.PreviewNode;
+import org.entirej.ide.ui.editors.preview.PreviewTheme;
 
 public class AppLayoutPreviewModelBuilder
 {
@@ -66,14 +67,35 @@ public class AppLayoutPreviewModelBuilder
         EJDevPreviewDescriptor descriptor = EJDevPreviewDescriptor.create(EJDevPreviewKind.FORM_CONTAINER, container.getTitle(), container.getTitle(),
                 "applicationLayout", container.getWidth(), container.getHeight());
         PreviewNode root = new PreviewNode(container, descriptor);
+        root.setPreviewTheme(RapPreviewThemeResolver.forProject(properties.getJavaProject()));
         root.setColumns(container.getColumns());
         root.setCompactLayout(true);
         root.setPaintContainerTitle(false);
+        root.setPaintBorder(false);
         root.setBounds(0, 0, size(container.getWidth(), availableWidth, 900), size(container.getHeight(), availableHeight, 650));
 
         addContainerChildren(properties, root, container, selectedSource);
+        applyTheme(root);
         new PreviewGridLayoutSolver().layout(root);
         return root;
+    }
+
+    private void applyTheme(PreviewNode node)
+    {
+        if (node.getSource() instanceof LayoutGroup)
+        {
+            LayoutGroup group = (LayoutGroup) node.getSource();
+            node.setThemeSelector(group.isBorder() ? "Composite[BORDER]" : "Composite");
+            node.setThemeVariant("applayout");
+            int border = node.getPreviewTheme().border(node.getThemeSelector(), node.getThemeVariant());
+            node.setPaintBorder(border > 0);
+            int margin = (group.isHideMargin() ? 0 : 5) + border;
+            int[] padding = node.getPreviewTheme().box(node.getThemeSelector(), node.getThemeVariant(), "padding");
+            node.setLayoutInsets(margin + padding[0] + (node.isPaintContainerTitle() ? node.getPreviewTheme().textHeight("Label", null) + 2 : 0),
+                    margin + padding[1], margin + padding[2], margin + padding[3]);
+        }
+        if (node.getKind() == EJDevPreviewKind.TAB_FOLDER) node.getPreviewTheme().applyPageInsets(node);
+        for (PreviewNode child : node.getChildren()) applyTheme(child);
     }
 
     private void addContainerChildren(EJPluginEntireJProperties properties, PreviewNode parent, ItemContainer container, Object selectedSource)

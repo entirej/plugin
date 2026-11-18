@@ -30,7 +30,7 @@ public class PreviewCorpusTest {
                 String context=path.getFileName()+"/"+blockXml.getAttribute("name");
                 try {
                     EJPluginBlockProperties block=PreviewRegressionTest.loadBlock(path,blockXml);
-                    PreviewNode root=new FormPreviewModelBuilder().build(block.getFormProperties(),block,900,700);
+                    PreviewNode root=PreviewRegressionTest.builder().build(block.getFormProperties(),block,900,700);
                     blocks++;
                     audit(root,context);
                     // Render a representative sample of real single-record layouts, once per renderer.
@@ -70,7 +70,8 @@ public class PreviewCorpusTest {
             EJFrameworkExtensionProperties props=((EJPluginMainScreenItemProperties)item).getBlockRendererRequiredProperties();
             boolean autoWidth=props==null || props.getIntProperty("DISPLAYED_WIDTH",0)<=0;
             if(autoWidth && (n.getKind()==EJDevPreviewKind.CHECKBOX || n.getKind()==EJDevPreviewKind.LABEL)) {
-                int minimum=item.getLabel().length()*7+(n.getKind()==EJDevPreviewKind.CHECKBOX?24:0);
+                int minimum=org.eclipse.draw2d.FigureUtilities.getTextWidth(item.getLabel(),n.getPreviewTheme().font(n.getThemeSelector(),n.getThemeVariant()))
+                    +(n.getKind()==EJDevPreviewKind.CHECKBOX?23:0);
                 PreviewRegressionTest.check(n.getConstraint().getPreferredWidth()>=minimum,
                     context+" natural caption fits: "+item.getName()+" ["+n.getDisplayName()+"]");
             }

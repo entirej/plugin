@@ -2,6 +2,7 @@ param(
     [string]$FormsDirectory,
     [string]$ScreenshotsDirectory,
     [string]$SourceDirectory,
+    [string]$ThemeFile,
     [switch]$Packaged,
     [switch]$Corpus,
     [string]$EclipseHome = 'C:\tools\latest\eclipse',
@@ -33,23 +34,29 @@ $taskClasspath=(@($taskOut,$taskUi,$taskFormUi,
     "$taskRepo\org.entirej.ide.core\target\classes",
     "$taskRepo\org.entirej.core.runtime\extlibs\*",
     "$taskRepo\org.entirej.core.runtime\extlibs-dev\*") + $taskLibraries) -join ';'
-$taskSources=@('PreviewNode','PreviewBounds','PreviewGridConstraint','PreviewGridLayoutSolver','PreviewNodeFigure') | ForEach-Object {
+$taskSources=@('PreviewNode','PreviewBounds','PreviewGridConstraint','PreviewGridLayoutSolver','PreviewNodeFigure','PreviewTheme') | ForEach-Object {
     Join-Path $SourceDirectory "org.entirej.ide.ui\src\org\entirej\ide\ui\editors\preview\$_.java"
 }
 $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\FormPreviewModelBuilder.java'
 $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\FormPreviewDescriptorResolver.java'
 $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\PreviewRendererNames.java'
+$taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\RapPreviewThemeResolver.java'
+$taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\AppLayoutPreviewModelBuilder.java'
 $taskSources+=Join-Path $PSScriptRoot 'PreviewRegressionTest.java'
 if($Packaged){$taskSources=@((Join-Path $PSScriptRoot 'PreviewRegressionTest.java'))}
 $taskSources+=Join-Path $PSScriptRoot 'PreviewCorpusTest.java'
+$taskSources+=Join-Path $PSScriptRoot 'PreviewSpacingTest.java'
+$taskSources+=Join-Path $PSScriptRoot 'PreviewPresentationTest.java'
 $ErrorActionPreference='Continue'
 & "$JavaHome\bin\javac.exe" -encoding UTF-8 -cp $taskClasspath -d $taskOut $taskSources
 $ErrorActionPreference='Stop'
 if($LASTEXITCODE -ne 0){throw 'Preview test compilation failed'}
 $taskArguments=@('-cp',$taskClasspath,'PreviewRegressionTest')
 if($FormsDirectory){$taskArguments+=$FormsDirectory}
-if($FormsDirectory -and ($ScreenshotsDirectory -or $Corpus)){$taskArguments+= $(if($ScreenshotsDirectory){$ScreenshotsDirectory}else{'-'})}
+if($FormsDirectory -and ($ScreenshotsDirectory -or $Corpus -or $ThemeFile)){$taskArguments+= $(if($ScreenshotsDirectory){$ScreenshotsDirectory}else{'-'})}
 if($Corpus){if(!$FormsDirectory){throw '-Corpus requires -FormsDirectory'};$taskArguments+='corpus'}
+elseif($ThemeFile){$taskArguments+='-'}
+if($ThemeFile){if(!$FormsDirectory){throw '-ThemeFile requires -FormsDirectory'};$taskArguments+=$ThemeFile}
 $ErrorActionPreference='Continue'
 & "$JavaHome\bin\java.exe" $taskArguments
 $ErrorActionPreference='Stop'

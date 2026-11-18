@@ -53,6 +53,7 @@ import org.entirej.framework.plugin.framework.properties.interfaces.EJPluginScre
 import org.entirej.ide.ui.editors.preview.PreviewGridConstraint;
 import org.entirej.ide.ui.editors.preview.PreviewGridLayoutSolver;
 import org.entirej.ide.ui.editors.preview.PreviewNode;
+import org.entirej.ide.ui.editors.preview.PreviewTheme;
 
 public class FormPreviewModelBuilder
 {
@@ -95,6 +96,8 @@ public class FormPreviewModelBuilder
     private static final int    CHAR_HEIGHT                 = 18;
 
     private final FormPreviewDescriptorResolver resolver;
+    private final PreviewTheme theme;
+    private final Boolean canvasDesignMode;
 
     public FormPreviewModelBuilder()
     {
@@ -103,12 +106,24 @@ public class FormPreviewModelBuilder
 
     public FormPreviewModelBuilder(FormPreviewDescriptorResolver resolver)
     {
+        this(resolver, null);
+    }
+
+    public FormPreviewModelBuilder(FormPreviewDescriptorResolver resolver, PreviewTheme theme)
+    {
+        this(resolver, theme, null);
+    }
+
+    private FormPreviewModelBuilder(FormPreviewDescriptorResolver resolver, PreviewTheme theme, Boolean canvasDesignMode)
+    {
         this.resolver = resolver;
+        this.theme = theme;
+        this.canvasDesignMode = canvasDesignMode;
     }
 
     public PreviewNode build(EJPluginFormProperties form)
     {
-        return buildCanvasPreview(form, null);
+        return build(form, null, 0, 0);
     }
 
     public PreviewNode build(EJPluginFormProperties form, Object selectedSource)
@@ -118,8 +133,16 @@ public class FormPreviewModelBuilder
 
     public PreviewNode build(EJPluginFormProperties form, Object selectedSource, int availableWidth, int availableHeight)
     {
+        if (theme == null)
+            return new FormPreviewModelBuilder(resolver, RapPreviewThemeResolver.forProject(form.getJavaProject()), canvasDesignMode)
+                    .build(form, selectedSource, availableWidth, availableHeight);
         PreviewNode selectedPreview = buildSelectedPreview(form, selectedSource, availableWidth, availableHeight);
         return selectedPreview == null ? buildCanvasPreview(form, selectedSource) : selectedPreview;
+    }
+
+    public PreviewNode build(EJPluginFormProperties form, Object selectedSource, int availableWidth, int availableHeight, boolean canvasDesign)
+    {
+        return new FormPreviewModelBuilder(resolver, theme, Boolean.valueOf(canvasDesign)).build(form, selectedSource, availableWidth, availableHeight);
     }
 
     private PreviewNode buildCanvasPreview(EJPluginFormProperties form, Object selectedSource)
@@ -127,6 +150,7 @@ public class FormPreviewModelBuilder
         EJDevPreviewDescriptor descriptor = EJDevPreviewDescriptor.create(EJDevPreviewKind.FORM_CONTAINER, form.getName(), form.getTitle(),
                 form.getFormRendererName(), form.getFormWidth(), form.getFormHeight());
         PreviewNode root = new PreviewNode(form, descriptor);
+        root.setPreviewTheme(theme);
         root.setColumns(form.getNumCols());
         root.setBounds(0, 0, size(form.getFormWidth(), 900), size(form.getFormHeight(), 650));
         root.setCompactLayout(true);
@@ -134,7 +158,7 @@ public class FormPreviewModelBuilder
         root.setPaintBorder(false);
 
         addCanvasContainer(root, form.getCanvasContainer(), selectedSource);
-        new PreviewGridLayoutSolver().layout(root);
+        layout(root, isCanvasSelection(selectedSource));
         return root;
     }
 
@@ -263,7 +287,7 @@ public class FormPreviewModelBuilder
         content.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(1).setFillHorizontal(true).setFillVertical(true)
                 .setGrabHorizontal(true).setGrabVertical(true));
         root.addChild(content);
-        new PreviewGridLayoutSolver().layout(root);
+        layout(root, false);
         return root;
     }
 
@@ -313,7 +337,7 @@ public class FormPreviewModelBuilder
         {
             return buildRendererPlaceholderPreview(form, source(selectedSource, block), block, descriptor, width, height, availableWidth, availableHeight);
         }
-        new PreviewGridLayoutSolver().layout(root);
+        layout(root, false);
         return root;
     }
 
@@ -335,7 +359,7 @@ public class FormPreviewModelBuilder
         rendererNode.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(1).setPreferredWidth(preferredWidth)
                 .setPreferredHeight(preferredHeight).setFillHorizontal(true).setFillVertical(true).setGrabHorizontal(true).setGrabVertical(true));
         root.addChild(rendererNode);
-        new PreviewGridLayoutSolver().layout(root);
+        layout(root, false);
         return root;
     }
 
@@ -344,6 +368,7 @@ public class FormPreviewModelBuilder
         EJDevPreviewDescriptor descriptor = EJDevPreviewDescriptor.create(EJDevPreviewKind.FORM_CONTAINER, popup.getName(),
                 value(popup.getPopupPageTitle(), popup.getName()), "popup", popup.getWidth(), popup.getHeight());
         PreviewNode root = new PreviewNode(popup, descriptor);
+        root.setPreviewTheme(theme);
         root.setColumns(popup.getNumCols());
         root.setBounds(0, 0, size(popup.getWidth(), size(form.getFormWidth(), 900)), size(popup.getHeight(), size(form.getFormHeight(), 650)));
         root.setCompactLayout(true);
@@ -351,7 +376,7 @@ public class FormPreviewModelBuilder
         root.setPaintBorder(false);
 
         addCanvasContainer(root, popup.getPopupCanvasContainer(), popup);
-        new PreviewGridLayoutSolver().layout(root);
+        layout(root, true);
         return root;
     }
 
@@ -368,8 +393,79 @@ public class FormPreviewModelBuilder
         {
             return null;
         }
-        new PreviewGridLayoutSolver().layout(root);
+        layout(root, false);
         return root;
+    }
+
+    private boolean isCanvasSelection(Object source)
+    {
+        return canvasDesignMode != null ? canvasDesignMode.booleanValue() : canvasDesignSelection(source, true);
+    }
+
+    /** Page navigation preserves the current presentation; an explicit canvas/block selection changes it. */
+    public static boolean canvasDesignSelection(Object source, boolean previous)
+    {
+        return canvasDesignSelection(source, previous, false);
+    }
+
+    public static boolean canvasDesignSelection(Object source, boolean previous, boolean fromPreview)
+    {
+        if (fromPreview) return previous;
+        if (source instanceof EJPluginTabPageProperties || source instanceof EJPluginStackedPageProperties || source instanceof EJPluginDrawerPageProperties)
+            return previous;
+        return source instanceof EJPluginCanvasProperties || source instanceof EJPluginCanvasContainer;
+    }
+
+    private void layout(PreviewNode root, boolean canvasDesign)
+    {
+        if (!canvasDesign)
+        {
+            root.setDesignHintsVisible(false);
+            prepareRuntimePresentation(root);
+        }
+        new PreviewGridLayoutSolver().layout(root);
+    }
+
+    /** Remove design-only chrome before measuring, without changing model/selection identities. */
+    private void prepareRuntimePresentation(PreviewNode node)
+    {
+        if (node.getSource() instanceof EJPluginCanvasProperties)
+        {
+            EJPluginCanvasProperties canvas = (EJPluginCanvasProperties) node.getSource();
+            if (canvas.getType() != EJCanvasType.GROUP) node.setPaintContainerTitle(false);
+            if (canvas.getType() == EJCanvasType.STACKED)
+            {
+                node.setPaintBorder(false);
+                // Keep the editor's page-switch tabs, but not its debug heading/prefixes.
+                List<String> captions = new ArrayList<String>();
+                for (EJPluginStackedPageProperties page : canvas.getStackedPageContainer().getStackedPageProperties())
+                    captions.add(page.getName());
+                node.setTabLabels(captions);
+                node.getPreviewTheme().applyPageInsets(node);
+            }
+            else if (canvas.getType() == EJCanvasType.TAB || canvas.getType() == EJCanvasType.DRAWER)
+            {
+                List<String> captions = new ArrayList<String>();
+                if (canvas.getType() == EJCanvasType.TAB)
+                {
+                    for (EJPluginTabPageProperties page : canvas.getTabPageContainer().getTabPageProperties())
+                        captions.add(value(page.getPageTitle(), page.getName()));
+                    node.getPreviewTheme().applyPageInsets(node);
+                }
+                else
+                {
+                    for (EJPluginDrawerPageProperties page : canvas.getDrawerPageContainer().getDrawerPageProperties())
+                        captions.add(value(page.getPageTitle(), page.getName()));
+                }
+                node.setTabLabels(captions);
+            }
+            if (node.getKind() == EJDevPreviewKind.APP_COMPONENT) node.setPaintControlLabel(false);
+        }
+        // A table/chart's technical block name is not a runtime heading. Real block title bars
+        // are separate BLOCK nodes and are deliberately retained.
+        if (node.getKind() == EJDevPreviewKind.TABLE || node.getKind() == EJDevPreviewKind.TREE || node.getKind() == EJDevPreviewKind.CHART)
+            node.setPaintContainerTitle(false);
+        for (PreviewNode child : node.getChildren()) prepareRuntimePresentation(child);
     }
 
     private PreviewNode createFlatRoot(EJPluginFormProperties form, Object source, int columns)
@@ -377,6 +473,7 @@ public class FormPreviewModelBuilder
         EJDevPreviewDescriptor descriptor = EJDevPreviewDescriptor.create(EJDevPreviewKind.FORM_CONTAINER, form.getName(), form.getTitle(),
                 form.getFormRendererName(), form.getFormWidth(), form.getFormHeight());
         PreviewNode root = new PreviewNode(source, descriptor);
+        root.setPreviewTheme(theme);
         root.setColumns(columns);
         root.setBounds(0, 0, size(form.getFormWidth(), 900), size(form.getFormHeight(), 650));
         root.setCompactLayout(true);
@@ -391,6 +488,8 @@ public class FormPreviewModelBuilder
         EJDevPreviewDescriptor descriptor = EJDevPreviewDescriptor.create(EJDevPreviewKind.FORM_CONTAINER, form.getName(), form.getTitle(),
                 form.getFormRendererName(), configuredWidth, configuredHeight);
         PreviewNode root = new PreviewNode(source, descriptor);
+        root.setPreviewTheme(theme);
+        root.setLayoutMargin(0);
         root.setColumns(columns);
         root.setBounds(0, 0, selectedSize(configuredWidth, availableWidth, size(form.getFormWidth(), DEFAULT_SELECTED_WIDTH)), selectedSize(
                 configuredHeight, availableHeight, size(form.getFormHeight(), DEFAULT_SELECTED_HEIGHT)));
@@ -529,7 +628,9 @@ public class FormPreviewModelBuilder
         }
 
         node.setColumns(group.getNumCols());
-        node.setLayoutGap(0);
+        node.setHorizontalGap(5);
+        node.setVerticalGap(1);
+        node.setLayoutMargin(group.dispayGroupFrame() ? 5 : 0);
         node.setCompactLayout(true);
         // EJRWTBlockPreviewerCreator#addItemGroup: a frameless group, or a framed group with no
         // frame title, is a plain Composite with no border at all. Only a framed + titled group
@@ -537,6 +638,20 @@ public class FormPreviewModelBuilder
         boolean titled = group.dispayGroupFrame() && value(group.getFrameTitle()) != null;
         node.setPaintBorder(titled);
         node.setPaintContainerTitle(titled);
+        node.setThemeSelector(titled ? "Group" : group.dispayGroupFrame() ? "Composite[BORDER]" : "Composite");
+        node.setThemeVariant(stringProperty(group.getRendererProperties(), "CSS_KEY"));
+        if (titled)
+        {
+            applyGroupChrome(node, 5);
+        }
+        else
+        {
+            int border = theme.border(node.getThemeSelector(), node.getThemeVariant());
+            int inset = (group.dispayGroupFrame() ? 5 : 0) + border;
+            int[] padding = theme.box(node.getThemeSelector(), node.getThemeVariant(), "padding");
+            node.setLayoutInsets(inset + padding[0], inset + padding[1], inset + padding[2], inset + padding[3]);
+            node.setPaintBorder(border > 0);
+        }
         if (titled)
         {
             applyTitleBar(node, group.getRendererProperties());
@@ -595,13 +710,14 @@ public class FormPreviewModelBuilder
         node.setPaintBorder(false);
         node.setPaintControlLabel(false);
         node.setTextAlignment(labelTextAlignment(requiredProperties));
+        node.setThemeVariant(itemVariant(item));
         // SWT (createBlockLableGridData): GridData(FILL_HORIZONTAL) with grabExcessHorizontalSpace
         // = false. Vertically the label is centred in its cell, except that it is pinned to the top
         // when it spans rows or its item expands vertically.
         int verticalSpan = intProperty(requiredProperties, YSPAN_PROPERTY, 1);
         boolean top = verticalSpan > 1 || booleanProperty(requiredProperties, EXPAND_Y_PROPERTY, false);
         node.setConstraint(PreviewGridConstraint.defaults().setHorizontalSpan(1).setVerticalSpan(verticalSpan)
-                .setPreferredWidth(labelWidth(item)).setPreferredHeight(DEFAULT_CONTROL_HEIGHT).setFillHorizontal(true).setFillVertical(false)
+                .setPreferredWidth(labelWidth(item)).setPreferredHeight(theme.controlHeight("Label", itemVariant(item))).setFillHorizontal(true).setFillVertical(false)
                 .setGrabHorizontal(false).setGrabVertical(false)
                 .setVerticalAlignment(top ? PreviewGridConstraint.Alignment.BEGINNING : PreviewGridConstraint.Alignment.CENTER));
         return node;
@@ -635,6 +751,10 @@ public class FormPreviewModelBuilder
             node.setTitleBarMode(PreviewNode.TITLE_BAR_PLAIN);
         }
         node.setTitleBarExpanded(booleanProperty(titleBarProperties, TITLE_BAR_EXPANDED_PROPERTY, true));
+        int margin = Math.max(0, node.getLayoutMargin());
+        node.setLayoutInsets(margin + theme.textHeight("Label", null) + 4, margin, margin, margin);
+        node.setThemeSelector("Label");
+        node.setPaintBorder(false);
     }
 
     /**
@@ -671,6 +791,8 @@ public class FormPreviewModelBuilder
         node.setPaintBorder(false);
         node.setPaintControlLabel(false);
         node.setVerticalOrientation(isVerticalSeparator(item));
+        node.setThemeSelector(controlSelector(node.getKind()));
+        node.setThemeVariant(itemVariant(item));
         switch (node.getKind())
         {
             case LABEL:
@@ -757,6 +879,10 @@ public class FormPreviewModelBuilder
         {
             // SWT only titles a group canvas when it asks for a frame and supplies a title.
             node.setPaintContainerTitle(Boolean.TRUE.equals(canvas.getDisplayGroupFrame()) && value(canvas.getGroupFrameTitle()) != null);
+            node.setLayoutMargin(Boolean.TRUE.equals(canvas.getDisplayGroupFrame()) && value(canvas.getGroupFrameTitle()) == null ? 5 : 0);
+            node.setThemeSelector(node.isPaintContainerTitle() ? "Group" : "Composite");
+            node.setPaintBorder(false);
+            if (node.isPaintContainerTitle()) applyGroupChrome(node, 0);
             addCanvasContainer(node, canvas.getGroupCanvasContainer(), selectedSource);
         }
         else if (type == EJCanvasType.SPLIT)
@@ -771,6 +897,7 @@ public class FormPreviewModelBuilder
         else if (type == EJCanvasType.TAB)
         {
             addTabPages(node, canvas, selectedSource);
+            theme.applyPageInsets(node);
         }
         else if (type == EJCanvasType.DRAWER)
         {
@@ -780,6 +907,7 @@ public class FormPreviewModelBuilder
         else if (type == EJCanvasType.STACKED)
         {
             addStackedPages(node, canvas, selectedSource);
+            theme.applyPageInsets(node);
         }
 
         return node;
@@ -842,12 +970,16 @@ public class FormPreviewModelBuilder
         PreviewNode node = new PreviewNode(block, descriptor);
         node.setColumns(mainScreen.getNumCols());
         node.setCompactLayout(true);
+        node.setLayoutMargin(0);
         // Only a framed main screen gets a Group box; table/tree renderers draw their own border.
         node.setPaintBorder(frame);
 
         if (descriptor.getKind() == EJDevPreviewKind.BLOCK)
         {
             node.setPaintContainerTitle(frame && frameTitle != null);
+            node.setThemeSelector(node.isPaintContainerTitle() ? "Group" : "Composite");
+            if (node.isPaintContainerTitle()) applyGroupChrome(node, 0);
+            else node.setPaintBorder(false);
             addFlatItemGroups(node, block.getMainScreenItemGroupDisplayContainer());
         }
         else
@@ -882,6 +1014,7 @@ public class FormPreviewModelBuilder
                 block.getBlockRendererName(), 0, 0));
         section.setColumns(1);
         section.setCompactLayout(true);
+        section.setLayoutMargin(0);
         section.setPaintBorder(false);
         section.setPaintContainerTitle(true);
         applyTitleBar(section, titleBar);
@@ -1018,10 +1151,12 @@ public class FormPreviewModelBuilder
     private int preferredControlWidth(EJPluginScreenItemProperties item, EJFrameworkExtensionProperties requiredProperties, boolean expandHorizontally)
     {
         EJDevPreviewKind kind = resolver.forScreenItem(item).getKind();
+        String selector = controlSelector(kind);
+        String variant = itemVariant(item);
         int displayedWidth = intProperty(requiredProperties, DISPLAYED_WIDTH_PROPERTY, 0);
         if (displayedWidth > 0)
         {
-            return usesFontDimensions(item, kind) ? (displayedWidth + 1) * CHAR_WIDTH : displayedWidth;
+            return usesFontDimensions(item, kind) ? (displayedWidth + 1) * theme.characterWidth(selector, variant) : displayedWidth;
         }
         if (item.isSpacerItem())
         {
@@ -1038,26 +1173,30 @@ public class FormPreviewModelBuilder
             int optionWidth = 0;
             for (String option : options)
             {
-                int width = 16 + (option == null ? 0 : option.length() * CHAR_WIDTH);
-                optionWidth = isHorizontalRadioGroup(item) ? optionWidth + width + 10 : Math.max(optionWidth, width);
+                int width = theme.radioWidth(option, variant);
+                optionWidth = isHorizontalRadioGroup(item) ? optionWidth + width + 3 : Math.max(optionWidth, width);
             }
-            optionWidth += isHorizontalRadioGroup(item) ? -6 : 4;
+            optionWidth += isHorizontalRadioGroup(item) ? -3 : 0;
             if (isRadioGroupFramed(item))
             {
-                optionWidth = Math.max(optionWidth + 12, textWidth(item.getLabel()) + 20);
+                int[] insets = theme.groupInsets(0, variant);
+                optionWidth = Math.max(optionWidth + insets[1] + insets[3], theme.textWidth("Group", variant, item.getLabel()) + 20);
             }
             return expandHorizontally ? Math.max(DEFAULT_CONTROL_WIDTH, optionWidth) : Math.max(18, optionWidth);
         }
 
         if (kind == EJDevPreviewKind.BUTTON)
         {
-            return Math.max(34, textWidth(item.getLabel()) + 14);
+            int[] padding = theme.box(selector, variant, "padding");
+            return Math.max(20, theme.textWidth(selector, variant, item.getLabel()) + padding[1] + padding[3] + 2 * theme.border(selector, variant));
         }
         if (kind == EJDevPreviewKind.CHECKBOX || kind == EJDevPreviewKind.LABEL)
         {
             // computeSize() in the native preview measures the caption, not the internal name.
             // Explicit DISPLAYED_WIDTH above still wins (pixels for checks, characters for labels).
-            return Math.max(20, textWidth(item.getLabel()) + (kind == EJDevPreviewKind.CHECKBOX ? 24 : 4));
+            int[] padding = theme.box(selector, variant, "padding");
+            int captionWidth = theme.textWidth(selector, variant, item.getLabel());
+            return Math.max(1, captionWidth + padding[1] + padding[3] + (kind == EJDevPreviewKind.CHECKBOX ? 13 + theme.spacing(selector, variant, 7) : 0));
         }
         if (kind == EJDevPreviewKind.STACKED)
         {
@@ -1069,10 +1208,12 @@ public class FormPreviewModelBuilder
     private int preferredControlHeight(EJPluginScreenItemProperties item, EJFrameworkExtensionProperties requiredProperties)
     {
         EJDevPreviewKind kind = resolver.forScreenItem(item).getKind();
+        String selector = controlSelector(kind);
+        String variant = itemVariant(item);
         int displayedHeight = intProperty(requiredProperties, DISPLAYED_HEIGHT_PROPERTY, 0);
         if (displayedHeight > 0)
         {
-            return usesFontDimensions(item, kind) ? (displayedHeight + 1) * CHAR_HEIGHT : displayedHeight;
+            return usesFontDimensions(item, kind) ? (displayedHeight + 1) * theme.textHeight(selector, variant) : displayedHeight;
         }
         if (item.isSpacerItem())
         {
@@ -1085,14 +1226,15 @@ public class FormPreviewModelBuilder
             case HTML:
                 return DEFAULT_TEXT_AREA_HEIGHT;
             case BUTTON:
-                return DEFAULT_BUTTON_HEIGHT;
+                return theme.controlHeight(selector, variant);
             case RADIO_GROUP:
                 // Unframed radio groups have no caption in the native RAP definition.
                 int optionCount = radioOptionLabels(item).size();
                 int rows = isHorizontalRadioGroup(item) ? 1 : (optionCount == 0 ? 2 : optionCount);
-                return (isRadioGroupFramed(item) ? 18 : 0) + CHAR_HEIGHT * rows + 6;
+                int[] insets = isRadioGroupFramed(item) ? theme.groupInsets(0, variant) : new int[4];
+                return insets[0] + insets[2] + theme.controlHeight("Button[RADIO]", variant) * rows + 3 * (rows - 1);
             default:
-                return DEFAULT_CONTROL_HEIGHT;
+                return theme.controlHeight(selector, variant);
         }
     }
 
@@ -1142,12 +1284,41 @@ public class FormPreviewModelBuilder
 
     private int labelWidth(EJPluginScreenItemProperties item)
     {
-        return Math.max(20, textWidth(value(item.getLabel(), item.getReferencedItemName())) + 4);
+        return Math.max(1, theme.textWidth("Label", itemVariant(item), value(item.getLabel(), item.getReferencedItemName())));
     }
 
     private int textWidth(String text)
     {
-        return text == null ? 0 : text.length() * 7;
+        return theme.textWidth("Label", null, text);
+    }
+
+    private void applyGroupChrome(PreviewNode node, int margin)
+    {
+        int[] insets = theme.groupInsets(margin, node.getThemeVariant());
+        node.setLayoutInsets(insets[0], insets[1], insets[2], insets[3]);
+        node.setPaintBorder(theme.border("Group-Frame", node.getThemeVariant()) > 0);
+    }
+
+    private String itemVariant(EJPluginScreenItemProperties item)
+    {
+        EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
+        return blockItem == null ? null : stringProperty(blockItem.getItemRendererProperties(), "CSS_KEY");
+    }
+
+    private String controlSelector(EJDevPreviewKind kind)
+    {
+        switch (kind)
+        {
+            case LABEL: return "Label";
+            case BUTTON: return "Button[PUSH]";
+            case CHECKBOX: return "Button[CHECK]";
+            case RADIO_GROUP: return "Button[RADIO]";
+            case COMBO: return "Combo[BORDER]";
+            case DATE_FIELD:
+            case DATE_TIME_FIELD: return "DateTime[BORDER]";
+            case TEXT_AREA: return "Text[MULTI][BORDER]";
+            default: return "Text[BORDER]";
+        }
     }
 
     private EJFrameworkExtensionProperties requiredProperties(EJPluginScreenItemProperties item)
@@ -1253,6 +1424,7 @@ public class FormPreviewModelBuilder
                     pageLabel(page.getPageTitle(), page.getName()), "tabPage", 0, 0));
             pageNode.setColumns(page.getNumCols());
             pageNode.setCompactLayout(true);
+            pageNode.setLayoutMargin(0);
             pageNode.setPaintContainerTitle(false);
             pageNode.setPaintBorder(false);
             addCanvasContainer(pageNode, page.getContainedCanvases(), selectedSource);
@@ -1290,6 +1462,7 @@ public class FormPreviewModelBuilder
                     "<page>: " + page.getName(), "stackedPage", 0, 0));
             pageNode.setColumns(page.getNumCols());
             pageNode.setCompactLayout(true);
+            pageNode.setLayoutMargin(0);
             pageNode.setPaintContainerTitle(false);
             pageNode.setPaintBorder(false);
             addCanvasContainer(pageNode, page.getContainedCanvases(), selectedSource);

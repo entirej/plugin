@@ -27,6 +27,8 @@ public class PreviewRegressionTest {
     static int passed, failed;
     static Display display;
     static Path screenshots;
+    static PreviewTheme testTheme;
+    static FormPreviewModelBuilder builder(){return new FormPreviewModelBuilder(new FormPreviewDescriptorResolver(),testTheme);}
     static final XPath XPATH = XPathFactory.newInstance().newXPath();
     static void check(boolean value, String description) {
         if (value) { passed++; System.out.println("PASS " + description); }
@@ -44,6 +46,8 @@ public class PreviewRegressionTest {
             && c.getX()+c.getWidth()<=p.getX()+p.getWidth() && c.getY()+c.getHeight()<=p.getY()+p.getHeight();
     }
     public static void main(String[] args) throws Exception {
+        if(args.length>3)testTheme=PreviewTheme.fromCss(Files.readString(Paths.get(args[3])));
+        else testTheme=PreviewTheme.rapDefault();
         PreviewNode root=node(EJDevPreviewKind.FORM_CONTAINER,0,0);root.setBounds(0,0,900,700);
         PreviewNode group=node(EJDevPreviewKind.GROUP,0,0);root.addChild(group);
         for(int i=0;i<4;i++)group.addChild(node(EJDevPreviewKind.TEXT_FIELD,180,36));
@@ -72,8 +76,11 @@ public class PreviewRegressionTest {
         PreviewNode left=node(EJDevPreviewKind.CANVAS,100,100),right=node(EJDevPreviewKind.CANVAS,300,100);
         left.getConstraint().setGrabHorizontal(true);right.getConstraint().setGrabHorizontal(true);split.addChild(left);split.addChild(right);solver.layout(split);
         check(right.getBounds().getWidth()>left.getBounds().getWidth()&&inside(right,split),"weighted split sizing remains intact");
-        rendererRegressions();
+        display=new Display();
         if(args.length>1 && !"-".equals(args[1]))screenshots=Paths.get(args[1]);
+        rendererRegressions();
+        PreviewSpacingTest.run();
+        PreviewPresentationTest.run();
         if(args.length>0)for(String form:Arrays.asList("TM03.2","TM03.4","TM03.5","TM04.2"))testForm(Paths.get(args[0],form+".form"));
         if(args.length>2 && "corpus".equals(args[2]))PreviewCorpusTest.run(Paths.get(args[0]));
         if(display!=null)display.dispose();
@@ -87,7 +94,7 @@ public class PreviewRegressionTest {
         if(blockXml==null)throw new AssertionError("Missing block "+blockName);
         EJPluginBlockProperties block=loadBlock(path,blockXml);
         EJPluginFormProperties form=block.getFormProperties();
-        PreviewNode preview=new FormPreviewModelBuilder().build(form,block,900,700);
+        PreviewNode preview=builder().build(form,block,900,700);
         validateContainers(preview,path.getFileName().toString());
         PreviewNode radio=findRadio(preview);
         check(radio!=null,path.getFileName()+" contains radio preview");
@@ -97,8 +104,8 @@ public class PreviewRegressionTest {
             check(!contains(preview,"criticalExcess"),"TM04.2 explicitly hidden fields stay hidden");
         }
         if(radio!=null && !blockName.equals("TM04ARequest")) {
-            int longest=radio.getOptionLabels().stream().mapToInt(String::length).max().orElse(0);
-            check(radio.getBounds().getWidth()>=longest*8+18,path.getFileName()+" radio options fit intrinsic width");
+            int longest=radio.getOptionLabels().stream().mapToInt(s->org.eclipse.draw2d.FigureUtilities.getTextWidth(s,testTheme.font("Button[RADIO]",null))).max().orElse(0);
+            check(radio.getBounds().getWidth()>=longest+23,path.getFileName()+" radio options fit intrinsic width");
         }
         System.out.println("FORM "+path.getFileName()+" block="+blockName);
         if(screenshots!=null)render(preview,path.getFileName().toString()+".png");
@@ -124,14 +131,14 @@ public class PreviewRegressionTest {
         xml.append("<item referencedItemName='hidden'><visible>false</visible></item></itemGroupItemList></itemGroup></itemGroupList></mainScreen></block>");
         Document document=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new org.xml.sax.InputSource(new java.io.StringReader(xml.toString())));
         EJPluginBlockProperties block=loadBlock(Paths.get("renderer-fixtures.form"),document.getDocumentElement());
-        PreviewNode root=new FormPreviewModelBuilder().build(block.getFormProperties(),block,900,700);
+        PreviewNode root=builder().build(block.getFormProperties(),block,900,700);
         PreviewNode label=find(root,"i0"),checkbox=find(root,"i1");
-        int captionWidth="A long visible caption that must not be clipped".length()*7;
+        int captionWidth=org.eclipse.draw2d.FigureUtilities.getTextWidth("A long visible caption that must not be clipped",testTheme.font("Label",null));
         check(label.getConstraint().getPreferredWidth()>=captionWidth,"auto label measures caption rather than internal item name");
-        check(checkbox.getConstraint().getPreferredWidth()>=captionWidth+24,"auto checkbox reserves caption and checkbox glyph");
+        check(checkbox.getConstraint().getPreferredWidth()>=captionWidth+23,"auto checkbox reserves caption and checkbox glyph");
         check(label.getTextAlignment()==PreviewNode.TEXT_ALIGN_RIGHT,"label renderer ALIGNMENT is honored");
         check(find(root,"i3").getKind()==EJDevPreviewKind.DATE_TIME_FIELD,"date-time renderer is not mistaken for date only");
-        check(find(root,"i5").getConstraint().getPreferredWidth()==88,"explicit label width keeps character units");
+        check(find(root,"i5").getConstraint().getPreferredWidth()==11*testTheme.characterWidth("Label",null),"explicit label width keeps character units");
         check(find(root,"i6").getConstraint().getPreferredWidth()==10,"explicit checkbox width keeps pixel units");
         check(!contains(root,"hidden"),"hidden fixture stays hidden");
         List<String> painted=paintedText(root);
@@ -193,7 +200,7 @@ public class PreviewRegressionTest {
         } finally {graphics.dispose();gc.dispose();image.dispose();}
     }
     static PreviewNodeFigure figure(PreviewNode model,PreviewNode parent) {
-        PreviewBounds b=model.getBounds();PreviewNodeFigure f=new PreviewNodeFigure(model);f.setFont(display.getSystemFont());
+        PreviewBounds b=model.getBounds();PreviewNodeFigure f=new PreviewNodeFigure(model);if(model.getPreviewTheme()==null)f.setFont(display.getSystemFont());
         int x=b.getX()-(parent==null?0:parent.getBounds().getX()),y=b.getY()-(parent==null?0:parent.getBounds().getY());
         f.setBounds(new Rectangle(x,y,b.getWidth(),b.getHeight()));
         for(PreviewNode child:model.getVisibleChildren()) {

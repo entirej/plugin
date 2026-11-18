@@ -46,12 +46,16 @@ public class PreviewNodeFigure extends Figure
         setOpaque(true);
         setLayoutManager(new XYLayout());
         applyBorder();
+        applyTheme();
+        applyToolTip();
     }
 
     public void setModel(PreviewNode model)
     {
         this.model = model;
         applyBorder();
+        applyTheme();
+        applyToolTip();
         repaint();
     }
 
@@ -85,7 +89,9 @@ public class PreviewNodeFigure extends Figure
         if (model.isPaintBorder())
         {
             graphics.setForegroundColor(ColorConstants.gray);
-            graphics.drawRectangle(area.x, area.y, area.width - 1, area.height - 1);
+            int frameTop = model.getPreviewTheme() != null && "Group".equals(model.getThemeSelector())
+                    ? model.getPreviewTheme().box("Group-Frame", model.getThemeVariant(), "margin")[0] : 0;
+            graphics.drawRectangle(area.x, area.y + frameTop, Math.max(1, area.width - 1), Math.max(1, area.height - frameTop - 1));
         }
 
         paintKind(graphics, contentArea(area), kind);
@@ -125,7 +131,7 @@ public class PreviewNodeFigure extends Figure
     private Rectangle contentArea(Rectangle area)
     {
         Rectangle content = area.getCopy();
-        if (model.isPaintBorder())
+        if (model.isPaintBorder() && model.getPreviewTheme() == null)
         {
             content.shrink(5, 5);
         }
@@ -135,6 +141,7 @@ public class PreviewNodeFigure extends Figure
     private void paintKind(Graphics graphics, Rectangle area, EJDevPreviewKind kind)
     {
         String text = model.getControlText() == null ? model.getDisplayName() : model.getControlText();
+        if (model.getPreviewTheme() != null && paintThemedControl(graphics, area, kind, text)) return;
         switch (kind)
         {
             case TEXT_FIELD:
@@ -236,11 +243,13 @@ public class PreviewNodeFigure extends Figure
                 drawImagePlaceholder(graphics, area);
                 break;
             case CHART:
-                drawTitle(graphics, area, text);
-                drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(42, area.height - 20));
+                boolean chartHeading = model.isDesignHintsVisible() || model.isPaintContainerTitle();
+                if (chartHeading) drawTitle(graphics, area, text);
+                int chartTop = chartHeading ? 18 : 0;
+                drawInsetBox(graphics, area.x, area.y + chartTop, area.width, Math.max(42, area.height - chartTop - 2));
                 int baseLine = area.y + area.height - 8;
                 graphics.drawLine(area.x + 10, baseLine, area.x + area.width - 8, baseLine);
-                graphics.drawLine(area.x + 10, area.y + 28, area.x + 10, baseLine);
+                graphics.drawLine(area.x + 10, area.y + chartTop + 10, area.x + 10, baseLine);
                 // drawInsetBox leaves the background white; the bars would be invisible without this.
                 graphics.setBackgroundColor(ColorConstants.lightGray);
                 graphics.fillRectangle(area.x + 22, baseLine - 20, 14, 20);
@@ -274,7 +283,7 @@ public class PreviewNodeFigure extends Figure
                 }
                 else
                 {
-                    drawTitle(graphics, area, "<STACKED_COMPONENT>");
+                    if (model.isDesignHintsVisible()) drawTitle(graphics, area, "<STACKED_COMPONENT>");
                     drawTabs(graphics, area, tabStripOffset());
                 }
                 break;
@@ -298,16 +307,19 @@ public class PreviewNodeFigure extends Figure
                 }
                 break;
             case TAB_PAGE:
-                drawTitle(graphics, area, text);
-                graphics.drawRectangle(area.x, area.y + 18, Math.min(70, area.width - 1), 18);
-                graphics.drawText("Tab", area.x + 8, area.y + 21);
+                if (model.isDesignHintsVisible())
+                {
+                    drawTitle(graphics, area, text);
+                    graphics.drawRectangle(area.x, area.y + 18, Math.min(70, area.width - 1), 18);
+                    graphics.drawText("Tab", area.x + 8, area.y + 21);
+                }
                 break;
             case APP_COMPONENT:
             case MENU_TREE:
             case TOOLBAR:
             case STATUS_BAR:
             case BANNER:
-                drawAppComponent(graphics, area);
+                if (model.isDesignHintsVisible() || model.isPaintControlLabel()) drawAppComponent(graphics, area);
                 break;
             case SEPARATOR:
                 if (model.isPaintControlLabel())
@@ -362,7 +374,14 @@ public class PreviewNodeFigure extends Figure
     private void drawTitle(Graphics graphics, Rectangle area, String text)
     {
         graphics.setForegroundColor(ColorConstants.black);
-        graphics.drawText(text, area.x + 2, area.y + 1);
+        int x = area.x + 2;
+        if (model.getPreviewTheme() != null && "Group".equals(model.getThemeSelector()))
+        {
+            PreviewTheme theme = model.getPreviewTheme();
+            x = area.x + theme.box("Group-Label", model.getThemeVariant(), "margin")[3]
+                    + theme.box("Group-Label", model.getThemeVariant(), "padding")[3];
+        }
+        graphics.drawText(text, x, area.y + 1);
     }
 
     /**
@@ -401,7 +420,8 @@ public class PreviewNodeFigure extends Figure
         graphics.setForegroundColor(ColorConstants.black);
         graphics.drawText(text, textX, area.y + 1);
         graphics.setForegroundColor(ColorConstants.buttonDarker);
-        graphics.drawLine(area.x, area.y + 16, area.x + area.width, area.y + 16);
+        int lineY = area.y + (model.getPreviewTheme() == null ? 16 : model.getPreviewTheme().textHeight("Label", null) + 2);
+        graphics.drawLine(area.x, lineY, area.x + area.width, lineY);
     }
 
     /**
@@ -410,6 +430,11 @@ public class PreviewNodeFigure extends Figure
      */
     private void drawRadioGroup(Graphics graphics, Rectangle area, String text)
     {
+        if (model.getPreviewTheme() != null)
+        {
+            drawThemedRadioGroup(graphics, area, text);
+            return;
+        }
         Rectangle body = area.getCopy();
         if (model.isOptionsFramed())
         {
@@ -469,7 +494,92 @@ public class PreviewNodeFigure extends Figure
 
     private void applyBorder()
     {
-        setBorder(model != null && model.isPaintBorder() ? new LineBorder(ColorConstants.gray) : null);
+        // The themed solver already includes CSS borders in its child-area insets. A Draw2D
+        // LineBorder would shift XYLayout's client origin again, adding the same border twice.
+        setBorder(model != null && model.isPaintBorder() && model.getPreviewTheme() == null ? new LineBorder(ColorConstants.gray) : null);
+    }
+
+    private void applyTheme()
+    {
+        PreviewTheme theme = model.getPreviewTheme();
+        if (theme == null) setFont(null);
+        else if (Display.getCurrent() != null) setFont(theme.font(model.getThemeSelector(), model.getThemeVariant()));
+    }
+
+    private void applyToolTip()
+    {
+        String name = model.getDescriptor().getName();
+        setToolTip(name == null || name.isEmpty() ? null : new org.eclipse.draw2d.Label(name));
+    }
+
+    private boolean paintThemedControl(Graphics graphics, Rectangle area, EJDevPreviewKind kind, String text)
+    {
+        PreviewTheme theme = model.getPreviewTheme();
+        int[] padding = theme.box(model.getThemeSelector(), model.getThemeVariant(), "padding");
+        int textHeight = FigureUtilities.getTextExtents("Mg", getFont()).height;
+        int textY = area.y + Math.max(0, (area.height - textHeight) / 2);
+        switch (kind)
+        {
+            case TEXT_FIELD:
+            case NUMBER_FIELD:
+            case DATE_FIELD:
+            case DATE_TIME_FIELD:
+            case TEXT_AREA:
+                drawInsetBox(graphics, area.x, area.y, area.width, Math.max(1, area.height));
+                return true;
+            case COMBO:
+                drawInsetBox(graphics, area.x, area.y, area.width, Math.max(1, area.height));
+                int right = area.x + area.width - 7, cy = area.y + area.height / 2;
+                graphics.drawLine(right - 6, cy - 2, right, cy - 2);
+                graphics.drawLine(right - 6, cy - 2, right - 3, cy + 2);
+                graphics.drawLine(right, cy - 2, right - 3, cy + 2);
+                return true;
+            case BUTTON:
+                drawInsetBox(graphics, area.x, area.y, area.width, Math.max(1, area.height));
+                graphics.drawText(text, area.x + Math.max(padding[3], (area.width - textWidth(text)) / 2), textY);
+                return true;
+            case CHECKBOX:
+                drawInsetBox(graphics, area.x + padding[3], area.y + Math.max(0, (area.height - 13) / 2), 13, 13);
+                graphics.drawText(text, area.x + padding[3] + 13 + theme.spacing(model.getThemeSelector(), model.getThemeVariant(), 7), textY);
+                return true;
+            case LABEL:
+                graphics.drawText(text, alignedTextX(area, text), textY);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void drawThemedRadioGroup(Graphics graphics, Rectangle area, String text)
+    {
+        PreviewTheme theme = model.getPreviewTheme();
+        String variant = model.getThemeVariant();
+        int[] insets = model.isOptionsFramed() ? theme.groupInsets(0, variant) : new int[4];
+        if (model.isOptionsFramed())
+        {
+            if (theme.border("Group-Frame", variant) > 0)
+            {
+                graphics.setForegroundColor(ColorConstants.gray);
+                graphics.drawRectangle(area.x, area.y + insets[0] / 2, Math.max(1, area.width - 1), Math.max(1, area.height - insets[0] / 2 - 1));
+            }
+            graphics.setForegroundColor(ColorConstants.black);
+            graphics.drawText(text, area.x + 10, area.y);
+        }
+        List<String> options = model.getOptionLabels().isEmpty() ? DEFAULT_OPTIONS : model.getOptionLabels();
+        int rowHeight = theme.controlHeight("Button[RADIO]", variant);
+        int[] padding = theme.box("Button[RADIO]", variant, "padding");
+        int x = area.x + insets[3], y = area.y + insets[0];
+        for (String option : options)
+        {
+            int width = theme.radioWidth(option, variant);
+            if (y + rowHeight > area.bottom() - insets[2] || x + width > area.right() - insets[1]) break;
+            graphics.setForegroundColor(ColorConstants.gray);
+            graphics.drawOval(x + padding[3], y + Math.max(0, (rowHeight - 13) / 2), 12, 12);
+            graphics.setForegroundColor(ColorConstants.black);
+            graphics.drawText(option, x + padding[3] + 13 + theme.spacing("Button[RADIO]", variant, 7), y + padding[0]);
+            if (model.isVerticalOrientation()) y += rowHeight + 3;
+            else x += width + 3;
+        }
     }
 
     private void drawInsetBox(Graphics graphics, int x, int y, int width, int height)
@@ -521,7 +631,9 @@ public class PreviewNodeFigure extends Figure
      */
     private int tabStripOffset()
     {
-        if (model.getKind() == EJDevPreviewKind.STACKED)
+        if (model.getPreviewTheme() != null)
+            return model.getKind() == EJDevPreviewKind.STACKED && model.isDesignHintsVisible() || shouldPaintContainerTitle() ? model.getPreviewTheme().textHeight("Label", null) + 2 : 0;
+        if (model.getKind() == EJDevPreviewKind.STACKED && model.isDesignHintsVisible())
         {
             return 18;
         }
@@ -533,7 +645,7 @@ public class PreviewNodeFigure extends Figure
      */
     private int tabStripY(Rectangle area, int offset)
     {
-        return model.isTabsAtBottom() ? area.y + Math.max(0, area.height - 21) : area.y + offset;
+        return model.isTabsAtBottom() ? area.y + Math.max(0, area.height - tabHeight() - 1) : area.y + offset;
     }
 
     private void drawTabs(Graphics graphics, Rectangle area, int offset)
@@ -542,38 +654,45 @@ public class PreviewNodeFigure extends Figure
         int tabY = tabStripY(area, offset);
         int maxRight = area.x + area.width - 1;
         int selectedIndex = model.getSelectedTabIndex();
+        int height = tabHeight();
+        org.eclipse.swt.graphics.Font originalFont = graphics.getFont();
         for (int i = 0; i < model.getTabLabels().size(); i++)
         {
             String label = model.getTabLabels().get(i);
-            int width = Math.max(48, Math.min(120, (label.length() * 7) + 18));
+            int width = tabWidth(label);
             if (tabX + width > maxRight)
             {
                 break;
             }
             boolean selected = i == selectedIndex;
+            if (model.getPreviewTheme() != null)
+                graphics.setFont(model.getPreviewTheme().font(selected ? "CTabItem:selected" : "CTabItem", null));
             graphics.setBackgroundColor(selected ? ColorConstants.white : ColorConstants.buttonLightest);
-            graphics.fillRectangle(tabX, tabY, width, 20);
+            graphics.fillRectangle(tabX, tabY, width, height);
             graphics.setForegroundColor(ColorConstants.gray);
-            graphics.drawRectangle(tabX, tabY, width, 20);
+            graphics.drawRectangle(tabX, tabY, width, height);
             graphics.setForegroundColor(ColorConstants.black);
-            graphics.drawText(label, tabX + 6, tabY + 3);
+            int[] padding = model.getPreviewTheme() == null ? new int[] {3, 6, 3, 6}
+                    : model.getPreviewTheme().box(selected ? "CTabItem:selected" : "CTabItem", null, "padding");
+            graphics.drawText(label, tabX + padding[3], tabY + padding[0]);
             if (selected)
             {
                 // Erase the folder edge under (or above) the active tab so it reads as connected.
-                int edgeY = model.isTabsAtBottom() ? tabY : tabY + 20;
+                int edgeY = model.isTabsAtBottom() ? tabY : tabY + height;
                 graphics.setForegroundColor(ColorConstants.white);
                 graphics.drawLine(tabX + 1, edgeY, tabX + width - 1, edgeY);
             }
             tabX += width - 1;
         }
-        if (model.getTabLabels().isEmpty())
+        if (model.getTabLabels().isEmpty() && model.isDesignHintsVisible())
         {
-            graphics.drawRectangle(area.x, tabY, Math.min(70, area.width - 1), 20);
+            graphics.drawRectangle(area.x, tabY, Math.min(70, area.width - 1), height);
             graphics.drawText("Tab", area.x + 8, tabY + 3);
         }
         graphics.setForegroundColor(ColorConstants.gray);
-        int edgeY = model.isTabsAtBottom() ? tabY - 1 : tabY + 21;
+        int edgeY = model.isTabsAtBottom() ? tabY - 1 : tabY + height + 1;
         graphics.drawLine(area.x, edgeY, area.x + area.width, edgeY);
+        graphics.setFont(originalFont);
     }
 
     /**
@@ -665,12 +784,14 @@ public class PreviewNodeFigure extends Figure
         List<String> labels = model.getColumnLabels();
         if (labels.isEmpty())
         {
-            drawTitle(graphics, area, text);
-            drawInsetBox(graphics, area.x, area.y + 18, area.width, Math.max(36, area.height - 20));
+            boolean heading = model.isDesignHintsVisible() || model.isPaintContainerTitle() && model.isPaintControlLabel();
+            if (heading) drawTitle(graphics, area, text);
+            int top = heading ? 18 : 0;
+            drawInsetBox(graphics, area.x, area.y + top, area.width, Math.max(36, area.height - top - (heading ? 2 : 0)));
             if (kind == EJDevPreviewKind.LIST)
             {
-                graphics.drawLine(area.x + 6, area.y + 54, area.x + area.width - 8, area.y + 54);
-                graphics.drawLine(area.x + 6, area.y + 69, area.x + area.width - 8, area.y + 69);
+                graphics.drawLine(area.x + 6, area.y + top + 36, area.x + area.width - 8, area.y + top + 36);
+                graphics.drawLine(area.x + 6, area.y + top + 51, area.x + area.width - 8, area.y + top + 51);
             }
             return;
         }
@@ -737,7 +858,7 @@ public class PreviewNodeFigure extends Figure
         Rectangle area = contentArea(getClientArea().getCopy());
         int tabX = area.x;
         int tabY = tabStripY(area, tabStripOffset());
-        if (y < tabY || y > tabY + 20)
+        if (y < tabY || y > tabY + tabHeight())
         {
             return -1;
         }
@@ -746,7 +867,7 @@ public class PreviewNodeFigure extends Figure
         for (int i = 0; i < model.getTabLabels().size(); i++)
         {
             String label = model.getTabLabels().get(i);
-            int width = Math.max(48, Math.min(120, (label.length() * 7) + 18));
+            int width = tabWidth(label);
             if (tabX + width > maxRight)
             {
                 return -1;
@@ -758,6 +879,16 @@ public class PreviewNodeFigure extends Figure
             tabX += width - 1;
         }
         return -1;
+    }
+
+    private int tabHeight() { return model.getPreviewTheme() == null ? 20 : model.getPreviewTheme().tabHeight(); }
+
+    private int tabWidth(String label)
+    {
+        PreviewTheme theme = model.getPreviewTheme();
+        if (theme == null) return Math.max(48, Math.min(120, label.length() * 7 + 18));
+        int[] padding = theme.box("CTabItem:selected", null, "padding");
+        return Math.max(24, theme.textWidth("CTabItem:selected", null, label) + padding[1] + padding[3] + 2);
     }
 
     private void drawDrawer(Graphics graphics, Rectangle area)

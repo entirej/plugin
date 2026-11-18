@@ -73,20 +73,21 @@ public class PreviewGridLayoutSolver
         int right = rightInset(parent);
         int top = topInset(parent);
         int bottom = bottomInset(parent);
-        int gap = gap(parent);
+        int gap = horizontalGap(parent);
+        int verticalGap = verticalGap(parent);
 
         int availableWidth = parent.getBounds().getWidth() - left - right - (gap * (columns - 1));
         int[] columnWidths = columnWidths(parent, placements, columns, availableWidth, gap);
 
-        int availableHeight = parent.getBounds().getHeight() - top - bottom - (gap * (rowCount - 1));
+        int availableHeight = parent.getBounds().getHeight() - top - bottom - (verticalGap * (rowCount - 1));
         int[] rowHeights = rowHeights(parent, placements, rowCount, availableHeight);
 
         for (Placement placement : placements)
         {
             int x = parent.getBounds().getX() + left + widthBefore(columnWidths, placement.column) + (gap * placement.column);
-            int y = parent.getBounds().getY() + top + heightBefore(rowHeights, placement.row) + (gap * placement.row);
+            int y = parent.getBounds().getY() + top + heightBefore(rowHeights, placement.row) + (verticalGap * placement.row);
             int width = widthSpan(columnWidths, placement.column, placement.columnSpan) + (gap * (placement.columnSpan - 1));
-            int height = heightSpan(rowHeights, placement.row, placement.rowSpan) + (gap * (placement.rowSpan - 1));
+            int height = heightSpan(rowHeights, placement.row, placement.rowSpan) + (verticalGap * (placement.rowSpan - 1));
 
             PreviewGridConstraint constraint = placement.node.getConstraint();
             int cellWidth = width;
@@ -109,6 +110,7 @@ public class PreviewGridLayoutSolver
 
     private int leftInset(PreviewNode parent)
     {
+        if (parent.getInsetLeft() >= 0) return parent.getInsetLeft();
         switch (parent.getKind())
         {
             case TAB_FOLDER:
@@ -121,6 +123,7 @@ public class PreviewGridLayoutSolver
 
     private int rightInset(PreviewNode parent)
     {
+        if (parent.getInsetRight() >= 0) return parent.getInsetRight();
         switch (parent.getKind())
         {
             case TAB_FOLDER:
@@ -133,6 +136,7 @@ public class PreviewGridLayoutSolver
 
     private int topInset(PreviewNode parent)
     {
+        if (parent.getInsetTop() >= 0) return parent.getInsetTop();
         switch (parent.getKind())
         {
             case TAB_FOLDER:
@@ -170,6 +174,7 @@ public class PreviewGridLayoutSolver
 
     private int bottomInset(PreviewNode parent)
     {
+        if (parent.getInsetBottom() >= 0) return parent.getInsetBottom();
         switch (parent.getKind())
         {
             case TAB_FOLDER:
@@ -189,9 +194,14 @@ public class PreviewGridLayoutSolver
         return parent.isCompactLayout() ? COMPACT_MARGIN : MARGIN;
     }
 
-    private int gap(PreviewNode parent)
+    private int horizontalGap(PreviewNode parent)
     {
-        return parent.getLayoutGap() >= 0 ? parent.getLayoutGap() : GAP;
+        return parent.getHorizontalGap() >= 0 ? parent.getHorizontalGap() : GAP;
+    }
+
+    private int verticalGap(PreviewNode parent)
+    {
+        return parent.getVerticalGap() >= 0 ? parent.getVerticalGap() : GAP;
     }
 
     private int[] columnWidths(PreviewNode parent, List<Placement> placements, int columns, int availableWidth, int gap)
@@ -286,7 +296,8 @@ public class PreviewGridLayoutSolver
         for (Placement placement : placements)
         {
             int preferredHeight = preferredHeight(placement.node);
-            int heightPerRow = Math.max(1, (preferredHeight + Math.max(1, placement.rowSpan) - 1) / Math.max(1, placement.rowSpan));
+            int contentHeight = Math.max(1, preferredHeight - verticalGap(parent) * (placement.rowSpan - 1));
+            int heightPerRow = Math.max(1, (contentHeight + placement.rowSpan - 1) / placement.rowSpan);
             for (int i = placement.row; i < placement.row + placement.rowSpan && i < heights.length; i++)
             {
                 heights[i] = Math.max(heights[i], heightPerRow);
@@ -555,7 +566,7 @@ public class PreviewGridLayoutSolver
             if (!children.isEmpty())
             {
                 int columns = Math.max(1, node.getColumns());
-                int gap = gap(node);
+                int gap = horizontalGap(node);
                 int[] widths = columnWidths(node, place(children, columns), columns, 0, gap);
                 width = leftInset(node) + rightInset(node) + widthSpan(widths, 0, columns) + gap * (columns - 1);
             }
@@ -584,7 +595,7 @@ public class PreviewGridLayoutSolver
                 List<Placement> placements = place(children, Math.max(1, node.getColumns()));
                 int rows = rowCount(placements);
                 int[] heights = rowHeights(node, placements, rows, 0);
-                height = topInset(node) + bottomInset(node) + heightSpan(heights, 0, rows) + gap(node) * (rows - 1);
+                height = topInset(node) + bottomInset(node) + heightSpan(heights, 0, rows) + verticalGap(node) * (rows - 1);
             }
             measured = Integer.valueOf(height);
             measuredHeights.put(node, measured);

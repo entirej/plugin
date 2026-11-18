@@ -43,6 +43,15 @@ public class PreviewNode
     private boolean                 paintBorder         = true;
     private boolean                 paintControlLabel   = true;
     private int                     layoutGap           = -1;
+    private int                     horizontalGap       = -1;
+    private int                     verticalGap         = -1;
+    private int                     insetTop            = -1;
+    private int                     insetRight          = -1;
+    private int                     insetBottom         = -1;
+    private int                     insetLeft           = -1;
+    private PreviewTheme            previewTheme;
+    private String                  themeSelector       = "Label";
+    private String                  themeVariant;
     private int                     layoutMargin        = -1;
     private boolean                 verticalOrientation;
     private boolean                 tabsAtBottom;
@@ -52,6 +61,7 @@ public class PreviewNode
     private final List<String>      optionLabels        = new ArrayList<String>();
     private boolean                 optionsFramed;
     private String                  controlText;
+    private Boolean                 designHintsVisible;
 
     public static final int         TEXT_ALIGN_LEFT     = 0;
     public static final int         TEXT_ALIGN_CENTER   = 1;
@@ -136,6 +146,17 @@ public class PreviewNode
     public void setControlText(String controlText)
     {
         this.controlText = controlText;
+    }
+
+    /** Canvas design aids are inherited; legacy/report models keep their existing presentation. */
+    public boolean isDesignHintsVisible()
+    {
+        return designHintsVisible != null ? designHintsVisible.booleanValue() : parent == null || parent.isDesignHintsVisible();
+    }
+
+    public void setDesignHintsVisible(boolean visible)
+    {
+        designHintsVisible = Boolean.valueOf(visible);
     }
 
     public PreviewGridConstraint getConstraint()
@@ -440,6 +461,28 @@ public class PreviewNode
     {
         this.layoutMargin = layoutMargin;
     }
+
+    public int getHorizontalGap() { return horizontalGap >= 0 ? horizontalGap : layoutGap; }
+    public int getVerticalGap() { return verticalGap >= 0 ? verticalGap : layoutGap; }
+    public void setHorizontalGap(int value) { horizontalGap = value; }
+    public void setVerticalGap(int value) { verticalGap = value; }
+
+    /** Full child-area insets, including any title/tab chrome. Negative restores kind defaults. */
+    public void setLayoutInsets(int top, int right, int bottom, int left)
+    {
+        insetTop = top; insetRight = right; insetBottom = bottom; insetLeft = left;
+    }
+    public int getInsetTop() { return insetTop; }
+    public int getInsetRight() { return insetRight; }
+    public int getInsetBottom() { return insetBottom; }
+    public int getInsetLeft() { return insetLeft; }
+
+    public PreviewTheme getPreviewTheme() { return previewTheme != null ? previewTheme : parent == null ? null : parent.getPreviewTheme(); }
+    public void setPreviewTheme(PreviewTheme theme) { previewTheme = theme; }
+    public String getThemeSelector() { return themeSelector; }
+    public void setThemeSelector(String selector) { themeSelector = selector; }
+    public String getThemeVariant() { return themeVariant; }
+    public void setThemeVariant(String variant) { themeVariant = variant; }
 
     private int normalizedSelectedTabIndex()
     {

@@ -55,6 +55,8 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
     private PreviewEditControl            previewControl;
     private AbstractNode<?>               selectedNode;
+    private boolean                       canvasDesignMode;
+    private boolean                       previewSelectionChange;
 
     public FormPreviewPart(AbstractEJFormEditor editor, FormPage page, Composite parent)
     {
@@ -149,6 +151,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
     public void showDetails(AbstractNode<?> node)
     {
         selectedNode = node;
+        canvasDesignMode = FormPreviewModelBuilder.canvasDesignSelection(node == null ? null : node.getSource(), canvasDesignMode, previewSelectionChange);
         previewLayout();
     }
 
@@ -190,7 +193,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
 
             Rectangle area = body.getClientArea();
             PreviewNode model = modelBuilder.build(editor.getFormProperties(), selectedNode == null ? null : selectedNode.getSource(), area.width,
-                    area.height);
+                    area.height, canvasDesignMode);
             previewControl.setModel(model);
             if (selectedNode != null)
             {
@@ -222,7 +225,16 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
             {
                 if (source != null && editor.getFormBasePage() != null && editor.getFormBasePage().getTreeSection() != null)
                 {
-                    editor.getFormBasePage().getTreeSection().selectNodes(true, source);
+                    boolean previous = previewSelectionChange;
+                    try
+                    {
+                        previewSelectionChange = true;
+                        editor.getFormBasePage().getTreeSection().selectNodes(true, source);
+                    }
+                    finally
+                    {
+                        previewSelectionChange = previous;
+                    }
                 }
             }
         });
