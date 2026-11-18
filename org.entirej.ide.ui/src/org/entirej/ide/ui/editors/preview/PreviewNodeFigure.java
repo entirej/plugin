@@ -134,7 +134,7 @@ public class PreviewNodeFigure extends Figure
 
     private void paintKind(Graphics graphics, Rectangle area, EJDevPreviewKind kind)
     {
-        String text = model.getDisplayName();
+        String text = model.getControlText() == null ? model.getDisplayName() : model.getControlText();
         switch (kind)
         {
             case TEXT_FIELD:
@@ -265,8 +265,18 @@ public class PreviewNodeFigure extends Figure
                 drawTabs(graphics, area, tabStripOffset());
                 break;
             case STACKED:
-                drawTitle(graphics, area, "<STACKED_COMPONENT>");
-                drawTabs(graphics, area, tabStripOffset());
+                if (model.getControlText() != null)
+                {
+                    // EJRWTStackedItemRendererDefinition previews a text-mode item, not a
+                    // stacked canvas. Canvas chrome cannot fit in a normal 22-pixel item row.
+                    drawInsetBox(graphics, area.x, area.y, area.width, Math.max(1, area.height));
+                    graphics.drawText("STACK-TEXT-MODE", area.x + 4, area.y + 3);
+                }
+                else
+                {
+                    drawTitle(graphics, area, "<STACKED_COMPONENT>");
+                    drawTabs(graphics, area, tabStripOffset());
+                }
                 break;
             case DRAWER:
                 drawDrawer(graphics, area);
@@ -715,6 +725,10 @@ public class PreviewNodeFigure extends Figure
 
     public int getTabIndexAt(int x, int y)
     {
+        if (model.getKind() == EJDevPreviewKind.STACKED && model.getControlText() != null)
+        {
+            return -1;
+        }
         if (model.getKind() != EJDevPreviewKind.TAB_FOLDER && model.getKind() != EJDevPreviewKind.STACKED)
         {
             return -1;

@@ -72,43 +72,21 @@ public class PreviewRegressionTest {
         PreviewNode left=node(EJDevPreviewKind.CANVAS,100,100),right=node(EJDevPreviewKind.CANVAS,300,100);
         left.getConstraint().setGrabHorizontal(true);right.getConstraint().setGrabHorizontal(true);split.addChild(left);split.addChild(right);solver.layout(split);
         check(right.getBounds().getWidth()>left.getBounds().getWidth()&&inside(right,split),"weighted split sizing remains intact");
-        if(args.length>1)screenshots=Paths.get(args[1]);
+        rendererRegressions();
+        if(args.length>1 && !"-".equals(args[1]))screenshots=Paths.get(args[1]);
         if(args.length>0)for(String form:Arrays.asList("TM03.2","TM03.4","TM03.5","TM04.2"))testForm(Paths.get(args[0],form+".form"));
+        if(args.length>2 && "corpus".equals(args[2]))PreviewCorpusTest.run(Paths.get(args[0]));
         if(display!=null)display.dispose();
         System.out.println("RESULT passed="+passed+" failed="+failed);
         if(failed>0)throw new AssertionError(failed+" preview regressions failed");
     }
     static void testForm(Path path) throws Exception {
-        DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
-        factory.setFeature("http://xml.org/sax/features/external-general-entities",false);
-        factory.setFeature("http://xml.org/sax/features/external-parameter-entities",false);
-        Document xml=factory.newDocumentBuilder().parse(path.toFile());
+        Document xml=parse(path);
         String blockName=path.getFileName().toString().startsWith("TM04")?"TM04ARequest":path.getFileName().toString().substring(0,6).replace(".","")+"CProductType";
         Element blockXml=(Element)XPATH.evaluate("//block[@name='"+blockName+"']",xml,XPathConstants.NODE);
         if(blockXml==null)throw new AssertionError("Missing block "+blockName);
-        EJPluginFormProperties form=new EJPluginFormProperties(path.getFileName().toString(),null);
-        final String blockRenderer=text(blockXml,"blockRendererName","");
-        EJPluginBlockProperties block=new EJPluginBlockProperties(form,blockName,true) {
-            @Override public String getBlockRendererName(){return blockRenderer;}
-            @Override public EJDevBlockRendererDefinition getBlockRendererDefinition(){return null;}
-        };
-        form.getBlockContainer().addBlockProperties(block);
-        Element main=child(blockXml,"mainScreenProperties");
-        block.getMainScreenProperties().setNumCols(integer(main,"numCols",1));
-        block.getMainScreenProperties().setWidth(integer(main,"width",0));
-        block.getMainScreenProperties().setHeight(integer(main,"height",0));
-        for(Element itemXml:children(child(blockXml,"itemList"),"item")) {
-            final String renderer=text(itemXml,"itemRendererName","");
-            final EJCoreFrameworkExtensionProperties props=properties(child(itemXml,"itemRendererProperties"));
-            EJPluginBlockItemProperties item=new EJPluginBlockItemProperties(block,itemXml.getAttribute("name"),true) {
-                @Override public String getItemRendererName(){return renderer;}
-                @Override public EJCoreFrameworkExtensionProperties getItemRendererProperties(){return props;}
-                @Override public EJDevItemRendererDefinition getItemRendererDefinition(){return null;}
-            };
-            block.getItemContainer().addItemProperties(item);
-        }
-        addGroups(child(child(blockXml,"mainScreen"),"itemGroupList"),block.getMainScreenItemGroupDisplayContainer());
+        EJPluginBlockProperties block=loadBlock(path,blockXml);
+        EJPluginFormProperties form=block.getFormProperties();
         PreviewNode preview=new FormPreviewModelBuilder().build(form,block,900,700);
         validateContainers(preview,path.getFileName().toString());
         PreviewNode radio=findRadio(preview);
@@ -124,6 +102,84 @@ public class PreviewRegressionTest {
         }
         System.out.println("FORM "+path.getFileName()+" block="+blockName);
         if(screenshots!=null)render(preview,path.getFileName().toString()+".png");
+    }
+    static Document parse(Path path) throws Exception {
+        DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities",false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities",false);
+        return factory.newDocumentBuilder().parse(path.toFile());
+    }
+    static void rendererRegressions() throws Exception {
+        // Anonymous, non-customer fixtures cover visible/blank captions and explicit size overrides.
+        StringBuilder xml=new StringBuilder("<block name='controls'><blockRendererName>SingleRecord</blockRendererName><mainScreenProperties><numCols>1</numCols></mainScreenProperties><itemList>");
+        String[] renderers={"LabelItem","CheckBoxItem","StackedItem","DateTimeItem","ButtonItem","LabelItem","CheckBoxItem"};
+        for(int i=0;i<renderers.length;i++)xml.append("<item name='i").append(i).append("'><itemRendererName>").append(renderers[i])
+            .append("</itemRendererName><itemRendererProperties><property name='ALIGNMENT'>RIGHT</property></itemRendererProperties></item>");
+        xml.append("</itemList><mainScreen><itemGroupList><itemGroup name='group'><numCols>2</numCols><itemGroupItemList>");
+        for(int i=0;i<renderers.length;i++)xml.append("<item referencedItemName='i").append(i).append("'><label>")
+            .append(i<2?"A long visible caption that must not be clipped":"")
+            .append("</label><blockRendererRequiredProperties>").append(i==5||i==6?"<property name='DISPLAYED_WIDTH'>10</property>":"")
+            .append("</blockRendererRequiredProperties></item>");
+        xml.append("<item referencedItemName='hidden'><visible>false</visible></item></itemGroupItemList></itemGroup></itemGroupList></mainScreen></block>");
+        Document document=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new org.xml.sax.InputSource(new java.io.StringReader(xml.toString())));
+        EJPluginBlockProperties block=loadBlock(Paths.get("renderer-fixtures.form"),document.getDocumentElement());
+        PreviewNode root=new FormPreviewModelBuilder().build(block.getFormProperties(),block,900,700);
+        PreviewNode label=find(root,"i0"),checkbox=find(root,"i1");
+        int captionWidth="A long visible caption that must not be clipped".length()*7;
+        check(label.getConstraint().getPreferredWidth()>=captionWidth,"auto label measures caption rather than internal item name");
+        check(checkbox.getConstraint().getPreferredWidth()>=captionWidth+24,"auto checkbox reserves caption and checkbox glyph");
+        check(label.getTextAlignment()==PreviewNode.TEXT_ALIGN_RIGHT,"label renderer ALIGNMENT is honored");
+        check(find(root,"i3").getKind()==EJDevPreviewKind.DATE_TIME_FIELD,"date-time renderer is not mistaken for date only");
+        check(find(root,"i5").getConstraint().getPreferredWidth()==88,"explicit label width keeps character units");
+        check(find(root,"i6").getConstraint().getPreferredWidth()==10,"explicit checkbox width keeps pixel units");
+        check(!contains(root,"hidden"),"hidden fixture stays hidden");
+        List<String> painted=paintedText(root);
+        check(painted.contains("STACK-TEXT-MODE")&&!painted.contains("<STACKED_COMPONENT>")&&!painted.contains("Tab"),
+            "stacked item paints a field placeholder, not clipped canvas tabs");
+        check(!painted.contains("i4")&&!painted.contains("i5")&&!painted.contains("i6"),"blank inline captions do not expose internal item names");
+        PreviewNode canvas=node(EJDevPreviewKind.STACKED,300,200);canvas.setPaintContainerTitle(true);canvas.setTabLabels(Arrays.asList("First","Second"));
+        canvas.addChild(node(EJDevPreviewKind.TAB_PAGE,200,80));canvas.addChild(node(EJDevPreviewKind.TAB_PAGE,200,80));
+        canvas.setBounds(0,0,300,200);new PreviewGridLayoutSolver().layout(canvas);
+        check(paintedText(canvas).containsAll(Arrays.asList("<STACKED_COMPONENT>","First","Second")),"stacked canvases retain their page tabs");
+    }
+    static List<String> paintedText(PreviewNode model) {
+        if(display==null)display=new Display();
+        Image image=new Image(display,Math.max(1,model.getBounds().getWidth()),Math.max(1,model.getBounds().getHeight()));
+        GC gc=new GC(image);List<String> result=new ArrayList<>();
+        SWTGraphics graphics=new SWTGraphics(gc) {
+            @Override public void drawText(String text,int x,int y){result.add(text);super.drawText(text,x,y);}
+        };
+        try{PreviewNodeFigure f=figure(model,null);f.validate();f.paint(graphics);return result;}
+        finally{graphics.dispose();gc.dispose();image.dispose();}
+    }
+    static PreviewNode find(PreviewNode n,String name){if(name.equals(n.getDescriptor().getName()))return n;for(PreviewNode c:n.getChildren()){PreviewNode r=find(c,name);if(r!=null)return r;}return null;}
+    static EJPluginBlockProperties loadBlock(Path path,Element blockXml) {
+        String blockName=blockXml.getAttribute("name");
+        EJPluginFormProperties form=new EJPluginFormProperties(path.getFileName().toString(),null);
+        final String blockRenderer=text(blockXml,"blockRendererName","");
+        EJPluginBlockProperties block=new EJPluginBlockProperties(form,blockName,true) {
+            @Override public String getBlockRendererName(){return blockRenderer;}
+            @Override public EJDevBlockRendererDefinition getBlockRendererDefinition(){return null;}
+        };
+        form.getBlockContainer().addBlockProperties(block);
+        block.setBlockRendererProperties(properties(child(blockXml,"blockRendererProperties")));
+        Element main=child(blockXml,"mainScreenProperties");
+        block.getMainScreenProperties().setNumCols(integer(main,"numCols",1));
+        block.getMainScreenProperties().setWidth(integer(main,"width",0));
+        block.getMainScreenProperties().setHeight(integer(main,"height",0));
+        for(Element itemXml:children(child(blockXml,"itemList"),"item")) {
+            final String renderer=text(itemXml,"itemRendererName","");
+            final EJCoreFrameworkExtensionProperties props=properties(child(itemXml,"itemRendererProperties"));
+            EJPluginBlockItemProperties item=new EJPluginBlockItemProperties(block,itemXml.getAttribute("name"),true) {
+                @Override public String getItemRendererName(){return renderer;}
+                @Override public EJCoreFrameworkExtensionProperties getItemRendererProperties(){return props;}
+                @Override public EJDevItemRendererDefinition getItemRendererDefinition(){return null;}
+            };
+            block.getItemContainer().addItemProperties(item);
+        }
+        addGroups(child(child(blockXml,"mainScreen"),"itemGroupList"),block.getMainScreenItemGroupDisplayContainer());
+        return block;
     }
     static void render(PreviewNode model,String name) throws Exception {
         if(display==null)display=new Display();Files.createDirectories(screenshots);
@@ -168,6 +224,9 @@ public class PreviewRegressionTest {
             g.setDisplayGroupFrame(bool(e,"displayFrame",false));g.setFrameTitle(text(e,"frameTitle",""));
             g.setHorizontalAlignment(EJItemGroupAlignment.valueOf(text(e,"horizontalAlignment","FILL")));
             g.setVerticalAlignment(EJItemGroupAlignment.valueOf(text(e,"verticalAlignment","FILL")));
+            g.setRendererProperties(properties(child(e,"rendererProperties")));
+            g.setSeparator(boolAttribute(e,"isSeparator"));
+            if(e.hasAttribute("separatorOrientation"))g.setSeparatorOrientation(EJSeparatorOrientation.valueOf(e.getAttribute("separatorOrientation")));
             container.addItemGroupProperties(g);
             for(Element si:children(child(e,"itemGroupItemList"),"item")) {
                 EJPluginMainScreenItemProperties item=new EJPluginMainScreenItemProperties(g,false,boolAttribute(si,"isSpacerItem")) {
@@ -176,13 +235,15 @@ public class PreviewRegressionTest {
                 };
                 item.setReferencedItemName(si.getAttribute("referencedItemName"));item.setLabel(text(si,"label",""));
                 item.setVisible(bool(si,"visible",true));item.setBlockRendererRequiredProperties(properties(child(si,"blockRendererRequiredProperties")));
+                item.setSeparator(boolAttribute(si,"isSeparator"));
+                if(si.hasAttribute("separatorOrientation"))item.setSeparatorOrientation(EJSeparatorOrientation.valueOf(si.getAttribute("separatorOrientation")));
                 g.addItemProperties(item);
             }
             addGroups(child(e,"itemGroupList"),g.getChildItemGroupContainer());
         }
     }
     static EJCoreFrameworkExtensionProperties properties(Element e) {
-        EJCoreFrameworkExtensionProperties p=new EJCoreFrameworkExtensionProperties(null,null,"test",null);
+        EJCoreFrameworkExtensionProperties p=new EJCoreFrameworkExtensionProperties(null,null,e!=null&&e.hasAttribute("name")?e.getAttribute("name"):"test",null);
         for(Element v:children(e,"property")) {
             EJCoreFrameworkExtensionProperty value=new EJCoreFrameworkExtensionProperty(EJPropertyDefinitionType.STRING,v.getAttribute("name"));
             value.setValue(v.getTextContent().trim());p.addProperty(value);
@@ -192,6 +253,7 @@ public class PreviewRegressionTest {
             for(Element en:children(l,"listEntry")){EJCoreFrameworkExtensionPropertyListEntry entry=new EJCoreFrameworkExtensionPropertyListEntry();for(Element v:children(en,"property"))entry.addProperty(v.getAttribute("name"),v.getTextContent().trim());list.addListEntry(entry);}
             p.addPropertyList(list);
         }
+        for(Element g:children(e,"propertyGroup"))p.addPropertyGroup(properties(g));
         return p;
     }
     static List<Element> children(Element e,String name){List<Element> result=new ArrayList<>();if(e!=null)for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element && n.getNodeName().equals(name))result.add((Element)n);return result;}

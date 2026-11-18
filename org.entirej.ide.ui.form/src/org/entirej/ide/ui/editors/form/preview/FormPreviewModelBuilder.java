@@ -671,6 +671,27 @@ public class FormPreviewModelBuilder
         node.setPaintBorder(false);
         node.setPaintControlLabel(false);
         node.setVerticalOrientation(isVerticalSeparator(item));
+        switch (node.getKind())
+        {
+            case LABEL:
+            case CHECKBOX:
+            case BUTTON:
+            case RADIO_GROUP:
+            case STACKED:
+                // Native item renderers use the literal caption, including an intentionally
+                // blank one. The descriptor's name remains available for editor selection.
+                node.setControlText(item.getLabel() == null ? "" : item.getLabel());
+                break;
+            default:
+                break;
+        }
+        if (node.getKind() == EJDevPreviewKind.LABEL)
+        {
+            EJDevBlockItemDisplayProperties blockItem = item.getBlockItemDisplayProperties();
+            String alignment = blockItem == null ? null : stringProperty(blockItem.getItemRendererProperties(), "ALIGNMENT");
+            node.setTextAlignment(ORIENTATION_RIGHT.equals(alignment) ? PreviewNode.TEXT_ALIGN_RIGHT
+                    : ORIENTATION_CENTER.equals(alignment) ? PreviewNode.TEXT_ALIGN_CENTER : PreviewNode.TEXT_ALIGN_LEFT);
+        }
         if (node.getKind() == EJDevPreviewKind.RADIO_GROUP)
         {
             applyRadioGroup(node, item);
@@ -1030,7 +1051,17 @@ public class FormPreviewModelBuilder
 
         if (kind == EJDevPreviewKind.BUTTON)
         {
-            return Math.max(34, textWidth(value(item.getLabel(), item.getReferencedItemName())) + 14);
+            return Math.max(34, textWidth(item.getLabel()) + 14);
+        }
+        if (kind == EJDevPreviewKind.CHECKBOX || kind == EJDevPreviewKind.LABEL)
+        {
+            // computeSize() in the native preview measures the caption, not the internal name.
+            // Explicit DISPLAYED_WIDTH above still wins (pixels for checks, characters for labels).
+            return Math.max(20, textWidth(item.getLabel()) + (kind == EJDevPreviewKind.CHECKBOX ? 24 : 4));
+        }
+        if (kind == EJDevPreviewKind.STACKED)
+        {
+            return Math.max(DEFAULT_CONTROL_WIDTH, textWidth("STACK-TEXT-MODE") + 12);
         }
         return expandHorizontally ? DEFAULT_CONTROL_WIDTH : Math.max(DEFAULT_CONTROL_WIDTH, textWidth(item.getReferencedItemName()) + 20);
     }

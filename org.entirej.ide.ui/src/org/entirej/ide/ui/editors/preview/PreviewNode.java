@@ -51,6 +51,7 @@ public class PreviewNode
     private boolean                 titleBarExpanded    = true;
     private final List<String>      optionLabels        = new ArrayList<String>();
     private boolean                 optionsFramed;
+    private String                  controlText;
 
     public static final int         TEXT_ALIGN_LEFT     = 0;
     public static final int         TEXT_ALIGN_CENTER   = 1;
@@ -120,6 +121,21 @@ public class PreviewNode
             return descriptor.getRendererName();
         }
         return descriptor.getKind().name();
+    }
+
+    /**
+     * The literal caption of an inline item control. Null uses the descriptor's display name;
+     * an empty string deliberately paints no caption, without losing the item's selection name.
+     * Also distinguishes a stacked item control from a stacked page container.
+     */
+    public String getControlText()
+    {
+        return controlText;
+    }
+
+    public void setControlText(String controlText)
+    {
+        this.controlText = controlText;
     }
 
     public PreviewGridConstraint getConstraint()
