@@ -112,6 +112,10 @@ public class PreviewNodePart extends AbstractGraphicalEditPart
 
     private void handleMousePressed(MouseEvent event)
     {
+        if (event.button != 1)
+        {
+            return;
+        }
         PreviewNode model = getModel();
         if (model.getKind() == null)
         {
@@ -127,6 +131,8 @@ public class PreviewNodePart extends AbstractGraphicalEditPart
             return;
         }
 
+        // Tab navigation is handled here, not by GEF's normal selection/drag tool.
+        event.consume();
         model.setSelectedTabIndex(tabIndex);
         new PreviewGridLayoutSolver().layout(model.getRoot());
         refreshRootPart();

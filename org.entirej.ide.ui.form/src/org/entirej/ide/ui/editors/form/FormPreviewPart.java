@@ -56,7 +56,6 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
     private PreviewEditControl            previewControl;
     private AbstractNode<?>               selectedNode;
     private boolean                       canvasDesignMode;
-    private boolean                       previewSelectionChange;
 
     public FormPreviewPart(AbstractEJFormEditor editor, FormPage page, Composite parent)
     {
@@ -151,7 +150,7 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
     public void showDetails(AbstractNode<?> node)
     {
         selectedNode = node;
-        canvasDesignMode = FormPreviewModelBuilder.canvasDesignSelection(node == null ? null : node.getSource(), canvasDesignMode, previewSelectionChange);
+        canvasDesignMode = FormPreviewModelBuilder.canvasDesignSelection(node == null ? null : node.getSource(), canvasDesignMode);
         previewLayout();
     }
 
@@ -225,16 +224,9 @@ public class FormPreviewPart extends AbstractDescriptorPart implements INodeDesc
             {
                 if (source != null && editor.getFormBasePage() != null && editor.getFormBasePage().getTreeSection() != null)
                 {
-                    boolean previous = previewSelectionChange;
-                    try
-                    {
-                        previewSelectionChange = true;
-                        editor.getFormBasePage().getTreeSection().selectNodes(true, source);
-                    }
-                    finally
-                    {
-                        previewSelectionChange = previous;
-                    }
+                    // Update the outline/properties without rebuilding a selected block preview.
+                    // The current model owns tab navigation and must retain its page/root state.
+                    editor.getFormBasePage().getTreeSection().selectNodesNoRefresh(false, source);
                 }
             }
         });

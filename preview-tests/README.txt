@@ -109,3 +109,15 @@ page selection within that mode keeps the design presentation. Technical names
 remain model/selection identities and are available in hover tooltips.
 Presentation tests cover both modes, page switching, reserved title space,
 selection rebuilds, technical table/chart headings and real column captions.
+
+Preview click synchronization
+-----------------------------
+Preview-originated selections update the outline and property descriptors via
+selectNodesNoRefresh(false, source). They do not change the preview's selected
+root or move focus out of the preview. Explicit outline selections retain the
+normal block/canvas/form preview behavior. Tab navigation consumes its mouse
+press so GEF's normal selection tool cannot overwrite the active page selection.
+Interaction tests send real SWT mouse-down/up events through a GEF viewer for
+top/bottom tabs and stacked pages in form/design modes. Optional workbench
+adapter lookups and tooltip extensions use standalone test substitutes; the
+full Eclipse workbench/outline wiring still needs a manual acceptance check.

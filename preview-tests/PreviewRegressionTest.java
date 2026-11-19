@@ -81,6 +81,7 @@ public class PreviewRegressionTest {
         rendererRegressions();
         PreviewSpacingTest.run();
         PreviewPresentationTest.run();
+        PreviewInteractionTest.run();
         if(args.length>0)for(String form:Arrays.asList("TM03.2","TM03.4","TM03.5","TM04.2"))testForm(Paths.get(args[0],form+".form"));
         if(args.length>2 && "corpus".equals(args[2]))PreviewCorpusTest.run(Paths.get(args[0]));
         if(display!=null)display.dispose();

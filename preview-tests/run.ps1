@@ -18,7 +18,8 @@ $taskBundles=@('org.eclipse.swt','org.eclipse.swt.win32.win32.x86_64','org.eclip
     'org.eclipse.jface','org.eclipse.core.runtime','org.eclipse.core.resources','org.eclipse.core.jobs',
     'org.eclipse.core.expressions','org.eclipse.core.commands','org.eclipse.core.filesystem','org.eclipse.core.contenttype',
     'org.eclipse.equinox.common','org.eclipse.equinox.registry','org.eclipse.equinox.preferences','org.eclipse.osgi',
-    'org.eclipse.jdt.core','org.eclipse.ui','org.eclipse.ui.workbench','org.eclipse.ui.forms','org.eclipse.ui.ide','org.eclipse.text')
+    'org.eclipse.jdt.core','org.eclipse.ui','org.eclipse.ui.workbench','org.eclipse.ui.forms','org.eclipse.ui.ide','org.eclipse.text',
+    'org.osgi.service.prefs')
 $taskLibraries=foreach($taskBundle in $taskBundles){
     Get-ChildItem -LiteralPath "$EclipseHome\plugins" -Filter "${taskBundle}_*.jar" |
         Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
@@ -42,6 +43,9 @@ $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entire
 $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\PreviewRendererNames.java'
 $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\RapPreviewThemeResolver.java'
 $taskSources+=Join-Path $SourceDirectory 'org.entirej.ide.ui.form\src\org\entirej\ide\ui\editors\form\preview\AppLayoutPreviewModelBuilder.java'
+$taskSources+=@('PreviewEditControl','PreviewEditPartFactory','PreviewNodePart','PreviewSelectionHandler') | ForEach-Object {
+    Join-Path $SourceDirectory "org.entirej.ide.ui\src\org\entirej\ide\ui\editors\preview\$_.java"
+}
 $taskSources+=Join-Path $PSScriptRoot 'PreviewRegressionTest.java'
 if($Packaged){$taskSources=@((Join-Path $PSScriptRoot 'PreviewRegressionTest.java'))}
 $taskSources+=Join-Path $PSScriptRoot 'PreviewCorpusTest.java'
@@ -49,6 +53,7 @@ $taskSources+=Join-Path $PSScriptRoot 'PreviewFormFixture.java'
 $taskSources+=Join-Path $PSScriptRoot 'PreviewFixtureRepository.java'
 $taskSources+=Join-Path $PSScriptRoot 'PreviewSpacingTest.java'
 $taskSources+=Join-Path $PSScriptRoot 'PreviewPresentationTest.java'
+$taskSources+=Join-Path $PSScriptRoot 'PreviewInteractionTest.java'
 $ErrorActionPreference='Continue'
 & "$JavaHome\bin\javac.exe" -encoding UTF-8 -cp $taskClasspath -d $taskOut $taskSources
 $ErrorActionPreference='Stop'
