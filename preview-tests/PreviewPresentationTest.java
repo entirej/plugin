@@ -79,6 +79,17 @@ public class PreviewPresentationTest {
         EJPluginBlockProperties columns=block("MultiRecord","technicalTable");
         PreviewNode selected=PreviewRegressionTest.builder().build(columns.getFormProperties(),columns,900,700);
         check(PreviewRegressionTest.paintedText(selected).contains("Runtime column"),"real table column captions are preserved");
+        EJPluginCanvasProperties popup=canvas(form,"technicalPopup",EJCanvasType.POPUP,480,220);
+        EJPluginCanvasProperties popupTabs=canvas(form,"technicalPopupTabs",EJCanvasType.TAB,420,140);
+        EJPluginTabPageProperties popupPage=new EJPluginTabPageProperties(popupTabs,"popupPage");popupPage.setPageTitle("Popup details");
+        popupTabs.getTabPageContainer().addTabPageProperties(popupPage);popup.getPopupCanvasContainer().addCanvasProperties(popupTabs);
+        form.getCanvasContainer().addCanvasProperties(popup);
+        PreviewNode popupDesign=PreviewRegressionTest.builder().build(form,popup,900,700);
+        PreviewNode popupRuntime=PreviewRegressionTest.builder().build(form,popup,900,700,false);
+        check(popupDesign.isDesignHintsVisible() && PreviewRegressionTest.paintedText(popupDesign).contains("technicalPopupTabs"),
+            "explicit popup canvas selection keeps canvas design hints");
+        check(!popupRuntime.isDesignHintsVisible() && !PreviewRegressionTest.paintedText(popupRuntime).contains("technicalPopupTabs")
+            && PreviewRegressionTest.paintedText(popupRuntime).contains("Popup details"),"popup form-preview mode omits technical headings while preserving real tab captions");
     }
     static EJPluginBlockProperties block(String renderer,String name) throws Exception {
         String xml="<block name='"+name+"'><blockRendererName>"+renderer+"</blockRendererName><itemList><item name='column'><itemRendererName>TextItem</itemRendererName></item></itemList>"

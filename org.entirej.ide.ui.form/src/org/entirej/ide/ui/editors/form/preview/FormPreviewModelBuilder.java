@@ -376,7 +376,7 @@ public class FormPreviewModelBuilder
         root.setPaintBorder(false);
 
         addCanvasContainer(root, popup.getPopupCanvasContainer(), popup);
-        layout(root, true);
+        layout(root, isCanvasSelection(popup));
         return root;
     }
 

@@ -162,19 +162,29 @@ public class PreviewRegressionTest {
     }
     static PreviewNode find(PreviewNode n,String name){if(name.equals(n.getDescriptor().getName()))return n;for(PreviewNode c:n.getChildren()){PreviewNode r=find(c,name);if(r!=null)return r;}return null;}
     static EJPluginBlockProperties loadBlock(Path path,Element blockXml) {
-        String blockName=blockXml.getAttribute("name");
         EJPluginFormProperties form=new EJPluginFormProperties(path.getFileName().toString(),null);
+        return loadBlock(path,blockXml,form);
+    }
+    static EJPluginBlockProperties loadBlock(Path path,Element blockXml,EJPluginFormProperties form) {
+        String blockName=blockXml.getAttribute("name");
         final String blockRenderer=text(blockXml,"blockRendererName","");
         EJPluginBlockProperties block=new EJPluginBlockProperties(form,blockName,true) {
             @Override public String getBlockRendererName(){return blockRenderer;}
             @Override public EJDevBlockRendererDefinition getBlockRendererDefinition(){return null;}
         };
         form.getBlockContainer().addBlockProperties(block);
+        block.setCanvasName(text(blockXml,"canvasName",""));
         block.setBlockRendererProperties(properties(child(blockXml,"blockRendererProperties")));
         Element main=child(blockXml,"mainScreenProperties");
         block.getMainScreenProperties().setNumCols(integer(main,"numCols",1));
         block.getMainScreenProperties().setWidth(integer(main,"width",0));
         block.getMainScreenProperties().setHeight(integer(main,"height",0));
+        block.getMainScreenProperties().setDisplayFrame(bool(main,"displayFrame",false));
+        block.getMainScreenProperties().setFrameTitle(text(main,"frameTitle",""));
+        block.getMainScreenProperties().setHorizontalSpan(integer(main,"horizontalSpan",1));
+        block.getMainScreenProperties().setVerticalSpan(integer(main,"verticalSpan",1));
+        block.getMainScreenProperties().setExpandHorizontally(bool(main,"expandHorizontally",false));
+        block.getMainScreenProperties().setExpandVertically(bool(main,"expandVertically",false));
         for(Element itemXml:children(child(blockXml,"itemList"),"item")) {
             final String renderer=text(itemXml,"itemRendererName","");
             final EJCoreFrameworkExtensionProperties props=properties(child(itemXml,"itemRendererProperties"));

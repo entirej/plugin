@@ -40,6 +40,8 @@ public class PreviewSpacingTest {
                 check(actual.x==expected.getX()&&actual.y==expected.getY()&&actual.width==expected.getWidth()&&actual.height==expected.getHeight(),"RAP item-grid geometry matches native SWT grid cell "+i);
             }
         } finally{shell.dispose();}
+        constrainedGrids();
+        gridMatrix();
         PreviewTheme theme=PreviewTheme.fromCss("""
             * { font: 12px Verdana; padding: 0; }
             Group-Frame { padding: 0; margin: 0; border: 0px solid gray; }
@@ -88,6 +90,72 @@ public class PreviewSpacingTest {
         bordered.setPaintBorder(true);bordered.setLayoutInsets(1,1,1,1);bordered.addChild(node(EJDevPreviewKind.TEXT_FIELD,30,20));
         new PreviewGridLayoutSolver().layout(bordered);PreviewNodeFigure painted=PreviewRegressionTest.figure(bordered,null);painted.validate();
         check(painted.getChildren().get(0).getBounds().x==1 && painted.getChildren().get(0).getBounds().y==1,"CSS border is not counted again by Draw2D XYLayout");
+    }
+
+    static void constrainedGrids() {
+        Shell shell=new Shell(PreviewRegressionTest.display);
+        try {
+            for(boolean horizontal:new boolean[]{true,false}) {
+                Composite nativeGrid=new Composite(shell,SWT.NONE);GridLayout layout=new GridLayout(horizontal?2:1,false);
+                layout.marginHeight=layout.marginWidth=0;layout.horizontalSpacing=5;layout.verticalSpacing=1;nativeGrid.setLayout(layout);
+                nativeGrid.setSize(horizontal?150:100,horizontal?40:25);
+                PreviewNode preview=node(EJDevPreviewKind.GROUP,horizontal?150:100,horizontal?40:25);
+                preview.setBounds(0,0,horizontal?150:100,horizontal?40:25);preview.setColumns(horizontal?2:1);
+                preview.setLayoutMargin(0);preview.setHorizontalGap(5);preview.setVerticalGap(1);
+                for(int i=0;i<2;i++) {
+                    Label label=new Label(nativeGrid,SWT.NONE);GridData data=new GridData(SWT.FILL,SWT.FILL,horizontal,!horizontal);
+                    data.widthHint=100;data.heightHint=20;label.setLayoutData(data);
+                    PreviewNode child=node(EJDevPreviewKind.TEXT_FIELD,100,20);
+                    child.getConstraint().setGrabHorizontal(horizontal).setGrabVertical(!horizontal);preview.addChild(child);
+                }
+                nativeGrid.layout();new PreviewGridLayoutSolver().layout(preview);
+                for(int i=0;i<2;i++) {
+                    org.eclipse.swt.graphics.Rectangle actual=nativeGrid.getChildren()[i].getBounds();PreviewBounds expected=preview.getChildren().get(i).getBounds();
+                    check(actual.x==expected.getX()&&actual.y==expected.getY()&&actual.width==expected.getWidth()&&actual.height==expected.getHeight(),
+                        "constrained "+(horizontal?"horizontal":"vertical")+" grab grid matches SWT cell "+i+" actual="+actual+" preview="+expected.getWidth()+"x"+expected.getHeight());
+                }
+            }
+            Composite sparse=new Composite(shell,SWT.NONE);GridLayout layout=new GridLayout(3,false);
+            layout.marginWidth=layout.marginHeight=0;layout.horizontalSpacing=5;sparse.setLayout(layout);
+            Label label=new Label(sparse,SWT.NONE);GridData data=new GridData();data.widthHint=60;data.heightHint=20;data.horizontalSpan=3;label.setLayoutData(data);
+            PreviewNode preview=node(EJDevPreviewKind.FORM_CONTAINER,0,0);preview.setBounds(0,0,1,1);preview.setColumns(3);preview.setLayoutMargin(0);
+            PreviewNode child=node(EJDevPreviewKind.TEXT_FIELD,60,20);child.getConstraint().setHorizontalSpan(3);preview.addChild(child);
+            new PreviewGridLayoutSolver().layout(preview);
+            check(preview.getBounds().getWidth()==sparse.computeSize(SWT.DEFAULT,SWT.DEFAULT).x,"spanning-only columns have the same natural width as SWT, without phantom 120px tracks");
+        } finally {shell.dispose();}
+    }
+
+    // width, height, horizontal span, vertical span, grab X/Y, minimum X/Y.
+    static void gridMatrix() {
+        int[][][] cases={
+            {{100,20,1,1,1,1,30,8},{80,30,1,1,1,1,10,5},{90,25,1,1,1,1,0,0}},
+            {{100,20,1,1,0,0,0,0},{80,30,1,1,1,1,10,5}},
+            {{100,50,1,2,1,1,0,0},{80,20,1,1,1,0,0,0},{70,60,1,1,1,1,0,10}},
+            {{100,20,1,1,0,0,0,0},{50,20,1,1,1,0,0,0},{200,20,2,1,1,0,30,0}},
+            {{100,20,1,1,0,0,0,0},{50,20,1,1,0,0,0,0},{200,20,2,1,0,0,0,0}}
+        };
+        Shell shell=new Shell(PreviewRegressionTest.display);
+        try {
+            for(int columns:new int[]{2,3})for(int c=0;c<cases.length;c++)for(int width:new int[]{0,80,180,360}) {
+                Composite composite=new Composite(shell,SWT.NONE);GridLayout grid=new GridLayout(columns,false);
+                grid.marginWidth=grid.marginHeight=0;grid.horizontalSpacing=5;grid.verticalSpacing=1;composite.setLayout(grid);composite.setSize(width,65);
+                PreviewNode preview=node(EJDevPreviewKind.GROUP,width,65);preview.setBounds(0,0,width,65);preview.setColumns(columns);
+                preview.setLayoutMargin(0);preview.setHorizontalGap(5);preview.setVerticalGap(1);
+                for(int[] spec:cases[c]) {
+                    Label label=new Label(composite,SWT.NONE);GridData data=new GridData(SWT.FILL,SWT.FILL,spec[4]!=0,spec[5]!=0,spec[2],spec[3]);
+                    data.widthHint=spec[0];data.heightHint=spec[1];data.minimumWidth=spec[6];data.minimumHeight=spec[7];label.setLayoutData(data);
+                    PreviewNode child=node(EJDevPreviewKind.TEXT_FIELD,spec[0],spec[1]);child.getConstraint().setHorizontalSpan(spec[2]).setVerticalSpan(spec[3])
+                        .setGrabHorizontal(spec[4]!=0).setGrabVertical(spec[5]!=0).setMinimumWidth(spec[6]).setMinimumHeight(spec[7]);preview.addChild(child);
+                }
+                composite.layout();new PreviewGridLayoutSolver().layout(preview);
+                for(int i=0;i<cases[c].length;i++) {
+                    org.eclipse.swt.graphics.Rectangle actual=composite.getChildren()[i].getBounds();PreviewBounds expected=preview.getChildren().get(i).getBounds();
+                    check(actual.x==expected.getX()&&actual.y==expected.getY()&&actual.width==expected.getWidth()&&actual.height==expected.getHeight(),
+                        "SWT grid matrix "+c+" columns="+columns+" width="+width+" cell="+i+" native="+actual+" preview="+expected.getX()+","+expected.getY()+","+expected.getWidth()+","+expected.getHeight());
+                }
+                composite.dispose();
+            }
+        } finally {shell.dispose();}
     }
 
     // Exercise the real project resolver using in-memory Eclipse resource/JDT interfaces.

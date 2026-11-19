@@ -76,10 +76,10 @@ public class PreviewGridLayoutSolver
         int gap = horizontalGap(parent);
         int verticalGap = verticalGap(parent);
 
-        int availableWidth = parent.getBounds().getWidth() - left - right - (gap * (columns - 1));
+        int availableWidth = Math.max(0, parent.getBounds().getWidth() - left - right - (gap * (columns - 1)));
         int[] columnWidths = columnWidths(parent, placements, columns, availableWidth, gap);
 
-        int availableHeight = parent.getBounds().getHeight() - top - bottom - (verticalGap * (rowCount - 1));
+        int availableHeight = Math.max(0, parent.getBounds().getHeight() - top - bottom - (verticalGap * (rowCount - 1)));
         int[] rowHeights = rowHeights(parent, placements, rowCount, availableHeight);
 
         for (Placement placement : placements)
@@ -223,29 +223,21 @@ public class PreviewGridLayoutSolver
             }
         }
 
-        for (int i = 0; i < widths.length; i++)
-        {
-            if (widths[i] == 0)
-            {
-                widths[i] = DEFAULT_CELL_WIDTH;
-            }
-        }
-
         for (Placement placement : placements)
         {
-            int preferredWidth = preferredWidth(placement.node);
-            int currentWidth = widthSpan(widths, placement.column, placement.columnSpan) + (gap * (placement.columnSpan - 1));
-            if (currentWidth < preferredWidth)
-            {
-                growSpan(widths, placement.column, placement.columnSpan, preferredWidth - currentWidth);
-            }
             if (placement.columnSpan > 1)
             {
                 markSpanningGrabColumns(grabColumns, placement, columns);
             }
+            int preferredWidth = preferredWidth(placement.node);
+            int currentWidth = widthSpan(widths, placement.column, placement.columnSpan) + (gap * (placement.columnSpan - 1));
+            if (currentWidth < preferredWidth)
+            {
+                growSpan(widths, grabColumns, placement.column, placement.columnSpan, preferredWidth - currentWidth);
+            }
         }
 
-        distributeExtra(widths, grabColumns, availableWidth);
+        distributeExtra(widths, grabColumns, minimumSizes(placements, columns, gap, true, grabColumns), availableWidth);
         return widths;
     }
 
@@ -277,10 +269,7 @@ public class PreviewGridLayoutSolver
             }
         }
 
-        for (int i = placement.column; i < end && i < grabColumns.length; i++)
-        {
-            grabColumns[i] = true;
-        }
+        grabColumns[end - 1] = true;
     }
 
     private int[] rowHeights(PreviewNode parent, List<Placement> placements, int rowCount, int availableHeight)
@@ -295,23 +284,10 @@ public class PreviewGridLayoutSolver
 
         for (Placement placement : placements)
         {
-            int preferredHeight = preferredHeight(placement.node);
-            int contentHeight = Math.max(1, preferredHeight - verticalGap(parent) * (placement.rowSpan - 1));
-            int heightPerRow = Math.max(1, (contentHeight + placement.rowSpan - 1) / placement.rowSpan);
-            for (int i = placement.row; i < placement.row + placement.rowSpan && i < heights.length; i++)
-            {
-                heights[i] = Math.max(heights[i], heightPerRow);
-            }
             if (placement.rowSpan == 1)
             {
+                heights[placement.row] = Math.max(heights[placement.row], preferredHeight(placement.node));
                 markGrabRows(grabRows, placement);
-            }
-        }
-        for (int i = 0; i < heights.length; i++)
-        {
-            if (heights[i] == 0)
-            {
-                heights[i] = DEFAULT_CELL_HEIGHT;
             }
         }
 
@@ -321,10 +297,37 @@ public class PreviewGridLayoutSolver
             {
                 markSpanningGrabRows(grabRows, placement);
             }
+            int missing = preferredHeight(placement.node) - heightSpan(heights, placement.row, placement.rowSpan)
+                    - verticalGap(parent) * (placement.rowSpan - 1);
+            if (missing > 0) growSpan(heights, grabRows, placement.row, placement.rowSpan, missing);
         }
 
-        distributeExtra(heights, grabRows, availableHeight);
+        distributeExtra(heights, grabRows, minimumSizes(placements, heights.length, verticalGap(parent), false, grabRows), availableHeight);
         return heights;
+    }
+
+    /** Fixed controls retain their natural size; grabbing controls may shrink only to their
+     * explicit minimum. Spanning controls constrain the sum of their tracks, including gaps. */
+    private int[] minimumSizes(List<Placement> placements, int count, int gap, boolean horizontal, boolean[] grab)
+    {
+        int[] minimums = new int[count];
+        for (int pass = 0; pass < 2; pass++)
+        {
+            for (Placement placement : placements)
+            {
+                int start = horizontal ? placement.column : placement.row;
+                int span = horizontal ? placement.columnSpan : placement.rowSpan;
+                if ((span == 1) != (pass == 0)) continue;
+                PreviewGridConstraint constraint = placement.node.getConstraint();
+                boolean expands = horizontal ? constraint.isGrabHorizontal() : constraint.isGrabVertical();
+                int minimum = expands ? (horizontal ? constraint.getMinimumWidth() : constraint.getMinimumHeight())
+                        : (horizontal ? preferredWidth(placement.node) : preferredHeight(placement.node));
+                int missing = minimum - widthSpan(minimums, start, span) - gap * (span - 1);
+                if (missing <= 0) continue;
+                growSpan(minimums, grab, start, span, missing);
+            }
+        }
+        return minimums;
     }
 
     private void markGrabRows(boolean[] grabRows, Placement placement)
@@ -355,10 +358,7 @@ public class PreviewGridLayoutSolver
             }
         }
 
-        for (int i = placement.row; i < end && i < grabRows.length; i++)
-        {
-            grabRows[i] = true;
-        }
+        grabRows[end - 1] = true;
     }
 
     private boolean isHorizontalSplit(PreviewNode parent, int columns)
@@ -486,9 +486,10 @@ public class PreviewGridLayoutSolver
         return index;
     }
 
-    private void distributeExtra(int[] sizes, boolean[] grab, int available)
+    private void distributeExtra(int[] sizes, boolean[] grab, int[] minimums, int available)
     {
-        if (available <= 0)
+        // -1 means natural measurement, not a zero-size client area.
+        if (available < 0)
         {
             return;
         }
@@ -499,7 +500,34 @@ public class PreviewGridLayoutSolver
         }
 
         int extra = available - used;
-        if (extra <= 0)
+        if (extra < 0)
+        {
+            int overflow = -extra;
+            while (overflow > 0)
+            {
+                int count = 0, last = -1;
+                for (int i = 0; i < sizes.length; i++)
+                {
+                    if (grab[i] && sizes[i] > minimums[i])
+                    {
+                        count++;
+                        last = i;
+                    }
+                }
+                if (count == 0) break;
+                int share = overflow / count, remainder = overflow % count;
+                // SWT puts the division remainder on the final expandable track.
+                for (int i = 0; i < sizes.length; i++)
+                {
+                    if (!grab[i] || sizes[i] <= minimums[i]) continue;
+                    int reduction = Math.min(share + (i == last ? remainder : 0), sizes[i] - minimums[i]);
+                    sizes[i] -= reduction;
+                    overflow -= reduction;
+                }
+            }
+            return;
+        }
+        if (extra == 0)
         {
             return;
         }
@@ -524,29 +552,27 @@ public class PreviewGridLayoutSolver
             if (grab[i])
             {
                 sizes[i] += perSlot;
-                if (remainder > 0)
-                {
-                    sizes[i]++;
-                    remainder--;
-                }
             }
         }
+        for (int i = sizes.length - 1; i >= 0; i--)
+            if (grab[i]) { sizes[i] += remainder; break; }
     }
 
-    private void growSpan(int[] sizes, int start, int span, int extra)
+    private void growSpan(int[] sizes, boolean[] grab, int start, int span, int extra)
     {
-        int slots = Math.max(1, Math.min(span, sizes.length - start));
+        int end = Math.min(start + span, sizes.length);
+        int slots = 0;
+        for (int i = start; i < end; i++) if (grab[i]) slots++;
+        if (slots == 0)
+        {
+            sizes[end - 1] += extra;
+            return;
+        }
         int perSlot = extra / slots;
         int remainder = extra % slots;
-        for (int i = start; i < start + slots; i++)
-        {
-            sizes[i] += perSlot;
-            if (remainder > 0)
-            {
-                sizes[i]++;
-                remainder--;
-            }
-        }
+        for (int i = start; i < end; i++) if (grab[i]) sizes[i] += perSlot;
+        for (int i = end - 1; i >= start; i--)
+            if (grab[i]) { sizes[i] += remainder; break; }
     }
 
     private int preferredWidth(PreviewNode node)
@@ -567,7 +593,7 @@ public class PreviewGridLayoutSolver
             {
                 int columns = Math.max(1, node.getColumns());
                 int gap = horizontalGap(node);
-                int[] widths = columnWidths(node, place(children, columns), columns, 0, gap);
+                int[] widths = columnWidths(node, place(children, columns), columns, -1, gap);
                 width = leftInset(node) + rightInset(node) + widthSpan(widths, 0, columns) + gap * (columns - 1);
             }
             measured = Integer.valueOf(width);
@@ -594,7 +620,7 @@ public class PreviewGridLayoutSolver
             {
                 List<Placement> placements = place(children, Math.max(1, node.getColumns()));
                 int rows = rowCount(placements);
-                int[] heights = rowHeights(node, placements, rows, 0);
+                int[] heights = rowHeights(node, placements, rows, -1);
                 height = topInset(node) + bottomInset(node) + heightSpan(heights, 0, rows) + verticalGap(node) * (rows - 1);
             }
             measured = Integer.valueOf(height);
